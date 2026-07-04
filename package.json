@@ -9,7 +9,6 @@
     "lint": "eslint"
   },
   "dependencies": {
-    "@next/swc-win32-x64-msvc": "^16.2.9",
     "bcryptjs": "^3.0.3",
     "cloudinary": "^2.10.0",
     "jimp": "^1.6.1",
