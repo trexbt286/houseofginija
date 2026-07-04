@@ -1,0 +1,1656 @@
+'use client';
+
+import { useState, useEffect, Suspense } from 'react';
+import { useSearchParams, useRouter } from 'next/navigation';
+import Link from 'next/link';
+import Image from 'next/image';
+import { useStore } from '@/context/StoreContext';
+
+function CollectionsContent() {
+  const searchParams = useSearchParams();
+  const router = useRouter();
+  const { user, cart, addToCart, updateCartQuantity, wishlist, toggleWishlist } = useStore();
+
+  // Filter States
+  const [products, setProducts] = useState([]);
+  const [allProducts, setAllProducts] = useState([]);
+  const [collections, setCollections] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  // Read initial params
+  const initialCollection = searchParams.get('collection') || '';
+  const [selectedCollection, setSelectedCollection] = useState(initialCollection);
+  const [searchQuery, setSearchQuery] = useState(searchParams.get('search') || '');
+  const [selectedSize, setSelectedSize] = useState('');
+  const [selectedColor, setSelectedColor] = useState('');
+  const [selectedSort, setSelectedSort] = useState('newest');
+
+  // Detailed view states
+  const [activeProduct, setActiveProduct] = useState(null);
+  const [activeProductImage, setActiveProductImage] = useState('');
+  const [activeProductSize, setActiveProductSize] = useState('');
+  const [activeProductColor, setActiveProductColor] = useState('');
+  const [activeProductQty, setActiveProductQty] = useState(1);
+  const [isMobileFilterOpen, setIsMobileFilterOpen] = useState(false);
+  const [activeCategorySidebar, setActiveCategorySidebar] = useState('');
+
+  // Manage scroll-lock on document.body when mobile filter drawer is open
+  useEffect(() => {
+    if (isMobileFilterOpen) {
+      document.body.classList.add('scroll-locked');
+    } else {
+      document.body.classList.remove('scroll-locked');
+    }
+    return () => {
+      document.body.classList.remove('scroll-locked');
+    };
+  }, [isMobileFilterOpen]);
+
+  // Trap Escape key for closing filter drawer
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.key === 'Escape') {
+        setIsMobileFilterOpen(false);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, []);
+
+  // Handle manual collections reset event (e.g., clicking Collections in header link while already on collections page)
+  useEffect(() => {
+    const handleReset = () => {
+      setActiveProduct(null);
+      setSelectedCollection('');
+      setSearchQuery('');
+      setSelectedSize('');
+      setSelectedColor('');
+      setSelectedSort('newest');
+    };
+    window.addEventListener('reset-collections', handleReset);
+    return () => {
+      window.removeEventListener('reset-collections', handleReset);
+    };
+  }, []);
+
+  // Synchronize state when URL query parameters change (e.g., from Header dropdown links)
+  useEffect(() => {
+    const colParam = searchParams.get('collection') || '';
+    setSelectedCollection(colParam);
+    
+    const searchParam = searchParams.get('search') || '';
+    setSearchQuery(searchParam);
+    
+    // Close detailed preview when collection query changes
+    setActiveProduct(null);
+
+    // Scroll to category if present in the URL
+    const categoryParam = searchParams.get('category') || '';
+    if (categoryParam) {
+      let targetId = categoryParam.toLowerCase();
+      if (targetId === 'necklace') targetId = 'necklaces';
+      
+      setTimeout(() => {
+        const element = document.getElementById(targetId);
+        if (element) {
+          element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      }, 300);
+    }
+  }, [searchParams]);
+
+  // Scroll-Spy: Highlight active category on left panel as user scrolls the right panel feed
+  useEffect(() => {
+    // Only active on mobile viewport width
+    if (typeof window === 'undefined' || window.innerWidth > 768) return;
+
+    const feed = document.querySelector('.blinkit-feed');
+    if (!feed) return;
+
+    const sections = ['suits', 'rings', 'necklaces', 'bracelets', 'earrings'];
+    const observedElements = [];
+
+    const observerOptions = {
+      root: feed,
+      rootMargin: '0px 0px -60% 0px', // Trigger when headers are in the top 40% of the feed viewport
+      threshold: 0
+    };
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          setActiveCategorySidebar(entry.target.id);
+        }
+      });
+    }, observerOptions);
+
+    sections.forEach(secId => {
+      const el = document.getElementById(secId);
+      if (el) {
+        observer.observe(el);
+        observedElements.push(el);
+      }
+    });
+
+    return () => {
+      observedElements.forEach(el => observer.unobserve(el));
+      observer.disconnect();
+    };
+  }, [loading, products, activeProduct]);
+
+  const handleCategorySidebarClick = (catId) => {
+    setActiveCategorySidebar(catId);
+    const element = document.getElementById(catId);
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  };
+
+  // Static options matching our seed data
+  const sizes = ['XS', 'S', 'M', 'L', 'XL', 'One Size'];
+  const colors = [
+    'Champagne Pink',
+    'Deep Plum',
+    'Blush Cream',
+    'Midnight Plum',
+    '#000000 #000000',
+    'Warm Ivory',
+    'Rose Mauve',
+    'Rose Pink',
+    'Mulberry',
+    'Rose Pink Foil',
+    'Dusty Mauve',
+  ];
+
+  // Helper to render filter controls (shared between desktop sidebar and mobile bottom sheet)
+  const renderFilters = () => (
+    <>
+      <div style={filterGroupStyle}>
+        <h4 style={filterTitleStyle}>Search</h4>
+        <input
+          type="text"
+          placeholder="Search creations..."
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          style={searchFieldStyle}
+        />
+      </div>
+
+      <div style={filterGroupStyle}>
+        <h4 style={filterTitleStyle}>Collections</h4>
+        <select
+          value={selectedCollection}
+          onChange={(e) => setSelectedCollection(e.target.value)}
+          style={selectFieldStyle}
+        >
+          <option value="">All Collections</option>
+          {collections.map((c) => (
+            <option key={c.id} value={c.slug}>
+              {c.name}
+            </option>
+          ))}
+        </select>
+      </div>
+
+      <div style={filterGroupStyle}>
+        <h4 style={filterTitleStyle}>Size</h4>
+        <div style={gridSelectStyle}>
+          {sizes.map((s) => (
+            <button
+              key={s}
+              onClick={() => setSelectedSize(selectedSize === s ? '' : s)}
+              style={selectedSize === s ? activeGridItemStyle : gridItemStyle}
+            >
+              {s}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      <div style={filterGroupStyle}>
+        <h4 style={filterTitleStyle}>Color Palette</h4>
+        <select
+          value={selectedColor}
+          onChange={(e) => setSelectedColor(e.target.value)}
+          style={selectFieldStyle}
+        >
+          <option value="">All Colors</option>
+          {colors.map((c) => (
+            <option key={c} value={c}>
+              {c}
+            </option>
+          ))}
+        </select>
+      </div>
+
+      <div style={filterGroupStyle}>
+        <h4 style={filterTitleStyle}>Sort By</h4>
+        <select
+          value={selectedSort}
+          onChange={(e) => setSelectedSort(e.target.value)}
+          style={selectFieldStyle}
+        >
+          <option value="newest">Newest Additions</option>
+          <option value="price_asc">Price: Low to High</option>
+          <option value="price_desc">Price: High to Low</option>
+          <option value="name_asc">Alphabetical</option>
+        </select>
+      </div>
+
+      <button 
+        onClick={() => {
+          handleClearFilters();
+          setIsMobileFilterOpen(false);
+        }} 
+        style={clearBtnStyle}
+      >
+        Reset All Filters
+      </button>
+    </>
+  );
+
+  // Fetch collections
+  useEffect(() => {
+    const fetchCols = async () => {
+      try {
+        const res = await fetch('/api/collections');
+        if (res.ok) {
+          const data = await res.json();
+          setCollections(data.collections || []);
+        }
+      } catch (err) {
+        console.error(err);
+      }
+    };
+    fetchCols();
+  }, []);
+
+  // Fetch products once on mount to cache in memory
+  useEffect(() => {
+    const fetchAllProducts = async () => {
+      setLoading(true);
+      try {
+        const res = await fetch('/api/products');
+        if (res.ok) {
+          const data = await res.json();
+          const list = data.products || [];
+          setAllProducts(list);
+          setProducts(list);
+        }
+      } catch (err) {
+        console.error(err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchAllProducts();
+  }, []);
+
+  // Filter in memory instantly when selections change
+  useEffect(() => {
+    let filtered = [...allProducts];
+
+    // Filter by collection
+    if (selectedCollection) {
+      filtered = filtered.filter(p => p.collection_slug === selectedCollection);
+    }
+
+    // Filter by search
+    if (searchQuery) {
+      const q = searchQuery.toLowerCase();
+      filtered = filtered.filter(p => 
+        p.name.toLowerCase().includes(q) || 
+        (p.description && p.description.toLowerCase().includes(q))
+      );
+    }
+
+    // Filter by size
+    if (selectedSize) {
+      filtered = filtered.filter(p => 
+        p.variants && p.variants.some(v => v.size === selectedSize && v.stock > 0)
+      );
+    }
+
+    // Filter by color
+    if (selectedColor) {
+      filtered = filtered.filter(p => 
+        p.variants && p.variants.some(v => v.color === selectedColor && v.stock > 0)
+      );
+    }
+
+    // Sort
+    if (selectedSort === 'price_asc') {
+      filtered.sort((a, b) => parseFloat(a.price) - parseFloat(b.price));
+    } else if (selectedSort === 'price_desc') {
+      filtered.sort((a, b) => parseFloat(b.price) - parseFloat(a.price));
+    } else if (selectedSort === 'name_asc') {
+      filtered.sort((a, b) => a.name.localeCompare(b.name));
+    } else {
+      filtered.sort((a, b) => Number(b.id) - Number(a.id));
+    }
+
+    setProducts(filtered);
+
+    // Sync URL params
+    const urlParams = new URLSearchParams();
+    if (selectedCollection) urlParams.set('collection', selectedCollection);
+    if (searchQuery) urlParams.set('search', searchQuery);
+    router.replace(`/collections?${urlParams.toString()}`, { scroll: false });
+
+  }, [selectedCollection, searchQuery, selectedSize, selectedColor, selectedSort, allProducts]);
+
+  const handleClearFilters = () => {
+    setSelectedCollection('');
+    setSearchQuery('');
+    setSelectedSize('');
+    setSelectedColor('');
+    setSelectedSort('newest');
+  };
+
+  const getCollectionTitle = () => {
+    if (!selectedCollection) return 'All collections';
+    const found = collections.find((c) => c.slug === selectedCollection);
+    return found ? `${found.name} Collection` : 'Collection';
+  };
+
+  // Group products for "All Collections" and "Jewellery" views
+  const groupedProducts = {};
+  const shouldGroup = !selectedCollection || selectedCollection === 'jewellery';
+
+  if (shouldGroup && products.length > 0) {
+    products.forEach(p => {
+      let groupName = 'Other';
+      const slug = p.slug.toLowerCase();
+      if (slug.includes('suit')) groupName = 'Suits';
+      else if (slug.includes('ring')) groupName = 'Rings';
+      else if (slug.includes('necklace')) groupName = 'Necklaces';
+      else if (slug.includes('bracelet')) groupName = 'Bracelets';
+      else if (slug.includes('earring')) groupName = 'Earrings';
+      else groupName = p.collection_name || 'Other';
+      
+      if (!groupedProducts[groupName]) groupedProducts[groupName] = [];
+      groupedProducts[groupName].push(p);
+    });
+  }
+
+  const handleProductClick = (e, product) => {
+    if (e.metaKey || e.ctrlKey || e.shiftKey || e.button !== 0) {
+      return;
+    }
+    e.preventDefault();
+    setActiveProduct(product);
+    if (product.images && product.images.length > 0) {
+      setActiveProductImage(product.images[0]);
+    } else {
+      setActiveProductImage('/placeholder.jpg');
+    }
+    
+    // Auto-select size/color combinations
+    const vars = product.variants || [];
+    const inStockVar = vars.find(v => v.stock > 0);
+    if (inStockVar) {
+      setActiveProductSize(inStockVar.size || '');
+      setActiveProductColor(inStockVar.color || '');
+    } else if (vars.length > 0) {
+      setActiveProductSize(vars[0].size || '');
+      setActiveProductColor(vars[0].color || '');
+    } else {
+      setActiveProductSize('One Size');
+      setActiveProductColor('Default');
+    }
+    setActiveProductQty(1);
+    
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const getSidebarCategories = () => {
+    const list = [];
+    
+    // Add "All Items" option at the top
+    list.push({ id: 'all', name: 'All Items', emoji: '✨', targetId: '' });
+
+    collections.forEach(col => {
+      if (col.slug === 'suits') {
+        list.push({ id: 'suits', name: col.name, emoji: '👔', targetId: 'suits' });
+      } else if (col.slug === 'jewellery') {
+        list.push({ id: 'rings', name: 'Rings', emoji: '💍', targetId: 'rings' });
+        list.push({ id: 'necklaces', name: 'Necklaces', emoji: '📿', targetId: 'necklaces' });
+        list.push({ id: 'bracelets', name: 'Bracelets', emoji: '📿', targetId: 'bracelets' });
+        list.push({ id: 'earrings', name: 'Earrings', emoji: '✨', targetId: 'earrings' });
+      } else {
+        list.push({ id: col.slug, name: col.name, emoji: '✨', targetId: col.slug });
+      }
+    });
+    
+    return list;
+  };
+
+  const renderProductCard = (p) => {
+    const outOfStock = p.is_out_of_stock;
+    const rating = (4.0 + ((p.id * 13) % 10) / 10).toFixed(1);
+    const reviews = (p.id * 37) % 950 + 50; 
+    
+    // Check if product has custom size/color options
+    const hasVariants = p.variants && p.variants.length > 1;
+    
+    const defaultVariant = p.variants && p.variants[0]
+      ? p.variants[0]
+      : { size: 'One Size', color: 'Default', stock: 10 };
+    const cartItem = cart && cart.find(
+      item => item.id === p.id && 
+              item.size === (defaultVariant.size || 'One Size') && 
+              item.color === (defaultVariant.color || 'Default')
+    );
+    const currentQty = cartItem ? cartItem.quantity : 0;
+    
+    // Total quantity of all variants of this product currently in cart
+    const totalQtyInCart = cart ? cart.filter(item => item.id === p.id).reduce((sum, item) => sum + item.quantity, 0) : 0;
+
+    return (
+      <div key={p.id} style={{ ...cardContainerStyle, cursor: 'pointer' }} className="collections-product-card" onClick={(e) => handleProductClick(e, p)}>
+        <a href={`/products/${p.slug}`} onClick={(e) => handleProductClick(e, p)} style={{ display: 'block' }}>
+          <div style={cardImageWrapperStyle} className="collections-product-image-wrapper">
+            <Image 
+              src={p.images && p.images[0] ? p.images[0] : '/placeholder.jpg'} 
+              alt={p.name} 
+              fill
+              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 25vw"
+              style={{ objectFit: 'cover' }}
+              loading="lazy" 
+            />
+            {outOfStock && (
+              <div style={{
+                position: 'absolute',
+                top: '12px',
+                left: '12px',
+                backgroundColor: '#FFFFFF',
+                color: '#D9534F',
+                border: '1px solid #D9534F',
+                padding: '4px 10px',
+                borderRadius: '4px',
+                fontSize: '0.7rem',
+                fontWeight: '700',
+                textTransform: 'uppercase',
+                letterSpacing: '0.05em',
+                boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
+                zIndex: 10
+              }}>
+                Sold Out
+              </div>
+            )}
+          </div>
+        </a>
+        <div style={cardContentStyle} className="collections-product-card-content">
+          <span style={collectionLabelStyle}>{p.collection_name || 'Jewellery'}</span>
+          <a href={`/products/${p.slug}`} onClick={(e) => handleProductClick(e, p)} style={{ textDecoration: 'none' }}>
+            <h3 style={cardTitleStyle}>{p.name}</h3>
+          </a>
+
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.2rem', margin: '0.2rem 0 0.5rem 0' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', fontSize: '0.8rem', color: '#0F1111' }}>
+              <span>{rating}</span>
+              <span style={{ color: '#FFA41C', fontSize: '1.1rem', letterSpacing: '-2px' }}>★★★★<span style={{ color: '#E7E7E7'}}>★</span></span>
+              <span style={{ color: '#007185' }}>({reviews})</span>
+            </div>
+          </div>
+
+          <p style={cardPriceStyle}>₹{parseFloat(p.price).toLocaleString('en-IN')}</p>
+
+          {user && user.role === 'admin' ? (
+            <Link
+              href={`/admin/products?edit=${p.slug}`}
+              style={adminPreviewBadgeLinkStyle}
+              onClick={(e) => e.stopPropagation()}
+            >
+              Admin Preview: Edit
+            </Link>
+          ) : hasVariants ? (
+            /* Products with custom variants (Suits) */
+            <button 
+              className="blinkit-add-btn"
+              disabled={outOfStock}
+              onClick={(e) => {
+                e.stopPropagation();
+                e.preventDefault();
+                if (outOfStock) return;
+                handleProductClick(e, p);
+              }}
+            >
+              {outOfStock ? 'Sold Out' : totalQtyInCart > 0 ? `ADDED (${totalQtyInCart})` : 'ADD ▾'}
+            </button>
+          ) : (
+            /* Products without variants (Jewellery) */
+            currentQty > 0 ? (
+              <div className="blinkit-count-controller" onClick={(e) => e.stopPropagation()}>
+                <button 
+                  className="blinkit-count-btn"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    e.preventDefault();
+                    updateCartQuantity(p.id, defaultVariant.size || 'One Size', defaultVariant.color || 'Default', currentQty - 1);
+                  }}
+                >
+                  -
+                </button>
+                <span className="blinkit-count-val">{currentQty}</span>
+                <button 
+                  className="blinkit-count-btn"
+                  disabled={currentQty >= (defaultVariant.stock || 10)}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    e.preventDefault();
+                    const maxStock = defaultVariant.stock || 10;
+                    if (currentQty >= maxStock) return;
+                    updateCartQuantity(p.id, defaultVariant.size || 'One Size', defaultVariant.color || 'Default', currentQty + 1);
+                  }}
+                >
+                  +
+                </button>
+              </div>
+            ) : (
+              <button 
+                className="blinkit-add-btn"
+                disabled={outOfStock}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  e.preventDefault();
+                  if (outOfStock) return;
+                  addToCart(p, defaultVariant.size || 'One Size', defaultVariant.color || 'Default');
+                }}
+              >
+                {outOfStock ? 'Sold Out' : 'ADD'}
+              </button>
+            )
+          )}
+        </div>
+      </div>
+    );
+  };
+
+  const activeCartItem = activeProduct && cart && cart.find(
+    item => Number(item.id) === Number(activeProduct.id) && 
+            (item.size || '') === (activeProductSize || '') && 
+            (item.color || '') === (activeProductColor || '')
+  );
+  const currentQtyInCart = activeCartItem ? activeCartItem.quantity : 0;
+
+  const siblingProducts = activeProduct
+    ? products.filter(sib => sib.collection_id === activeProduct.collection_id && sib.id !== activeProduct.id)
+    : [];
+
+  const activeMatchingVar = activeProduct && activeProduct.variants && activeProduct.variants.find(
+    v => (v.size || '') === (activeProductSize || '') && (v.color || '') === (activeProductColor || '')
+  );
+  const maxStock = activeMatchingVar ? activeMatchingVar.stock : 10;
+  const isPlusDisabled = currentQtyInCart > 0 ? (currentQtyInCart >= maxStock) : (activeProductQty >= maxStock);
+
+  return (
+    <div style={pageStyle}>
+      {activeProduct ? (
+        <div className="container animate-fade-in" style={detailContainerStyle}>
+          {/* Back button and wishlist toggle on top */}
+          <div style={detailHeaderStyle}>
+            <button onClick={() => setActiveProduct(null)} style={detailBackButtonStyle}>
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.0" strokeLinecap="round" strokeLinejoin="round" style={{ marginRight: '8px' }}>
+                <line x1="19" y1="12" x2="5" y2="12"></line>
+                <polyline points="12 19 5 12 12 5"></polyline>
+              </svg>
+              Back to Collections
+            </button>
+            
+            <button 
+              onClick={() => toggleWishlist && toggleWishlist(activeProduct.id)} 
+              style={wishlistBtnStyle}
+              title={wishlist && wishlist.includes(activeProduct.id) ? "Remove from wishlist" : "Add to wishlist"}
+            >
+              <svg 
+                width="22" 
+                height="22" 
+                viewBox="0 0 24 24" 
+                fill={wishlist && wishlist.includes(activeProduct.id) ? "#D98E9B" : "none"} 
+                stroke={wishlist && wishlist.includes(activeProduct.id) ? "#D98E9B" : "currentColor"} 
+                strokeWidth="1.5"
+              >
+                <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+              </svg>
+            </button>
+          </div>
+
+          <div className="detail-preview-grid">
+            {/* Left: Gallery */}
+            <div style={detailGalleryStyle}>
+              <div style={detailMainImgWrapperStyle}>
+                <img src={activeProductImage} alt={activeProduct.name} style={detailMainImgStyle} loading="lazy" />
+              </div>
+              {activeProduct.images && activeProduct.images.length > 1 && (
+                <div style={detailThumbRowStyle} className="hide-scrollbar">
+                  {activeProduct.images.map((img, idx) => (
+                    <button 
+                      key={idx} 
+                      onClick={() => setActiveProductImage(img)}
+                      style={activeProductImage === img ? activeDetailThumbStyle : detailThumbStyle}
+                    >
+                      <img src={img} alt="thumbnail" style={detailThumbImgStyle} loading="lazy" />
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            {/* Right: Details */}
+            <div style={detailInfoStyle}>
+              <span style={detailCollectionLabelStyle}>{activeProduct.collection_name}</span>
+              <h1 style={detailTitleStyle}>{activeProduct.name}</h1>
+              
+              <div style={ratingRowStyle}>
+                <span style={{ color: '#FFA41C', fontSize: '1.2rem', letterSpacing: '-2px' }}>★★★★<span style={{ color: '#E7E7E7'}}>★</span></span>
+                <span style={{ color: 'rgba(0,0,0,0.5)', fontSize: '0.85rem', marginLeft: '6px' }}>(4.8 rating)</span>
+              </div>
+
+              <p style={detailPriceStyle}>₹{parseFloat(activeProduct.price).toLocaleString('en-IN')}</p>
+              
+              <div style={detailDividerStyle}></div>
+
+              <p style={detailDescStyle}>{activeProduct.description || 'Exclusive luxury item, crafted from premium archival coutures.'}</p>
+
+              {/* Sizes selector */}
+              {activeProduct.variants && activeProduct.variants.some(v => v.size) && (
+                <div style={detailOptionGroupStyle}>
+                  <h4 style={detailOptionTitleStyle}>Select Size</h4>
+                  <div style={detailSizesRowStyle}>
+                    {[...new Set(activeProduct.variants.map(v => v.size))].filter(Boolean).map(size => (
+                      <button 
+                        key={size}
+                        onClick={() => setActiveProductSize(size)}
+                        style={activeProductSize === size ? activeSizeOptStyle : sizeOptStyle}
+                      >
+                        {size}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Colors selector */}
+              {activeProduct.variants && activeProduct.variants.some(v => v.color) && (
+                <div style={detailOptionGroupStyle}>
+                  <h4 style={detailOptionTitleStyle}>Select Color</h4>
+                  <div style={detailColorsRowStyle}>
+                    {[...new Set(activeProduct.variants.map(v => v.color))].filter(Boolean).map(color => (
+                      <button 
+                        key={color}
+                        onClick={() => setActiveProductColor(color)}
+                        style={activeProductColor === color ? activeColorOptStyle : colorOptStyle}
+                      >
+                        {color}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
+              
+              {/* Add to Bag block */}
+              <div style={detailActionWrapperStyle} className="desktop-action-only">
+                {user && user.role === 'admin' ? (
+                  <Link
+                    href={`/admin/products?edit=${activeProduct.slug}`}
+                    style={detailAdminEditBtnStyle}
+                  >
+                    Admin Preview: Edit Product
+                  </Link>
+                ) : (
+                  <>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem' }}>
+                      <div style={detailQtyControlStyle}>
+                        <button 
+                          style={detailQtyBtnStyle}
+                          onClick={() => {
+                            console.log('--- DETAILED VIEW QUANTITY - CLICK ---');
+                            console.log('activeProduct:', activeProduct.name);
+                            console.log('size/color:', activeProductSize, '/', activeProductColor);
+                            console.log('currentQtyInCart:', currentQtyInCart);
+                            console.log('activeProductQty:', activeProductQty);
+                            if (currentQtyInCart > 0) {
+                              updateCartQuantity(activeProduct.id, activeProductSize, activeProductColor, currentQtyInCart - 1);
+                            } else if (activeProductQty > 1) {
+                              setActiveProductQty(activeProductQty - 1);
+                            }
+                          }}
+                        >
+                          -
+                        </button>
+                        <span style={detailQtyValStyle}>{currentQtyInCart > 0 ? currentQtyInCart : activeProductQty}</span>
+                        <button 
+                          style={{
+                            ...detailQtyBtnStyle,
+                            opacity: isPlusDisabled ? 0.35 : 1,
+                            cursor: isPlusDisabled ? 'not-allowed' : 'pointer'
+                          }}
+                          disabled={isPlusDisabled}
+                          onClick={() => {
+                            console.log('--- DETAILED VIEW QUANTITY + CLICK ---');
+                            console.log('activeProduct:', activeProduct.name);
+                            console.log('size/color:', activeProductSize, '/', activeProductColor);
+                            console.log('matchingVar:', activeMatchingVar);
+                            console.log('maxStock:', maxStock);
+                            console.log('currentQtyInCart:', currentQtyInCart);
+                            console.log('activeProductQty:', activeProductQty);
+                            if (currentQtyInCart > 0) {
+                              if (currentQtyInCart < maxStock) {
+                                updateCartQuantity(activeProduct.id, activeProductSize, activeProductColor, currentQtyInCart + 1);
+                              }
+                            } else if (activeProductQty < maxStock) {
+                              setActiveProductQty(activeProductQty + 1);
+                            }
+                          }}
+                        >
+                          +
+                        </button>
+                      </div>
+                      
+                      {activeProduct && (
+                        <div style={{ fontSize: '0.75rem', color: 'rgba(0,0,0,0.5)', marginTop: '0.1rem' }}>
+                          {isPlusDisabled ? (
+                            <span style={{ color: '#D98E9B', fontWeight: '600' }}>Stock limit reached ({maxStock} available)</span>
+                          ) : (
+                            <span>Available stock: {maxStock}</span>
+                          )}
+                        </div>
+                      )}
+                    </div>
+
+                    <button 
+                      style={detailAddBtnStyle}
+                      disabled={activeProduct.is_out_of_stock || isPlusDisabled}
+                      onClick={() => {
+                        if (activeProduct.is_out_of_stock || isPlusDisabled) return;
+                        addToCart(activeProduct, activeProductSize, activeProductColor, activeProductQty);
+                        setActiveProductQty(1); // Reset counter selector to 1 after adding to cart
+                      }}
+                    >
+                      {activeProduct.is_out_of_stock ? 'Sold Out' : 'Add to cart'}
+                    </button>
+                  </>
+                )}
+              </div>
+            </div>
+          </div>
+
+          {/* Sibling Products Navigation (Exploration carousel at the bottom) */}
+          {siblingProducts.length > 0 && (
+            <div style={detailExploreSectionStyle}>
+              <h3 style={detailExploreTitleStyle}>More from the {activeProduct.collection_name} collection</h3>
+              <div style={detailExploreCarouselStyle} className="hide-scrollbar">
+                {siblingProducts.map(sib => (
+                  <div 
+                    key={sib.id} 
+                    onClick={(e) => handleProductClick(e, sib)}
+                    style={detailExploreItemStyle}
+                  >
+                    <img src={sib.images && sib.images[0] ? sib.images[0] : '/placeholder.jpg'} alt={sib.name} style={detailExploreImgStyle} loading="lazy" />
+                    <span style={detailExploreNameStyle}>{sib.name}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Mobile Sticky Buy Bar */}
+          {!(user && user.role === 'admin') && (
+            <div className="mobile-sticky-bar" style={mobileStickyBarWrapperStyle}>
+              <div style={mobileStickyPriceInfoStyle}>
+                <span style={mobileStickyNameStyle}>
+                  {activeProduct.name} {activeProductSize ? `• ${activeProductSize}` : ''}
+                </span>
+                <span style={mobileStickyPriceStyle}>
+                  ₹{parseFloat(activeProduct.price).toLocaleString('en-IN')}
+                </span>
+              </div>
+              <button 
+                style={mobileStickyBtnStyle}
+                disabled={activeProduct.is_out_of_stock}
+                onClick={() => {
+                  if (activeProduct.is_out_of_stock) return;
+                  addToCart(activeProduct, activeProductSize, activeProductColor, activeProductQty);
+                }}
+              >
+                {activeProduct.is_out_of_stock ? 'Sold Out' : 'ADD'}
+              </button>
+            </div>
+          )}
+        </div>
+      ) : (
+        <div className="container collections-layout-grid blinkit-layout-wrapper">
+          {/* Filters Sidebar (Desktop only, hidden on mobile) */}
+          <aside style={sidebarStyle} className="collections-sidebar-desktop">
+            {renderFilters()}
+          </aside>
+
+          {/* Blinkit Mobile Category Sidebar (Mobile only, hidden on desktop) */}
+          <aside className="blinkit-sidebar">
+            <div 
+              className="blinkit-sidebar-item blinkit-sidebar-filter-btn"
+              onClick={() => setIsMobileFilterOpen(true)}
+              style={{ borderBottom: '1px solid rgba(139, 119, 137, 0.08)', marginBottom: '0.4rem', paddingBottom: '0.6rem' }}
+            >
+              <div className="blinkit-sidebar-icon">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#D98E9B" strokeWidth="2.5">
+                  <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3" />
+                </svg>
+              </div>
+              <span style={{ fontWeight: '700', color: '#D98E9B' }}>Filter</span>
+            </div>
+
+            {getSidebarCategories().map(cat => (
+              <div 
+                key={cat.id} 
+                className={`blinkit-sidebar-item ${activeCategorySidebar === cat.id ? 'active' : ''}`}
+                onClick={() => handleCategorySidebarClick(cat.id)}
+              >
+                <div className="blinkit-sidebar-icon">
+                  <span>{cat.emoji}</span>
+                </div>
+                <span>{cat.name}</span>
+              </div>
+            ))}
+          </aside>
+
+          {/* Products Grid / Product Feed */}
+          <main style={mainGridStyle} className="blinkit-feed">
+            {/* Page Header (Desktop only) */}
+            <section className="blinkit-feed-main-header" style={{ textAlign: 'center', marginBottom: '1.5rem', paddingTop: '1rem' }}>
+              <h1 style={titleStyle}>{getCollectionTitle()}</h1>
+              <div style={dividerStyle}></div>
+            </section>
+
+            {loading && products.length === 0 ? (
+              <div style={loadingStateStyle}>Curating items from the vault...</div>
+            ) : products.length === 0 ? (
+              <div style={emptyStateStyle}>
+                <p>No creations match your active filters.</p>
+                <button onClick={handleClearFilters} style={resetBtnStyle}>
+                  Clear Filters
+                </button>
+              </div>
+            ) : (
+              <div 
+                style={{ 
+                  opacity: loading ? 0.6 : 1, 
+                  transition: 'opacity 0.2s ease',
+                  pointerEvents: loading ? 'none' : 'auto' 
+                }}
+              >
+                {shouldGroup ? (
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '2.5rem' }}>
+                    {getSidebarCategories()
+                      .filter(cat => cat.id !== 'all')
+                      .map(cat => {
+                        const group = cat.name;
+                        const items = groupedProducts[group] || [];
+                        return (
+                          <div key={cat.id} id={cat.id}>
+                            <h2 className="blinkit-feed-section-title">
+                              {group}
+                            </h2>
+                            {items.length > 0 ? (
+                              <div className="grid-cols-shop">
+                                {items.map(p => renderProductCard(p))}
+                              </div>
+                            ) : (
+                              <div style={{
+                                padding: '2.5rem 1.5rem',
+                                textAlign: 'center',
+                                backgroundColor: '#F6DDE2',
+                                borderRadius: '8px',
+                                color: 'rgba(0,0,0,0.5)',
+                                fontSize: '0.9rem',
+                                border: '1px dashed rgba(139, 119, 137, 0.15)'
+                              }}>
+                                No creations currently available in this vault.
+                              </div>
+                            )}
+                          </div>
+                        );
+                      })
+                    }
+                  </div>
+                ) : (
+                  <div className="grid-cols-shop">
+                    {products.map((p) => renderProductCard(p))}
+                  </div>
+                )}
+              </div>
+            )}
+          </main>
+        </div>
+      )}
+
+
+
+      {/* Sliding Bottom Sheet Filter Panel for Mobile */}
+      <div className={`mobile-filter-backdrop ${isMobileFilterOpen ? 'open' : ''}`} onClick={() => setIsMobileFilterOpen(false)}>
+        <div className="mobile-filter-drawer" onClick={(e) => e.stopPropagation()}>
+          <div className="mobile-filter-drawer-header">
+            <h3 className="mobile-filter-drawer-title">Filters & Sort</h3>
+            <span className="mobile-filter-drawer-close" onClick={() => setIsMobileFilterOpen(false)}>
+              &times;
+            </span>
+          </div>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '1.2rem' }}>
+            {renderFilters()}
+            <button 
+              onClick={() => setIsMobileFilterOpen(false)}
+              style={{
+                backgroundColor: '#D98E9B',
+                color: '#000000',
+                padding: '0.8rem',
+                border: 'none',
+                borderRadius: '4px',
+                fontWeight: '700',
+                textTransform: 'uppercase',
+                letterSpacing: '0.05em',
+                fontSize: '0.8rem',
+                marginTop: '1rem',
+                cursor: 'pointer',
+                width: '100%',
+                textAlign: 'center'
+              }}
+            >
+              Apply Filters
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export default function Collections() {
+  return (
+    <Suspense fallback={<div>Loading Collections...</div>}>
+      <CollectionsContent />
+    </Suspense>
+  );
+}
+
+// Inline styles for Collections Browse Page
+const pageStyle = {
+  paddingBottom: '5rem',
+  backgroundColor: '#FFFFFF',
+};
+
+const headerSectionStyle = {
+  textAlign: 'center',
+  padding: '4rem 1rem 2rem 1rem',
+};
+
+const subHeaderStyle = {
+  fontSize: '0.75rem',
+  textTransform: 'uppercase',
+  letterSpacing: '0.2em',
+  color: '#000000',
+  fontWeight: '600',
+  display: 'block',
+  marginBottom: '0.5rem',
+};
+
+const titleStyle = {
+  fontSize: '2.5rem',
+  fontFamily: 'var(--font-serif)',
+  color: '#D98E9B',
+  fontWeight: '400',
+};
+
+const dividerStyle = {
+  width: '60px',
+  height: '1px',
+  backgroundColor: '#D98E9B',
+  margin: '1.2rem auto 0 auto',
+};
+
+const sidebarStyle = {
+  display: 'flex',
+  flexDirection: 'column',
+  gap: '1.2rem',
+  backgroundColor: '#F6DDE2', // Blush Cream background for sidebar
+  padding: '1.5rem',
+  borderRadius: '8px',
+  height: 'fit-content',
+  border: '1px solid rgba(139, 119, 137, 0.15)',
+  position: 'sticky',
+  top: '115px',
+};
+
+const filterGroupStyle = {
+  display: 'flex',
+  flexDirection: 'column',
+  gap: '0.6rem',
+};
+
+const filterTitleStyle = {
+  fontSize: '0.75rem',
+  textTransform: 'uppercase',
+  letterSpacing: '0.08em',
+  color: '#000000',
+  fontWeight: '800',
+};
+
+const searchFieldStyle = {
+  padding: '0.6rem 0.8rem',
+  border: '1px solid rgba(139, 119, 137, 0.25)',
+  fontSize: '0.85rem',
+};
+
+const selectFieldStyle = {
+  padding: '0.6rem 0.8rem',
+  border: '1px solid rgba(139, 119, 137, 0.25)',
+  fontSize: '0.85rem',
+};
+
+const gridSelectStyle = {
+  display: 'grid',
+  gridTemplateColumns: 'repeat(3, 1fr)',
+  gap: '0.4rem',
+};
+
+const gridItemStyle = {
+  padding: '0.5rem 0.2rem',
+  border: '1px solid rgba(139, 119, 137, 0.2)',
+  fontSize: '0.75rem',
+  textAlign: 'center',
+  backgroundColor: '#FFFFFF',
+  color: '#000000',
+  borderRadius: '2px',
+};
+
+const activeGridItemStyle = {
+  ...gridItemStyle,
+  backgroundColor: '#F6DDE2', // Heather Mauve
+  color: '#000000',
+  bordercolor: '#000000',
+};
+
+const clearBtnStyle = {
+  backgroundColor: 'transparent',
+  border: '1px solid #000000',
+  color: '#000000',
+  padding: '0.6rem',
+  fontSize: '0.8rem',
+  fontWeight: '600',
+  borderRadius: '4px',
+  textTransform: 'uppercase',
+  letterSpacing: '0.05em',
+};
+
+const mainGridStyle = {
+  flex: 1,
+};
+
+const loadingStateStyle = {
+  textAlign: 'center',
+  padding: '8rem 0',
+  color: '#000000',
+  fontSize: '1.1rem',
+  fontFamily: 'var(--font-serif)',
+};
+
+const emptyStateStyle = {
+  textAlign: 'center',
+  padding: '6rem 2rem',
+  color: '#000000',
+};
+
+const resetBtnStyle = {
+  marginTop: '1rem',
+  backgroundColor: '#D98E9B',
+  color: '#000000',
+  padding: '0.6rem 1.5rem',
+  borderRadius: '4px',
+  fontSize: '0.8rem',
+};
+
+// Card Styles
+const cardContainerStyle = {
+  backgroundColor: '#FFFFFF',
+  borderRadius: '6px',
+  overflow: 'hidden',
+  boxShadow: 'var(--shadow-sm)',
+  transition: 'var(--transition)',
+  border: '1px solid rgba(139, 119, 137, 0.05)',
+  position: 'relative',
+  ':hover': {
+    boxShadow: 'var(--shadow-md)',
+  },
+};
+
+const cardLinkStyle = {
+  display: 'flex',
+  flexDirection: 'column',
+  height: '100%',
+};
+
+const cardImageWrapperStyle = {
+  position: 'relative',
+  width: '100%',
+  height: '320px',
+  overflow: 'hidden',
+  backgroundColor: '#FFFFFF',
+};
+
+const cardImgStyle = {
+  width: '100%',
+  height: '100%',
+  objectFit: 'cover',
+};
+
+const pinkBadgeStyle = {
+  position: 'absolute',
+  top: '0.75rem',
+  right: '0.75rem',
+  backgroundColor: '#D98E9B',
+  color: '#000000',
+  padding: '0.25rem 0.6rem',
+  borderRadius: '999px',
+  fontSize: '0.6rem',
+  fontWeight: '700',
+  textTransform: 'uppercase',
+  letterSpacing: '0.05em',
+  border: '1px solid #D98E9B',
+};
+
+const outOfStockOverlayStyle = {
+  position: 'absolute',
+  top: 0,
+  left: 0,
+  width: '100%',
+  height: '100%',
+  backgroundColor: 'rgba(60, 48, 58, 0.4)',
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+};
+
+const outOfStockTextStyle = {
+  backgroundColor: '#FFFFFF',
+  color: '#000000',
+  padding: '0.4rem 1rem',
+  fontSize: '0.8rem',
+  textTransform: 'uppercase',
+  letterSpacing: '0.1em',
+  fontWeight: '600',
+  borderRadius: '2px',
+};
+
+const cardContentStyle = {
+  padding: '1.2rem',
+  display: 'flex',
+  flexDirection: 'column',
+  gap: '0.3rem',
+};
+
+const collectionLabelStyle = {
+  fontSize: '0.68rem',
+  textTransform: 'uppercase',
+  letterSpacing: '0.1em',
+  color: '#000000',
+  fontWeight: '600',
+};
+
+const cardTitleStyle = {
+  fontSize: '1.1rem',
+  fontFamily: 'var(--font-serif)',
+  color: '#D98E9B',
+  fontWeight: '500',
+};
+
+const cardPriceStyle = {
+  fontSize: '0.9rem',
+  color: '#000000',
+  fontWeight: '600',
+};
+
+const cardCartBtnStyle = {
+  backgroundColor: '#F6DDE2', // Blush Cream background
+  color: '#000000',
+  padding: '0.6rem 0',
+  borderRadius: '4px',
+  border: '1px solid rgba(139, 119, 137, 0.15)',
+  width: '100%',
+  fontSize: '0.8rem',
+  fontWeight: '600',
+  textTransform: 'uppercase',
+  letterSpacing: '0.05em',
+  cursor: 'pointer',
+  marginTop: '0.8rem',
+  transition: 'all 0.3s cubic-bezier(0.25, 1, 0.5, 1)',
+  boxShadow: 'var(--shadow-sm)',
+};
+
+const adminPreviewBadgeStyle = {
+  ...cardCartBtnStyle,
+  backgroundColor: 'transparent',
+  border: '1px solid #000000',
+  color: '#000000',
+  cursor: 'default',
+  textAlign: 'center',
+  boxShadow: 'none',
+};
+
+const adminPreviewBadgeLinkStyle = {
+  ...adminPreviewBadgeStyle,
+  display: 'block',
+  textDecoration: 'none',
+  cursor: 'pointer',
+  transition: 'all 0.3s ease',
+};
+
+const qtyControllerStyle = {
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'space-between',
+  backgroundColor: '#D98E9B', // Brand Plum/Pink
+  color: '#FFFFFF',
+  borderRadius: '4px',
+  border: '1px solid #D98E9B',
+  width: '100%',
+  marginTop: '0.8rem',
+  overflow: 'hidden',
+  height: '38px',
+  boxSizing: 'border-box',
+  boxShadow: 'var(--shadow-sm)',
+};
+
+const qtyControllerBtnStyle = {
+  width: '40px',
+  height: '100%',
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  fontSize: '1.2rem',
+  fontWeight: '600',
+  color: '#FFFFFF',
+  backgroundColor: 'transparent',
+  cursor: 'pointer',
+};
+
+const qtyControllerValueStyle = {
+  fontSize: '0.85rem',
+  fontWeight: '700',
+  flex: 1,
+  textAlign: 'center',
+};
+
+// Styles for active product detailed view
+const detailContainerStyle = {
+  padding: '1.5rem',
+  backgroundColor: '#FFFFFF',
+  borderRadius: '8px',
+  boxShadow: 'var(--shadow-md)',
+  border: '1px solid rgba(139, 119, 137, 0.1)',
+  marginTop: '1.5rem',
+};
+
+const detailHeaderStyle = {
+  display: 'flex',
+  justifyContent: 'space-between',
+  alignItems: 'center',
+  marginBottom: '1rem',
+};
+
+const detailBackButtonStyle = {
+  display: 'flex',
+  alignItems: 'center',
+  backgroundColor: 'transparent',
+  border: 'none',
+  color: '#000000',
+  fontSize: '0.9rem',
+  fontWeight: '600',
+  cursor: 'pointer',
+  padding: '0.5rem 0',
+  letterSpacing: '0.05em',
+  textTransform: 'uppercase',
+};
+
+const wishlistBtnStyle = {
+  backgroundColor: 'transparent',
+  border: 'none',
+  cursor: 'pointer',
+  padding: '0.5rem',
+  color: '#000000',
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+};
+
+const detailGalleryStyle = {
+  display: 'flex',
+  flexDirection: 'column',
+  gap: '1rem',
+};
+
+const detailMainImgWrapperStyle = {
+  width: '100%',
+  maxHeight: '430px',
+  overflow: 'hidden',
+  borderRadius: '8px',
+  border: '1px solid rgba(139, 119, 137, 0.1)',
+  backgroundColor: '#FBF0EC',
+};
+
+const detailMainImgStyle = {
+  width: '100%',
+  height: '100%',
+  maxHeight: '430px',
+  objectFit: 'cover',
+  display: 'block',
+};
+
+const detailThumbRowStyle = {
+  display: 'flex',
+  gap: '0.8rem',
+  overflowX: 'auto',
+  paddingBottom: '0.4rem',
+};
+
+const detailThumbStyle = {
+  width: '70px',
+  height: '70px',
+  borderRadius: '4px',
+  overflow: 'hidden',
+  border: '1px solid rgba(139, 119, 137, 0.15)',
+  padding: 0,
+  cursor: 'pointer',
+  backgroundColor: '#FFFFFF',
+};
+
+const activeDetailThumbStyle = {
+  ...detailThumbStyle,
+  borderColor: '#D98E9B',
+  borderWidth: '2px',
+};
+
+const detailThumbImgStyle = {
+  width: '100%',
+  height: '100%',
+  objectFit: 'cover',
+};
+
+const detailInfoStyle = {
+  display: 'flex',
+  flexDirection: 'column',
+  gap: '0.75rem',
+};
+
+const detailCollectionLabelStyle = {
+  fontSize: '0.75rem',
+  textTransform: 'uppercase',
+  letterSpacing: '0.12em',
+  color: '#D98E9B',
+  fontWeight: '700',
+};
+
+const detailTitleStyle = {
+  fontSize: '1.8rem',
+  fontFamily: 'var(--font-serif)',
+  color: '#000000',
+  fontWeight: '400',
+  lineHeight: '1.15',
+  margin: '0.1rem 0',
+};
+
+const ratingRowStyle = {
+  display: 'flex',
+  alignItems: 'center',
+};
+
+const detailPriceStyle = {
+  fontSize: '1.4rem',
+  color: '#000000',
+  fontWeight: '600',
+};
+
+const detailDividerStyle = {
+  height: '1px',
+  backgroundColor: 'rgba(139, 119, 137, 0.15)',
+  margin: '0.2rem 0',
+};
+
+const detailDescStyle = {
+  fontSize: '0.88rem',
+  lineHeight: '1.5',
+  color: 'rgba(0,0,0,0.7)',
+};
+
+const detailOptionGroupStyle = {
+  display: 'flex',
+  flexDirection: 'column',
+  gap: '0.4rem',
+  marginTop: '0.2rem',
+};
+
+const detailOptionTitleStyle = {
+  fontSize: '0.75rem',
+  textTransform: 'uppercase',
+  letterSpacing: '0.08em',
+  color: '#D98E9B',
+  fontWeight: '700',
+};
+
+const detailSizesRowStyle = {
+  display: 'flex',
+  flexWrap: 'wrap',
+  gap: '0.6rem',
+};
+
+const sizeOptStyle = {
+  padding: '0.4rem 1rem',
+  border: '1px solid rgba(139, 119, 137, 0.25)',
+  borderRadius: '4px',
+  fontSize: '0.75rem',
+  fontWeight: '600',
+  backgroundColor: '#FFFFFF',
+  color: '#000000',
+  cursor: 'pointer',
+  transition: 'all 0.2s ease',
+};
+
+const activeSizeOptStyle = {
+  ...sizeOptStyle,
+  backgroundColor: '#F6DDE2',
+  borderColor: '#D98E9B',
+  color: '#000000',
+};
+
+const detailColorsRowStyle = {
+  display: 'flex',
+  flexWrap: 'wrap',
+  gap: '0.6rem',
+};
+
+const colorOptStyle = {
+  padding: '0.4rem 1rem',
+  border: '1px solid rgba(139, 119, 137, 0.25)',
+  borderRadius: '4px',
+  fontSize: '0.75rem',
+  fontWeight: '600',
+  backgroundColor: '#FFFFFF',
+  color: '#000000',
+  cursor: 'pointer',
+  transition: 'all 0.2s ease',
+};
+
+const activeColorOptStyle = {
+  ...colorOptStyle,
+  backgroundColor: '#F6DDE2',
+  borderColor: '#D98E9B',
+  color: '#000000',
+};
+
+const detailActionWrapperStyle = {
+  display: 'flex',
+  gap: '0.8rem',
+  marginTop: '0.6rem',
+};
+
+const detailQtyControlStyle = {
+  display: 'flex',
+  alignItems: 'center',
+  border: '1px solid rgba(139, 119, 137, 0.25)',
+  borderRadius: '4px',
+  overflow: 'hidden',
+  height: '40px',
+};
+
+const detailQtyBtnStyle = {
+  width: '36px',
+  height: '100%',
+  backgroundColor: 'transparent',
+  border: 'none',
+  fontSize: '1.1rem',
+  cursor: 'pointer',
+  color: '#000000',
+};
+
+const detailQtyValStyle = {
+  padding: '0 0.8rem',
+  fontWeight: '600',
+  fontSize: '0.95rem',
+};
+
+const detailAddBtnStyle = {
+  flex: 1,
+  backgroundColor: '#D98E9B',
+  color: '#FFFFFF',
+  border: 'none',
+  borderRadius: '4px',
+  fontSize: '0.8rem',
+  fontWeight: '700',
+  textTransform: 'uppercase',
+  letterSpacing: '0.08em',
+  cursor: 'pointer',
+  height: '40px',
+  transition: 'all 0.3s ease',
+};
+
+const detailAdminEditBtnStyle = {
+  flex: 1,
+  backgroundColor: '#FFFFFF',
+  color: '#000000',
+  border: '1px solid #000000',
+  borderRadius: '4px',
+  fontSize: '0.8rem',
+  fontWeight: '700',
+  textTransform: 'uppercase',
+  letterSpacing: '0.08em',
+  cursor: 'pointer',
+  height: '40px',
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  textDecoration: 'none',
+  transition: 'all 0.3s ease',
+};
+
+const detailExploreSectionStyle = {
+  borderTop: '1px solid rgba(139, 119, 137, 0.15)',
+  paddingTop: '2.5rem',
+  marginTop: '2rem',
+};
+
+const detailExploreTitleStyle = {
+  fontSize: '1.3rem',
+  fontFamily: 'var(--font-serif)',
+  marginBottom: '1.5rem',
+  color: '#000000',
+  letterSpacing: '0.02em',
+  textTransform: 'uppercase',
+};
+
+const detailExploreCarouselStyle = {
+  display: 'flex',
+  gap: '2rem',
+  overflowX: 'auto',
+  paddingBottom: '1rem',
+};
+
+const detailExploreItemStyle = {
+  display: 'flex',
+  flexDirection: 'column',
+  alignItems: 'center',
+  cursor: 'pointer',
+  flexShrink: 0,
+  width: '100px',
+  transition: 'transform 0.2s ease',
+};
+
+const detailExploreImgStyle = {
+  width: '80px',
+  height: '80px',
+  borderRadius: '50%',
+  objectFit: 'cover',
+  border: '2px solid rgba(139, 119, 137, 0.15)',
+  marginBottom: '0.6rem',
+  transition: 'border-color 0.2s ease',
+};
+
+const detailExploreNameStyle = {
+  fontSize: '0.75rem',
+  fontWeight: '600',
+  color: 'rgba(0,0,0,0.8)',
+  textAlign: 'center',
+  whiteSpace: 'nowrap',
+  overflow: 'hidden',
+  textOverflow: 'ellipsis',
+  width: '100%',
+};
+
+// Mobile Sticky Buy Bar Styles
+const mobileStickyBarWrapperStyle = {
+  display: 'flex',
+  justifyContent: 'space-between',
+  alignItems: 'center',
+  position: 'fixed',
+  bottom: 0,
+  left: 0,
+  width: '100%',
+  backgroundColor: '#FFFFFF',
+  borderTop: '1px solid rgba(139, 119, 137, 0.15)',
+  padding: '0.8rem 1.2rem',
+  boxSizing: 'border-box',
+  zIndex: 150,
+  boxShadow: '0 -4px 15px rgba(0,0,0,0.06)',
+};
+
+const mobileStickyPriceInfoStyle = {
+  display: 'flex',
+  flexDirection: 'column',
+};
+
+const mobileStickyNameStyle = {
+  fontSize: '0.75rem',
+  fontWeight: '700',
+  color: 'rgba(0,0,0,0.5)',
+  textTransform: 'uppercase',
+  letterSpacing: '0.02em',
+};
+
+const mobileStickyPriceStyle = {
+  fontSize: '1.2rem',
+  fontWeight: '700',
+  color: '#000000',
+};
+
+const mobileStickyBtnStyle = {
+  backgroundColor: '#D98E9B',
+  color: '#FFFFFF',
+  border: 'none',
+  borderRadius: '4px',
+  padding: '0.6rem 1.4rem',
+  fontSize: '0.8rem',
+  fontWeight: '700',
+  textTransform: 'uppercase',
+  letterSpacing: '0.05em',
+  cursor: 'pointer',
+};

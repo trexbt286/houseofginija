@@ -1,0 +1,28 @@
+{
+  "name": "houseofginija",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev --webpack",
+    "build": "next build --webpack",
+    "start": "next start",
+    "lint": "eslint"
+  },
+  "dependencies": {
+    "@next/swc-win32-x64-msvc": "^16.2.9",
+    "bcryptjs": "^3.0.3",
+    "cloudinary": "^2.10.0",
+    "jimp": "^1.6.1",
+    "jose": "^6.2.3",
+    "next": "16.2.9",
+    "pg": "^8.21.0",
+    "razorpay": "^2.9.6",
+    "react": "19.2.4",
+    "react-dom": "19.2.4"
+  },
+  "devDependencies": {
+    "eslint": "^9",
+    "eslint-config-next": "16.2.9",
+    "puppeteer": "^25.3.0"
+  }
+}
