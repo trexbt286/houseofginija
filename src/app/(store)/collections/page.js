@@ -733,7 +733,7 @@ function CollectionsContent() {
               
               <div style={detailDividerStyle} className="detail-divider"></div>
 
-              <p style={detailDescStyle} className="detail-product-desc">{activeProduct.description || 'Exclusive luxury item, crafted from premium archival coutures.'}</p>
+              <p style={detailDescStyle} className="detail-product-desc">{(activeProduct.description && activeProduct.description.trim()) ? activeProduct.description.trim() : 'Exclusive luxury item, crafted from premium archival coutures.'}</p>
 
               <div className="detail-stock-warning" style={{ marginTop: '0.5rem', marginBottom: '1rem', fontSize: '0.85rem', color: '#B8860B', fontWeight: '600' }}>
                 {maxStock <= 3 ? (

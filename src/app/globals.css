@@ -1838,7 +1838,8 @@ header {
     overflow: hidden !important;
     margin: 0 !important;
     padding: 0 !important;
-    border-radius: 24px 24px 0 0 !important;
+    border-radius: 24px 24px 0 0 !important; /* Rounds the top of the sheet */
+    flex-shrink: 0 !important; /* Prevent product image from being squeezed or pushed out */
   }
   
   .detail-main-img-wrapper {
@@ -1870,8 +1871,8 @@ header {
     width: 100vw !important;
     height: 50vh !important; /* expanded details container space */
     background-color: #FFFFFF !important;
-    border-radius: 24px 24px 0 0 !important; /* rounded top corners overlapping slightly */
-    margin-top: -24px !important;
+    border-radius: 0 !important; /* Flat top corners to prevent image borders sticking out behind */
+    margin-top: 0 !important; /* Sits flush below the image with no overlapping border glitch */
     padding: 1.0rem 1.5rem 9.5rem 1.5rem !important; /* compact top padding; bottom padding clears sticky footer */
     overflow-y: hidden !important; /* prevent vertical scrolling on the card details */
     position: relative !important;
@@ -1880,6 +1881,7 @@ header {
     display: flex !important;
     flex-direction: column !important;
     gap: 0.35rem !important; /* tight element gaps */
+    flex-shrink: 1 !important; /* Allow details card to shrink to fit viewport height */
   }
 
   /* Details typography & elements */
