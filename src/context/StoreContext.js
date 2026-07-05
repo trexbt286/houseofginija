@@ -135,6 +135,25 @@ export function StoreProvider({ children }) {
 
   // Cart actions
   const addToCart = (product, size, color, quantity = 1) => {
+    // Find the variant stock
+    const matchingVariant = product.variants && product.variants.find(
+      v => (v.size || '') === (size || '') && (v.color || '') === (color || '')
+    );
+    const stock = matchingVariant ? matchingVariant.stock : 10;
+    
+    // Check if adding exceeds stock
+    const existingItem = cart.find(
+      item => Number(item.id) === Number(product.id) && 
+              (item.size || '') === (size || '') && 
+              (item.color || '') === (color || '')
+    );
+    const alreadyInCart = existingItem ? existingItem.quantity : 0;
+
+    if (alreadyInCart + quantity > stock) {
+      alert(`Only ${stock} left!`);
+      return;
+    }
+
     setCart((prevCart) => {
       // Find if item with same ID, size and color already exists
       const existingItemIndex = prevCart.findIndex(
@@ -162,6 +181,7 @@ export function StoreProvider({ children }) {
             size,
             color,
             quantity,
+            stock, // Store stock inside cart item for update checks
           },
         ];
       }
@@ -188,15 +208,38 @@ export function StoreProvider({ children }) {
       removeFromCart(productId, size, color);
       return;
     }
-    setCart((prevCart) =>
-      prevCart.map((item) =>
+    
+    let stockExceeded = false;
+    let availableStock = 10;
+
+    setCart((prevCart) => {
+      // Find the item first to check stock
+      const targetItem = prevCart.find(
+        (item) => Number(item.id) === Number(productId) && 
+                  (item.size || '') === (size || '') && 
+                  (item.color || '') === (color || '')
+      );
+      if (targetItem) {
+        const itemStock = targetItem.stock !== undefined ? targetItem.stock : 10;
+        if (quantity > itemStock) {
+          stockExceeded = true;
+          availableStock = itemStock;
+          return prevCart; // Do not update state if exceeded
+        }
+      }
+
+      return prevCart.map((item) =>
         Number(item.id) === Number(productId) && 
         (item.size || '') === (size || '') && 
         (item.color || '') === (color || '')
           ? { ...item, quantity }
           : item
-      )
-    );
+      );
+    });
+
+    if (stockExceeded) {
+      alert(`Only ${availableStock} left!`);
+    }
   };
 
   const clearCart = () => {

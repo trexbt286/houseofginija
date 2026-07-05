@@ -405,6 +405,70 @@ function CollectionsContent() {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
+  const renderCategoryIcon = (catId) => {
+    const strokeColor = '#B8860B'; // Gold accent color
+    
+    switch (catId) {
+      case 'all':
+        return (
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={strokeColor} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+            <polygon points="12 2 22 8.5 22 15.5 12 22 2 15.5 2 8.5 12 2" />
+            <line x1="12" y1="2" x2="12" y2="22" />
+            <line x1="12" y1="12" x2="22" y2="8.5" />
+            <line x1="12" y1="12" x2="2" y2="8.5" />
+          </svg>
+        );
+      case 'suits':
+        return (
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={strokeColor} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M12 2a3 3 0 0 0-3 3h6a3 3 0 0 0-3-3z" />
+            <path d="M2 19V9a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2z" />
+            <line x1="12" y1="5" x2="12" y2="21" />
+            <path d="M6 9l6 4 6-4" />
+          </svg>
+        );
+      case 'rings':
+        return (
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={strokeColor} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+            <circle cx="12" cy="14" r="6" />
+            <polygon points="12 2 7 7 17 7" />
+          </svg>
+        );
+      case 'necklaces':
+        return (
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={strokeColor} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M12 2a8 8 0 0 0-8 8c0 4.4 3.6 8 8 8s8-3.6 8-8a8 8 0 0 0-8-8z" />
+            <circle cx="12" cy="18" r="1.5" fill={strokeColor} />
+            <path d="M6 10l2 2m8-2l-2 2" />
+          </svg>
+        );
+      case 'bracelets':
+        return (
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={strokeColor} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+            <rect x="3" y="10" width="5" height="4" rx="1.5" />
+            <rect x="8" y="10" width="5" height="4" rx="1.5" />
+            <rect x="13" y="10" width="5" height="4" rx="1.5" />
+          </svg>
+        );
+      case 'earrings':
+        return (
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={strokeColor} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+            <circle cx="7" cy="6" r="1.5" />
+            <circle cx="17" cy="6" r="1.5" />
+            <path d="M7 7.5v5.5m10-5.5v5.5" />
+            <polygon points="7 13 5 17 9 17" />
+            <polygon points="17 13 15 17 19 17" />
+          </svg>
+        );
+      default:
+        return (
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={strokeColor} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M12 2v20M2 12h20" />
+          </svg>
+        );
+    }
+  };
+
   const getSidebarCategories = () => {
     const list = [];
     
@@ -449,7 +513,7 @@ function CollectionsContent() {
     const totalQtyInCart = cart ? cart.filter(item => item.id === p.id).reduce((sum, item) => sum + item.quantity, 0) : 0;
 
     return (
-      <div key={p.id} style={{ ...cardContainerStyle, cursor: 'pointer' }} className="collections-product-card" onClick={(e) => handleProductClick(e, p)}>
+      <div key={p.id} style={cardContainerStyle} className="collections-product-card">
         <a href={`/products/${p.slug}`} onClick={(e) => handleProductClick(e, p)} style={{ display: 'block' }}>
           <div style={cardImageWrapperStyle} className="collections-product-image-wrapper">
             <Image 
@@ -484,17 +548,10 @@ function CollectionsContent() {
         </a>
         <div style={cardContentStyle} className="collections-product-card-content">
           <span style={collectionLabelStyle}>{p.collection_name || 'Jewellery'}</span>
-          <a href={`/products/${p.slug}`} onClick={(e) => handleProductClick(e, p)} style={{ textDecoration: 'none' }}>
+          <a href={`/products/${p.slug}`} style={{ textDecoration: 'none' }}>
             <h3 style={cardTitleStyle}>{p.name}</h3>
           </a>
 
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.2rem', margin: '0.2rem 0 0.5rem 0' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', fontSize: '0.8rem', color: '#0F1111' }}>
-              <span>{rating}</span>
-              <span style={{ color: '#FFA41C', fontSize: '1.1rem', letterSpacing: '-2px' }}>★★★★<span style={{ color: '#E7E7E7'}}>★</span></span>
-              <span style={{ color: '#007185' }}>({reviews})</span>
-            </div>
-          </div>
 
           <p style={cardPriceStyle}>₹{parseFloat(p.price).toLocaleString('en-IN')}</p>
 
@@ -506,8 +563,36 @@ function CollectionsContent() {
             >
               Admin Preview: Edit
             </Link>
-          ) : hasVariants ? (
-            /* Products with custom variants (Suits) */
+          ) : currentQty > 0 ? (
+            /* Items already added to cart */
+            <div className="blinkit-count-controller" onClick={(e) => e.stopPropagation()}>
+              <button 
+                className="blinkit-count-btn"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  e.preventDefault();
+                  updateCartQuantity(p.id, defaultVariant.size || 'One Size', defaultVariant.color || 'Default', currentQty - 1);
+                }}
+              >
+                -
+              </button>
+              <span className="blinkit-count-val">{currentQty}</span>
+              <button 
+                className="blinkit-count-btn"
+                disabled={currentQty >= (defaultVariant.stock || 10)}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  e.preventDefault();
+                  const maxStock = defaultVariant.stock || 10;
+                  if (currentQty >= maxStock) return;
+                  updateCartQuantity(p.id, defaultVariant.size || 'One Size', defaultVariant.color || 'Default', currentQty + 1);
+                }}
+              >
+                +
+              </button>
+            </div>
+          ) : (
+            /* Add item directly to cart */
             <button 
               className="blinkit-add-btn"
               disabled={outOfStock}
@@ -515,54 +600,11 @@ function CollectionsContent() {
                 e.stopPropagation();
                 e.preventDefault();
                 if (outOfStock) return;
-                handleProductClick(e, p);
+                addToCart(p, defaultVariant.size || 'One Size', defaultVariant.color || 'Default');
               }}
             >
-              {outOfStock ? 'Sold Out' : totalQtyInCart > 0 ? `ADDED (${totalQtyInCart})` : 'ADD ▾'}
+              {outOfStock ? 'Sold Out' : 'ADD'}
             </button>
-          ) : (
-            /* Products without variants (Jewellery) */
-            currentQty > 0 ? (
-              <div className="blinkit-count-controller" onClick={(e) => e.stopPropagation()}>
-                <button 
-                  className="blinkit-count-btn"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    e.preventDefault();
-                    updateCartQuantity(p.id, defaultVariant.size || 'One Size', defaultVariant.color || 'Default', currentQty - 1);
-                  }}
-                >
-                  -
-                </button>
-                <span className="blinkit-count-val">{currentQty}</span>
-                <button 
-                  className="blinkit-count-btn"
-                  disabled={currentQty >= (defaultVariant.stock || 10)}
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    e.preventDefault();
-                    const maxStock = defaultVariant.stock || 10;
-                    if (currentQty >= maxStock) return;
-                    updateCartQuantity(p.id, defaultVariant.size || 'One Size', defaultVariant.color || 'Default', currentQty + 1);
-                  }}
-                >
-                  +
-                </button>
-              </div>
-            ) : (
-              <button 
-                className="blinkit-add-btn"
-                disabled={outOfStock}
-                onClick={(e) => {
-                  e.stopPropagation();
-                  e.preventDefault();
-                  if (outOfStock) return;
-                  addToCart(p, defaultVariant.size || 'One Size', defaultVariant.color || 'Default');
-                }}
-              >
-                {outOfStock ? 'Sold Out' : 'ADD'}
-              </button>
-            )
           )}
         </div>
       </div>
@@ -654,6 +696,14 @@ function CollectionsContent() {
               <div style={detailDividerStyle}></div>
 
               <p style={detailDescStyle}>{activeProduct.description || 'Exclusive luxury item, crafted from premium archival coutures.'}</p>
+
+              <div style={{ marginTop: '0.5rem', marginBottom: '1rem', fontSize: '0.85rem', color: '#B8860B', fontWeight: '600' }}>
+                {maxStock <= 3 ? (
+                  <span style={{ color: '#D9534F' }}>⚠️ Only {maxStock} left in our vaults!</span>
+                ) : (
+                  <span>Remaining stock: {maxStock} available</span>
+                )}
+              </div>
 
               {/* Sizes selector */}
               {activeProduct.variants && activeProduct.variants.some(v => v.size) && (
@@ -850,7 +900,7 @@ function CollectionsContent() {
                 onClick={() => handleCategorySidebarClick(cat.id)}
               >
                 <div className="blinkit-sidebar-icon">
-                  <span>{cat.emoji}</span>
+                  {renderCategoryIcon(cat.id)}
                 </div>
                 <span>{cat.name}</span>
               </div>

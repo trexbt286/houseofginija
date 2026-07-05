@@ -137,10 +137,12 @@ export default function Home() {
         {/* Hero Value Props Bar */}
         <div className="hero-value-props-bar">
           <div className="value-prop-item">
-            {/* Ribbon/Award Icon */}
+            {/* Handloom Weaving Shuttle Icon */}
             <svg className="value-prop-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-              <circle cx="12" cy="8" r="7" />
-              <polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88" />
+              <path d="M2 12l4-3h12l4 3-4 3H6l-4-3z" />
+              <path d="M9 10h6v4H9z" />
+              <line x1="12" y1="10" x2="12" y2="14" />
+              <path d="M4 12c2.5 0 2.5-3 5-3s2.5 3 5 3 2.5-3 5-3 2.5 3 5 3" opacity="0.25" />
             </svg>
             <div className="value-prop-text">
               <span>Premium</span>
@@ -149,10 +151,14 @@ export default function Home() {
           </div>
           <div className="value-prop-divider"></div>
           <div className="value-prop-item">
-            {/* Leaf Icon */}
+            {/* Yarn Spool / Hand-spun Wool Icon */}
             <svg className="value-prop-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 22 2c-2 5-2.5 6.5-3.6 12.2A7 7 0 0 1 11 20z" />
-              <path d="M9 22l3-3M19 5l-8 8" />
+              <circle cx="12" cy="12" r="7" />
+              <path d="M7 10c2.5-1 7.5-1 10 0" />
+              <path d="M6 13c3 .5 9 .5 12 0" />
+              <path d="M8 16c2.5 1 5.5 1 8 0" />
+              <line x1="3" y1="21" x2="21" y2="3" />
+              <circle cx="21" cy="3" r="1.2" fill="currentColor" />
             </svg>
             <div className="value-prop-text">
               <span>Slow</span>
@@ -161,12 +167,11 @@ export default function Home() {
           </div>
           <div className="value-prop-divider"></div>
           <div className="value-prop-item">
-            {/* Scissors Icon */}
+            {/* Sewing Needle & Thread Loop Icon */}
             <svg className="value-prop-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-              <circle cx="6" cy="6" r="3" />
-              <circle cx="6" cy="18" r="3" />
-              <line x1="9.8" y1="8.2" x2="20" y2="17" />
-              <line x1="9.8" y1="15.8" x2="20" y2="7" />
+              <line x1="4" y1="20" x2="18" y2="6" />
+              <ellipse cx="16.5" cy="7.5" rx="1.8" ry="0.9" transform="rotate(-45 16.5 7.5)" />
+              <path d="M18 6c3.5-3.5 5.5-1 2 2.5s-6 5-9.5 5-5.5-2-7.5 0" />
             </svg>
             <div className="value-prop-text">
               <span>Expert</span>
@@ -175,9 +180,15 @@ export default function Home() {
           </div>
           <div className="value-prop-divider"></div>
           <div className="value-prop-item">
-            {/* Heart Icon */}
+            {/* Tailor's Tape Measure Infinity Loop Icon */}
             <svg className="value-prop-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+              <path d="M4 10c0-4 4-6 8-6s8 2 8 6-4 8-8 10-8-4-8-10z" />
+              <line x1="8" y1="4.2" x2="8" y2="6.2" />
+              <line x1="12" y1="4" x2="12" y2="7" />
+              <line x1="16" y1="4.2" x2="16" y2="6.2" />
+              <line x1="18.5" y1="7.2" x2="16.8" y2="8.2" />
+              <line x1="19.5" y1="11" x2="17.5" y2="11.5" />
+              <line x1="11.5" y1="16.5" x2="13.2" y2="17.8" />
             </svg>
             <div className="value-prop-text">
               <span>Made To</span>
