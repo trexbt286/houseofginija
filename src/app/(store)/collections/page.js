@@ -641,6 +641,10 @@ function CollectionsContent() {
     ? products.filter(sib => sib.collection_id === activeProduct.collection_id && sib.id !== activeProduct.id)
     : [];
 
+  const switcherProducts = activeProduct
+    ? products.filter(sib => sib.collection_id === activeProduct.collection_id)
+    : [];
+
   const activeMatchingVar = activeProduct && activeProduct.variants && activeProduct.variants.find(
     v => (v.size || '') === (activeProductSize || '') && (v.color || '') === (activeProductColor || '')
   );
@@ -899,29 +903,124 @@ function CollectionsContent() {
             </div>
           )}
 
-          {/* Mobile Sticky Buy Bar */}
-          {!(user && user.role === 'admin') && (
-            <div className="mobile-sticky-bar" style={mobileStickyBarWrapperStyle}>
-              <div style={mobileStickyPriceInfoStyle}>
-                <span style={mobileStickyNameStyle}>
-                  {activeProduct.name} {activeProductSize ? `• ${activeProductSize}` : ''}
-                </span>
-                <span style={mobileStickyPriceStyle}>
-                  ₹{parseFloat(activeProduct.price).toLocaleString('en-IN')}
-                </span>
-              </div>
-              <button 
-                style={mobileStickyBtnStyle}
-                disabled={activeProduct.is_out_of_stock}
-                onClick={() => {
-                  if (activeProduct.is_out_of_stock) return;
-                  addToCart(activeProduct, activeProductSize, activeProductColor, activeProductQty);
-                }}
-              >
-                {activeProduct.is_out_of_stock ? 'Sold Out' : 'ADD'}
-              </button>
+          {/* Swiggy Instamart-style Sticky Bottom Footer (Actions + Sibling Product Switcher) */}
+          <div className="bottom-sheet-footer">
+            <div style={detailActionWrapperStyle} className="detail-action-bottom-bar">
+              {user && user.role === 'admin' ? (
+                <Link
+                  href={`/admin/products?edit=${activeProduct.slug}`}
+                  style={detailAdminEditBtnStyle}
+                >
+                  Admin Preview: Edit Product
+                </Link>
+              ) : currentQtyInCart > 0 ? (
+                /* Counter controller when product is already in cart */
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.6rem', width: '100%' }}>
+                  <div className="blinkit-count-controller" style={{ ...detailAddBtnStyle, backgroundColor: '#FFFFFF', border: '1px solid #D98E9B', display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 1rem', cursor: 'default' }}>
+                    <button 
+                      style={{ border: 'none', backgroundColor: 'transparent', fontSize: '1.4rem', color: '#D98E9B', cursor: 'pointer', fontWeight: 'bold', padding: '0 0.8rem' }}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        updateCartQuantity(activeProduct.id, activeProductSize, activeProductColor, currentQtyInCart - 1);
+                      }}
+                    >
+                      -
+                    </button>
+                    <span style={{ fontWeight: '700', color: '#000000', fontSize: '1rem' }}>{currentQtyInCart} in bag</span>
+                    <button 
+                      style={{ border: 'none', backgroundColor: 'transparent', fontSize: '1.4rem', color: '#D98E9B', cursor: 'pointer', fontWeight: 'bold', padding: '0 0.8rem', opacity: currentQtyInCart >= maxStock ? 0.35 : 1 }}
+                      disabled={currentQtyInCart >= maxStock}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        updateCartQuantity(activeProduct.id, activeProductSize, activeProductColor, currentQtyInCart + 1);
+                      }}
+                    >
+                      +
+                    </button>
+                  </div>
+                </div>
+              ) : (
+                /* Standard Selector & Add to Cart button when not in cart */
+                <>
+                  <div className="mobile-hide-qty" style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem' }}>
+                    <div style={detailQtyControlStyle}>
+                      <button 
+                        style={detailQtyBtnStyle}
+                        onClick={() => {
+                          if (activeProductQty > 1) {
+                            setActiveProductQty(activeProductQty - 1);
+                          }
+                        }}
+                      >
+                        -
+                      </button>
+                      <span style={detailQtyValStyle}>{activeProductQty}</span>
+                      <button 
+                        style={{
+                          ...detailQtyBtnStyle,
+                          opacity: isPlusDisabled ? 0.35 : 1,
+                          cursor: isPlusDisabled ? 'not-allowed' : 'pointer'
+                        }}
+                        disabled={isPlusDisabled}
+                        onClick={() => {
+                          if (activeProductQty < maxStock) {
+                            setActiveProductQty(activeProductQty + 1);
+                          }
+                        }}
+                      >
+                        +
+                      </button>
+                    </div>
+                  </div>
+
+                  <button 
+                    style={detailAddBtnStyle}
+                    disabled={activeProduct.is_out_of_stock || isPlusDisabled}
+                    onClick={() => {
+                      if (activeProduct.is_out_of_stock || isPlusDisabled) return;
+                      addToCart(activeProduct, activeProductSize, activeProductColor, activeProductQty);
+                      setActiveProductQty(1); // Reset counter selector to 1 after adding to cart
+                    }}
+                  >
+                    {activeProduct.is_out_of_stock ? 'Sold Out' : 'ADD'}
+                  </button>
+                </>
+              )}
             </div>
-          )}
+
+            {/* Sibling switcher row of 56px circular buttons */}
+            {switcherProducts.length > 0 && (
+              <div className="mobile-sibling-switcher-row hide-scrollbar">
+                {switcherProducts.map(sib => {
+                  const isActive = sib.id === activeProduct.id;
+                  return (
+                    <button
+                      key={sib.id}
+                      onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        setActiveProduct(sib);
+                        setActiveProductImage(sib.images && sib.images[0] ? sib.images[0] : '/placeholder.jpg');
+                        // Reset options
+                        const vars = sib.variants || [];
+                        const inStockVar = vars.find(v => v.stock > 0) || vars[0];
+                        setActiveProductSize(inStockVar ? inStockVar.size || '' : '');
+                        setActiveProductColor(inStockVar ? inStockVar.color || '' : '');
+                        setActiveProductQty(1);
+                      }}
+                      className={`sibling-switcher-circle-btn ${isActive ? 'active' : ''}`}
+                    >
+                      <img 
+                        src={sib.images && sib.images[0] ? sib.images[0] : '/placeholder.jpg'} 
+                        alt={sib.name} 
+                        className="sibling-switcher-circle-img"
+                      />
+                    </button>
+                  );
+                })}
+              </div>
+            )}
+          </div>
         </div>
       )}
 
