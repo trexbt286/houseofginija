@@ -686,10 +686,6 @@ function CollectionsContent() {
               <span style={detailCollectionLabelStyle}>{activeProduct.collection_name}</span>
               <h1 style={detailTitleStyle}>{activeProduct.name}</h1>
               
-              <div style={ratingRowStyle}>
-                <span style={{ color: '#FFA41C', fontSize: '1.2rem', letterSpacing: '-2px' }}>★★★★<span style={{ color: '#E7E7E7'}}>★</span></span>
-                <span style={{ color: 'rgba(0,0,0,0.5)', fontSize: '0.85rem', marginLeft: '6px' }}>(4.8 rating)</span>
-              </div>
 
               <p style={detailPriceStyle}>₹{parseFloat(activeProduct.price).toLocaleString('en-IN')}</p>
               
@@ -1508,9 +1504,9 @@ const sizeOptStyle = {
 
 const activeSizeOptStyle = {
   ...sizeOptStyle,
-  backgroundColor: '#F6DDE2',
-  borderColor: '#D98E9B',
-  color: '#000000',
+  backgroundColor: '#000000',
+  borderColor: '#000000',
+  color: '#FFFFFF',
 };
 
 const detailColorsRowStyle = {
@@ -1533,9 +1529,9 @@ const colorOptStyle = {
 
 const activeColorOptStyle = {
   ...colorOptStyle,
-  backgroundColor: '#F6DDE2',
-  borderColor: '#D98E9B',
-  color: '#000000',
+  backgroundColor: '#000000',
+  borderColor: '#000000',
+  color: '#FFFFFF',
 };
 
 const detailActionWrapperStyle = {

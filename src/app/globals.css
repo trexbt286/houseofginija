@@ -1656,3 +1656,43 @@ header {
     height: 16px !important;
   }
 }
+
+/* --- RESPONSIVE CHECKOUT LAYOUT --- */
+.checkout-layout-grid {
+  display: grid !important;
+  grid-template-columns: 1.2fr 1fr !important;
+  gap: 4rem !important;
+  align-items: start !important;
+  width: 100% !important;
+}
+
+.checkout-form-box {
+  background-color: #FFFFFF !important;
+  padding: 2.5rem !important;
+  border-radius: 8px !important;
+  border: 1px solid rgba(139, 119, 137, 0.12) !important;
+  box-shadow: var(--shadow-sm) !important;
+}
+
+.checkout-form-row {
+  display: flex !important;
+  gap: 1rem !important;
+  width: 100% !important;
+  margin-bottom: 1rem !important;
+}
+
+@media (max-width: 991px) {
+  .checkout-layout-grid {
+    grid-template-columns: 1fr !important;
+    gap: 2.5rem !important;
+  }
+  
+  .checkout-form-box {
+    padding: 1.2rem 1rem !important;
+  }
+  
+  .checkout-form-row {
+    flex-direction: column !important;
+    gap: 1rem !important;
+  }
+}

@@ -604,25 +604,29 @@ const sizeSelectorStyle = {
 
 const sizeBtnStyle = {
   border: '1px solid rgba(139, 119, 137, 0.3)',
-  backgroundColor: '#D98E9B',
+  backgroundColor: '#FFFFFF',
   padding: '0.5rem 1.2rem',
   fontSize: '0.8rem',
   borderRadius: '2px',
   color: '#000000',
+  cursor: 'pointer',
+  transition: 'all 0.2s ease',
 };
 
 const activeSizeBtnStyle = {
   ...sizeBtnStyle,
-  backgroundColor: '#D98E9B',
-  color: '#000000',
-  bordercolor: '#000000',
+  backgroundColor: '#000000',
+  color: '#FFFFFF',
+  borderColor: '#000000',
 };
 
 const disabledSizeBtnStyle = {
   ...sizeBtnStyle,
-  opacity: 0.4,
+  opacity: 0.3,
   textDecoration: 'line-through',
   cursor: 'not-allowed',
+  backgroundColor: '#F9F9F9',
+  color: '#999999',
 };
 
 const colorSelectorStyle = {
@@ -633,25 +637,29 @@ const colorSelectorStyle = {
 
 const colorBtnStyle = {
   border: '1px solid rgba(139, 119, 137, 0.3)',
-  backgroundColor: '#D98E9B',
+  backgroundColor: '#FFFFFF',
   padding: '0.5rem 1.2rem',
   fontSize: '0.8rem',
   borderRadius: '2px',
   color: '#000000',
+  cursor: 'pointer',
+  transition: 'all 0.2s ease',
 };
 
 const activeColorBtnStyle = {
   ...colorBtnStyle,
-  backgroundColor: '#D98E9B',
-  color: '#000000',
-  bordercolor: '#000000',
+  backgroundColor: '#000000',
+  color: '#FFFFFF',
+  borderColor: '#000000',
 };
 
 const disabledColorBtnStyle = {
   ...colorBtnStyle,
-  opacity: 0.4,
+  opacity: 0.3,
   textDecoration: 'line-through',
   cursor: 'not-allowed',
+  backgroundColor: '#F9F9F9',
+  color: '#999999',
 };
 
 const quantityWrapperStyle = {

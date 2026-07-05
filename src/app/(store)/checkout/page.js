@@ -256,9 +256,9 @@ export default function CheckoutPage() {
           <Link href="/collections" style={shopBtnStyle}>Explore Creations</Link>
         </div>
       ) : (
-        <div style={layoutGridStyle}>
+        <div style={layoutGridStyle} className="checkout-layout-grid">
           {/* Left: Address details Form */}
-          <form onSubmit={handlePayment} style={formStyle}>
+          <form onSubmit={handlePayment} style={formStyle} className="checkout-form-box">
             <h3 style={sectionTitleStyle}>Shipping Address</h3>
             
             {savedAddresses.length > 0 && (
@@ -279,7 +279,7 @@ export default function CheckoutPage() {
               </div>
             )}
 
-            <div style={formRowStyle}>
+            <div style={formRowStyle} className="checkout-form-row">
               <div style={{ ...formGroupStyle, flex: 1 }}>
                 <label style={labelStyle}>Address Line 1</label>
                 <input
@@ -295,7 +295,7 @@ export default function CheckoutPage() {
               </div>
             </div>
 
-            <div style={formRowStyle}>
+            <div style={formRowStyle} className="checkout-form-row">
               <div style={{ ...formGroupStyle, flex: 1 }}>
                 <label style={labelStyle}>Address Line 2 (Optional)</label>
                 <input
@@ -310,7 +310,7 @@ export default function CheckoutPage() {
               </div>
             </div>
 
-            <div style={formRowStyle}>
+            <div style={formRowStyle} className="checkout-form-row">
               <div style={{ ...formGroupStyle, flex: 1 }}>
                 <label style={labelStyle}>City</label>
                 <input
@@ -339,7 +339,7 @@ export default function CheckoutPage() {
               </div>
             </div>
 
-            <div style={formRowStyle}>
+            <div style={formRowStyle} className="checkout-form-row">
               <div style={{ ...formGroupStyle, flex: 1 }}>
                 <label style={labelStyle}>Postal Code</label>
                 <input
