@@ -1700,56 +1700,100 @@ header {
 /* --- RESPONSIVE PRODUCT DETAIL GALLERY & CONTAINER SPACING --- */
 /* --- RESPONSIVE PRODUCT DETAIL GALLERY & CONTAINER SPACING --- */
 @media (max-width: 768px) {
-  /* Collections Page Detailed View Modal & Standalone Product Page View */
-  .detail-container-box, .product-page-container {
+  /* Dim Backdrop behind Bottom Sheet */
+  .mobile-bottom-sheet-backdrop {
     position: fixed !important;
     top: 0 !important;
     left: 0 !important;
     width: 100vw !important;
     height: 100vh !important;
+    background-color: rgba(0, 0, 0, 0.6) !important;
+    z-index: 9999 !important;
+    display: block !important;
+    animation: fadeInBackdrop 0.3s ease-out forwards !important;
+  }
+
+  @keyframes fadeInBackdrop {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
+  /* Catalog grid container box is always displayed on mobile */
+  .catalog-grid-container-box {
+    display: block !important;
+  }
+
+  /* Detailed View Bottom Sheet Card Modal */
+  .detail-container-box {
+    position: fixed !important;
+    bottom: 0 !important;
+    left: 0 !important;
+    width: 100vw !important;
+    height: 90vh !important; /* cover ~90% screen height */
     margin: 0 !important;
     padding: 0 !important;
-    z-index: 1000 !important;
+    z-index: 10000 !important; /* floats over backdrop */
     background-color: #FFFFFF !important;
+    border-radius: 20px 20px 0 0 !important; /* top corners */
+    box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.15) !important;
     display: flex !important;
     flex-direction: column !important;
     overflow: hidden !important;
-    border-radius: 0 !important;
-    box-shadow: none !important;
     border: none !important;
+    animation: slideUp 0.35s cubic-bezier(0.25, 1, 0.5, 1) forwards !important;
+  }
+  
+  @keyframes slideUp {
+    from { transform: translateY(100%); }
+    to { transform: translateY(0); }
   }
 
-  /* Overlay Header */
+  /* Drag handle pill at the top center */
+  .mobile-sheet-drag-handle {
+    width: 40px !important;
+    height: 5px !important;
+    background-color: rgba(0, 0, 0, 0.15) !important;
+    border-radius: 999px !important;
+    position: absolute !important;
+    top: 10px !important;
+    left: 50% !important;
+    transform: translateX(-50%) !important;
+    z-index: 10020 !important;
+    display: block !important;
+  }
+
+  /* Mobile Sheet Header buttons overlay */
   .detail-header-mobile-overlay {
     position: absolute !important;
-    top: 16px !important;
+    top: 18px !important;
     left: 16px !important;
     right: 16px !important;
-    z-index: 1010 !important;
+    z-index: 10010 !important;
     display: flex !important;
     justify-content: space-between !important;
     align-items: center !important;
     background-color: transparent !important;
     width: auto !important;
+    padding: 0 !important;
   }
-  
-  .detail-back-btn-overlay {
-    display: inline-flex !important;
-    align-items: center !important;
+
+  .desktop-back-btn {
+    display: none !important; /* hide desktop back button on mobile */
+  }
+
+  .mobile-sheet-dismiss-btn {
     background-color: rgba(255, 255, 255, 0.85) !important;
     backdrop-filter: blur(4px) !important;
     border: none !important;
-    color: #000000 !important;
-    font-size: 0.72rem !important;
-    font-weight: 700 !important;
-    padding: 0.5rem 0.9rem !important;
-    border-radius: 999px !important;
-    letter-spacing: 0.05em !important;
-    text-transform: uppercase !important;
-    text-decoration: none !important;
+    border-radius: 50% !important;
+    width: 36px !important;
+    height: 36px !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
     box-shadow: 0 2px 8px rgba(0,0,0,0.1) !important;
     cursor: pointer !important;
-    font-family: inherit !important;
+    padding: 0 !important;
   }
   
   .detail-wishlist-btn-overlay {
@@ -1767,69 +1811,60 @@ header {
     padding: 0 !important;
   }
 
-  .desktop-breadcrumbs-only {
-    display: none !important;
-  }
-
-  /* Split screen layouts */
-  .detail-preview-grid, .product-detail-preview-grid {
+  /* Grid Layout inside mobile Bottom Sheet */
+  .detail-preview-grid {
     display: flex !important;
     flex-direction: column !important;
     width: 100vw !important;
-    height: 100vh !important;
+    height: calc(90vh - 15px) !important;
     margin: 0 !important;
     gap: 0 !important;
     overflow: hidden !important;
     position: relative !important;
   }
   
-  /* Top Half: Image Gallery */
-  .detail-preview-grid > div:first-child,
-  .product-detail-preview-grid > div:first-child {
+  /* Top Half: Image Gallery (full width, no padding) */
+  .detail-preview-grid > div:first-child {
     width: 100vw !important;
-    height: 50vh !important;
+    height: 45vh !important;
     position: relative !important;
     overflow: hidden !important;
     margin: 0 !important;
     padding: 0 !important;
-    border-radius: 0 !important;
+    border-radius: 20px 20px 0 0 !important;
   }
   
-  /* Image wrapper */
-  .detail-main-img-wrapper,
-  .product-detail-main-img-wrapper {
+  .detail-main-img-wrapper {
     width: 100vw !important;
-    height: 50vh !important;
-    max-height: 50vh !important;
-    border-radius: 0 !important;
+    height: 45vh !important;
+    max-height: 45vh !important;
+    border-radius: 20px 20px 0 0 !important;
     border: none !important;
     margin: 0 !important;
     padding: 0 !important;
     background-color: #FBF0EC !important;
   }
   
-  .detail-main-img,
-  .product-detail-main-img {
+  .detail-main-img {
     width: 100vw !important;
-    height: 50vh !important;
-    max-height: 50vh !important;
+    height: 45vh !important;
+    max-height: 45vh !important;
     object-fit: cover !important;
-    border-radius: 0 !important;
+    border-radius: 20px 20px 0 0 !important;
   }
   
-  .detail-thumb-row, .product-detail-thumb-row {
-    display: none !important; /* Hide thumbnails on mobile detailed view to save vertical space */
+  .detail-thumb-row {
+    display: none !important; /* Hide thumbnails on mobile sheet */
   }
   
-  /* Bottom Half: Details Container */
-  .detail-preview-grid > div:last-child,
-  .product-detail-preview-grid > div:last-child {
+  /* Bottom Half: Details scrollable Container */
+  .detail-preview-grid > div:last-child {
     flex: 1 !important;
     width: 100vw !important;
-    height: 50vh !important;
-    background-color: #FFFFFF !important; /* white/ivory background */
-    border-radius: 20px 20px 0 0 !important; /* rounded top corners */
-    margin-top: -20px !important; /* overlap slightly onto the image */
+    height: 45vh !important;
+    background-color: #FFFFFF !important;
+    border-radius: 20px 20px 0 0 !important; /* rounded top corners overlapping slightly */
+    margin-top: -20px !important;
     padding: 1.8rem 1.5rem 6.5rem 1.5rem !important; /* bottom padding for sticky button */
     overflow-y: auto !important; /* scrollable independently */
     position: relative !important;
@@ -1881,7 +1916,7 @@ header {
     background: linear-gradient(to top, #FFFFFF 70%, rgba(255, 255, 255, 0) 100%) !important;
     padding: 1rem 1.5rem 1.5rem 1.5rem !important;
     box-sizing: border-box !important;
-    z-index: 1020 !important;
+    z-index: 10020 !important;
     display: flex !important;
     align-items: center !important;
     gap: 1rem !important;
@@ -1927,9 +1962,16 @@ header {
     font-weight: 700 !important;
   }
 
-  /* Hide Sibling Products from mobile view to optimize height constraints */
+  /* Hide Sibling Products and sticky bar on mobile */
   .detail-preview-grid + div,
-  .product-detail-preview-grid + div {
+  .mobile-sticky-bar {
     display: none !important;
   }
+}
+
+/* Desktop default hide classes */
+.mobile-bottom-sheet-backdrop,
+.mobile-sheet-drag-handle,
+.mobile-sheet-dismiss-btn {
+  display: none;
 }

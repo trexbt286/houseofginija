@@ -640,17 +640,35 @@ function CollectionsContent() {
   const isPlusDisabled = currentQtyInCart > 0 ? (currentQtyInCart >= maxStock) : (activeProductQty >= maxStock);
 
   return (
-    <div style={pageStyle}>
-      {activeProduct ? (
+    <div style={pageStyle} className="collections-root-container">
+      {/* Mobile bottom sheet backdrop */}
+      {activeProduct && (
+        <div 
+          className="mobile-bottom-sheet-backdrop" 
+          onClick={() => setActiveProduct(null)}
+        />
+      )}
+
+      {activeProduct && (
         <div className="container animate-fade-in detail-container-box" style={detailContainerStyle}>
+          {/* Mobile Drag handle pill */}
+          <div className="mobile-sheet-drag-handle" />
+
           {/* Back button and wishlist toggle on top */}
           <div style={detailHeaderStyle} className="detail-header-mobile-overlay">
-            <button onClick={() => setActiveProduct(null)} style={detailBackButtonStyle} className="detail-back-btn-overlay">
+            <button onClick={() => setActiveProduct(null)} style={detailBackButtonStyle} className="desktop-back-btn detail-back-btn-overlay">
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.0" strokeLinecap="round" strokeLinejoin="round" style={{ marginRight: '8px' }}>
                 <line x1="19" y1="12" x2="5" y2="12"></line>
                 <polyline points="12 19 5 12 12 5"></polyline>
               </svg>
               Back to Collections
+            </button>
+
+            {/* Mobile Down Chevron dismiss button */}
+            <button onClick={() => setActiveProduct(null)} className="mobile-sheet-dismiss-btn">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#000000" strokeWidth="2.0" strokeLinecap="round" strokeLinejoin="round">
+                <polyline points="6 9 12 15 18 9"></polyline>
+              </svg>
             </button>
             
             <button 
@@ -897,8 +915,10 @@ function CollectionsContent() {
             </div>
           )}
         </div>
-      ) : (
-        <div className="container collections-layout-grid blinkit-layout-wrapper">
+      )}
+
+      {/* Catalog Grid container (desktop: hidden when activeProduct is set, mobile: always rendered and visible underneath modal) */}
+      <div className="catalog-grid-container-box" style={{ display: activeProduct ? 'none' : 'block' }}>
           {/* Filters Sidebar (Desktop only, hidden on mobile) */}
           <aside style={sidebarStyle} className="collections-sidebar-desktop">
             {renderFilters()}
@@ -1000,8 +1020,7 @@ function CollectionsContent() {
               </div>
             )}
           </main>
-        </div>
-      )}
+      </div>
 
 
 
