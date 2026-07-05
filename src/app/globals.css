@@ -1696,3 +1696,53 @@ header {
     gap: 1rem !important;
   }
 }
+
+/* --- RESPONSIVE PRODUCT DETAIL GALLERY & CONTAINER SPACING --- */
+@media (max-width: 768px) {
+  /* Collections Page Detailed View Modal */
+  .detail-container-box {
+    padding: 1rem !important;
+    margin-top: 0.5rem !important;
+  }
+  
+  .detail-main-img-wrapper {
+    max-height: 250px !important;
+  }
+  
+  .detail-main-img {
+    max-height: 250px !important;
+  }
+  
+  .detail-thumb-row {
+    display: none !important; /* Hide thumbnails on mobile detailed view to save vertical space */
+  }
+
+  /* Standalone Product Page View */
+  .product-page-container {
+    padding-left: 1rem !important;
+    padding-right: 1rem !important;
+    margin-top: 0.5rem !important;
+  }
+
+  .product-detail-main-img-wrapper {
+    max-height: 250px !important;
+  }
+  
+  .product-detail-main-img {
+    max-height: 250px !important;
+  }
+  
+  .product-detail-thumb-row {
+    display: none !important; /* Hide thumbnails on mobile product page to save vertical space */
+  }
+  
+  /* Pull up content spacing */
+  .detail-preview-grid {
+    gap: 1rem !important;
+    margin-bottom: 1rem !important;
+  }
+  
+  .detail-preview-grid > div:last-child {
+    gap: 0.4rem !important; /* reduce vertical gap between description, options, and button */
+  }
+}

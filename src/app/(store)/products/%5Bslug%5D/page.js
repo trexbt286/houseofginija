@@ -113,7 +113,7 @@ export default function ProductPage({ params }) {
   };
 
   return (
-    <div style={pageStyle} className="container animate-fade-in">
+    <div style={pageStyle} className="container animate-fade-in product-page-container">
       <div style={breadcrumbsStyle}>
         <Link href="/">Home</Link> &gt;{' '}
         <Link href="/collections">Creations</Link> &gt;{' '}
@@ -124,11 +124,11 @@ export default function ProductPage({ params }) {
       <div style={productGridStyle}>
         {/* Left Column: Image Gallery */}
         <div style={galleryColumnStyle}>
-          <div style={mainImageContainerStyle}>
-            <img src={activeImage} alt={product.name} style={mainImageStyle} loading="lazy" />
+          <div style={mainImageContainerStyle} className="product-detail-main-img-wrapper">
+            <img src={activeImage} alt={product.name} style={mainImageStyle} className="product-detail-main-img" loading="lazy" />
           </div>
           {product.images && product.images.length > 1 && (
-            <div style={thumbnailRowStyle}>
+            <div style={thumbnailRowStyle} className="product-detail-thumb-row">
               {product.images.map((img, idx) => (
                 <button
                   key={idx}

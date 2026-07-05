@@ -642,7 +642,7 @@ function CollectionsContent() {
   return (
     <div style={pageStyle}>
       {activeProduct ? (
-        <div className="container animate-fade-in" style={detailContainerStyle}>
+        <div className="container animate-fade-in detail-container-box" style={detailContainerStyle}>
           {/* Back button and wishlist toggle on top */}
           <div style={detailHeaderStyle}>
             <button onClick={() => setActiveProduct(null)} style={detailBackButtonStyle}>
@@ -674,11 +674,11 @@ function CollectionsContent() {
           <div className="detail-preview-grid">
             {/* Left: Gallery */}
             <div style={detailGalleryStyle}>
-              <div style={detailMainImgWrapperStyle}>
-                <img src={activeProductImage} alt={activeProduct.name} style={detailMainImgStyle} loading="lazy" />
+              <div style={detailMainImgWrapperStyle} className="detail-main-img-wrapper">
+                <img src={activeProductImage} alt={activeProduct.name} style={detailMainImgStyle} className="detail-main-img" loading="lazy" />
               </div>
               {activeProduct.images && activeProduct.images.length > 1 && (
-                <div style={detailThumbRowStyle} className="hide-scrollbar">
+                <div style={detailThumbRowStyle} className="detail-thumb-row hide-scrollbar">
                   {activeProduct.images.map((img, idx) => (
                     <button 
                       key={idx} 
