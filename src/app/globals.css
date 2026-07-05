@@ -2075,9 +2075,10 @@ header {
     display: none !important; /* Hide quantity selector beside ADD button on mobile */
   }
 
-  /* Hide Sibling Products and sticky bar on mobile */
+  /* Hide Sibling Products, desktop action bar, and sticky bar on mobile */
   .detail-preview-grid + div,
-  .mobile-sticky-bar {
+  .mobile-sticky-bar,
+  .desktop-action-only {
     display: none !important;
   }
 }
