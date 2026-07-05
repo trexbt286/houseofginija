@@ -1833,7 +1833,7 @@ header {
   /* Top Half: Image Gallery (full width, no padding) */
   .detail-preview-grid > div:first-child {
     width: 100vw !important;
-    height: 45vh !important;
+    height: 38vh !important; /* Reduced from 45vh to give more space for text */
     position: relative !important;
     overflow: hidden !important;
     margin: 0 !important;
@@ -1843,8 +1843,8 @@ header {
   
   .detail-main-img-wrapper {
     width: 100vw !important;
-    height: 45vh !important;
-    max-height: 45vh !important;
+    height: 38vh !important;
+    max-height: 38vh !important;
     border-radius: 24px 24px 0 0 !important;
     border: none !important;
     margin: 0 !important;
@@ -1854,8 +1854,8 @@ header {
   
   .detail-main-img {
     width: 100vw !important;
-    height: 45vh !important;
-    max-height: 45vh !important;
+    height: 38vh !important;
+    max-height: 38vh !important;
     object-fit: cover !important;
     border-radius: 24px 24px 0 0 !important;
   }
@@ -1868,50 +1868,92 @@ header {
   .detail-preview-grid > div:last-child {
     flex: 1 !important;
     width: 100vw !important;
-    height: 45vh !important;
+    height: 52vh !important;
     background-color: #FFFFFF !important;
     border-radius: 24px 24px 0 0 !important; /* rounded top corners overlapping slightly */
     margin-top: -24px !important;
-    padding: 1.8rem 1.5rem 10.5rem 1.5rem !important; /* Generous bottom padding to prevent actions bar overlap */
-    overflow-y: auto !important; /* scrollable independently */
+    padding: 12px 16px 7.5rem 16px !important; /* Tightened padding */
+    overflow-y: auto !important; /* scrollable if text overflows, but should fit */
     position: relative !important;
     z-index: 2 !important;
     box-sizing: border-box !important;
     display: flex !important;
     flex-direction: column !important;
-    gap: 0.8rem !important;
+    gap: 6px !important; /* Tightened elements gap to max 8px */
   }
 
   /* Details typography & elements */
   .detail-collection-label {
     color: #D98E9B !important;
-    font-size: 0.75rem !important;
+    font-size: 11px !important; /* Tightened to 11px */
     text-transform: uppercase !important;
     letter-spacing: 0.12em !important;
     font-weight: 700 !important;
+    margin-bottom: 2px !important;
   }
 
   .detail-product-name {
     font-family: var(--font-serif) !important;
-    font-size: 1.8rem !important;
+    font-size: 18px !important; /* Tightened to 18px */
     font-weight: 700 !important;
     color: #000000 !important;
     line-height: 1.2 !important;
-    margin: 0.2rem 0 !important;
+    margin: 0 !important;
+    margin-bottom: 4px !important; /* max margin 8px */
   }
 
   .detail-product-price {
-    font-size: 1.4rem !important;
+    font-size: 20px !important; /* Tightened to 20px */
     font-weight: 700 !important;
     color: #000000 !important;
-    margin: 0.2rem 0 !important;
+    margin: 0 !important;
+    margin-bottom: 6px !important;
+  }
+
+  /* Hide divider lines on mobile bottom sheet to save vertical space */
+  .detail-divider {
+    display: none !important;
+    border: none !important;
+    height: 0 !important;
+    margin: 0 !important;
   }
 
   .detail-product-desc {
-    font-size: 0.88rem !important;
+    font-size: 12px !important; /* Tightened to 12px */
     color: #666666 !important;
-    line-height: 1.5 !important;
-    margin-bottom: 0.5rem !important;
+    line-height: 1.4 !important;
+    margin: 0 !important;
+    margin-bottom: 6px !important;
+    /* Limit to exactly 2 lines with ellipsis */
+    display: -webkit-box !important;
+    -webkit-line-clamp: 2 !important;
+    -webkit-box-orient: vertical !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+  }
+
+  .detail-stock-warning {
+    font-size: 11px !important;
+    margin-top: 0 !important;
+    margin-bottom: 6px !important;
+  }
+
+  .detail-option-group {
+    margin-bottom: 6px !important;
+  }
+
+  .detail-option-title {
+    font-size: 11px !important;
+    margin: 0 !important;
+    margin-bottom: 4px !important;
+    font-weight: 600 !important;
+  }
+
+  /* Tighten variant selection pills */
+  .detail-variant-pill {
+    padding: 4px 8px !important; /* Compact padding */
+    font-size: 10px !important; /* Compact 10px font */
+    margin-bottom: 4px !important;
   }
 
   /* Swiggy Instamart-style Sticky Bottom Footer containing both ADD button and sibling circles switcher */
@@ -1926,7 +1968,7 @@ header {
     display: flex !important;
     flex-direction: column !important;
     gap: 0 !important;
-    padding-bottom: env(safe-area-inset-bottom, 0.5rem) !important;
+    padding-bottom: env(safe-area-inset-bottom, 4px) !important;
   }
 
   /* Sticky actions container at the bottom of the details section */
@@ -1934,7 +1976,7 @@ header {
     position: relative !important;
     width: 100% !important;
     background: #FFFFFF !important;
-    padding: 0.8rem 1.5rem 0.5rem 1.5rem !important;
+    padding: 0.5rem 1rem 0.3rem 1rem !important; /* Tightened padding */
     box-sizing: border-box !important;
     z-index: 10025 !important;
     display: flex !important;
@@ -1948,12 +1990,13 @@ header {
   .detail-action-bottom-bar .blinkit-count-controller {
     width: 100% !important;
     max-width: 100% !important;
-    height: 48px !important;
+    height: 44px !important; /* Reduced to 44px */
     border-radius: 999px !important; /* rounded pill style */
     font-size: 0.9rem !important;
     font-weight: 700 !important;
     letter-spacing: 0.05em !important;
     text-transform: uppercase !important;
+    margin-bottom: 8px !important; /* margin-bottom 8px */
   }
   
   .detail-action-bottom-bar button:not(.blinkit-count-controller button) {
@@ -1961,7 +2004,7 @@ header {
     color: #FFFFFF !important;
     border: none !important;
     cursor: pointer !important;
-    box-shadow: 0 4px 15px rgba(217, 142, 155, 0.3) !important;
+    box-shadow: 0 4px 12px rgba(217, 142, 155, 0.2) !important;
   }
   
   .detail-action-bottom-bar .blinkit-count-controller {
@@ -1974,6 +2017,7 @@ header {
     font-size: 1.4rem !important;
     width: auto !important;
     height: 100% !important;
+    margin-bottom: 0 !important;
   }
 
   .detail-action-bottom-bar .blinkit-count-controller span {
@@ -1990,19 +2034,20 @@ header {
     flex-direction: row !important;
     align-items: center !important;
     justify-content: flex-start !important;
-    padding: 0.4rem 1.5rem 0.8rem 1.5rem !important;
+    padding: 0.2rem 1rem 0.5rem 1rem !important; /* Tightened padding */
     gap: 0.8rem !important;
     background-color: #FFFFFF !important;
     box-sizing: border-box !important;
     white-space: nowrap !important;
     -webkit-overflow-scrolling: touch !important;
+    margin-top: 6px !important; /* margin-top 6px */
   }
 
   .sibling-switcher-circle-btn {
-    width: 56px !important;
-    height: 56px !important;
-    min-width: 56px !important;
-    min-height: 56px !important;
+    width: 48px !important; /* Reduced to 48px diameter */
+    height: 48px !important;
+    min-width: 48px !important;
+    min-height: 48px !important;
     border-radius: 50% !important;
     padding: 0 !important;
     margin: 0 !important;
