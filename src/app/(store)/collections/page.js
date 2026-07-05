@@ -142,7 +142,9 @@ function CollectionsContent() {
 
   const handleCategorySidebarClick = (catId) => {
     setActiveCategorySidebar(catId);
-    const element = document.getElementById(catId);
+    let targetId = catId;
+    if (targetId === 'jewellery') targetId = 'rings';
+    const element = document.getElementById(targetId);
     if (element) {
       element.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
@@ -427,6 +429,13 @@ function CollectionsContent() {
             <path d="M6 9l6 4 6-4" />
           </svg>
         );
+      case 'jewellery':
+        return (
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={strokeColor} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+            <polygon points="12 2 22 8.5 12 22 2 8.5" />
+            <polygon points="12 2 17 8.5 12 15 7 8.5" />
+          </svg>
+        );
       case 'rings':
         return (
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={strokeColor} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
@@ -479,12 +488,11 @@ function CollectionsContent() {
       if (col.slug === 'suits') {
         list.push({ id: 'suits', name: col.name, emoji: '👔', targetId: 'suits' });
       } else if (col.slug === 'jewellery') {
+        list.push({ id: 'jewellery', name: col.name, emoji: '💎', targetId: 'jewellery' });
         list.push({ id: 'rings', name: 'Rings', emoji: '💍', targetId: 'rings' });
         list.push({ id: 'necklaces', name: 'Necklaces', emoji: '📿', targetId: 'necklaces' });
         list.push({ id: 'bracelets', name: 'Bracelets', emoji: '📿', targetId: 'bracelets' });
         list.push({ id: 'earrings', name: 'Earrings', emoji: '✨', targetId: 'earrings' });
-      } else {
-        list.push({ id: col.slug, name: col.name, emoji: '✨', targetId: col.slug });
       }
     });
     
