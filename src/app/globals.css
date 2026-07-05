@@ -1833,7 +1833,7 @@ header {
   /* Top Half: Image Gallery (full width, no padding) */
   .detail-preview-grid > div:first-child {
     width: 100vw !important;
-    height: 32vh !important; /* reduced image height to give extra details space */
+    height: 40vh !important; /* reduced image height to give extra details space */
     position: relative !important;
     overflow: hidden !important;
     margin: 0 !important;
@@ -1844,8 +1844,8 @@ header {
   
   .detail-main-img-wrapper {
     width: 100vw !important;
-    height: 32vh !important;
-    max-height: 32vh !important;
+    height: 40vh !important;
+    max-height: 40vh !important;
     border-radius: 24px 24px 0 0 !important;
     border: none !important;
     margin: 0 !important;
@@ -1855,8 +1855,8 @@ header {
   
   .detail-main-img {
     width: 100vw !important;
-    height: 32vh !important;
-    max-height: 32vh !important;
+    height: 40vh !important;
+    max-height: 40vh !important;
     object-fit: cover !important;
     border-radius: 24px 24px 0 0 !important;
   }
@@ -1869,11 +1869,11 @@ header {
   .detail-preview-grid > div:last-child {
     flex: 1 !important;
     width: 100vw !important;
-    height: 58vh !important; /* expanded details container space to fit description */
+    height: 50vh !important; /* expanded details container space */
     background-color: #FFFFFF !important;
     border-radius: 0 !important; /* Flat top corners to prevent image borders sticking out behind */
     margin-top: 0 !important; /* Sits flush below the image with no overlapping border glitch */
-    padding: 0.8rem 1.5rem 8.5rem 1.5rem !important; /* compact top padding; bottom padding clears sticky footer */
+    padding: 0.8rem 1.5rem 9.5rem 1.5rem !important; /* compact top padding; bottom padding clears sticky footer */
     overflow-y: hidden !important; /* prevent vertical scrolling on the card details */
     position: relative !important;
     z-index: 2 !important;
@@ -1896,7 +1896,7 @@ header {
 
   .detail-product-name {
     font-family: var(--font-serif) !important;
-    font-size: 1.25rem !important; /* compact title size */
+    font-size: 1.15rem !important; /* compact title size */
     font-weight: 700 !important;
     color: #000000 !important;
     line-height: 1.2 !important;
@@ -1904,20 +1904,20 @@ header {
   }
 
   .detail-product-price {
-    font-size: 1.05rem !important; /* compact price size */
+    font-size: 0.98rem !important; /* compact price size */
     font-weight: 700 !important;
     color: #000000 !important;
     margin: 0 !important;
   }
 
   .detail-product-desc {
+    display: block !important; /* Block layout prevents flexbox height collapse */
     font-size: 0.72rem !important; /* compact description size */
     color: #666666 !important;
-    line-height: 1.3 !important;
+    line-height: 1.30 !important;
     margin: 0 !important;
-    display: block !important; /* fallback to standard block to avoid flex rendering collapse bugs */
+    max-height: 2.6em !important; /* clamp to 2 lines max */
     overflow: hidden !important;
-    max-height: 28px !important;
     text-overflow: ellipsis !important;
   }
 
@@ -1926,7 +1926,7 @@ header {
   }
 
   .detail-stock-warning {
-    font-size: 0.72rem !important;
+    font-size: 0.70rem !important;
     color: #B8860B !important;
     font-weight: 600 !important;
     margin: 0 !important;
@@ -1938,7 +1938,7 @@ header {
   }
 
   .detail-option-title {
-    font-size: 0.72rem !important;
+    font-size: 0.68rem !important;
     margin: 0 0 0.2rem 0 !important;
   }
 
