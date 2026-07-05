@@ -724,8 +724,9 @@ button {
   /* Layout wrapper locking browser screen height */
   .blinkit-layout-wrapper {
     display: flex !important;
-    height: calc(100vh - 107px) !important; /* Locks height to fit viewport minus sticky announcement bar + header */
-    overflow: hidden !important;
+    flex-direction: column !important; /* stack category bar and grid vertically */
+    height: auto !important; /* let page scroll naturally */
+    overflow: visible !important;
     width: 100vw !important;
     max-width: 100vw !important;
     margin: 0 !important;
@@ -733,20 +734,24 @@ button {
     background-color: #FFFFFF !important;
   }
 
-  /* Left vertical category sidebar */
+  /* Horizontal top category bar */
   .blinkit-sidebar {
-    width: 60px !important;
-    height: 100% !important;
-    overflow-y: auto !important;
-    background-color: #FBF0EC !important; /* Soft Ivory brand color */
-    border-right: 1px solid rgba(139, 119, 137, 0.12) !important;
+    width: 100vw !important;
+    height: auto !important;
+    overflow-x: auto !important; /* horizontal scroll */
+    overflow-y: hidden !important;
+    background-color: #FFFFFF !important; /* Clean white */
+    border-right: none !important;
+    border-bottom: 1px solid rgba(139, 119, 137, 0.08) !important;
     display: flex !important;
-    flex-direction: column !important;
+    flex-direction: row !important; /* horizontal items list */
     align-items: center !important;
-    padding-top: 1rem !important;
-    padding-bottom: 5rem !important; /* Room for floating cart button/bar */
+    padding: 0.6rem 1rem !important;
+    gap: 1rem !important;
     box-sizing: border-box !important;
     flex-shrink: 0 !important;
+    white-space: nowrap !important;
+    -webkit-overflow-scrolling: touch !important;
   }
 
   .blinkit-sidebar::-webkit-scrollbar {
@@ -755,29 +760,30 @@ button {
 
   /* Category sidebar navigation item card */
   .blinkit-sidebar-item {
-    width: 100% !important;
-    display: flex !important;
+    display: inline-flex !important;
     flex-direction: column !important;
     align-items: center !important;
     justify-content: center !important;
-    padding: 0.6rem 0.1rem !important;
+    padding: 0.2rem 0 !important;
+    min-width: 60px !important;
     cursor: pointer !important;
     text-align: center !important;
-    border-left: 3px solid transparent !important;
+    border-left: none !important;
+    border-bottom: 2px solid transparent !important; /* underline active category */
     transition: all 0.2s ease !important;
     box-sizing: border-box !important;
-    font-size: 9px !important;
+    font-size: 10px !important;
     font-weight: 600 !important;
     color: rgba(0, 0, 0, 0.6) !important;
-    gap: 0.35rem !important;
+    gap: 0.25rem !important;
   }
 
   /* Category sidebar item avatar circle icon bubble */
   .blinkit-sidebar-icon {
-    width: 28px !important;
-    height: 28px !important;
+    width: 32px !important;
+    height: 32px !important;
     border-radius: 50% !important;
-    background-color: #FFFFFF !important;
+    background-color: #FBF0EC !important;
     border: 1px solid rgba(139, 119, 137, 0.12) !important;
     display: flex !important;
     align-items: center !important;
@@ -788,8 +794,8 @@ button {
   }
 
   .blinkit-sidebar-icon svg {
-    width: 12px !important;
-    height: 12px !important;
+    width: 14px !important;
+    height: 14px !important;
   }
 
   .blinkit-sidebar-icon img {
@@ -800,9 +806,10 @@ button {
 
   /* Category sidebar active selected state */
   .blinkit-sidebar-item.active {
-    background-color: #FFFFFF !important;
-    border-left-color: #D98E9B !important;
-    color: #000000 !important;
+    background-color: transparent !important;
+    border-bottom-color: #D98E9B !important;
+    border-left-color: transparent !important;
+    color: #D98E9B !important;
     font-weight: 700 !important;
   }
 
@@ -815,9 +822,9 @@ button {
   /* Right scrollable product feed container */
   .blinkit-feed {
     flex: 1 !important;
-    height: 100% !important;
-    overflow-y: auto !important;
-    padding: 0.8rem 0.6rem 6rem 1.2rem !important; /* Generous left padding to offset from category sidebar */
+    height: auto !important;
+    overflow-y: visible !important;
+    padding: 0.8rem 0.8rem 6rem 0.8rem !important; /* Balanced left and right padding */
     box-sizing: border-box !important;
     scroll-behavior: smooth !important;
   }
@@ -829,7 +836,7 @@ button {
     color: #000000 !important;
     border-bottom: 1px solid rgba(139, 119, 137, 0.15) !important;
     padding-bottom: 0.4rem !important;
-    padding-left: 0.25rem !important; /* Slightly offset text for alignment */
+    padding-left: 0.25rem !important;
     margin-top: 1rem !important;
     margin-bottom: 1rem !important;
     text-transform: uppercase !important;
@@ -851,7 +858,7 @@ button {
   }
 
   .collections-layout-grid > main {
-    padding: 0.8rem 0.6rem 6rem 1.2rem !important;
+    padding: 0.8rem 0.8rem 6rem 0.8rem !important; /* Balanced left and right padding */
   }
 }
 
