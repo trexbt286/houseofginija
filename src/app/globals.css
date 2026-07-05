@@ -1698,51 +1698,238 @@ header {
 }
 
 /* --- RESPONSIVE PRODUCT DETAIL GALLERY & CONTAINER SPACING --- */
+/* --- RESPONSIVE PRODUCT DETAIL GALLERY & CONTAINER SPACING --- */
 @media (max-width: 768px) {
-  /* Collections Page Detailed View Modal */
-  .detail-container-box {
-    padding: 1rem !important;
-    margin-top: 0.5rem !important;
+  /* Collections Page Detailed View Modal & Standalone Product Page View */
+  .detail-container-box, .product-page-container {
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100vw !important;
+    height: 100vh !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    z-index: 1000 !important;
+    background-color: #FFFFFF !important;
+    display: flex !important;
+    flex-direction: column !important;
+    overflow: hidden !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    border: none !important;
+  }
+
+  /* Overlay Header */
+  .detail-header-mobile-overlay {
+    position: absolute !important;
+    top: 16px !important;
+    left: 16px !important;
+    right: 16px !important;
+    z-index: 1010 !important;
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+    background-color: transparent !important;
+    width: auto !important;
   }
   
-  .detail-main-img-wrapper {
-    max-height: 250px !important;
+  .detail-back-btn-overlay {
+    display: inline-flex !important;
+    align-items: center !important;
+    background-color: rgba(255, 255, 255, 0.85) !important;
+    backdrop-filter: blur(4px) !important;
+    border: none !important;
+    color: #000000 !important;
+    font-size: 0.72rem !important;
+    font-weight: 700 !important;
+    padding: 0.5rem 0.9rem !important;
+    border-radius: 999px !important;
+    letter-spacing: 0.05em !important;
+    text-transform: uppercase !important;
+    text-decoration: none !important;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1) !important;
+    cursor: pointer !important;
+    font-family: inherit !important;
   }
   
-  .detail-main-img {
-    max-height: 250px !important;
+  .detail-wishlist-btn-overlay {
+    background-color: rgba(255, 255, 255, 0.85) !important;
+    backdrop-filter: blur(4px) !important;
+    border: none !important;
+    border-radius: 50% !important;
+    width: 36px !important;
+    height: 36px !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1) !important;
+    cursor: pointer !important;
+    padding: 0 !important;
+  }
+
+  .desktop-breadcrumbs-only {
+    display: none !important;
+  }
+
+  /* Split screen layouts */
+  .detail-preview-grid, .product-detail-preview-grid {
+    display: flex !important;
+    flex-direction: column !important;
+    width: 100vw !important;
+    height: 100vh !important;
+    margin: 0 !important;
+    gap: 0 !important;
+    overflow: hidden !important;
+    position: relative !important;
   }
   
-  .detail-thumb-row {
+  /* Top Half: Image Gallery */
+  .detail-preview-grid > div:first-child,
+  .product-detail-preview-grid > div:first-child {
+    width: 100vw !important;
+    height: 50vh !important;
+    position: relative !important;
+    overflow: hidden !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border-radius: 0 !important;
+  }
+  
+  /* Image wrapper */
+  .detail-main-img-wrapper,
+  .product-detail-main-img-wrapper {
+    width: 100vw !important;
+    height: 50vh !important;
+    max-height: 50vh !important;
+    border-radius: 0 !important;
+    border: none !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    background-color: #FBF0EC !important;
+  }
+  
+  .detail-main-img,
+  .product-detail-main-img {
+    width: 100vw !important;
+    height: 50vh !important;
+    max-height: 50vh !important;
+    object-fit: cover !important;
+    border-radius: 0 !important;
+  }
+  
+  .detail-thumb-row, .product-detail-thumb-row {
     display: none !important; /* Hide thumbnails on mobile detailed view to save vertical space */
   }
+  
+  /* Bottom Half: Details Container */
+  .detail-preview-grid > div:last-child,
+  .product-detail-preview-grid > div:last-child {
+    flex: 1 !important;
+    width: 100vw !important;
+    height: 50vh !important;
+    background-color: #FFFFFF !important; /* white/ivory background */
+    border-radius: 20px 20px 0 0 !important; /* rounded top corners */
+    margin-top: -20px !important; /* overlap slightly onto the image */
+    padding: 1.8rem 1.5rem 6.5rem 1.5rem !important; /* bottom padding for sticky button */
+    overflow-y: auto !important; /* scrollable independently */
+    position: relative !important;
+    z-index: 2 !important;
+    box-sizing: border-box !important;
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 0.8rem !important;
+  }
 
-  /* Standalone Product Page View */
-  .product-page-container {
-    padding-left: 1rem !important;
-    padding-right: 1rem !important;
-    margin-top: 0.5rem !important;
+  /* Details typography & elements */
+  .detail-collection-label {
+    color: #D98E9B !important;
+    font-size: 0.75rem !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.12em !important;
+    font-weight: 700 !important;
   }
 
-  .product-detail-main-img-wrapper {
-    max-height: 250px !important;
+  .detail-product-name {
+    font-family: var(--font-serif) !important;
+    font-size: 1.8rem !important;
+    font-weight: 700 !important;
+    color: #000000 !important;
+    line-height: 1.2 !important;
+    margin: 0.2rem 0 !important;
   }
-  
-  .product-detail-main-img {
-    max-height: 250px !important;
+
+  .detail-product-price {
+    font-size: 1.4rem !important;
+    font-weight: 700 !important;
+    color: #000000 !important;
+    margin: 0.2rem 0 !important;
   }
-  
-  .product-detail-thumb-row {
-    display: none !important; /* Hide thumbnails on mobile product page to save vertical space */
+
+  .detail-product-desc {
+    font-size: 0.88rem !important;
+    color: #666666 !important;
+    line-height: 1.5 !important;
+    margin-bottom: 0.5rem !important;
   }
-  
-  /* Pull up content spacing */
-  .detail-preview-grid {
+
+  /* Sticky actions container at the bottom of the details section */
+  .detail-action-bottom-bar {
+    position: fixed !important;
+    bottom: 0 !important;
+    left: 0 !important;
+    width: 100vw !important;
+    background: linear-gradient(to top, #FFFFFF 70%, rgba(255, 255, 255, 0) 100%) !important;
+    padding: 1rem 1.5rem 1.5rem 1.5rem !important;
+    box-sizing: border-box !important;
+    z-index: 1020 !important;
+    display: flex !important;
+    align-items: center !important;
     gap: 1rem !important;
-    margin-bottom: 1rem !important;
+    margin-top: 0 !important;
   }
   
-  .detail-preview-grid > div:last-child {
-    gap: 0.4rem !important; /* reduce vertical gap between description, options, and button */
+  /* Style both Add to Bag and Counter Controller */
+  .detail-action-bottom-bar button, 
+  .detail-action-bottom-bar .blinkit-count-controller {
+    width: 100% !important;
+    max-width: 100% !important;
+    height: 48px !important;
+    border-radius: 999px !important; /* rounded pill style */
+    font-size: 0.9rem !important;
+    font-weight: 700 !important;
+    letter-spacing: 0.05em !important;
+    text-transform: uppercase !important;
+  }
+  
+  .detail-action-bottom-bar button:not(.blinkit-count-controller button) {
+    background-color: #D98E9B !important; /* full-width pink */
+    color: #FFFFFF !important;
+    border: none !important;
+    cursor: pointer !important;
+    box-shadow: 0 4px 15px rgba(217, 142, 155, 0.3) !important;
+  }
+  
+  .detail-action-bottom-bar .blinkit-count-controller {
+    background-color: #FFFFFF !important;
+    border: 1px solid #D98E9B !important;
+  }
+
+  .detail-action-bottom-bar .blinkit-count-controller button {
+    color: #D98E9B !important;
+    font-size: 1.4rem !important;
+    width: auto !important;
+    height: 100% !important;
+  }
+
+  .detail-action-bottom-bar .blinkit-count-controller span {
+    font-size: 0.95rem !important;
+    color: #000000 !important;
+    font-weight: 700 !important;
+  }
+
+  /* Hide Sibling Products from mobile view to optimize height constraints */
+  .detail-preview-grid + div,
+  .product-detail-preview-grid + div {
+    display: none !important;
   }
 }

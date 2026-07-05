@@ -114,14 +114,42 @@ export default function ProductPage({ params }) {
 
   return (
     <div style={pageStyle} className="container animate-fade-in product-page-container">
-      <div style={breadcrumbsStyle}>
+      {/* Breadcrumbs for desktop, mobile header overlay is handled via CSS */}
+      <div style={{}} className="detail-header-mobile-overlay">
+        <Link href="/collections" className="detail-back-btn-overlay">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.0" strokeLinecap="round" strokeLinejoin="round" style={{ marginRight: '8px' }}>
+            <line x1="19" y1="12" x2="5" y2="12"></line>
+            <polyline points="12 19 5 12 12 5"></polyline>
+          </svg>
+          Back to Collections
+        </Link>
+        
+        <button 
+          onClick={() => toggleWishlist && toggleWishlist(product.id)} 
+          className="detail-wishlist-btn-overlay"
+          title={isStarred ? "Remove from wishlist" : "Add to wishlist"}
+        >
+          <svg 
+            width="22" 
+            height="22" 
+            viewBox="0 0 24 24" 
+            fill={isStarred ? "#D98E9B" : "none"} 
+            stroke={isStarred ? "#D98E9B" : "currentColor"} 
+            strokeWidth="1.5"
+          >
+            <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+          </svg>
+        </button>
+      </div>
+
+      <div style={breadcrumbsStyle} className="desktop-breadcrumbs-only">
         <Link href="/">Home</Link> &gt;{' '}
         <Link href="/collections">Creations</Link> &gt;{' '}
         <Link href={`/collections?collection=${product.collection_slug}`}>{product.collection_name}</Link> &gt;{' '}
         <span>{product.name}</span>
       </div>
 
-      <div style={productGridStyle}>
+      <div style={productGridStyle} className="product-detail-preview-grid">
         {/* Left Column: Image Gallery */}
         <div style={galleryColumnStyle}>
           <div style={mainImageContainerStyle} className="product-detail-main-img-wrapper">
@@ -144,13 +172,13 @@ export default function ProductPage({ params }) {
 
         {/* Right Column: Details & Configuration */}
         <div style={detailsColumnStyle}>
-          <span style={collectionNameStyle}>{product.collection_name}</span>
-          <h1 style={productNameStyle}>{product.name}</h1>
-          <p style={priceStyle}>₹{parseFloat(product.price).toLocaleString('en-IN')}</p>
+          <span style={collectionNameStyle} className="detail-collection-label">{product.collection_name}</span>
+          <h1 style={productNameStyle} className="detail-product-name">{product.name}</h1>
+          <p style={priceStyle} className="detail-product-price">₹{parseFloat(product.price).toLocaleString('en-IN')}</p>
 
           <div style={dividerLineStyle}></div>
 
-          <p style={descriptionStyle}>{product.description}</p>
+          <p style={descriptionStyle} className="detail-product-desc">{product.description}</p>
 
           <div style={{ marginTop: '0.5rem', marginBottom: '1rem', fontSize: '0.85rem', color: '#B8860B', fontWeight: '600' }}>
             {stockCount <= 3 ? (
@@ -282,7 +310,7 @@ export default function ProductPage({ params }) {
                 </Link>
               </div>
             ) : (
-              <div style={actionsContainerStyle}>
+              <div style={actionsContainerStyle} className="detail-action-bottom-bar">
                 {cartQty > 0 ? (
                   <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', flex: 1 }}>
                     <div className="blinkit-count-controller" style={{ ...buyBtnStyle, backgroundColor: '#FFFFFF', border: '1px solid #D98E9B', display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 1.5rem', cursor: 'default', height: '48px', boxSizing: 'border-box', flex: 1 }}>

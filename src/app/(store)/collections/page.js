@@ -644,8 +644,8 @@ function CollectionsContent() {
       {activeProduct ? (
         <div className="container animate-fade-in detail-container-box" style={detailContainerStyle}>
           {/* Back button and wishlist toggle on top */}
-          <div style={detailHeaderStyle}>
-            <button onClick={() => setActiveProduct(null)} style={detailBackButtonStyle}>
+          <div style={detailHeaderStyle} className="detail-header-mobile-overlay">
+            <button onClick={() => setActiveProduct(null)} style={detailBackButtonStyle} className="detail-back-btn-overlay">
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.0" strokeLinecap="round" strokeLinejoin="round" style={{ marginRight: '8px' }}>
                 <line x1="19" y1="12" x2="5" y2="12"></line>
                 <polyline points="12 19 5 12 12 5"></polyline>
@@ -656,6 +656,7 @@ function CollectionsContent() {
             <button 
               onClick={() => toggleWishlist && toggleWishlist(activeProduct.id)} 
               style={wishlistBtnStyle}
+              className="detail-wishlist-btn-overlay"
               title={wishlist && wishlist.includes(activeProduct.id) ? "Remove from wishlist" : "Add to wishlist"}
             >
               <svg 
@@ -694,15 +695,15 @@ function CollectionsContent() {
 
             {/* Right: Details */}
             <div style={detailInfoStyle}>
-              <span style={detailCollectionLabelStyle}>{activeProduct.collection_name}</span>
-              <h1 style={detailTitleStyle}>{activeProduct.name}</h1>
+              <span style={detailCollectionLabelStyle} className="detail-collection-label">{activeProduct.collection_name}</span>
+              <h1 style={detailTitleStyle} className="detail-product-name">{activeProduct.name}</h1>
               
 
-              <p style={detailPriceStyle}>₹{parseFloat(activeProduct.price).toLocaleString('en-IN')}</p>
+              <p style={detailPriceStyle} className="detail-product-price">₹{parseFloat(activeProduct.price).toLocaleString('en-IN')}</p>
               
               <div style={detailDividerStyle}></div>
 
-              <p style={detailDescStyle}>{activeProduct.description || 'Exclusive luxury item, crafted from premium archival coutures.'}</p>
+              <p style={detailDescStyle} className="detail-product-desc">{activeProduct.description || 'Exclusive luxury item, crafted from premium archival coutures.'}</p>
 
               <div style={{ marginTop: '0.5rem', marginBottom: '1rem', fontSize: '0.85rem', color: '#B8860B', fontWeight: '600' }}>
                 {maxStock <= 3 ? (
@@ -749,7 +750,7 @@ function CollectionsContent() {
               )}
               
               {/* Add to Bag block */}
-              <div style={detailActionWrapperStyle} className="desktop-action-only">
+              <div style={detailActionWrapperStyle} className="desktop-action-only detail-action-bottom-bar">
                 {user && user.role === 'admin' ? (
                   <Link
                     href={`/admin/products?edit=${activeProduct.slug}`}
