@@ -1833,7 +1833,7 @@ header {
   /* Top Half: Image Gallery (full width, no padding) */
   .detail-preview-grid > div:first-child {
     width: 100vw !important;
-    height: 40vh !important; /* reduced image height to give extra details space */
+    height: 32vh !important; /* reduced image height to give extra details space */
     position: relative !important;
     overflow: hidden !important;
     margin: 0 !important;
@@ -1844,8 +1844,8 @@ header {
   
   .detail-main-img-wrapper {
     width: 100vw !important;
-    height: 40vh !important;
-    max-height: 40vh !important;
+    height: 32vh !important;
+    max-height: 32vh !important;
     border-radius: 24px 24px 0 0 !important;
     border: none !important;
     margin: 0 !important;
@@ -1855,8 +1855,8 @@ header {
   
   .detail-main-img {
     width: 100vw !important;
-    height: 40vh !important;
-    max-height: 40vh !important;
+    height: 32vh !important;
+    max-height: 32vh !important;
     object-fit: cover !important;
     border-radius: 24px 24px 0 0 !important;
   }
@@ -1869,18 +1869,18 @@ header {
   .detail-preview-grid > div:last-child {
     flex: 1 !important;
     width: 100vw !important;
-    height: 50vh !important; /* expanded details container space */
+    height: 58vh !important; /* expanded details container space to fit description */
     background-color: #FFFFFF !important;
     border-radius: 0 !important; /* Flat top corners to prevent image borders sticking out behind */
     margin-top: 0 !important; /* Sits flush below the image with no overlapping border glitch */
-    padding: 1.0rem 1.5rem 9.5rem 1.5rem !important; /* compact top padding; bottom padding clears sticky footer */
+    padding: 0.8rem 1.5rem 8.5rem 1.5rem !important; /* compact top padding; bottom padding clears sticky footer */
     overflow-y: hidden !important; /* prevent vertical scrolling on the card details */
     position: relative !important;
     z-index: 2 !important;
     box-sizing: border-box !important;
     display: flex !important;
     flex-direction: column !important;
-    gap: 0.35rem !important; /* tight element gaps */
+    gap: 0.25rem !important; /* tight element gaps */
     flex-shrink: 1 !important; /* Allow details card to shrink to fit viewport height */
   }
 
@@ -1911,14 +1911,13 @@ header {
   }
 
   .detail-product-desc {
-    font-size: 0.76rem !important; /* compact description size */
+    font-size: 0.72rem !important; /* compact description size */
     color: #666666 !important;
-    line-height: 1.35 !important;
+    line-height: 1.3 !important;
     margin: 0 !important;
-    display: -webkit-box !important;
-    -webkit-line-clamp: 2 !important; /* clamp to 2 lines max */
-    -webkit-box-orient: vertical !important;
+    display: block !important; /* fallback to standard block to avoid flex rendering collapse bugs */
     overflow: hidden !important;
+    max-height: 28px !important;
     text-overflow: ellipsis !important;
   }
 
