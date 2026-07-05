@@ -513,7 +513,15 @@ function CollectionsContent() {
     const totalQtyInCart = cart ? cart.filter(item => item.id === p.id).reduce((sum, item) => sum + item.quantity, 0) : 0;
 
     return (
-      <div key={p.id} style={cardContainerStyle} className="collections-product-card">
+      <div 
+        key={p.id} 
+        style={{
+          ...cardContainerStyle,
+          opacity: outOfStock ? 0.8 : 1,
+          transition: 'opacity 0.3s ease'
+        }} 
+        className="collections-product-card"
+      >
         <a href={`/products/${p.slug}`} onClick={(e) => handleProductClick(e, p)} style={{ display: 'block' }}>
           <div style={cardImageWrapperStyle} className="collections-product-image-wrapper">
             <Image 
@@ -521,7 +529,11 @@ function CollectionsContent() {
               alt={p.name} 
               fill
               sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 25vw"
-              style={{ objectFit: 'cover' }}
+              style={{ 
+                objectFit: 'cover',
+                filter: outOfStock ? 'grayscale(100%) opacity(50%)' : 'none',
+                transition: 'filter 0.3s ease'
+              }}
               loading="lazy" 
             />
             {outOfStock && (
@@ -529,19 +541,18 @@ function CollectionsContent() {
                 position: 'absolute',
                 top: '12px',
                 left: '12px',
-                backgroundColor: '#FFFFFF',
-                color: '#D9534F',
-                border: '1px solid #D9534F',
+                backgroundColor: 'rgba(51, 51, 51, 0.85)',
+                color: '#FFFFFF',
                 padding: '4px 10px',
-                borderRadius: '4px',
-                fontSize: '0.7rem',
-                fontWeight: '700',
+                borderRadius: '2px',
+                fontSize: '0.65rem',
+                fontWeight: '600',
                 textTransform: 'uppercase',
-                letterSpacing: '0.05em',
-                boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
+                letterSpacing: '0.1em',
+                boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
                 zIndex: 10
               }}>
-                Sold Out
+                Out of Stock
               </div>
             )}
           </div>
