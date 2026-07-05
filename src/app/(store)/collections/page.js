@@ -735,7 +735,7 @@ function CollectionsContent() {
 
               <p style={detailDescStyle} className="detail-product-desc">{activeProduct.description || 'Exclusive luxury item, crafted from premium archival coutures.'}</p>
 
-              <div style={{ marginTop: '0.5rem', marginBottom: '1rem', fontSize: '0.85rem', color: '#B8860B', fontWeight: '600' }} className="detail-stock-warning">
+              <div className="detail-stock-warning" style={{ marginTop: '0.5rem', marginBottom: '1rem', fontSize: '0.85rem', color: '#B8860B', fontWeight: '600' }}>
                 {maxStock <= 3 ? (
                   <span style={{ color: '#D9534F' }}>⚠️ Only {maxStock} left in our vaults!</span>
                 ) : (
@@ -747,13 +747,12 @@ function CollectionsContent() {
               {activeProduct.variants && activeProduct.variants.some(v => v.size) && (
                 <div style={detailOptionGroupStyle} className="detail-option-group">
                   <h4 style={detailOptionTitleStyle} className="detail-option-title">Select Size</h4>
-                  <div style={detailSizesRowStyle}>
+                  <div style={detailSizesRowStyle} className="detail-sizes-row">
                     {[...new Set(activeProduct.variants.map(v => v.size))].filter(Boolean).map(size => (
                       <button 
                         key={size}
                         onClick={() => setActiveProductSize(size)}
                         style={activeProductSize === size ? activeSizeOptStyle : sizeOptStyle}
-                        className={`detail-variant-pill ${activeProductSize === size ? 'active' : ''}`}
                       >
                         {size}
                       </button>
@@ -766,13 +765,12 @@ function CollectionsContent() {
               {activeProduct.variants && activeProduct.variants.some(v => v.color) && (
                 <div style={detailOptionGroupStyle} className="detail-option-group">
                   <h4 style={detailOptionTitleStyle} className="detail-option-title">Select Color</h4>
-                  <div style={detailColorsRowStyle}>
+                  <div style={detailColorsRowStyle} className="detail-colors-row">
                     {[...new Set(activeProduct.variants.map(v => v.color))].filter(Boolean).map(color => (
                       <button 
                         key={color}
                         onClick={() => setActiveProductColor(color)}
                         style={activeProductColor === color ? activeColorOptStyle : colorOptStyle}
-                        className={`detail-variant-pill ${activeProductColor === color ? 'active' : ''}`}
                       >
                         {color}
                       </button>

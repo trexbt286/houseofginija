@@ -1833,7 +1833,7 @@ header {
   /* Top Half: Image Gallery (full width, no padding) */
   .detail-preview-grid > div:first-child {
     width: 100vw !important;
-    height: 38vh !important; /* Reduced from 45vh to give more space for text */
+    height: 40vh !important; /* reduced image height to give extra details space */
     position: relative !important;
     overflow: hidden !important;
     margin: 0 !important;
@@ -1843,8 +1843,8 @@ header {
   
   .detail-main-img-wrapper {
     width: 100vw !important;
-    height: 38vh !important;
-    max-height: 38vh !important;
+    height: 40vh !important;
+    max-height: 40vh !important;
     border-radius: 24px 24px 0 0 !important;
     border: none !important;
     margin: 0 !important;
@@ -1854,8 +1854,8 @@ header {
   
   .detail-main-img {
     width: 100vw !important;
-    height: 38vh !important;
-    max-height: 38vh !important;
+    height: 40vh !important;
+    max-height: 40vh !important;
     object-fit: cover !important;
     border-radius: 24px 24px 0 0 !important;
   }
@@ -1864,96 +1864,95 @@ header {
     display: none !important; /* Hide thumbnails on mobile sheet */
   }
   
-  /* Bottom Half: Details scrollable Container */
+  /* Bottom Half: Details Container */
   .detail-preview-grid > div:last-child {
     flex: 1 !important;
     width: 100vw !important;
-    height: 52vh !important;
+    height: 50vh !important; /* expanded details container space */
     background-color: #FFFFFF !important;
     border-radius: 24px 24px 0 0 !important; /* rounded top corners overlapping slightly */
     margin-top: -24px !important;
-    padding: 12px 16px 7.5rem 16px !important; /* Tightened padding */
-    overflow-y: auto !important; /* scrollable if text overflows, but should fit */
+    padding: 1.0rem 1.5rem 9.5rem 1.5rem !important; /* compact top padding; bottom padding clears sticky footer */
+    overflow-y: hidden !important; /* prevent vertical scrolling on the card details */
     position: relative !important;
     z-index: 2 !important;
     box-sizing: border-box !important;
     display: flex !important;
     flex-direction: column !important;
-    gap: 6px !important; /* Tightened elements gap to max 8px */
+    gap: 0.35rem !important; /* tight element gaps */
   }
 
   /* Details typography & elements */
   .detail-collection-label {
     color: #D98E9B !important;
-    font-size: 11px !important; /* Tightened to 11px */
+    font-size: 0.65rem !important; /* compact label size */
     text-transform: uppercase !important;
     letter-spacing: 0.12em !important;
     font-weight: 700 !important;
-    margin-bottom: 2px !important;
+    margin: 0 !important;
   }
 
   .detail-product-name {
     font-family: var(--font-serif) !important;
-    font-size: 18px !important; /* Tightened to 18px */
+    font-size: 1.25rem !important; /* compact title size */
     font-weight: 700 !important;
     color: #000000 !important;
     line-height: 1.2 !important;
     margin: 0 !important;
-    margin-bottom: 4px !important; /* max margin 8px */
   }
 
   .detail-product-price {
-    font-size: 20px !important; /* Tightened to 20px */
+    font-size: 1.05rem !important; /* compact price size */
     font-weight: 700 !important;
     color: #000000 !important;
-    margin: 0 !important;
-    margin-bottom: 6px !important;
-  }
-
-  /* Hide divider lines on mobile bottom sheet to save vertical space */
-  .detail-divider {
-    display: none !important;
-    border: none !important;
-    height: 0 !important;
     margin: 0 !important;
   }
 
   .detail-product-desc {
-    font-size: 12px !important; /* Tightened to 12px */
+    font-size: 0.76rem !important; /* compact description size */
     color: #666666 !important;
-    line-height: 1.4 !important;
+    line-height: 1.35 !important;
     margin: 0 !important;
-    margin-bottom: 6px !important;
-    /* Limit to exactly 2 lines with ellipsis */
     display: -webkit-box !important;
-    -webkit-line-clamp: 2 !important;
+    -webkit-line-clamp: 2 !important; /* clamp to 2 lines max */
     -webkit-box-orient: vertical !important;
     overflow: hidden !important;
     text-overflow: ellipsis !important;
   }
 
-  .detail-stock-warning {
-    font-size: 11px !important;
-    margin-top: 0 !important;
-    margin-bottom: 6px !important;
+  .detail-divider {
+    display: none !important; /* hide dividers to reclaim vertical space */
   }
 
+  .detail-stock-warning {
+    font-size: 0.72rem !important;
+    color: #B8860B !important;
+    font-weight: 600 !important;
+    margin: 0 !important;
+  }
+
+  /* Size / Color option groups styling */
   .detail-option-group {
-    margin-bottom: 6px !important;
+    margin: 0 !important;
   }
 
   .detail-option-title {
-    font-size: 11px !important;
-    margin: 0 !important;
-    margin-bottom: 4px !important;
-    font-weight: 600 !important;
+    font-size: 0.72rem !important;
+    margin: 0 0 0.2rem 0 !important;
   }
 
-  /* Tighten variant selection pills */
-  .detail-variant-pill {
-    padding: 4px 8px !important; /* Compact padding */
-    font-size: 10px !important; /* Compact 10px font */
-    margin-bottom: 4px !important;
+  .detail-sizes-row,
+  .detail-colors-row {
+    gap: 0.35rem !important;
+  }
+
+  .detail-sizes-row button,
+  .detail-colors-row button {
+    padding: 0.25rem 0.7rem !important;
+    font-size: 0.72rem !important;
+    min-width: auto !important;
+    height: auto !important;
+    border-radius: 999px !important;
   }
 
   /* Swiggy Instamart-style Sticky Bottom Footer containing both ADD button and sibling circles switcher */
@@ -1968,7 +1967,7 @@ header {
     display: flex !important;
     flex-direction: column !important;
     gap: 0 !important;
-    padding-bottom: env(safe-area-inset-bottom, 4px) !important;
+    padding-bottom: env(safe-area-inset-bottom, 0.3rem) !important;
   }
 
   /* Sticky actions container at the bottom of the details section */
@@ -1976,7 +1975,7 @@ header {
     position: relative !important;
     width: 100% !important;
     background: #FFFFFF !important;
-    padding: 0.5rem 1rem 0.3rem 1rem !important; /* Tightened padding */
+    padding: 0.5rem 1.5rem 0.3rem 1.5rem !important; /* compact padding */
     box-sizing: border-box !important;
     z-index: 10025 !important;
     display: flex !important;
@@ -1990,13 +1989,12 @@ header {
   .detail-action-bottom-bar .blinkit-count-controller {
     width: 100% !important;
     max-width: 100% !important;
-    height: 44px !important; /* Reduced to 44px */
+    height: 38px !important; /* compact height */
     border-radius: 999px !important; /* rounded pill style */
-    font-size: 0.9rem !important;
+    font-size: 0.85rem !important;
     font-weight: 700 !important;
     letter-spacing: 0.05em !important;
     text-transform: uppercase !important;
-    margin-bottom: 8px !important; /* margin-bottom 8px */
   }
   
   .detail-action-bottom-bar button:not(.blinkit-count-controller button) {
@@ -2004,7 +2002,7 @@ header {
     color: #FFFFFF !important;
     border: none !important;
     cursor: pointer !important;
-    box-shadow: 0 4px 12px rgba(217, 142, 155, 0.2) !important;
+    box-shadow: 0 3px 10px rgba(217, 142, 155, 0.25) !important;
   }
   
   .detail-action-bottom-bar .blinkit-count-controller {
@@ -2014,14 +2012,13 @@ header {
 
   .detail-action-bottom-bar .blinkit-count-controller button {
     color: #D98E9B !important;
-    font-size: 1.4rem !important;
+    font-size: 1.2rem !important;
     width: auto !important;
     height: 100% !important;
-    margin-bottom: 0 !important;
   }
 
   .detail-action-bottom-bar .blinkit-count-controller span {
-    font-size: 0.95rem !important;
+    font-size: 0.85rem !important;
     color: #000000 !important;
     font-weight: 700 !important;
   }
@@ -2034,20 +2031,19 @@ header {
     flex-direction: row !important;
     align-items: center !important;
     justify-content: flex-start !important;
-    padding: 0.2rem 1rem 0.5rem 1rem !important; /* Tightened padding */
+    padding: 0.2rem 1.5rem 0.5rem 1.5rem !important; /* compact padding */
     gap: 0.8rem !important;
     background-color: #FFFFFF !important;
     box-sizing: border-box !important;
     white-space: nowrap !important;
     -webkit-overflow-scrolling: touch !important;
-    margin-top: 6px !important; /* margin-top 6px */
   }
 
   .sibling-switcher-circle-btn {
-    width: 48px !important; /* Reduced to 48px diameter */
-    height: 48px !important;
-    min-width: 48px !important;
-    min-height: 48px !important;
+    width: 56px !important;
+    height: 56px !important;
+    min-width: 56px !important;
+    min-height: 56px !important;
     border-radius: 50% !important;
     padding: 0 !important;
     margin: 0 !important;
