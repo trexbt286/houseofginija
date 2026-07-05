@@ -118,9 +118,12 @@ export async function POST(request) {
             const newStock = Math.max(0, currentStock - item.quantity);
             variants[variantIndex].stock = newStock;
 
+            const totalStockLeft = variants.reduce((sum, v) => sum + (v.stock || 0), 0);
+            const isOutOfStock = totalStockLeft <= 0;
+
             await client.query(
-              'UPDATE products SET variants = $1 WHERE id = $2',
-              [JSON.stringify(variants), item.id]
+              'UPDATE products SET variants = $1, is_out_of_stock = $2 WHERE id = $3',
+              [JSON.stringify(variants), isOutOfStock, item.id]
             );
           }
         }

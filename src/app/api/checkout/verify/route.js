@@ -118,10 +118,13 @@ export async function POST(request) {
       // Decrement stock in array
       variants[variantIndex].stock = currentStock - item.quantity;
 
-      // Update variants array in Postgres
+      const totalStockLeft = variants.reduce((sum, v) => sum + (v.stock || 0), 0);
+      const isOutOfStock = totalStockLeft <= 0;
+
+      // Update variants array and is_out_of_stock status in Postgres
       await client.query(
-        'UPDATE products SET variants = $1 WHERE id = $2',
-        [JSON.stringify(variants), item.id]
+        'UPDATE products SET variants = $1, is_out_of_stock = $2 WHERE id = $3',
+        [JSON.stringify(variants), isOutOfStock, item.id]
       );
     }
 
