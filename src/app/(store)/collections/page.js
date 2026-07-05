@@ -757,28 +757,57 @@ function CollectionsContent() {
                   >
                     Admin Preview: Edit Product
                   </Link>
+                ) : currentQtyInCart > 0 ? (
+                  /* Counter controller when product is already in cart */
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '0.6rem', width: '100%', marginTop: '0.5rem' }}>
+                    <div className="blinkit-count-controller" style={{ ...detailAddBtnStyle, backgroundColor: '#FFFFFF', border: '1px solid #D98E9B', display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 1rem', cursor: 'default' }}>
+                      <button 
+                        style={{ border: 'none', backgroundColor: 'transparent', fontSize: '1.4rem', color: '#D98E9B', cursor: 'pointer', fontWeight: 'bold', padding: '0 0.8rem' }}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          updateCartQuantity(activeProduct.id, activeProductSize, activeProductColor, currentQtyInCart - 1);
+                        }}
+                      >
+                        -
+                      </button>
+                      <span style={{ fontWeight: '700', color: '#000000', fontSize: '1rem' }}>{currentQtyInCart} in bag</span>
+                      <button 
+                        style={{ border: 'none', backgroundColor: 'transparent', fontSize: '1.4rem', color: '#D98E9B', cursor: 'pointer', fontWeight: 'bold', padding: '0 0.8rem', opacity: currentQtyInCart >= maxStock ? 0.35 : 1 }}
+                        disabled={currentQtyInCart >= maxStock}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          updateCartQuantity(activeProduct.id, activeProductSize, activeProductColor, currentQtyInCart + 1);
+                        }}
+                      >
+                        +
+                      </button>
+                    </div>
+                    {activeProduct && (
+                      <div style={{ fontSize: '0.75rem', color: 'rgba(0,0,0,0.5)', marginTop: '0.1rem', textAlign: 'center' }}>
+                        {currentQtyInCart >= maxStock ? (
+                          <span style={{ color: '#D98E9B', fontWeight: '600' }}>Stock limit reached ({maxStock} available)</span>
+                        ) : (
+                          <span>Available stock: {maxStock}</span>
+                        )}
+                      </div>
+                    )}
+                  </div>
                 ) : (
+                  /* Standard Selector & Add to Cart button when not in cart */
                   <>
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem' }}>
                       <div style={detailQtyControlStyle}>
                         <button 
                           style={detailQtyBtnStyle}
                           onClick={() => {
-                            console.log('--- DETAILED VIEW QUANTITY - CLICK ---');
-                            console.log('activeProduct:', activeProduct.name);
-                            console.log('size/color:', activeProductSize, '/', activeProductColor);
-                            console.log('currentQtyInCart:', currentQtyInCart);
-                            console.log('activeProductQty:', activeProductQty);
-                            if (currentQtyInCart > 0) {
-                              updateCartQuantity(activeProduct.id, activeProductSize, activeProductColor, currentQtyInCart - 1);
-                            } else if (activeProductQty > 1) {
+                            if (activeProductQty > 1) {
                               setActiveProductQty(activeProductQty - 1);
                             }
                           }}
                         >
                           -
                         </button>
-                        <span style={detailQtyValStyle}>{currentQtyInCart > 0 ? currentQtyInCart : activeProductQty}</span>
+                        <span style={detailQtyValStyle}>{activeProductQty}</span>
                         <button 
                           style={{
                             ...detailQtyBtnStyle,
@@ -787,18 +816,7 @@ function CollectionsContent() {
                           }}
                           disabled={isPlusDisabled}
                           onClick={() => {
-                            console.log('--- DETAILED VIEW QUANTITY + CLICK ---');
-                            console.log('activeProduct:', activeProduct.name);
-                            console.log('size/color:', activeProductSize, '/', activeProductColor);
-                            console.log('matchingVar:', activeMatchingVar);
-                            console.log('maxStock:', maxStock);
-                            console.log('currentQtyInCart:', currentQtyInCart);
-                            console.log('activeProductQty:', activeProductQty);
-                            if (currentQtyInCart > 0) {
-                              if (currentQtyInCart < maxStock) {
-                                updateCartQuantity(activeProduct.id, activeProductSize, activeProductColor, currentQtyInCart + 1);
-                              }
-                            } else if (activeProductQty < maxStock) {
+                            if (activeProductQty < maxStock) {
                               setActiveProductQty(activeProductQty + 1);
                             }
                           }}

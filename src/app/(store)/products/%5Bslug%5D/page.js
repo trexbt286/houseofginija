@@ -218,7 +218,7 @@ export default function ProductPage({ params }) {
             )}
 
             {/* Quantity */}
-            {!(user && user.role === 'admin') && (
+            {!(user && user.role === 'admin') && cartQty === 0 && (
               <div style={selectionGroupStyle}>
                 <span style={selectionLabelStyle}>Quantity:</span>
                 <div style={quantityWrapperStyle}>
@@ -283,13 +283,40 @@ export default function ProductPage({ params }) {
               </div>
             ) : (
               <div style={actionsContainerStyle}>
-                <button
-                  onClick={handleButtonClick}
-                  style={isOutOfStock ? disabledBuyBtnStyle : (cartSuccess || cartQty > 0) ? addedBuyBtnStyle : buyBtnStyle}
-                  disabled={isOutOfStock}
-                >
-                  {isOutOfStock ? 'Sold Out' : cartSuccess ? '✓ Added to Bag' : cartQty > 0 ? '✓ In Bag — View Bag' : 'Add to Bag'}
-                </button>
+                {cartQty > 0 ? (
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', flex: 1 }}>
+                    <div className="blinkit-count-controller" style={{ ...buyBtnStyle, backgroundColor: '#FFFFFF', border: '1px solid #D98E9B', display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 1.5rem', cursor: 'default', height: '48px', boxSizing: 'border-box', flex: 1 }}>
+                      <button 
+                        style={{ border: 'none', backgroundColor: 'transparent', fontSize: '1.4rem', color: '#D98E9B', cursor: 'pointer', fontWeight: 'bold', padding: '0 0.8rem' }}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          updateCartQuantity(product.id, selectedSize, selectedColor, cartQty - 1);
+                        }}
+                      >
+                        -
+                      </button>
+                      <span style={{ fontWeight: '700', color: '#000000', fontSize: '1rem' }}>{cartQty} in bag</span>
+                      <button 
+                        style={{ border: 'none', backgroundColor: 'transparent', fontSize: '1.4rem', color: '#D98E9B', cursor: 'pointer', fontWeight: 'bold', padding: '0 0.8rem', opacity: cartQty >= stockCount ? 0.35 : 1 }}
+                        disabled={cartQty >= stockCount}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          updateCartQuantity(product.id, selectedSize, selectedColor, cartQty + 1);
+                        }}
+                      >
+                        +
+                      </button>
+                    </div>
+                  </div>
+                ) : (
+                  <button
+                    onClick={handleButtonClick}
+                    style={isOutOfStock ? disabledBuyBtnStyle : cartSuccess ? addedBuyBtnStyle : buyBtnStyle}
+                    disabled={isOutOfStock}
+                  >
+                    {isOutOfStock ? 'Sold Out' : cartSuccess ? '✓ Added to Bag' : 'Add to Bag'}
+                  </button>
+                )}
 
                 <button
                   onClick={() => toggleWishlist(product.id)}
