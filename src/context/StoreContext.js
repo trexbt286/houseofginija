@@ -150,7 +150,6 @@ export function StoreProvider({ children }) {
     const alreadyInCart = existingItem ? existingItem.quantity : 0;
 
     if (alreadyInCart + quantity > stock) {
-      alert(`Only ${stock} left!`);
       return;
     }
 
@@ -236,10 +235,6 @@ export function StoreProvider({ children }) {
           : item
       );
     });
-
-    if (stockExceeded) {
-      alert(`Only ${availableStock} left!`);
-    }
   };
 
   const clearCart = () => {
