@@ -2087,7 +2087,7 @@ header {
     box-sizing: border-box !important;
     white-space: nowrap !important;
     -webkit-overflow-scrolling: touch !important;
-    margin-top: 20px !important; /* comfortable gap below card */
+    margin-top: 36px !important; /* comfortable gap below card */
     pointer-events: auto !important; /* allow clicks on switcher circles */
     flex-shrink: 0 !important;
   }
