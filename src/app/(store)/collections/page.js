@@ -744,22 +744,39 @@ function CollectionsContent() {
               </div>
 
               {/* Sizes selector */}
-              {activeProduct.variants && activeProduct.variants.some(v => v.size) && (
-                <div style={detailOptionGroupStyle} className="detail-option-group">
-                  <h4 style={detailOptionTitleStyle} className="detail-option-title">Select Size</h4>
-                  <div style={detailSizesRowStyle} className="detail-sizes-row">
-                    {[...new Set(activeProduct.variants.map(v => v.size))].filter(Boolean).map(size => (
-                      <button 
-                        key={size}
-                        onClick={() => setActiveProductSize(size)}
-                        style={activeProductSize === size ? activeSizeOptStyle : sizeOptStyle}
-                      >
-                        {size}
-                      </button>
-                    ))}
+              {activeProduct.variants && activeProduct.variants.some(v => v.size) && (() => {
+                const hasClothingSizes = activeProduct.variants.some(v => ['S', 'M', 'L', 'XL', 'XXL'].includes(v.size?.toUpperCase()));
+                const sizesToRender = hasClothingSizes 
+                  ? ['S', 'M', 'L', 'XL', 'XXL'] 
+                  : [...new Set(activeProduct.variants.map(v => v.size))].filter(Boolean);
+
+                return (
+                  <div style={detailOptionGroupStyle} className="detail-option-group">
+                    <h4 style={detailOptionTitleStyle} className="detail-option-title">Select Size</h4>
+                    <div style={detailSizesRowStyle} className="detail-sizes-row">
+                      {sizesToRender.map(size => {
+                        const variantForSize = activeProduct.variants.find(v => (v.size || '').toUpperCase() === size.toUpperCase());
+                        const hasStock = variantForSize && variantForSize.stock > 0;
+                        const isSelected = activeProductSize === size;
+                        
+                        return (
+                          <button 
+                            key={size}
+                            disabled={!hasStock}
+                            onClick={() => setActiveProductSize(size)}
+                            style={{
+                              ...(isSelected ? activeSizeOptStyle : sizeOptStyle),
+                              ...(!hasStock ? { opacity: 0.35, cursor: 'not-allowed', textDecoration: 'line-through' } : {})
+                            }}
+                          >
+                            {size}
+                          </button>
+                        );
+                      })}
+                    </div>
                   </div>
-                </div>
-              )}
+                );
+              })()}
 
               
               {/* Add to Bag block */}

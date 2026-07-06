@@ -71,7 +71,10 @@ export default function ProductPage({ params }) {
   }
 
   // Get available sizes & colors
-  const sizes = [...new Set(product.variants.map(v => v.size))].filter(Boolean);
+  const hasClothingSizes = product.variants && product.variants.some(v => ['S', 'M', 'L', 'XL', 'XXL'].includes(v.size?.toUpperCase()));
+  const sizes = hasClothingSizes 
+    ? ['S', 'M', 'L', 'XL', 'XXL'] 
+    : [...new Set(product.variants.map(v => v.size))].filter(Boolean);
   const colors = [...new Set(product.variants.map(v => v.color))].filter(Boolean);
 
   // Find stock of selected size/color combination
@@ -170,18 +173,23 @@ export default function ProductPage({ params }) {
                 <div style={sizeSelectorStyle}>
                   {sizes.map(size => {
                     // Check if size has any stock overall
-                    const hasStockInSize = product.variants.some(v => v.size === size && v.stock > 0);
+                    const variantForSize = product.variants.find(v => (v.size || '').toUpperCase() === size.toUpperCase());
+                    const hasStockInSize = variantForSize && variantForSize.stock > 0;
+                    const isSelected = selectedSize === size;
+
                     return (
                       <button
                         key={size}
+                        disabled={!hasStockInSize}
                         onClick={() => setSelectedSize(size)}
-                        style={
-                          selectedSize === size
+                        style={{
+                          ...(isSelected
                             ? activeSizeBtnStyle
                             : !hasStockInSize
                             ? disabledSizeBtnStyle
-                            : sizeBtnStyle
-                        }
+                            : sizeBtnStyle),
+                          ...(!hasStockInSize ? { opacity: 0.35, cursor: 'not-allowed', textDecoration: 'line-through' } : {})
+                        }}
                       >
                         {size}
                       </button>
