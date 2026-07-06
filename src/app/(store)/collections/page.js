@@ -754,11 +754,8 @@ function CollectionsContent() {
                 })()}
 
 
-              </div>
-            </div>
-
-            {/* Sticky Actions Footer (inside card) */}
-            <div className="card-sticky-footer">
+                {/* Sticky Actions Footer (inside card) */}
+                <div className="card-sticky-footer">
               <div style={detailActionWrapperStyle} className="detail-action-bottom-bar">
                 {user && user.role === 'admin' ? (
                   <Link
@@ -843,6 +840,8 @@ function CollectionsContent() {
               </div>
             </div>
           </div>
+        </div>
+      </div>
 
           {/* Sibling switcher row of 56px circular buttons (Outside the card!) */}
           {switcherProducts.length > 0 && (
