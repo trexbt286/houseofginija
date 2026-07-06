@@ -1884,11 +1884,11 @@ header {
     flex: 1 !important;
     width: 100% !important;
     height: auto !important; /* dynamic height based on content */
-    max-height: none !important; /* allow full padding/content to render without clipping */
+    max-height: 40vh !important; /* increased to avoid clipping bottom padding */
     background-color: #FFFFFF !important;
     border-radius: 0 !important;
     margin-top: 0 !important;
-    padding: 0.8rem 1.2rem 1.5rem 1.2rem !important; /* bottom padding clears border-radius curves */
+    padding: 0.8rem 1.2rem 12px 1.2rem !important; /* 12px padding-bottom for comfortable breathing room at the bottom edge */
     overflow: hidden !important; /* prevent any scrolling */
     position: relative !important;
     z-index: 2 !important;
@@ -2012,7 +2012,6 @@ header {
     border-radius: 0 !important;
     overflow: hidden !important;
     margin-top: 0.4rem !important; /* comfortable gap after size selector */
-    margin-bottom: 0 !important; /* clear bottom margin since padding handles it */
   }
 
   /* Sticky actions container at the bottom of the details section */
