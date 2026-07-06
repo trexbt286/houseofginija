@@ -94,18 +94,18 @@ function CollectionsContent() {
   }, []);
 
   // Synchronize state when URL query parameters change (e.g., from Header dropdown links)
+  const colParam = searchParams.get('collection') || '';
+  const searchParam = searchParams.get('search') || '';
+  const categoryParam = searchParams.get('category') || '';
+
   useEffect(() => {
-    const colParam = searchParams.get('collection') || '';
     setSelectedCollection(colParam);
-    
-    const searchParam = searchParams.get('search') || '';
     setSearchQuery(searchParam);
     
     // Close detailed preview when collection query changes
     setActiveProduct(null);
 
     // Scroll to category if present in the URL
-    const categoryParam = searchParams.get('category') || '';
     if (categoryParam) {
       let targetId = categoryParam.toLowerCase();
       if (targetId === 'necklace') targetId = 'necklaces';
@@ -117,7 +117,7 @@ function CollectionsContent() {
         }
       }, 300);
     }
-  }, [searchParams]);
+  }, [colParam, searchParam, categoryParam]);
 
   // Scroll-Spy: Highlight active category on left panel as user scrolls the right panel feed
   useEffect(() => {
@@ -784,29 +784,27 @@ function CollectionsContent() {
                   </Link>
                 ) : currentQtyInCart > 0 ? (
                   /* Counter controller when product is already in cart */
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '0.6rem', width: '100%' }}>
-                    <div className="blinkit-count-controller" style={{ ...detailAddBtnStyle, backgroundColor: '#FFFFFF', border: '1px solid #D98E9B', display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 1rem', cursor: 'default' }}>
-                      <button 
-                        style={{ border: 'none', backgroundColor: 'transparent', fontSize: '1.4rem', color: '#D98E9B', cursor: 'pointer', fontWeight: 'bold', padding: '0 0.8rem' }}
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          updateCartQuantity(activeProduct.id, activeProductSize, activeProductColor, currentQtyInCart - 1);
-                        }}
-                      >
-                        -
-                      </button>
-                      <span style={{ fontWeight: '700', color: '#000000', fontSize: '1rem' }}>{currentQtyInCart} in bag</span>
-                      <button 
-                        style={{ border: 'none', backgroundColor: 'transparent', fontSize: '1.4rem', color: '#D98E9B', cursor: 'pointer', fontWeight: 'bold', padding: '0 0.8rem', opacity: currentQtyInCart >= maxStock ? 0.35 : 1 }}
-                        disabled={currentQtyInCart >= maxStock}
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          updateCartQuantity(activeProduct.id, activeProductSize, activeProductColor, currentQtyInCart + 1);
-                        }}
-                      >
-                        +
-                      </button>
-                    </div>
+                  <div className="blinkit-count-controller" style={{ ...detailAddBtnStyle, backgroundColor: '#FFFFFF', border: '1px solid #D98E9B', display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 1rem', cursor: 'default', width: '100%' }}>
+                    <button 
+                      style={{ border: 'none', backgroundColor: 'transparent', fontSize: '1.4rem', color: '#D98E9B', cursor: 'pointer', fontWeight: 'bold', padding: '0 0.8rem' }}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        updateCartQuantity(activeProduct.id, activeProductSize, activeProductColor, currentQtyInCart - 1);
+                      }}
+                    >
+                      -
+                    </button>
+                    <span style={{ fontWeight: '700', color: '#000000', fontSize: '1rem' }}>{currentQtyInCart} in bag</span>
+                    <button 
+                      style={{ border: 'none', backgroundColor: 'transparent', fontSize: '1.4rem', color: '#D98E9B', cursor: 'pointer', fontWeight: 'bold', padding: '0 0.8rem', opacity: currentQtyInCart >= maxStock ? 0.35 : 1 }}
+                      disabled={currentQtyInCart >= maxStock}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        updateCartQuantity(activeProduct.id, activeProductSize, activeProductColor, currentQtyInCart + 1);
+                      }}
+                    >
+                      +
+                    </button>
                   </div>
                 ) : (
                   /* Standard Selector & Add to Cart button when not in cart */

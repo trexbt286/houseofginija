@@ -2034,9 +2034,9 @@ header {
     margin-top: 0 !important;
   }
   
-  /* Style both Add to Bag and Counter Controller */
-  .detail-action-bottom-bar button, 
-  .detail-action-bottom-bar .blinkit-count-controller {
+  /* Style both Add to Bag and Counter Controller - only direct children! */
+  .detail-action-bottom-bar > button, 
+  .detail-action-bottom-bar > .blinkit-count-controller {
     width: 100% !important;
     max-width: 100% !important;
     height: 32px !important; /* slim height */
@@ -2047,7 +2047,7 @@ header {
     text-transform: uppercase !important;
   }
   
-  .detail-action-bottom-bar button:not(.blinkit-count-controller button) {
+  .detail-action-bottom-bar > button {
     background-color: #D98E9B !important; /* full-width pink */
     color: #FFFFFF !important;
     border: none !important;
