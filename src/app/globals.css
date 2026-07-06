@@ -1730,16 +1730,33 @@ header {
     display: block !important;
   }
 
+  /* Wrapper container holding both card and switcher circles below it */
+  .mobile-sheet-wrapper-container {
+    position: fixed !important;
+    bottom: 12px !important;
+    left: 0 !important;
+    width: 100vw !important;
+    z-index: 10000 !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    pointer-events: none !important; /* lets clicks pass to backdrop */
+    padding-bottom: env(safe-area-inset-bottom, 12px) !important;
+    animation: slideUpWrapper 0.35s cubic-bezier(0.25, 1, 0.5, 1) forwards !important;
+  }
+
+  @keyframes slideUpWrapper {
+    from { transform: translateY(100%); }
+    to { transform: translateY(0); }
+  }
+
   /* Detailed View Bottom Sheet Card Modal */
   .detail-container-box {
-    position: fixed !important;
-    bottom: 12px !important; /* floated off the bottom screen edge */
-    left: 12px !important; /* floated off the left screen edge */
+    position: relative !important;
     width: calc(100vw - 24px) !important; /* centered width with margins */
-    height: 85vh !important; /* height constrained to prevent full viewport lock */
+    height: 70vh !important; /* height constrained to ~70% screen height */
     margin: 0 !important;
     padding: 0 !important;
-    z-index: 10000 !important; /* floats over backdrop */
     background-color: #FFFFFF !important;
     border-radius: 24px !important; /* all corners rounded */
     box-shadow: 0 -8px 32px rgba(0, 0, 0, 0.18) !important; /* elevated card shadow */
@@ -1747,12 +1764,7 @@ header {
     flex-direction: column !important;
     overflow: hidden !important;
     border: none !important;
-    animation: slideUp 0.35s cubic-bezier(0.25, 1, 0.5, 1) forwards !important;
-  }
-  
-  @keyframes slideUp {
-    from { transform: translateY(100%); }
-    to { transform: translateY(0); }
+    pointer-events: auto !important; /* enable interaction inside card */
   }
 
   /* Drag handle pill at the top center */
@@ -1818,12 +1830,12 @@ header {
     padding: 0 !important;
   }
 
-  /* Grid Layout inside mobile Bottom Sheet */
+  /* Grid Layout inside mobile Bottom Sheet Card */
   .detail-preview-grid {
     display: flex !important;
     flex-direction: column !important;
-    width: 100vw !important;
-    height: calc(90vh - 15px) !important;
+    width: 100% !important;
+    height: 100% !important;
     margin: 0 !important;
     gap: 0 !important;
     overflow: hidden !important;
@@ -1832,20 +1844,20 @@ header {
   
   /* Top Half: Image Gallery (full width, no padding) */
   .detail-preview-grid > div:first-child {
-    width: 100vw !important;
-    height: 40vh !important; /* reduced image height to give extra details space */
+    width: 100% !important;
+    height: 35vh !important; /* Top half takes exactly 50% of the 70vh card height */
     position: relative !important;
     overflow: hidden !important;
     margin: 0 !important;
     padding: 0 !important;
-    border-radius: 24px 24px 0 0 !important; /* Rounds the top of the sheet */
-    flex-shrink: 0 !important; /* Prevent product image from being squeezed or pushed out */
+    border-radius: 24px 24px 0 0 !important; /* Rounds the top of the card */
+    flex-shrink: 0 !important;
   }
   
   .detail-main-img-wrapper {
-    width: 100vw !important;
-    height: 40vh !important;
-    max-height: 40vh !important;
+    width: 100% !important;
+    height: 35vh !important;
+    max-height: 35vh !important;
     border-radius: 24px 24px 0 0 !important;
     border: none !important;
     margin: 0 !important;
@@ -1854,9 +1866,9 @@ header {
   }
   
   .detail-main-img {
-    width: 100vw !important;
-    height: 40vh !important;
-    max-height: 40vh !important;
+    width: 100% !important;
+    height: 35vh !important;
+    max-height: 35vh !important;
     object-fit: cover !important;
     border-radius: 24px 24px 0 0 !important;
   }
@@ -1868,20 +1880,20 @@ header {
   /* Bottom Half: Details Container */
   .detail-preview-grid > div:last-child {
     flex: 1 !important;
-    width: 100vw !important;
-    height: 50vh !important; /* expanded details container space */
+    width: 100% !important;
+    height: 35vh !important; /* Bottom half takes remaining 50% of the 70vh card height */
     background-color: #FFFFFF !important;
-    border-radius: 0 !important; /* Flat top corners to prevent image borders sticking out behind */
-    margin-top: 0 !important; /* Sits flush below the image with no overlapping border glitch */
-    padding: 0.8rem 1.5rem 9.5rem 1.5rem !important; /* compact top padding; bottom padding clears sticky footer */
-    overflow-y: hidden !important; /* prevent vertical scrolling on the card details */
+    border-radius: 0 !important; /* flat top, rounded corners are on the card wrapper */
+    margin-top: 0 !important;
+    padding: 0.8rem 1.5rem 4.5rem 1.5rem !important; /* bottom padding clears the sticky ADD button inside card */
+    overflow-y: auto !important; /* scrollable independently inside the card if contents overflow */
     position: relative !important;
     z-index: 2 !important;
     box-sizing: border-box !important;
     display: flex !important;
     flex-direction: column !important;
     gap: 0.25rem !important; /* tight element gaps */
-    flex-shrink: 1 !important; /* Allow details card to shrink to fit viewport height */
+    flex-shrink: 1 !important;
   }
 
   /* Details typography & elements */
@@ -1956,8 +1968,8 @@ header {
     border-radius: 999px !important;
   }
 
-  /* Swiggy Instamart-style Sticky Bottom Footer containing both ADD button and sibling circles switcher */
-  .bottom-sheet-footer {
+  /* Sticky Footer containing only the ADD button actions inside the card */
+  .card-sticky-footer {
     position: absolute !important;
     bottom: 0 !important;
     left: 0 !important;
@@ -1965,12 +1977,8 @@ header {
     background-color: #FFFFFF !important;
     border-top: 1px solid rgba(139, 119, 137, 0.08) !important;
     z-index: 10020 !important;
-    display: flex !important;
-    flex-direction: column !important;
-    gap: 0 !important;
     border-radius: 0 0 24px 24px !important; /* matches card bottom corners */
     overflow: hidden !important;
-    padding-bottom: env(safe-area-inset-bottom, 0.3rem) !important;
   }
 
   /* Sticky actions container at the bottom of the details section */
@@ -1978,7 +1986,7 @@ header {
     position: relative !important;
     width: 100% !important;
     background: #FFFFFF !important;
-    padding: 0.5rem 1.5rem 0.3rem 1.5rem !important; /* compact padding */
+    padding: 0.5rem 1.5rem 0.5rem 1.5rem !important; /* padding spacing */
     box-sizing: border-box !important;
     z-index: 10025 !important;
     display: flex !important;
@@ -2026,20 +2034,23 @@ header {
     font-weight: 700 !important;
   }
 
-  /* Sibling circles switcher row styling */
-  .mobile-sibling-switcher-row {
-    width: 100% !important; /* contained inside floating card */
+  /* Sibling switcher row rendering OUTSIDE/BELOW the card on the backdrop */
+  .mobile-sibling-switcher-row-outer {
+    width: calc(100vw - 24px) !important; /* matches card width */
     overflow-x: auto !important;
     display: flex !important;
     flex-direction: row !important;
     align-items: center !important;
     justify-content: flex-start !important;
-    padding: 0.2rem 1.5rem 0.5rem 1.5rem !important; /* compact padding */
+    padding: 0.4rem 0 !important;
     gap: 0.8rem !important;
-    background-color: #FFFFFF !important;
+    background-color: transparent !important; /* sits directly on dimmed backdrop */
     box-sizing: border-box !important;
     white-space: nowrap !important;
     -webkit-overflow-scrolling: touch !important;
+    margin-top: 12px !important; /* space below card */
+    pointer-events: auto !important; /* allow clicks on switcher circles */
+    flex-shrink: 0 !important;
   }
 
   .sibling-switcher-circle-btn {
@@ -2056,9 +2067,10 @@ header {
     display: inline-flex !important;
     align-items: center !important;
     justify-content: center !important;
-    border: 2px solid rgba(0, 0, 0, 0.06) !important;
+    border: 2px solid rgba(255, 255, 255, 0.25) !important; /* lighter border on backdrop */
     transition: all 0.2s ease !important;
     overflow: hidden !important;
+    background-color: rgba(255, 255, 255, 0.1) !important;
   }
 
   .sibling-switcher-circle-btn.active {
@@ -2077,8 +2089,7 @@ header {
     display: none !important; /* Hide quantity selector beside ADD button on mobile */
   }
 
-  /* Hide Sibling Products and sticky bar on mobile */
-  .detail-preview-grid + div,
+  /* Hide sticky bar on mobile */
   .mobile-sticky-bar {
     display: none !important;
   }

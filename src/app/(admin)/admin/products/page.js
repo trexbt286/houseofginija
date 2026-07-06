@@ -39,7 +39,7 @@ function AdminProductsContent() {
   const [uploadingImage, setUploadingImage] = useState(false);
   const [imageError, setImageError] = useState('');
 
-  const sizesOptions = ['XS', 'S', 'M', 'L', 'XL', 'One Size'];
+  const sizesOptions = ['XS', 'S', 'M', 'L', 'XL', 'XXL', 'One Size'];
   const colorsOptions = [
     'Champagne Pink',
     'Deep Plum',
@@ -178,6 +178,27 @@ function AdminProductsContent() {
 
   const removeVariant = (idxToRemove) => {
     setVariants((prev) => prev.filter((_, idx) => idx !== idxToRemove));
+  };
+
+  const syncStandardSizes = () => {
+    const standardSizes = ['S', 'M', 'L', 'XL', 'XXL'];
+    const defaultColor = 'Default';
+    const defaultStock = 10;
+
+    const existingSizes = new Set(variants.map(v => v.size));
+    const newVariants = [...variants];
+
+    standardSizes.forEach(size => {
+      if (!existingSizes.has(size)) {
+        newVariants.push({
+          size: size,
+          color: defaultColor,
+          stock: defaultStock
+        });
+      }
+    });
+
+    setVariants(newVariants);
   };
 
   const openCreateForm = () => {
@@ -460,7 +481,16 @@ function AdminProductsContent() {
 
               {/* Variants Stock Manager */}
               <div style={formGroupStyle}>
-                <h3 style={subFormTitleStyle}>Sizing & Color Variants Stock List ({variants.length})</h3>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.2rem', flexWrap: 'wrap', gap: '0.8rem' }}>
+                  <h3 style={{ ...subFormTitleStyle, margin: 0 }}>Sizing & Color Variants Stock List ({variants.length})</h3>
+                  <button 
+                    type="button" 
+                    onClick={syncStandardSizes} 
+                    style={syncSizesBtnStyle}
+                  >
+                    ⚡ Sync Standard Sizes (S-XXL, 10 Stock)
+                  </button>
+                </div>
                 
                 {/* Add Variant Form */}
                 <div style={addVariantRowStyle}>
@@ -1093,6 +1123,18 @@ const deleteActionBtnStyle = {
   color: '#000000',
   fontSize: '0.8rem',
   fontWeight: '600',
+};
+
+const syncSizesBtnStyle = {
+  backgroundColor: '#FFFFFF',
+  border: '1px solid #D98E9B',
+  color: '#D98E9B',
+  fontSize: '0.78rem',
+  fontWeight: '700',
+  padding: '0.35rem 0.75rem',
+  borderRadius: '4px',
+  cursor: 'pointer',
+  transition: 'all 0.2s ease',
 };
 
 export default function AdminProductsPage() {

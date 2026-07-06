@@ -661,126 +661,135 @@ function CollectionsContent() {
         />
       )}
 
-      {activeProduct && (
-        <div className="container animate-fade-in detail-container-box" style={detailContainerStyle}>
-          {/* Mobile Drag handle pill */}
-          <div className="mobile-sheet-drag-handle" />
 
-          {/* Back button and wishlist toggle on top */}
-          <div style={detailHeaderStyle} className="detail-header-mobile-overlay">
-            <button onClick={() => setActiveProduct(null)} style={detailBackButtonStyle} className="desktop-back-btn detail-back-btn-overlay">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.0" strokeLinecap="round" strokeLinejoin="round" style={{ marginRight: '8px' }}>
-                <line x1="19" y1="12" x2="5" y2="12"></line>
-                <polyline points="12 19 5 12 12 5"></polyline>
-              </svg>
-              Back to Collections
-            </button>
 
-            {/* Mobile Down Chevron dismiss button */}
-            <button onClick={() => setActiveProduct(null)} className="mobile-sheet-dismiss-btn">
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#000000" strokeWidth="2.0" strokeLinecap="round" strokeLinejoin="round">
-                <polyline points="6 9 12 15 18 9"></polyline>
-              </svg>
-            </button>
-            
-            <button 
-              onClick={() => toggleWishlist && toggleWishlist(activeProduct.id)} 
-              style={wishlistBtnStyle}
-              className="detail-wishlist-btn-overlay"
-              title={wishlist && wishlist.includes(activeProduct.id) ? "Remove from wishlist" : "Add to wishlist"}
-            >
-              <svg 
-                width="22" 
-                height="22" 
-                viewBox="0 0 24 24" 
-                fill={wishlist && wishlist.includes(activeProduct.id) ? "#D98E9B" : "none"} 
-                stroke={wishlist && wishlist.includes(activeProduct.id) ? "#D98E9B" : "currentColor"} 
-                strokeWidth="1.5"
+          {activeProduct && (
+        <div className="mobile-sheet-wrapper-container animate-fade-in">
+          {/* Floating Card */}
+          <div className="container detail-container-box" style={detailContainerStyle} onClick={(e) => e.stopPropagation()}>
+            {/* Mobile Drag handle pill */}
+            <div className="mobile-sheet-drag-handle" />
+
+            {/* Back button and wishlist toggle on top */}
+            <div style={detailHeaderStyle} className="detail-header-mobile-overlay">
+              <button onClick={() => setActiveProduct(null)} style={detailBackButtonStyle} className="desktop-back-btn detail-back-btn-overlay">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.0" strokeLinecap="round" strokeLinejoin="round" style={{ marginRight: '8px' }}>
+                  <line x1="19" y1="12" x2="5" y2="12"></line>
+                  <polyline points="12 19 5 12 12 5"></polyline>
+                </svg>
+                Back to Collections
+              </button>
+
+              {/* Mobile Down Chevron dismiss button */}
+              <button onClick={() => setActiveProduct(null)} className="mobile-sheet-dismiss-btn">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#000000" strokeWidth="2.0" strokeLinecap="round" strokeLinejoin="round">
+                  <polyline points="6 9 12 15 18 9"></polyline>
+                </svg>
+              </button>
+              
+              {/* Heart Wishlist button */}
+              <button 
+                onClick={(e) => {
+                  e.stopPropagation();
+                  toggleWishlist(activeProduct.id);
+                }} 
+                className="detail-wishlist-btn-overlay"
+                style={{
+                  color: wishlist.includes(activeProduct.id) ? '#D98E9B' : '#000000',
+                }}
               >
-                <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
-              </svg>
-            </button>
-          </div>
-
-          <div className="detail-preview-grid">
-            {/* Left: Gallery */}
-            <div style={detailGalleryStyle}>
-              <div style={detailMainImgWrapperStyle} className="detail-main-img-wrapper">
-                <img src={activeProductImage} alt={activeProduct.name} style={detailMainImgStyle} className="detail-main-img" loading="lazy" />
-              </div>
-              {activeProduct.images && activeProduct.images.length > 1 && (
-                <div style={detailThumbRowStyle} className="detail-thumb-row hide-scrollbar">
-                  {activeProduct.images.map((img, idx) => (
-                    <button 
-                      key={idx} 
-                      onClick={() => setActiveProductImage(img)}
-                      style={activeProductImage === img ? activeDetailThumbStyle : detailThumbStyle}
-                    >
-                      <img src={img} alt="thumbnail" style={detailThumbImgStyle} loading="lazy" />
-                    </button>
-                  ))}
-                </div>
-              )}
+                <svg width="20" height="20" viewBox="0 0 24 24" fill={wishlist.includes(activeProduct.id) ? 'currentColor' : 'none'} stroke="currentColor" strokeWidth="2">
+                  <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+                </svg>
+              </button>
             </div>
 
-            {/* Right: Details */}
-            <div style={detailInfoStyle}>
-              <span style={detailCollectionLabelStyle} className="detail-collection-label">{activeProduct.collection_name}</span>
-              <h1 style={detailTitleStyle} className="detail-product-name">{activeProduct.name}</h1>
-              
-
-              <p style={detailPriceStyle} className="detail-product-price">₹{parseFloat(activeProduct.price).toLocaleString('en-IN')}</p>
-              
-              <div style={detailDividerStyle} className="detail-divider"></div>
-
-              <p style={detailDescStyle} className="detail-product-desc">{(activeProduct.description && activeProduct.description.trim()) ? activeProduct.description.trim() : 'Exclusive luxury item, crafted from premium archival coutures.'}</p>
-
-              <div className="detail-stock-warning" style={{ marginTop: '0.5rem', marginBottom: '1rem', fontSize: '0.85rem', color: '#B8860B', fontWeight: '600' }}>
-                {maxStock <= 3 ? (
-                  <span style={{ color: '#D9534F' }}>⚠️ Only {maxStock} left in our vaults!</span>
-                ) : (
-                  <span>Remaining stock: {maxStock} available</span>
-                )}
+            {/* Grid container */}
+            <div style={{}} className="detail-preview-grid">
+              {/* Top Half: Image */}
+              <div style={detailMainImgWrapperStyle} className="detail-main-img-wrapper">
+                <img 
+                  src={activeProductImage} 
+                  alt={activeProduct.name} 
+                  style={detailMainImgStyle} 
+                  className="detail-main-img"
+                />
               </div>
 
-              {/* Sizes selector */}
-              {activeProduct.variants && activeProduct.variants.some(v => v.size) && (() => {
-                const hasClothingSizes = activeProduct.variants.some(v => ['S', 'M', 'L', 'XL', 'XXL'].includes(v.size?.toUpperCase()));
-                const sizesToRender = hasClothingSizes 
-                  ? ['S', 'M', 'L', 'XL', 'XXL'] 
-                  : [...new Set(activeProduct.variants.map(v => v.size))].filter(Boolean);
+              {/* Bottom Half: Details */}
+              <div style={detailInfoStyle}>
+                <span style={detailCollectionLabelStyle} className="detail-collection-label">{activeProduct.collection_name}</span>
+                <h1 style={detailTitleStyle} className="detail-product-name">{activeProduct.name}</h1>
+                <p style={detailPriceStyle} className="detail-product-price">₹{parseFloat(activeProduct.price).toLocaleString('en-IN')}</p>
+                <div style={detailDividerStyle} className="detail-divider"></div>
+                <p style={detailDescStyle} className="detail-product-desc">{(activeProduct.description && activeProduct.description.trim()) ? activeProduct.description.trim() : 'Exclusive luxury item, crafted from premium archival coutures.'}</p>
 
-                return (
+                <div className="detail-stock-warning" style={{ marginTop: '0.5rem', marginBottom: '1rem', fontSize: '0.85rem', color: '#B8860B', fontWeight: '600' }}>
+                  {maxStock <= 3 ? (
+                    <span style={{ color: '#D9534F' }}>⚠️ Only {maxStock} left in our vaults!</span>
+                  ) : (
+                    <span>Remaining stock: {maxStock} available</span>
+                  )}
+                </div>
+
+                {/* Sizes selector */}
+                {activeProduct.variants && activeProduct.variants.some(v => v.size) && (() => {
+                  const hasClothingSizes = activeProduct.variants.some(v => ['S', 'M', 'L', 'XL', 'XXL'].includes(v.size?.toUpperCase()));
+                  const sizesToRender = hasClothingSizes 
+                    ? ['S', 'M', 'L', 'XL', 'XXL'] 
+                    : [...new Set(activeProduct.variants.map(v => v.size))].filter(Boolean);
+
+                  return (
+                    <div style={detailOptionGroupStyle} className="detail-option-group">
+                      <h4 style={detailOptionTitleStyle} className="detail-option-title">Select Size</h4>
+                      <div style={detailSizesRowStyle} className="detail-sizes-row">
+                        {sizesToRender.map(size => {
+                          const variantForSize = activeProduct.variants.find(v => (v.size || '').toUpperCase() === size.toUpperCase());
+                          const hasStock = variantForSize && variantForSize.stock > 0;
+                          const isSelected = activeProductSize === size;
+                          
+                          return (
+                            <button 
+                              key={size}
+                              disabled={!hasStock}
+                              onClick={() => setActiveProductSize(size)}
+                              style={{
+                                ...(isSelected ? activeSizeOptStyle : sizeOptStyle),
+                                ...(!hasStock ? { opacity: 0.35, cursor: 'not-allowed', textDecoration: 'line-through' } : {})
+                              }}
+                            >
+                              {size}
+                            </button>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  );
+                })()}
+
+                {/* Colors selector */}
+                {activeProduct.variants && activeProduct.variants.some(v => v.color) && (
                   <div style={detailOptionGroupStyle} className="detail-option-group">
-                    <h4 style={detailOptionTitleStyle} className="detail-option-title">Select Size</h4>
-                    <div style={detailSizesRowStyle} className="detail-sizes-row">
-                      {sizesToRender.map(size => {
-                        const variantForSize = activeProduct.variants.find(v => (v.size || '').toUpperCase() === size.toUpperCase());
-                        const hasStock = variantForSize && variantForSize.stock > 0;
-                        const isSelected = activeProductSize === size;
-                        
-                        return (
-                          <button 
-                            key={size}
-                            disabled={!hasStock}
-                            onClick={() => setActiveProductSize(size)}
-                            style={{
-                              ...(isSelected ? activeSizeOptStyle : sizeOptStyle),
-                              ...(!hasStock ? { opacity: 0.35, cursor: 'not-allowed', textDecoration: 'line-through' } : {})
-                            }}
-                          >
-                            {size}
-                          </button>
-                        );
-                      })}
+                    <h4 style={detailOptionTitleStyle} className="detail-option-title">Select Color</h4>
+                    <div style={detailColorsRowStyle} className="detail-colors-row">
+                      {[...new Set(activeProduct.variants.map(v => v.color))].filter(Boolean).map(color => (
+                        <button 
+                          key={color}
+                          onClick={() => setActiveProductColor(color)}
+                          style={activeProductColor === color ? activeColorOptStyle : colorOptStyle}
+                        >
+                          {color}
+                        </button>
+                      ))}
                     </div>
                   </div>
-                );
-              })()}
+                )}
+              </div>
+            </div>
 
-              
-              {/* Add to Bag block */}
-              <div style={detailActionWrapperStyle} className="desktop-action-only detail-action-bottom-bar">
+            {/* Sticky Actions Footer (inside card) */}
+            <div className="card-sticky-footer">
+              <div style={detailActionWrapperStyle} className="detail-action-bottom-bar">
                 {user && user.role === 'admin' ? (
                   <Link
                     href={`/admin/products?edit=${activeProduct.slug}`}
@@ -790,7 +799,7 @@ function CollectionsContent() {
                   </Link>
                 ) : currentQtyInCart > 0 ? (
                   /* Counter controller when product is already in cart */
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '0.6rem', width: '100%', marginTop: '0.5rem' }}>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '0.6rem', width: '100%' }}>
                     <div className="blinkit-count-controller" style={{ ...detailAddBtnStyle, backgroundColor: '#FFFFFF', border: '1px solid #D98E9B', display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 1rem', cursor: 'default' }}>
                       <button 
                         style={{ border: 'none', backgroundColor: 'transparent', fontSize: '1.4rem', color: '#D98E9B', cursor: 'pointer', fontWeight: 'bold', padding: '0 0.8rem' }}
@@ -813,20 +822,11 @@ function CollectionsContent() {
                         +
                       </button>
                     </div>
-                    {activeProduct && (
-                      <div style={{ fontSize: '0.75rem', color: 'rgba(0,0,0,0.5)', marginTop: '0.1rem', textAlign: 'center' }}>
-                        {currentQtyInCart >= maxStock ? (
-                          <span style={{ color: '#D98E9B', fontWeight: '600' }}>Stock limit reached ({maxStock} available)</span>
-                        ) : (
-                          <span>Available stock: {maxStock}</span>
-                        )}
-                      </div>
-                    )}
                   </div>
                 ) : (
                   /* Standard Selector & Add to Cart button when not in cart */
                   <>
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem' }}>
+                    <div className="mobile-hide-qty" style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem' }}>
                       <div style={detailQtyControlStyle}>
                         <button 
                           style={detailQtyBtnStyle}
@@ -855,16 +855,6 @@ function CollectionsContent() {
                           +
                         </button>
                       </div>
-                      
-                      {activeProduct && (
-                        <div style={{ fontSize: '0.75rem', color: 'rgba(0,0,0,0.5)', marginTop: '0.1rem' }}>
-                          {isPlusDisabled ? (
-                            <span style={{ color: '#D98E9B', fontWeight: '600' }}>Stock limit reached ({maxStock} available)</span>
-                          ) : (
-                            <span>Available stock: {maxStock}</span>
-                          )}
-                        </div>
-                      )}
                     </div>
 
                     <button 
@@ -876,7 +866,7 @@ function CollectionsContent() {
                         setActiveProductQty(1); // Reset counter selector to 1 after adding to cart
                       }}
                     >
-                      {activeProduct.is_out_of_stock ? 'Sold Out' : 'Add to cart'}
+                      {activeProduct.is_out_of_stock ? 'Sold Out' : 'ADD'}
                     </button>
                   </>
                 )}
@@ -884,145 +874,42 @@ function CollectionsContent() {
             </div>
           </div>
 
-          {/* Sibling Products Navigation (Exploration carousel at the bottom) */}
-          {siblingProducts.length > 0 && (
-            <div style={detailExploreSectionStyle}>
-              <h3 style={detailExploreTitleStyle}>More from the {activeProduct.collection_name} collection</h3>
-              <div style={detailExploreCarouselStyle} className="hide-scrollbar">
-                {siblingProducts.map(sib => (
-                  <div 
-                    key={sib.id} 
-                    onClick={(e) => handleProductClick(e, sib)}
-                    style={detailExploreItemStyle}
+          {/* Sibling switcher row of 56px circular buttons (Outside the card!) */}
+          {switcherProducts.length > 0 && (
+            <div className="mobile-sibling-switcher-row-outer hide-scrollbar">
+              {switcherProducts.map(sib => {
+                const isActive = sib.id === activeProduct.id;
+                return (
+                  <button
+                    key={sib.id}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      setActiveProduct(sib);
+                      setActiveProductImage(sib.images && sib.images[0] ? sib.images[0] : '/placeholder.jpg');
+                      // Reset options
+                      const vars = sib.variants || [];
+                      const inStockVar = vars.find(v => v.stock > 0) || vars[0];
+                      setActiveProductSize(inStockVar ? inStockVar.size || '' : '');
+                      setActiveProductColor(inStockVar ? inStockVar.color || '' : '');
+                      setActiveProductQty(1);
+                    }}
+                    className={`sibling-switcher-circle-btn ${isActive ? 'active' : ''}`}
                   >
-                    <img src={sib.images && sib.images[0] ? sib.images[0] : '/placeholder.jpg'} alt={sib.name} style={detailExploreImgStyle} loading="lazy" />
-                    <span style={detailExploreNameStyle}>{sib.name}</span>
-                  </div>
-                ))}
-              </div>
+                    <img 
+                      src={sib.images && sib.images[0] ? sib.images[0] : '/placeholder.jpg'} 
+                      alt={sib.name} 
+                      className="sibling-switcher-circle-img"
+                    />
+                  </button>
+                );
+              })}
             </div>
           )}
-
-          {/* Swiggy Instamart-style Sticky Bottom Footer (Actions + Sibling Product Switcher) */}
-          <div className="bottom-sheet-footer">
-            <div style={detailActionWrapperStyle} className="detail-action-bottom-bar">
-              {user && user.role === 'admin' ? (
-                <Link
-                  href={`/admin/products?edit=${activeProduct.slug}`}
-                  style={detailAdminEditBtnStyle}
-                >
-                  Admin Preview: Edit Product
-                </Link>
-              ) : currentQtyInCart > 0 ? (
-                /* Counter controller when product is already in cart */
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.6rem', width: '100%' }}>
-                  <div className="blinkit-count-controller" style={{ ...detailAddBtnStyle, backgroundColor: '#FFFFFF', border: '1px solid #D98E9B', display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 1rem', cursor: 'default' }}>
-                    <button 
-                      style={{ border: 'none', backgroundColor: 'transparent', fontSize: '1.4rem', color: '#D98E9B', cursor: 'pointer', fontWeight: 'bold', padding: '0 0.8rem' }}
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        updateCartQuantity(activeProduct.id, activeProductSize, activeProductColor, currentQtyInCart - 1);
-                      }}
-                    >
-                      -
-                    </button>
-                    <span style={{ fontWeight: '700', color: '#000000', fontSize: '1rem' }}>{currentQtyInCart} in bag</span>
-                    <button 
-                      style={{ border: 'none', backgroundColor: 'transparent', fontSize: '1.4rem', color: '#D98E9B', cursor: 'pointer', fontWeight: 'bold', padding: '0 0.8rem', opacity: currentQtyInCart >= maxStock ? 0.35 : 1 }}
-                      disabled={currentQtyInCart >= maxStock}
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        updateCartQuantity(activeProduct.id, activeProductSize, activeProductColor, currentQtyInCart + 1);
-                      }}
-                    >
-                      +
-                    </button>
-                  </div>
-                </div>
-              ) : (
-                /* Standard Selector & Add to Cart button when not in cart */
-                <>
-                  <div className="mobile-hide-qty" style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem' }}>
-                    <div style={detailQtyControlStyle}>
-                      <button 
-                        style={detailQtyBtnStyle}
-                        onClick={() => {
-                          if (activeProductQty > 1) {
-                            setActiveProductQty(activeProductQty - 1);
-                          }
-                        }}
-                      >
-                        -
-                      </button>
-                      <span style={detailQtyValStyle}>{activeProductQty}</span>
-                      <button 
-                        style={{
-                          ...detailQtyBtnStyle,
-                          opacity: isPlusDisabled ? 0.35 : 1,
-                          cursor: isPlusDisabled ? 'not-allowed' : 'pointer'
-                        }}
-                        disabled={isPlusDisabled}
-                        onClick={() => {
-                          if (activeProductQty < maxStock) {
-                            setActiveProductQty(activeProductQty + 1);
-                          }
-                        }}
-                      >
-                        +
-                      </button>
-                    </div>
-                  </div>
-
-                  <button 
-                    style={detailAddBtnStyle}
-                    disabled={activeProduct.is_out_of_stock || isPlusDisabled}
-                    onClick={() => {
-                      if (activeProduct.is_out_of_stock || isPlusDisabled) return;
-                      addToCart(activeProduct, activeProductSize, activeProductColor, activeProductQty);
-                      setActiveProductQty(1); // Reset counter selector to 1 after adding to cart
-                    }}
-                  >
-                    {activeProduct.is_out_of_stock ? 'Sold Out' : 'ADD'}
-                  </button>
-                </>
-              )}
-            </div>
-
-            {/* Sibling switcher row of 56px circular buttons */}
-            {switcherProducts.length > 0 && (
-              <div className="mobile-sibling-switcher-row hide-scrollbar">
-                {switcherProducts.map(sib => {
-                  const isActive = sib.id === activeProduct.id;
-                  return (
-                    <button
-                      key={sib.id}
-                      onClick={(e) => {
-                        e.preventDefault();
-                        e.stopPropagation();
-                        setActiveProduct(sib);
-                        setActiveProductImage(sib.images && sib.images[0] ? sib.images[0] : '/placeholder.jpg');
-                        // Reset options
-                        const vars = sib.variants || [];
-                        const inStockVar = vars.find(v => v.stock > 0) || vars[0];
-                        setActiveProductSize(inStockVar ? inStockVar.size || '' : '');
-                        setActiveProductColor(inStockVar ? inStockVar.color || '' : '');
-                        setActiveProductQty(1);
-                      }}
-                      className={`sibling-switcher-circle-btn ${isActive ? 'active' : ''}`}
-                    >
-                      <img 
-                        src={sib.images && sib.images[0] ? sib.images[0] : '/placeholder.jpg'} 
-                        alt={sib.name} 
-                        className="sibling-switcher-circle-img"
-                      />
-                    </button>
-                  );
-                })}
-              </div>
-            )}
-          </div>
         </div>
       )}
+
+
 
       {/* Catalog Grid container (desktop: hidden when activeProduct is set, mobile: always rendered and visible underneath modal) */}
       <div className="catalog-grid-container-box" style={{ display: activeProduct ? 'none' : 'block' }}>
