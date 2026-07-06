@@ -34,27 +34,33 @@ function CollectionsContent() {
   const [isMobileFilterOpen, setIsMobileFilterOpen] = useState(false);
   const [activeCategorySidebar, setActiveCategorySidebar] = useState('');
 
-  // Manage scroll-lock on document.body when mobile filter drawer is open
+  // Manage scroll-lock on document.body and documentElement when mobile filter drawer is open
   useEffect(() => {
     if (isMobileFilterOpen) {
       document.body.classList.add('scroll-locked');
+      document.documentElement.classList.add('scroll-locked');
     } else {
       document.body.classList.remove('scroll-locked');
+      document.documentElement.classList.remove('scroll-locked');
     }
     return () => {
       document.body.classList.remove('scroll-locked');
+      document.documentElement.classList.remove('scroll-locked');
     };
   }, [isMobileFilterOpen]);
 
-  // Lock body scroll when product detail sheet is open
+  // Lock body and html scroll when product detail sheet is open
   useEffect(() => {
     if (activeProduct) {
       document.body.classList.add('scroll-locked');
+      document.documentElement.classList.add('scroll-locked');
     } else {
       document.body.classList.remove('scroll-locked');
+      document.documentElement.classList.remove('scroll-locked');
     }
     return () => {
       document.body.classList.remove('scroll-locked');
+      document.documentElement.classList.remove('scroll-locked');
     };
   }, [activeProduct]);
 

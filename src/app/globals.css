@@ -537,8 +537,11 @@ button {
 /* --- MOBILE & TABLET UX OPTIMIZATIONS --- */
 
 /* Scroll lock helper */
-.scroll-locked {
+html.scroll-locked,
+body.scroll-locked {
   overflow: hidden !important;
+  height: 100vh !important;
+  max-height: 100vh !important;
 }
 
 /* Collections responsive layout grid */
