@@ -1884,7 +1884,7 @@ header {
     flex: 1 !important;
     width: 100% !important;
     height: auto !important; /* dynamic height based on content */
-    max-height: 35vh !important; /* limit details scroll area to avoid card overflow */
+    max-height: none !important; /* allow full padding/content to render without clipping */
     background-color: #FFFFFF !important;
     border-radius: 0 !important;
     margin-top: 0 !important;
