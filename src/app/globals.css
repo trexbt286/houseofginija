@@ -1895,7 +1895,7 @@ header {
     box-sizing: border-box !important;
     display: flex !important;
     flex-direction: column !important;
-    gap: 0.5rem !important; /* equal, consistent breathing room between elements */
+    gap: 0.3rem !important; /* compact but comfortable breathing room — keeps ADD button fully visible */
     flex-shrink: 1 !important;
   }
 
@@ -2011,7 +2011,7 @@ header {
     z-index: 10020 !important;
     border-radius: 0 !important;
     overflow: hidden !important;
-    margin-top: 0.4rem !important; /* comfortable gap after size selector */
+    margin-top: 0 !important; /* no extra gap — handled by container gap */
   }
 
   /* Sticky actions container at the bottom of the details section */
@@ -2047,7 +2047,6 @@ header {
     border: none !important;
     cursor: pointer !important;
     box-shadow: 0 2px 8px rgba(217, 142, 155, 0.2) !important;
-    margin-bottom: 16px !important; /* breathing room from bottom edge of card */
   }
   
   .detail-action-bottom-bar .blinkit-count-controller {
