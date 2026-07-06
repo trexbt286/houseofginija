@@ -761,23 +761,6 @@ function CollectionsContent() {
                 </div>
               )}
 
-              {/* Colors selector */}
-              {activeProduct.variants && activeProduct.variants.some(v => v.color) && (
-                <div style={detailOptionGroupStyle} className="detail-option-group">
-                  <h4 style={detailOptionTitleStyle} className="detail-option-title">Select Color</h4>
-                  <div style={detailColorsRowStyle} className="detail-colors-row">
-                    {[...new Set(activeProduct.variants.map(v => v.color))].filter(Boolean).map(color => (
-                      <button 
-                        key={color}
-                        onClick={() => setActiveProductColor(color)}
-                        style={activeProductColor === color ? activeColorOptStyle : colorOptStyle}
-                      >
-                        {color}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-              )}
               
               {/* Add to Bag block */}
               <div style={detailActionWrapperStyle} className="desktop-action-only detail-action-bottom-bar">

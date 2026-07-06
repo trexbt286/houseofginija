@@ -191,32 +191,6 @@ export default function ProductPage({ params }) {
               </div>
             )}
 
-            {colors.length > 0 && (
-              <div style={selectionGroupStyle}>
-                <span style={selectionLabelStyle}>Select Color:</span>
-                <div style={colorSelectorStyle}>
-                  {colors.map(color => {
-                    const hasStockInColor = product.variants.some(v => v.color === color && v.stock > 0);
-                    return (
-                      <button
-                        key={color}
-                        onClick={() => setSelectedColor(color)}
-                        style={
-                          selectedColor === color
-                            ? activeColorBtnStyle
-                            : !hasStockInColor
-                            ? disabledColorBtnStyle
-                            : colorBtnStyle
-                        }
-                      >
-                        {color}
-                      </button>
-                    );
-                  })}
-                </div>
-              </div>
-            )}
-
             {/* Quantity */}
             {!(user && user.role === 'admin') && cartQty === 0 && (
               <div style={selectionGroupStyle}>
