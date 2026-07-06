@@ -1733,15 +1733,16 @@ header {
   /* Wrapper container holding both card and switcher circles below it */
   .mobile-sheet-wrapper-container {
     position: fixed !important;
-    bottom: 12px !important;
+    top: 110px !important; /* sits just below announcement bar (~36px) + nav bar (~74px) */
+    bottom: auto !important;
     left: 0 !important;
     width: 100vw !important;
     z-index: 10000 !important;
     display: flex !important;
     flex-direction: column !important;
     align-items: center !important;
+    justify-content: flex-start !important; /* stack from top — empty space falls below circles */
     pointer-events: none !important; /* lets clicks pass to backdrop */
-    padding-bottom: env(safe-area-inset-bottom, 12px) !important;
     animation: slideUpWrapper 0.35s cubic-bezier(0.25, 1, 0.5, 1) forwards !important;
   }
 
