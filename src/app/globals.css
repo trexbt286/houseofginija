@@ -2047,6 +2047,7 @@ header {
     border: none !important;
     cursor: pointer !important;
     box-shadow: 0 2px 8px rgba(217, 142, 155, 0.2) !important;
+    margin-bottom: 16px !important; /* breathing room from bottom edge of card */
   }
   
   .detail-action-bottom-bar .blinkit-count-controller {
