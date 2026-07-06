@@ -1845,7 +1845,7 @@ header {
   /* Top Half: Image Gallery (full width, no padding) */
   .detail-preview-grid > div:first-child {
     width: 100% !important;
-    height: 28vh !important; /* Top half takes exactly 40% of the 70vh card height */
+    height: 35vh !important; /* Top half takes exactly 50% of the 70vh card height */
     position: relative !important;
     overflow: hidden !important;
     margin: 0 !important;
@@ -1856,8 +1856,8 @@ header {
   
   .detail-main-img-wrapper {
     width: 100% !important;
-    height: 28vh !important;
-    max-height: 28vh !important;
+    height: 35vh !important;
+    max-height: 35vh !important;
     border-radius: 24px 24px 0 0 !important;
     border: none !important;
     margin: 0 !important;
@@ -1867,8 +1867,8 @@ header {
   
   .detail-main-img {
     width: 100% !important;
-    height: 28vh !important;
-    max-height: 28vh !important;
+    height: 35vh !important;
+    max-height: 35vh !important;
     object-fit: cover !important;
     border-radius: 24px 24px 0 0 !important;
   }
@@ -1881,19 +1881,24 @@ header {
   .detail-preview-grid > div:last-child {
     flex: 1 !important;
     width: 100% !important;
-    height: 42vh !important; /* Bottom half takes remaining 60% of the 70vh card height */
+    height: 35vh !important; /* Bottom half takes remaining 50% of the 70vh card height */
     background-color: #FFFFFF !important;
     border-radius: 0 !important; /* flat top, rounded corners are on the card wrapper */
     margin-top: 0 !important;
-    padding: 0.6rem 1.5rem 4.5rem 1.5rem !important; /* bottom padding clears the sticky ADD button inside card */
+    padding: 0.8rem 1.5rem 3.8rem 1.5rem !important; /* bottom padding clears the sticky ADD button inside card */
     overflow-y: auto !important; /* scrollable independently inside the card if contents overflow */
     position: relative !important;
     z-index: 2 !important;
     box-sizing: border-box !important;
     display: flex !important;
     flex-direction: column !important;
-    gap: 0.15rem !important; /* tight element gaps */
+    gap: 0.25rem !important; /* tight element gaps */
     flex-shrink: 1 !important;
+  }
+
+  /* Prevent flexbox height collapse on mobile card children */
+  .detail-preview-grid > div:last-child > * {
+    flex-shrink: 0 !important;
   }
 
   /* Details typography & elements */
@@ -1923,9 +1928,7 @@ header {
   }
 
   .detail-product-desc {
-    display: -webkit-box !important; /* Standard WebKit flex-box clamp */
-    -webkit-line-clamp: 2 !important;
-    -webkit-box-orient: vertical !important;
+    display: block !important; /* Block layout prevents flexbox height collapse */
     font-size: 0.72rem !important; /* compact description size */
     color: #666666 !important;
     line-height: 1.30 !important;
