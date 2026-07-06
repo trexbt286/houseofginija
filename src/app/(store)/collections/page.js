@@ -46,6 +46,18 @@ function CollectionsContent() {
     };
   }, [isMobileFilterOpen]);
 
+  // Lock body scroll when product detail sheet is open
+  useEffect(() => {
+    if (activeProduct) {
+      document.body.classList.add('scroll-locked');
+    } else {
+      document.body.classList.remove('scroll-locked');
+    }
+    return () => {
+      document.body.classList.remove('scroll-locked');
+    };
+  }, [activeProduct]);
+
   // Trap Escape key for closing filter drawer
   useEffect(() => {
     const handleKeyDown = (e) => {
