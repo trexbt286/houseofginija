@@ -1856,8 +1856,8 @@ header {
   
   .detail-main-img-wrapper {
     width: 100% !important;
-    height: 35vh !important;
-    max-height: 35vh !important;
+    height: 48vh !important;
+    max-height: 48vh !important;
     border-radius: 24px 24px 0 0 !important;
     border: none !important;
     margin: 0 !important;
@@ -1867,8 +1867,8 @@ header {
   
   .detail-main-img {
     width: 100% !important;
-    height: 35vh !important;
-    max-height: 35vh !important;
+    height: 48vh !important;
+    max-height: 48vh !important;
     object-fit: cover !important;
     border-radius: 24px 24px 0 0 !important;
   }
@@ -1881,7 +1881,7 @@ header {
   .detail-preview-grid > div:last-child {
     flex: 1 !important;
     width: 100% !important;
-    height: 35vh !important; /* Bottom half takes remaining 50% of the 70vh card height */
+    height: 22vh !important; /* Bottom half takes remaining 22% of the 70vh card height to fill the white space */
     background-color: #FFFFFF !important;
     border-radius: 0 !important; /* flat top, rounded corners are on the card wrapper */
     margin-top: 0 !important;
