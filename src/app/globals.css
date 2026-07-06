@@ -1885,14 +1885,14 @@ header {
     background-color: #FFFFFF !important;
     border-radius: 0 !important; /* flat top, rounded corners are on the card wrapper */
     margin-top: 0 !important;
-    padding: 0.8rem 1.5rem 3.8rem 1.5rem !important; /* bottom padding clears the sticky ADD button inside card */
+    padding: 0.4rem 1.2rem 3.2rem 1.2rem !important; /* bottom padding clears the slim sticky ADD button */
     overflow-y: auto !important; /* scrollable independently inside the card if contents overflow */
     position: relative !important;
     z-index: 2 !important;
     box-sizing: border-box !important;
     display: flex !important;
     flex-direction: column !important;
-    gap: 0.25rem !important; /* tight element gaps */
+    gap: 0.15rem !important; /* tight element gaps */
     flex-shrink: 1 !important;
   }
 
@@ -1904,36 +1904,38 @@ header {
   /* Details typography & elements */
   .detail-collection-label {
     color: #D98E9B !important;
-    font-size: 0.65rem !important; /* compact label size */
+    font-size: 0.60rem !important; /* compressed label size */
     text-transform: uppercase !important;
     letter-spacing: 0.12em !important;
     font-weight: 700 !important;
     margin: 0 !important;
+    line-height: 1.0 !important;
   }
 
   .detail-product-name {
     font-family: var(--font-serif) !important;
-    font-size: 1.15rem !important; /* compact title size */
+    font-size: 1.05rem !important; /* compressed title size */
     font-weight: 700 !important;
     color: #000000 !important;
-    line-height: 1.2 !important;
+    line-height: 1.1 !important;
     margin: 0 !important;
   }
 
   .detail-product-price {
-    font-size: 0.98rem !important; /* compact price size */
+    font-size: 0.90rem !important; /* compressed price size */
     font-weight: 700 !important;
     color: #000000 !important;
     margin: 0 !important;
+    line-height: 1.1 !important;
   }
 
   .detail-product-desc {
     display: block !important; /* Block layout prevents flexbox height collapse */
-    font-size: 0.72rem !important; /* compact description size */
+    font-size: 0.68rem !important; /* compressed description size */
     color: #666666 !important;
-    line-height: 1.30 !important;
-    margin: 0 !important;
-    max-height: 2.6em !important; /* clamp to 2 lines max */
+    line-height: 1.20 !important;
+    margin: 0 0 0.1rem 0 !important;
+    max-height: 2.4em !important; /* clamp to 2 lines max */
     overflow: hidden !important;
     text-overflow: ellipsis !important;
   }
@@ -1943,34 +1945,57 @@ header {
   }
 
   .detail-stock-warning {
-    font-size: 0.70rem !important;
+    font-size: 0.65rem !important; /* compressed stock warning */
     color: #B8860B !important;
     font-weight: 600 !important;
     margin: 0 !important;
+    line-height: 1.0 !important;
   }
 
   /* Size / Color option groups styling */
   .detail-option-group {
     margin: 0 !important;
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 0.1rem !important;
   }
 
   .detail-option-title {
-    font-size: 0.68rem !important;
-    margin: 0 0 0.2rem 0 !important;
+    font-size: 0.60rem !important; /* compressed title */
+    font-weight: 700 !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.05em !important;
+    margin: 0 !important;
+    line-height: 1.0 !important;
   }
 
   .detail-sizes-row,
   .detail-colors-row {
-    gap: 0.35rem !important;
+    gap: 0.25rem !important;
+    display: flex !important;
+    flex-direction: row !important;
+    flex-wrap: nowrap !important; /* keep in a single row */
+    overflow-x: auto !important; /* horizontal scroll if screen is too narrow */
+    padding: 0.1rem 0 !important;
+  }
+
+  .detail-sizes-row::-webkit-scrollbar,
+  .detail-colors-row::-webkit-scrollbar {
+    display: none !important; /* hide scrollbars */
   }
 
   .detail-sizes-row button,
   .detail-colors-row button {
-    padding: 0.25rem 0.7rem !important;
-    font-size: 0.72rem !important;
+    padding: 0.15rem 0.55rem !important; /* very compact size and color pills */
+    font-size: 0.68rem !important;
     min-width: auto !important;
-    height: auto !important;
+    min-height: 22px !important;
+    height: 22px !important;
     border-radius: 999px !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    margin: 0 !important;
   }
 
   /* Sticky Footer containing only the ADD button actions inside the card */
@@ -1991,12 +2016,12 @@ header {
     position: relative !important;
     width: 100% !important;
     background: #FFFFFF !important;
-    padding: 0.5rem 1.5rem 0.5rem 1.5rem !important; /* padding spacing */
+    padding: 0.35rem 1.2rem 0.35rem 1.2rem !important; /* tight padding spacing */
     box-sizing: border-box !important;
     z-index: 10025 !important;
     display: flex !important;
     align-items: center !important;
-    gap: 1rem !important;
+    gap: 0.8rem !important;
     margin-top: 0 !important;
   }
   
@@ -2005,9 +2030,9 @@ header {
   .detail-action-bottom-bar .blinkit-count-controller {
     width: 100% !important;
     max-width: 100% !important;
-    height: 38px !important; /* compact height */
+    height: 32px !important; /* slim height */
     border-radius: 999px !important; /* rounded pill style */
-    font-size: 0.85rem !important;
+    font-size: 0.80rem !important; /* compact font */
     font-weight: 700 !important;
     letter-spacing: 0.05em !important;
     text-transform: uppercase !important;
@@ -2018,7 +2043,7 @@ header {
     color: #FFFFFF !important;
     border: none !important;
     cursor: pointer !important;
-    box-shadow: 0 3px 10px rgba(217, 142, 155, 0.25) !important;
+    box-shadow: 0 2px 8px rgba(217, 142, 155, 0.2) !important;
   }
   
   .detail-action-bottom-bar .blinkit-count-controller {
@@ -2028,13 +2053,13 @@ header {
 
   .detail-action-bottom-bar .blinkit-count-controller button {
     color: #D98E9B !important;
-    font-size: 1.2rem !important;
+    font-size: 1.1rem !important;
     width: auto !important;
     height: 100% !important;
   }
 
   .detail-action-bottom-bar .blinkit-count-controller span {
-    font-size: 0.85rem !important;
+    font-size: 0.80rem !important;
     color: #000000 !important;
     font-weight: 700 !important;
   }
