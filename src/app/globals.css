@@ -2012,6 +2012,7 @@ header {
     border-radius: 0 !important;
     overflow: hidden !important;
     margin-top: 0.4rem !important; /* comfortable gap after size selector */
+    margin-bottom: 0.8rem !important; /* prevent colliding with bottom card border */
   }
 
   /* Sticky actions container at the bottom of the details section */
