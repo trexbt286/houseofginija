@@ -32,7 +32,7 @@ function AdminProductsContent() {
   // Temp states for adding single variant
   const [tempVariant, setTempVariant] = useState({
     size: 'S',
-    color: 'Rose Pink',
+    color: 'Default',
     stock: '10',
   });
 
@@ -158,11 +158,11 @@ function AdminProductsContent() {
 
     // Check if variant combination already exists
     const duplicate = variants.find(
-      (v) => v.size === tempVariant.size && v.color === tempVariant.color
+      (v) => v.size === tempVariant.size
     );
 
     if (duplicate) {
-      alert('This variant combination (size & color) already exists in list.');
+      alert('This variant size already exists in the list.');
       return;
     }
 
@@ -170,7 +170,7 @@ function AdminProductsContent() {
       ...prev,
       {
         size: tempVariant.size,
-        color: tempVariant.color,
+        color: 'Default',
         stock: stockNum,
       },
     ]);
@@ -507,18 +507,7 @@ function AdminProductsContent() {
                     </select>
                   </div>
 
-                  <div style={miniFormGroupStyle}>
-                    <label style={miniLabelStyle}>Color</label>
-                    <select
-                      value={tempVariant.color}
-                      onChange={(e) => setTempVariant({ ...tempVariant, color: e.target.value })}
-                      style={miniSelectStyle}
-                    >
-                      {colorsOptions.map((c) => (
-                        <option key={c} value={c}>{c}</option>
-                      ))}
-                    </select>
-                  </div>
+
 
                   <div style={miniFormGroupStyle}>
                     <label style={miniLabelStyle}>Stock Count</label>
@@ -542,7 +531,6 @@ function AdminProductsContent() {
                       <thead>
                         <tr>
                           <th style={thStyle}>Size</th>
-                          <th style={thStyle}>Color</th>
                           <th style={thStyle}>Stock</th>
                           <th style={{ ...thStyle, width: '80px', textAlign: 'center' }}>Remove</th>
                         </tr>
@@ -551,7 +539,6 @@ function AdminProductsContent() {
                         {variants.map((v, idx) => (
                           <tr key={idx} style={trStyle}>
                             <td style={tdStyle}>{v.size}</td>
-                            <td style={tdStyle}>{v.color}</td>
                             <td style={tdStyle}>{v.stock}</td>
                             <td style={{ ...tdStyle, textAlign: 'center' }}>
                               <button
