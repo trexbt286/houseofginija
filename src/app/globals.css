@@ -1566,6 +1566,15 @@ body.scroll-locked {
   .collections-grid {
     grid-template-columns: repeat(2, 1fr) !important;
     gap: 0.75rem !important;
+    padding-left: 1rem !important;
+    padding-right: 1rem !important;
+    box-sizing: border-box !important;
+  }
+
+  .collections-grid-card {
+    display: flex !important;
+    flex-direction: column !important;
+    height: 100% !important;
   }
 
   .collections-grid-card > div:first-child {
@@ -1574,6 +1583,10 @@ body.scroll-locked {
 
   .collections-grid-card-content {
     padding: 0.8rem 0.5rem !important;
+    display: flex !important;
+    flex-direction: column !important;
+    flex: 1 !important;
+    align-items: center !important;
   }
 
   .collections-grid-card-content > div {
@@ -1589,11 +1602,19 @@ body.scroll-locked {
     font-size: 0.72rem !important;
     margin-bottom: 0.8rem !important;
     line-height: 1.35 !important;
+    display: -webkit-box !important;
+    -webkit-line-clamp: 2 !important;
+    -webkit-box-orient: vertical !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    height: 2.7rem !important; /* Force a consistent 2-line height */
+    flex: none !important;
   }
 
   .collections-grid-card-content span {
     font-size: 0.65rem !important;
     padding: 0.4rem 0.8rem !important;
+    margin-top: auto !important; /* Align button to bottom */
   }
 
   .hero-value-props-bar {
