@@ -1596,6 +1596,33 @@ body.scroll-locked {
     border-right: 1px solid rgba(139, 119, 137, 0.15) !important;
     padding-right: 0.6rem !important;
   }
+
+  /* Mobile newsletter section overrides */
+  .footer-newsletter-form {
+    flex-direction: column !important;
+    gap: 0.6rem !important;
+    width: 100% !important;
+  }
+
+  .footer-newsletter-input {
+    width: 100% !important;
+    flex: none !important;
+    box-sizing: border-box !important;
+  }
+
+  .footer-newsletter-btn {
+    width: 100% !important;
+    flex: none !important;
+    background-color: #D98E9B !important; /* Brand pink */
+    color: #FFFFFF !important; /* White text */
+    border-radius: 50px !important; /* Rounded pill */
+    border: none !important;
+    padding: 0.8rem 1.5rem !important;
+    font-size: 0.85rem !important;
+    font-weight: 600 !important;
+    box-shadow: 0 4px 10px rgba(217, 142, 155, 0.2) !important;
+    box-sizing: border-box !important;
+  }
 }
 
 /* Footer Exploration column vertical border divider line */
