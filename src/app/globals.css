@@ -1713,10 +1713,10 @@ header {
   /* Dim + Blur Backdrop behind Bottom Sheet */
   .mobile-bottom-sheet-backdrop {
     position: fixed !important;
-    top: 0 !important;
+    top: 70px !important; /* Starts at the vertical midpoint of the header bar, covering the bottom half of the header */
     left: 0 !important;
     width: 100vw !important;
-    height: 100vh !important;
+    height: calc(100vh - 70px) !important; /* fills screen below the card's top edge */
     background-color: rgba(0, 0, 0, 0.45) !important; /* slightly lighter so blur is visible */
     backdrop-filter: blur(8px) !important;
     -webkit-backdrop-filter: blur(8px) !important;
@@ -1738,7 +1738,7 @@ header {
   /* Wrapper container holding both card and switcher circles below it */
   .mobile-sheet-wrapper-container {
     position: fixed !important;
-    top: 36px !important; /* sits just below the black announcement bar */
+    top: 70px !important; /* sits just below announcement bar (~32px) + top half of nav bar (~38px) */
     bottom: auto !important;
     left: 0 !important;
     width: 100vw !important;
@@ -2087,7 +2087,7 @@ header {
     box-sizing: border-box !important;
     white-space: nowrap !important;
     -webkit-overflow-scrolling: touch !important;
-    margin-top: 36px !important; /* comfortable gap below card */
+    margin-top: 24px !important; /* space below card — increased breathing room */
     pointer-events: auto !important; /* allow clicks on switcher circles */
     flex-shrink: 0 !important;
   }

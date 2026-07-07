@@ -64,22 +64,6 @@ function CollectionsContent() {
     };
   }, [activeProduct]);
 
-  // Intercept Android/browser back button to close product detail sheet instead of navigating away
-  useEffect(() => {
-    if (activeProduct) {
-      // Push a dummy history entry so pressing back triggers popstate instead of leaving the page
-      window.history.pushState({ productDetailOpen: true }, '');
-
-      const handlePopState = () => {
-        setActiveProduct(null);
-      };
-      window.addEventListener('popstate', handlePopState);
-      return () => {
-        window.removeEventListener('popstate', handlePopState);
-      };
-    }
-  }, [activeProduct]);
-
   // Trap Escape key for closing filter drawer
   useEffect(() => {
     const handleKeyDown = (e) => {
