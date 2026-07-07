@@ -994,7 +994,7 @@ function CollectionsContent() {
                 {shouldGroup ? (
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '2.5rem' }}>
                     {getSidebarCategories()
-                      .filter(cat => cat.id !== 'all')
+                      .filter(cat => cat.id !== 'all' && cat.id !== 'jewellery')
                       .map(cat => {
                         const group = cat.name;
                         const items = groupedProducts[group] || [];
