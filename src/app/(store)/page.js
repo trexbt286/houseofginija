@@ -241,7 +241,7 @@ export default function Home() {
                         <p style={cardDescStyle}>{col.description}</p>
                       </div>
                     </div>
-                    <span style={cardLinkStyle}>
+                    <span style={cardLinkStyle} className="collections-grid-card-btn">
                       VIEW {col.name.toUpperCase()} &rarr;
                     </span>
                   </Link>
@@ -651,9 +651,14 @@ const cardLinkStyle = {
   letterSpacing: '0.08em',
   fontWeight: '700',
   color: '#A06B79',
-  border: '1px solid rgba(217, 142, 155, 0.5)',
+  border: '1px solid rgba(217, 142, 155, 0.6)',
+  backgroundColor: 'transparent',
   borderRadius: '25px',
-  padding: '0.6rem 1.5rem',
+  padding: '0.6rem 1rem',
+  width: '85%',
+  textAlign: 'center',
+  whiteSpace: 'nowrap',
+  boxSizing: 'border-box',
   marginTop: 'auto',
   alignSelf: 'center',
   marginBottom: '1.8rem',

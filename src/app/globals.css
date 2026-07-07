@@ -1612,10 +1612,16 @@ body.scroll-locked {
     flex: none !important;
   }
 
-  .collections-grid-card-content span {
+  .collections-grid-card-btn {
     font-size: 0.65rem !important;
-    padding: 0.4rem 0.8rem !important;
-    margin-top: auto !important; /* Align button to bottom */
+    padding: 0.5rem 0.2rem !important;
+    width: 85% !important;
+    white-space: nowrap !important;
+    box-sizing: border-box !important;
+    text-align: center !important;
+    margin-top: auto !important;
+    margin-bottom: 1.2rem !important;
+    align-self: center !important;
   }
 
   .hero-value-props-bar {
