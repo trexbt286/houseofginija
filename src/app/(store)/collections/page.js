@@ -332,19 +332,8 @@ function CollectionsContent() {
     };
   }, [loading, products, activeProduct, searchQuery]);
 
-  // Close search suggestions dropdown when user taps anywhere outside it
-  useEffect(() => {
-    const handleClickOutside = (event) => {
-      const searchRow = document.querySelector('.mobile-search-bar-row');
-      if (searchRow && !searchRow.contains(event.target)) {
-        setShowSuggestions(false);
-      }
-    };
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
-  }, []);
+
+
 
   // Sync nav bar highlight with active collection filter selection
   useEffect(() => {
