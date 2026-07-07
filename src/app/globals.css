@@ -741,6 +741,9 @@ body.scroll-locked {
   .blinkit-sidebar {
     width: 100vw !important;
     height: auto !important;
+    position: sticky !important;
+    top: 107px !important; /* height of announcement bar (32px) + header (75px) */
+    z-index: 900 !important;
     overflow-x: hidden !important; /* disable horizontal scroll */
     overflow-y: hidden !important;
     background-color: #FBF0EC !important; /* light blush background */
