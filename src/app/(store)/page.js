@@ -237,9 +237,7 @@ export default function Home() {
                       <h3 style={cardTitleStyle}>
                         {col.name}
                       </h3>
-                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ marginBottom: '1.2rem' }}>
-                        <path d="M12 2L14.4 9.6L22 12L14.4 14.4L12 22L9.6 14.4L2 12L9.6 9.6L12 2Z" fill="#C5A880"/>
-                      </svg>
+
                       <p style={cardDescStyle}>{col.description}</p>
                       <span style={cardLinkStyle}>
                         VIEW {col.name.toUpperCase()} &rarr;
@@ -560,8 +558,8 @@ const loadingWrapperStyle = {
 
 const collectionsGridStyle = {
   display: 'grid',
-  gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))',
-  gap: '2.5rem',
+  gridTemplateColumns: 'repeat(2, 1fr)',
+  gap: '1.5rem',
   maxWidth: '1200px',
   margin: '0 auto',
 };
