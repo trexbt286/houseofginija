@@ -392,7 +392,16 @@ export default function Header() {
       <div className={`cart-drawer-backdrop ${isCartOpen ? 'open' : ''}`} onClick={() => setIsCartOpen(false)}>
         <div className="cart-drawer" onClick={(e) => e.stopPropagation()}>
           <div className="cart-drawer-header">
+            {/* Mobile Back Button (on the left) */}
+            <button className="cart-drawer-back-btn" onClick={() => setIsCartOpen(false)}>
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <line x1="19" y1="12" x2="5" y2="12"></line>
+                <polyline points="12 19 5 12 12 5"></polyline>
+              </svg>
+            </button>
+
             <h3 className="cart-drawer-title">Shopping Bag ({cartCount})</h3>
+
             <button className="cart-drawer-close" onClick={() => setIsCartOpen(false)}>
               <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <line x1="18" y1="6" x2="6" y2="18"></line>
