@@ -866,7 +866,7 @@ body.scroll-locked {
   }
 
   .blinkit-feed {
-    padding: 72px 0.8rem 1.5rem 0.8rem !important; /* Push top below fixed header + category navigation bar */
+    padding: 72px 0.8rem 1rem 0.8rem !important; /* Push top below fixed header + category navigation bar */
   }
 
   .blinkit-feed-section {
@@ -1622,6 +1622,10 @@ body.scroll-locked {
     font-weight: 600 !important;
     box-shadow: 0 4px 10px rgba(217, 142, 155, 0.2) !important;
     box-sizing: border-box !important;
+  }
+
+  .footer-newsletter {
+    padding: 1.5rem 1rem !important;
   }
 }
 

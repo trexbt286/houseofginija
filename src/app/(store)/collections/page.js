@@ -136,8 +136,8 @@ function CollectionsContent() {
     const observedElements = [];
 
     const observerOptions = {
-      root: feed,
-      rootMargin: '0px 0px -60% 0px', // Trigger when headers are in the top 40% of the feed viewport
+      root: null,
+      rootMargin: '-180px 0px -50% 0px', // Trigger when section top enters active area below the fixed header/category bar
       threshold: 0
     };
 
