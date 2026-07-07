@@ -314,24 +314,22 @@ function CollectionsContent() {
       let targetId = scrollToParam.toLowerCase();
       if (targetId === 'necklace') targetId = 'necklaces';
       
-      setTimeout(() => {
-        const element = document.getElementById(targetId);
-        if (element) {
-          const originalScrollBehavior = document.documentElement.style.scrollBehavior;
-          document.documentElement.style.scrollBehavior = 'auto';
-          
-          element.scrollIntoView({ behavior: 'instant', block: 'start' });
-          
-          if (originalScrollBehavior) {
-            document.documentElement.style.scrollBehavior = originalScrollBehavior;
-          } else {
-            document.documentElement.style.removeProperty('scroll-behavior');
-          }
-          
-          setActiveCategorySidebar(targetId);
+      const element = document.getElementById(targetId);
+      if (element) {
+        const originalScrollBehavior = document.documentElement.style.scrollBehavior;
+        document.documentElement.style.scrollBehavior = 'auto';
+        
+        element.scrollIntoView({ behavior: 'instant', block: 'start' });
+        
+        if (originalScrollBehavior) {
+          document.documentElement.style.scrollBehavior = originalScrollBehavior;
+        } else {
+          document.documentElement.style.removeProperty('scroll-behavior');
         }
-        setIsJumping(false);
-      }, 50);
+        
+        setActiveCategorySidebar(targetId);
+      }
+      setIsJumping(false);
     }
   }, [scrollToParam, loading, products]);
 
