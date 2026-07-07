@@ -15,7 +15,7 @@ export default function AboutPage() {
       </section>
 
       {/* Grid Story Section */}
-      <section className="container info-page-container" style={storyGridStyle}>
+      <section className="container info-page-container story-grid">
         <div style={textColStyle}>
           <p className="brand-tagline" style={taglineStyle}>Timeless Silhouettes</p>
           <h2 style={sectionTitleStyle}>Dedicated Couture Craftsmanship</h2>
@@ -51,7 +51,7 @@ export default function AboutPage() {
       </section>
 
       {/* Master Artisans Section */}
-      <section className="container" style={storyGridReverseStyle}>
+      <section className="container story-grid-reverse">
         <div style={imageColStyle}>
           <img
             src="https://images.unsplash.com/photo-1544441893-675973e31985?w=800&auto=format&fit=crop&q=80"
@@ -111,27 +111,6 @@ const dividerStyle = {
   height: '1px',
   backgroundColor: '#D98E9B',
   margin: '1.2rem auto 0 auto',
-};
-
-const storyGridStyle = {
-  display: 'grid',
-  gridTemplateColumns: '1.1fr 1fr',
-  gap: '5rem',
-  alignItems: 'center',
-  marginTop: '2rem',
-  '@media (max-width: 991px)': {
-    gridTemplateColumns: '1fr',
-    gap: '2.5rem',
-  },
-};
-
-const storyGridReverseStyle = {
-  ...storyGridStyle,
-  gridTemplateColumns: '1fr 1.1fr',
-  marginTop: '5rem',
-  '@media (max-width: 991px)': {
-    gridTemplateColumns: '1fr',
-  },
 };
 
 const textColStyle = {

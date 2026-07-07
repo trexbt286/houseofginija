@@ -742,6 +742,45 @@ body.scroll-locked {
   display: none;
 }
 
+/* --- About and Contact Pages Responsive Grids --- */
+.story-grid {
+  display: grid !important;
+  grid-template-columns: 1.1fr 1fr !important;
+  gap: 5rem !important;
+  align-items: center !important;
+  margin-top: 2rem !important;
+}
+
+.story-grid-reverse {
+  display: grid !important;
+  grid-template-columns: 1fr 1.1fr !important;
+  gap: 5rem !important;
+  align-items: center !important;
+  margin-top: 5rem !important;
+}
+
+.contact-layout-grid {
+  display: grid !important;
+  grid-template-columns: 1fr 1.2fr !important;
+  gap: 4rem !important;
+  margin-top: 2rem !important;
+  align-items: start !important;
+}
+
+@media (max-width: 991px) {
+  .story-grid, .story-grid-reverse {
+    grid-template-columns: 1fr !important;
+    gap: 2.5rem !important;
+  }
+}
+
+@media (max-width: 768px) {
+  .contact-layout-grid {
+    grid-template-columns: 1fr !important;
+    gap: 2.5rem !important;
+  }
+}
+
 /* --- BLINKIT MOBILE SPLIT-VIEW --- */
 
 @media (max-width: 768px) {

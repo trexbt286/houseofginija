@@ -48,7 +48,7 @@ export default function ContactPage() {
         <div style={dividerStyle}></div>
       </section>
 
-      <div style={layoutGridStyle}>
+      <div className="contact-layout-grid">
         {/* Info Column */}
         <div style={infoColStyle}>
           <h3 style={sectionTitleStyle}>Client Inquiries</h3>
@@ -188,18 +188,6 @@ const dividerStyle = {
   height: '1px',
   backgroundColor: '#D98E9B',
   margin: '1.2rem auto 0 auto',
-};
-
-const layoutGridStyle = {
-  display: 'grid',
-  gridTemplateColumns: '1fr 1.2fr',
-  gap: '4rem',
-  marginTop: '2rem',
-  alignItems: 'start',
-  '@media (max-width: 768px)': {
-    gridTemplateColumns: '1fr',
-    gap: '2.5rem',
-  },
 };
 
 const infoColStyle = {
