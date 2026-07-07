@@ -286,9 +286,19 @@ function CollectionsContent() {
       setTimeout(() => {
         const element = document.getElementById(targetId);
         if (element) {
-          const yOffset = -180;
+          const originalScrollBehavior = document.documentElement.style.scrollBehavior;
+          document.documentElement.style.scrollBehavior = 'auto';
+          
+          const yOffset = -242; // Offset for header + sticky category bar
           const y = element.getBoundingClientRect().top + window.pageYOffset + yOffset;
-          window.scrollTo({ top: y, behavior: 'smooth' });
+          window.scrollTo({ top: y, behavior: 'instant' });
+          
+          if (originalScrollBehavior) {
+            document.documentElement.style.scrollBehavior = originalScrollBehavior;
+          } else {
+            document.documentElement.style.removeProperty('scroll-behavior');
+          }
+          
           setActiveCategorySidebar(targetId);
         }
       }, 300);
