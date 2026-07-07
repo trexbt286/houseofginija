@@ -802,6 +802,20 @@ body.scroll-locked {
     grid-template-columns: 1fr !important;
     gap: 2.5rem !important;
   }
+
+  /* Homepage Signature Collections Grid (2-column on mobile) */
+  .collections-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 1rem !important;
+  }
+  
+  .collections-grid-card > div:first-child {
+    height: 200px !important;
+  }
+  
+  .collections-grid-card-content {
+    padding: 1rem !important;
+  }
 }
 
 /* --- BLINKIT MOBILE SPLIT-VIEW --- */

@@ -211,9 +211,13 @@ export default function Home() {
           ) : (
             <div style={collectionsGridStyle} className="collections-grid">
               {collections.map((col) => {
+                const linkHref = col.slug === 'jewellery' 
+                  ? '/collections?category=rings' 
+                  : `/collections?category=${col.slug}`;
+
                 return (
                   <Link 
-                    href={`/collections?collection=${col.slug}`} 
+                    href={linkHref} 
                     key={col.id} 
                     style={collectionCardStyle}
                     className="collections-grid-card"
