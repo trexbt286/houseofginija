@@ -1,10 +1,151 @@
 'use client';
 
-import { useState, useEffect, Suspense } from 'react';
+import { useState, useEffect, Suspense, useRef } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useStore } from '@/context/StoreContext';
+
+function MobileSearchBar({ allProducts, initialQuery, onSearch, handleProductClick }) {
+  const [localQuery, setLocalQuery] = useState(initialQuery || '');
+  const [showSuggestions, setShowSuggestions] = useState(false);
+  const timeoutRef = useRef(null);
+  
+  // Close suggestions if user clicks outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      const searchRow = document.querySelector('.mobile-search-bar-row');
+      if (searchRow && !searchRow.contains(event.target)) {
+        setShowSuggestions(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  const getSuggestions = () => {
+    if (!localQuery) return [];
+    const q = localQuery.toLowerCase().trim();
+    return allProducts
+      .filter((p) => p.name.toLowerCase().includes(q))
+      .slice(0, 5);
+  };
+
+  return (
+    <div className="mobile-search-bar-row">
+      <div className="mobile-search-bar-inner" style={{ position: 'relative', width: '100%' }}>
+        <svg className="mobile-search-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="rgba(0, 0, 0, 0.4)" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" style={{ position: 'absolute', left: '1rem', top: '50%', transform: 'translateY(-50%)', pointerEvents: 'none' }}>
+          <circle cx="11" cy="11" r="8"></circle>
+          <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+        </svg>
+        <input
+          type="text"
+          placeholder="Search for products, collections..."
+          value={localQuery}
+          onChange={(e) => {
+            const val = e.target.value;
+            setLocalQuery(val);
+            setShowSuggestions(true);
+            
+            if (timeoutRef.current) clearTimeout(timeoutRef.current);
+            timeoutRef.current = setTimeout(() => {
+              onSearch(val);
+            }, 300);
+          }}
+          onFocus={() => setShowSuggestions(true)}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter') {
+              setShowSuggestions(false);
+              // Do not blur here so input keeps focus.
+              if (timeoutRef.current) clearTimeout(timeoutRef.current);
+              onSearch(localQuery);
+            }
+          }}
+          className="mobile-search-input"
+          style={{
+            width: '100%',
+            height: '38px',
+            backgroundColor: '#FFFFFF',
+            border: '1px solid rgba(139, 119, 137, 0.25)',
+            borderRadius: '50px',
+            paddingLeft: '2.6rem',
+            paddingRight: '1rem',
+            fontSize: '0.85rem',
+            color: '#000000',
+            boxSizing: 'border-box',
+            outline: 'none'
+          }}
+        />
+        
+        {showSuggestions && localQuery.trim().length > 0 && (
+          <div className="search-suggestions-dropdown" style={{
+            position: 'absolute',
+            top: '44px',
+            left: 0,
+            right: 0,
+            backgroundColor: '#FFFFFF',
+            border: '1px solid rgba(139, 119, 137, 0.15)',
+            borderRadius: '8px',
+            boxShadow: '0 8px 24px rgba(0,0,0,0.12)',
+            zIndex: 1001,
+            maxHeight: '260px',
+            overflowY: 'auto',
+            display: 'flex',
+            flexDirection: 'column',
+            padding: '0.4rem 0',
+          }}>
+            {getSuggestions().map((p) => (
+              <a
+                key={p.id}
+                href={`/products/${p.slug}`}
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '0.8rem',
+                  padding: '0.6rem 1rem',
+                  textDecoration: 'none',
+                  borderBottom: '1px solid rgba(139, 119, 137, 0.05)',
+                  color: '#000000',
+                }}
+                onMouseDown={(e) => {
+                  e.preventDefault();
+                  setShowSuggestions(false);
+                  setLocalQuery('');
+                  onSearch('');
+                  handleProductClick(e, p);
+                }}
+                onClick={(e) => e.preventDefault()}
+              >
+                <img 
+                  src={p.images?.[0] || '/placeholder.png'} 
+                  style={{
+                    width: '36px',
+                    height: '36px',
+                    objectFit: 'cover',
+                    borderRadius: '4px',
+                    border: '1px solid rgba(139, 119, 137, 0.1)',
+                  }} 
+                  alt="" 
+                />
+                <div style={{ display: 'flex', flexDirection: 'column' }}>
+                  <span style={{ fontSize: '0.85rem', fontWeight: '500', color: '#000000' }}>{p.name}</span>
+                  <span style={{ fontSize: '0.75rem', color: '#D98E9B', fontWeight: '600', marginTop: '0.1rem' }}>
+                    ₹{parseFloat(p.price).toLocaleString('en-IN')}
+                  </span>
+                </div>
+              </a>
+            ))}
+            {getSuggestions().length === 0 && (
+              <div style={{ padding: '1rem', color: 'rgba(0,0,0,0.5)', fontSize: '0.85rem', textAlign: 'center' }}>
+                No matching products found
+              </div>
+            )}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
 
 function CollectionsContent() {
   const searchParams = useSearchParams();
@@ -33,7 +174,6 @@ function CollectionsContent() {
   const [activeProductQty, setActiveProductQty] = useState(1);
   const [isMobileFilterOpen, setIsMobileFilterOpen] = useState(false);
   const [activeCategorySidebar, setActiveCategorySidebar] = useState('');
-  const [showSuggestions, setShowSuggestions] = useState(false);
 
   // Viewport width state for mobile sibling switcher centering
   const [viewportWidth, setViewportWidth] = useState(390);
@@ -216,8 +356,7 @@ function CollectionsContent() {
   const activeFilterCount = [
     selectedCollection,
     selectedSize,
-    selectedColor,
-    searchQuery
+    selectedColor
   ].filter(Boolean).length;
 
   const getSuggestions = () => {
@@ -420,13 +559,13 @@ function CollectionsContent() {
     } else {
       if (selectedCollection) urlParams.set('collection', selectedCollection);
     }
-    router.replace(`/collections?${urlParams.toString()}`, { scroll: false });
+    const newUrl = `/collections?${urlParams.toString()}`;
+    window.history.replaceState({ ...window.history.state, as: newUrl, url: newUrl }, '', newUrl);
 
   }, [selectedCollection, searchQuery, selectedSize, selectedColor, selectedSort, allProducts]);
 
   const handleClearFilters = () => {
     setSelectedCollection('');
-    setSearchQuery('');
     setSelectedSize('');
     setSelectedColor('');
     setSelectedSort('price_asc');
@@ -1009,117 +1148,14 @@ function CollectionsContent() {
             {renderFilters(false)}
           </aside>
 
-          {/* Mobile Search Bar Row (Mobile only, sits between header and category nav bar) */}
-          <div className="mobile-search-bar-row">
-            <div className="mobile-search-bar-inner" style={{ position: 'relative', width: '100%' }}>
-              <svg className="mobile-search-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="rgba(0, 0, 0, 0.4)" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" style={{ position: 'absolute', left: '1rem', top: '50%', transform: 'translateY(-50%)', pointerEvents: 'none' }}>
-                <circle cx="11" cy="11" r="8"></circle>
-                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-              </svg>
-              <input
-                type="text"
-                placeholder="Search for products, collections..."
-                value={searchQuery}
-                onChange={(e) => {
-                  setSearchQuery(e.target.value);
-                  setShowSuggestions(true);
-                }}
-                onFocus={() => setShowSuggestions(true)}
-                onBlur={() => {
-                  // Slight timeout so click event on suggestion links registers before blur event closes dropdown
-                  setTimeout(() => setShowSuggestions(false), 200);
-                }}
-                 onKeyDown={(e) => {
-                  if (e.key === 'Enter') {
-                    setShowSuggestions(false);
-                    e.currentTarget.blur();
-                  }
-                }}
-                className="mobile-search-input"
-                style={{
-                  width: '100%',
-                  height: '38px',
-                  backgroundColor: '#FFFFFF',
-                  border: '1px solid rgba(139, 119, 137, 0.25)',
-                  borderRadius: '50px',
-                  paddingLeft: '2.6rem',
-                  paddingRight: '1rem',
-                  fontSize: '0.85rem',
-                  color: '#000000',
-                  boxSizing: 'border-box',
-                  outline: 'none'
-                }}
-              />
-              
-              {/* Suggestions Dropdown */}
-              {showSuggestions && searchQuery.trim().length > 0 && (
-                <div className="search-suggestions-dropdown" style={{
-                  position: 'absolute',
-                  top: '44px',
-                  left: 0,
-                  right: 0,
-                  backgroundColor: '#FFFFFF',
-                  border: '1px solid rgba(139, 119, 137, 0.15)',
-                  borderRadius: '8px',
-                  boxShadow: '0 8px 24px rgba(0,0,0,0.12)',
-                  zIndex: 1001,
-                  maxHeight: '260px',
-                  overflowY: 'auto',
-                  display: 'flex',
-                  flexDirection: 'column',
-                  padding: '0.4rem 0',
-                }}>
-                  {getSuggestions().map((p) => (
-                    <a
-                      key={p.id}
-                      href={`/products/${p.slug}`}
-                      style={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: '0.8rem',
-                        padding: '0.6rem 1rem',
-                        textDecoration: 'none',
-                        borderBottom: '1px solid rgba(139, 119, 137, 0.05)',
-                        color: '#000000',
-                      }}
-                      onMouseDown={(e) => {
-                        e.preventDefault();
-                        setShowSuggestions(false);
-                        setSearchQuery('');
-                        handleProductClick(e, p);
-                      }}
-                      onClick={(e) => {
-                        e.preventDefault();
-                      }}
-                    >
-                      <img 
-                        src={p.images?.[0] || '/placeholder.png'} 
-                        style={{
-                          width: '36px',
-                          height: '36px',
-                          objectFit: 'cover',
-                          borderRadius: '4px',
-                          border: '1px solid rgba(139, 119, 137, 0.1)',
-                        }} 
-                        alt="" 
-                      />
-                      <div style={{ display: 'flex', flexDirection: 'column' }}>
-                        <span style={{ fontSize: '0.85rem', fontWeight: '500', color: '#000000' }}>{p.name}</span>
-                        <span style={{ fontSize: '0.75rem', color: '#D98E9B', fontWeight: '600', marginTop: '0.1rem' }}>
-                          ₹{parseFloat(p.price).toLocaleString('en-IN')}
-                        </span>
-                      </div>
-                    </a>
-                  ))}
-                  {getSuggestions().length === 0 && (
-                    <div style={{ padding: '1rem', color: 'rgba(0,0,0,0.5)', fontSize: '0.85rem', textAlign: 'center' }}>
-                      No matching products found
-                    </div>
-                  )}
-                </div>
-              )}
-            </div>
-          </div>
+          <MobileSearchBar 
+            allProducts={allProducts} 
+            initialQuery={searchQuery}
+            onSearch={(val) => {
+              setSearchQuery(val);
+            }} 
+            handleProductClick={handleProductClick} 
+          />
 
           {/* Blinkit Mobile Category Sidebar (Mobile only, hidden on desktop) */}
           <aside className="blinkit-sidebar">
