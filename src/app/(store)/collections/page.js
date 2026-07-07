@@ -63,7 +63,8 @@ function MobileSearchBar({ allProducts, initialQuery, onSearch, handleProductCli
           onKeyDown={(e) => {
             if (e.key === 'Enter') {
               setShowSuggestions(false);
-              // Do not blur here so input keeps focus.
+              // Blur the input to programmatically close the mobile keyboard on Android/iOS
+              e.currentTarget.blur();
               if (timeoutRef.current) clearTimeout(timeoutRef.current);
               onSearch(localQuery);
             }
