@@ -5,7 +5,7 @@ export const metadata = {
 
 export default function PrivacyPage() {
   return (
-    <div style={pageStyle} className="container animate-fade-in">
+    <div style={pageStyle} className="container animate-fade-in info-page-container">
       <h1 style={titleStyle}>Privacy Policy</h1>
       <div style={dividerStyle}></div>
 

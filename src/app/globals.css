@@ -1466,6 +1466,12 @@ body.scroll-locked {
     margin-right: 0 !important;
   }
 
+  .info-page-container {
+    padding-left: 1.2rem !important;
+    padding-right: 1.2rem !important;
+    box-sizing: border-box !important;
+  }
+
   .collections-grid {
     grid-template-columns: 1fr !important;
     gap: 1.5rem !important;

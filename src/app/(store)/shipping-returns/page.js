@@ -5,7 +5,7 @@ export const metadata = {
 
 export default function ShippingPage() {
   return (
-    <div style={pageStyle} className="container animate-fade-in">
+    <div style={pageStyle} className="container animate-fade-in info-page-container">
       <h1 style={titleStyle}>Shipping & Returns</h1>
       <div style={dividerStyle}></div>
 
