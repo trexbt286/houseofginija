@@ -9,16 +9,16 @@ export default function AboutPage() {
   return (
     <div style={pageStyle} className="animate-fade-in">
       {/* Header Banner */}
-      <section style={headerSectionStyle}>
-        <h1 style={titleStyle}>Our Journey</h1>
+      <section className="about-header-section" style={headerSectionStyle}>
+        <h1 className="about-title" style={titleStyle}>Our Journey</h1>
         <div style={dividerStyle}></div>
       </section>
 
       {/* Grid Story Section */}
       <section className="container info-page-container story-grid">
         <div style={textColStyle}>
-          <p className="brand-tagline" style={taglineStyle}>Timeless Silhouettes</p>
-          <h2 style={sectionTitleStyle}>Dedicated Couture Craftsmanship</h2>
+          <p className="brand-tagline about-tagline" style={taglineStyle}>Timeless Silhouettes</p>
+          <h2 className="about-section-title" style={sectionTitleStyle}>Dedicated Couture Craftsmanship</h2>
           <p style={paragraphStyle}>
             Founded in the summer of 2021 as a private bespoke tailoring house, House Of Ginija arose from a singular vision: to create heirloom garments that transcend seasons. Rejecting the frenetic cycles of fast fashion, our brand set out to honor the slow, deliberate methods of historical couture.
           </p>
@@ -29,7 +29,7 @@ export default function AboutPage() {
             We dedicate our collections to the clients who have accompanied us on this journey. Every piece is an archival tribute—crafted in rich pink foils and soft mulberry silken structures—to carry forward our legacy of slow luxury.
           </p>
         </div>
-        <div style={imageColStyle}>
+        <div className="about-image-col" style={imageColStyle}>
           <img
             src="/images/story.jpeg"
             alt="Design workspace"
@@ -40,10 +40,10 @@ export default function AboutPage() {
       </section>
 
       {/* Philosophy Callout */}
-      <section style={philosophySectionStyle}>
+      <section className="about-philosophy-section" style={philosophySectionStyle}>
         <div className="container" style={philosophyContainerStyle}>
           <span style={philosophyIconStyle}>❧</span>
-          <h3 style={philosophyTitleStyle}>"Made to Last"</h3>
+          <h3 className="about-philosophy-title" style={philosophyTitleStyle}>"Made to Last"</h3>
           <p style={philosophyDescStyle}>
             We believe a garment should hold memories. We select only the highest grade of natural, ethically sourced silks, linen, and wool. A House Of Ginija creation is not merely designed for a season; it is made to endure, to be cherished, and to be passed down.
           </p>
@@ -52,7 +52,7 @@ export default function AboutPage() {
 
       {/* Master Artisans Section */}
       <section className="container story-grid-reverse">
-        <div style={imageColStyle}>
+        <div className="about-image-col" style={imageColStyle}>
           <img
             src="https://images.unsplash.com/photo-1544441893-675973e31985?w=800&auto=format&fit=crop&q=80"
             alt="Hand-finishing embroidery"
@@ -62,7 +62,7 @@ export default function AboutPage() {
         </div>
         <div style={textColStyle}>
           <span style={sectionSubStyle}>The Studio</span>
-          <h2 style={sectionTitleStyle}>Hand-Finished Heritage</h2>
+          <h2 className="about-section-title" style={sectionTitleStyle}>Hand-Finished Heritage</h2>
           <p style={paragraphStyle}>
             Located in our flagship studio, our tailors and pattern makers bring decades of combined experience. By maintaining an in-house studio, we control the entire lifecycle of our garments—ensuring living wages, zero waste through custom sizing, and a level of execution that machine-made garments can never replicate.
           </p>

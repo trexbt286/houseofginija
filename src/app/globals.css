@@ -775,6 +775,16 @@ body.scroll-locked {
 }
 
 @media (max-width: 768px) {
+  /* About Page Mobile Optimizations */
+  .about-header-section { padding: 3rem 1rem 2rem 1rem !important; }
+  .about-title { font-size: 2.2rem !important; }
+  .about-tagline { font-size: 1.8rem !important; margin-bottom: 0 !important; }
+  .about-section-title { font-size: 1.6rem !important; }
+  .about-image-col { height: 300px !important; }
+  .about-philosophy-section { padding: 3rem 1.5rem !important; margin: 3rem 0 !important; }
+  .about-philosophy-title { font-size: 1.6rem !important; }
+
+  /* Contact Page Grid */
   .contact-layout-grid {
     grid-template-columns: 1fr !important;
     gap: 2.5rem !important;
