@@ -215,11 +215,10 @@ function CollectionsContent() {
           style={selectFieldStyle}
         >
           <option value="">All Collections</option>
-          {collections.map((c) => (
-            <option key={c.id} value={c.slug}>
-              {c.name}
-            </option>
-          ))}
+          <option value="suits">Suits</option>
+          <option value="rings">Rings</option>
+          <option value="necklaces">Necklaces</option>
+          <option value="bracelets">Bracelets</option>
         </select>
       </div>
 
@@ -306,7 +305,17 @@ function CollectionsContent() {
 
     // Filter by collection
     if (selectedCollection) {
-      filtered = filtered.filter(p => p.collection_slug === selectedCollection);
+      if (selectedCollection === 'suits') {
+        filtered = filtered.filter(p => p.collection_slug === 'suits');
+      } else if (selectedCollection === 'rings') {
+        filtered = filtered.filter(p => p.slug.toLowerCase().includes('ring'));
+      } else if (selectedCollection === 'necklaces') {
+        filtered = filtered.filter(p => p.slug.toLowerCase().includes('necklace'));
+      } else if (selectedCollection === 'bracelets') {
+        filtered = filtered.filter(p => p.slug.toLowerCase().includes('bracelet'));
+      } else {
+        filtered = filtered.filter(p => p.collection_slug === selectedCollection);
+      }
     }
 
     // Filter by search
@@ -363,6 +372,10 @@ function CollectionsContent() {
 
   const getCollectionTitle = () => {
     if (!selectedCollection) return 'All collections';
+    if (selectedCollection === 'suits') return 'Suits Collection';
+    if (selectedCollection === 'rings') return 'Rings';
+    if (selectedCollection === 'necklaces') return 'Necklaces';
+    if (selectedCollection === 'bracelets') return 'Bracelets';
     const found = collections.find((c) => c.slug === selectedCollection);
     return found ? `${found.name} Collection` : 'Collection';
   };
