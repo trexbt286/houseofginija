@@ -1567,7 +1567,7 @@ const sizeOptStyle = {
 const activeSizeOptStyle = {
   ...sizeOptStyle,
   backgroundColor: '#000000',
-  borderColor: '#000000',
+  border: '1px solid #000000',
   color: '#FFFFFF',
 };
 
@@ -1592,7 +1592,7 @@ const colorOptStyle = {
 const activeColorOptStyle = {
   ...colorOptStyle,
   backgroundColor: '#000000',
-  borderColor: '#000000',
+  border: '1px solid #000000',
   color: '#FFFFFF',
 };
 

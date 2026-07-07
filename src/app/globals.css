@@ -1168,7 +1168,7 @@ body.scroll-locked {
 .cart-drawer-footer {
   padding: 1.5rem;
   border-top: 1px solid rgba(139, 119, 137, 0.15);
-  background-color: #FBF0EC; /* Light blush/ivory background */
+  background-color: #F6DDE2 !important; /* Brand pastel pink */
   flex-shrink: 0;
   display: flex;
   flex-direction: column;
@@ -1199,7 +1199,7 @@ body.scroll-locked {
 
 .cart-drawer-subtext {
   font-size: 0.75rem;
-  color: rgba(0, 0, 0, 0.5);
+  color: #000000 !important; /* solid black text */
   text-align: center;
   line-height: 1.4;
   margin-top: -0.4rem;
@@ -2216,6 +2216,58 @@ body.cart-drawer-open header {
     font-size: 1.3rem !important;
     margin-left: auto !important; /* push to the right side */
     text-align: right !important;
+  }
+
+  /* Compact cart item overrides on mobile */
+  .cart-drawer-item {
+    gap: 0.6rem !important;
+    padding-bottom: 0.8rem !important;
+    margin-bottom: 0.8rem !important;
+  }
+
+  .cart-drawer-thumb {
+    width: 60px !important;
+    height: 60px !important;
+  }
+
+  .cart-drawer-item-details {
+    gap: 0.1rem !important;
+  }
+
+  .cart-drawer-item-title {
+    font-size: 0.85rem !important;
+    line-height: 1.25 !important;
+  }
+
+  .cart-drawer-item-variant {
+    font-size: 0.65rem !important;
+  }
+
+  .cart-drawer-item-price {
+    font-size: 0.8rem !important;
+    margin-top: 0.05rem !important;
+  }
+
+  .cart-drawer-item-actions {
+    margin-top: 0.3rem !important;
+  }
+
+  .cart-drawer-qty-controller {
+    height: 24px !important;
+  }
+
+  .cart-drawer-qty-btn {
+    width: 24px !important;
+    font-size: 0.8rem !important;
+  }
+
+  .cart-drawer-qty-val {
+    padding: 0 0.4rem !important;
+    font-size: 0.75rem !important;
+  }
+
+  .cart-drawer-item-remove {
+    font-size: 0.7rem !important;
   }
 }
 
