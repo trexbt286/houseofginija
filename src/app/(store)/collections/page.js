@@ -275,9 +275,11 @@ function CollectionsContent() {
     
     // Close detailed preview when collection query changes
     setActiveProduct(null);
+  }, [colParam, searchParam]);
 
-    // Scroll to category if present in the URL
-    if (categoryParam) {
+  // Scroll to category if present in the URL (Runs once products are loaded)
+  useEffect(() => {
+    if (!loading && categoryParam) {
       let targetId = categoryParam.toLowerCase();
       if (targetId === 'necklace') targetId = 'necklaces';
       
@@ -287,15 +289,15 @@ function CollectionsContent() {
           const yOffset = -180;
           const y = element.getBoundingClientRect().top + window.pageYOffset + yOffset;
           window.scrollTo({ top: y, behavior: 'smooth' });
+          setActiveCategorySidebar(targetId);
         }
       }, 300);
     }
-  }, [colParam, searchParam, categoryParam]);
+  }, [categoryParam, loading]);
 
   // Scroll-Spy: Highlight active category on left panel as user scrolls the right panel feed
   useEffect(() => {
-    // Only active on mobile viewport width
-    if (typeof window === 'undefined' || window.innerWidth > 768) return;
+    if (typeof window === 'undefined') return;
 
     const handleScroll = () => {
       if (searchQuery) {
@@ -1257,7 +1259,7 @@ function CollectionsContent() {
                         const items = groupedProducts[group] || [];
                         return (
                           <div key={cat.id} id={cat.id} className="blinkit-feed-section">
-                            <h2 className="blinkit-feed-section-title">
+                            <h2 className="blinkit-feed-section-title" id={cat.id}>
                               {group}
                             </h2>
                             {items.length > 0 ? (
