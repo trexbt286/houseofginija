@@ -1083,7 +1083,11 @@ function CollectionsContent() {
                         borderBottom: '1px solid rgba(139, 119, 137, 0.05)',
                         color: '#000000',
                       }}
-                      onClick={() => setShowSuggestions(false)}
+                      onClick={(e) => {
+                        e.preventDefault();
+                        setShowSuggestions(false);
+                        handleProductClick(e, p);
+                      }}
                     >
                       <img 
                         src={p.images?.[0] || '/placeholder.png'} 
