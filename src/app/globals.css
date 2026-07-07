@@ -741,8 +741,9 @@ body.scroll-locked {
   .blinkit-sidebar {
     width: 100vw !important;
     height: auto !important;
-    position: sticky !important;
+    position: fixed !important;
     top: 107px !important; /* height of announcement bar (32px) + header (75px) */
+    left: 0 !important;
     z-index: 900 !important;
     overflow-x: hidden !important; /* disable horizontal scroll */
     overflow-y: hidden !important;
@@ -848,7 +849,7 @@ body.scroll-locked {
     margin-bottom: 1rem !important;
     text-transform: uppercase !important;
     letter-spacing: 0.05em !important;
-    scroll-margin-top: 10px !important;
+    scroll-margin-top: 170px !important; /* clear fixed header (107px) + fixed category bar (~60px) */
   }
 
   /* Hide headers inside feed that are not needed on mobile split view */
@@ -866,6 +867,7 @@ body.scroll-locked {
 
   .collections-layout-grid > main {
     padding: 0.8rem 0.8rem 6rem 0.8rem !important; /* Balanced left and right padding */
+    padding-top: 60px !important; /* Push content below fixed category navigation bar */
   }
 }
 
