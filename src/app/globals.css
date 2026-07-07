@@ -582,7 +582,7 @@ body.scroll-locked {
   }
   
   .collections-product-card-content h3 {
-    font-size: 0.78rem !important; /* Scale down titles */
+    font-size: 1rem !important; /* Increase title size for readability */
     line-height: 1.25 !important;
     margin-bottom: 0.25rem !important;
   }
