@@ -163,6 +163,15 @@ function CollectionsContent() {
     };
   }, [loading, products, activeProduct]);
 
+  // Sync nav bar highlight with active collection filter selection
+  useEffect(() => {
+    if (selectedCollection) {
+      setActiveCategorySidebar(selectedCollection);
+    } else {
+      setActiveCategorySidebar('');
+    }
+  }, [selectedCollection]);
+
   const handleCategorySidebarClick = (catId) => {
     setActiveCategorySidebar(catId);
     setSelectedCollection(catId);
