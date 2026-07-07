@@ -397,7 +397,7 @@ export default function Header() {
           <div className="cart-drawer-header">
             {/* Mobile Back Button (on the left) */}
             <button className="cart-drawer-back-btn" onClick={() => setIsCartOpen(false)}>
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#666666" strokeWidth="2.0" strokeLinecap="round" strokeLinejoin="round">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#000000" strokeWidth="2.0" strokeLinecap="round" strokeLinejoin="round">
                 <polyline points="6 9 12 15 18 9"></polyline>
               </svg>
             </button>
