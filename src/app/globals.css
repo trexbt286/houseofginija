@@ -1585,6 +1585,7 @@ body.scroll-locked {
     padding: 0.8rem 0.5rem !important;
     display: flex !important;
     flex-direction: column !important;
+    justify-content: space-between !important;
     flex: 1 !important;
     align-items: center !important;
   }

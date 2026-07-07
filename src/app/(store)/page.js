@@ -233,12 +233,13 @@ export default function Home() {
                       />
                     </div>
                     <div style={cardContentStyle} className="collections-grid-card-content">
-                      <div style={cardDividerStyle}></div>
-                      <h3 style={cardTitleStyle}>
-                        {col.name}
-                      </h3>
-
-                      <p style={cardDescStyle}>{col.description}</p>
+                      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: '100%' }}>
+                        <div style={cardDividerStyle}></div>
+                        <h3 style={cardTitleStyle}>
+                          {col.name}
+                        </h3>
+                        <p style={cardDescStyle}>{col.description}</p>
+                      </div>
                       <span style={cardLinkStyle}>
                         VIEW {col.name.toUpperCase()} &rarr;
                       </span>
@@ -617,6 +618,7 @@ const cardContentStyle = {
   flexDirection: 'column',
   alignItems: 'center',
   textAlign: 'center',
+  justifyContent: 'space-between',
   flex: 1,
 };
 
