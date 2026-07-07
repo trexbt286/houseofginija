@@ -129,37 +129,37 @@ function CollectionsContent() {
     // Only active on mobile viewport width
     if (typeof window === 'undefined' || window.innerWidth > 768) return;
 
-    const feed = document.querySelector('.blinkit-feed');
-    if (!feed) return;
+    const handleScroll = () => {
+      const sections = getSidebarCategories()
+        .map(c => c.id)
+        .filter(id => id !== 'all' && id !== 'jewellery');
+      
+      const scrollPosition = window.scrollY + 190; // offset of header + category bar + buffer
+      let activeSection = '';
 
-    const sections = ['suits', 'rings', 'necklaces', 'bracelets', 'earrings'];
-    const observedElements = [];
+      for (const secId of sections) {
+        const el = document.getElementById(secId);
+        if (el) {
+          const top = el.getBoundingClientRect().top + window.scrollY;
+          const height = el.offsetHeight;
+          if (scrollPosition >= top && scrollPosition < top + height) {
+            activeSection = secId;
+            break;
+          }
+        }
+      }
 
-    const observerOptions = {
-      root: null,
-      rootMargin: '-180px 0px -50% 0px', // Trigger when section top enters active area below the fixed header/category bar
-      threshold: 0
+      if (activeSection) {
+        setActiveCategorySidebar(activeSection);
+      }
     };
 
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          setActiveCategorySidebar(entry.target.id);
-        }
-      });
-    }, observerOptions);
-
-    sections.forEach(secId => {
-      const el = document.getElementById(secId);
-      if (el) {
-        observer.observe(el);
-        observedElements.push(el);
-      }
-    });
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    // Run once on mount/load
+    handleScroll();
 
     return () => {
-      observedElements.forEach(el => observer.unobserve(el));
-      observer.disconnect();
+      window.removeEventListener('scroll', handleScroll);
     };
   }, [loading, products, activeProduct]);
 
