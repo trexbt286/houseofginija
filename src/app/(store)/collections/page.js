@@ -268,9 +268,6 @@ function CollectionsContent() {
     setSelectedCollection(colParam);
     setSearchQuery(searchParam);
     setActiveCategorySidebar(colParam);
-    
-    // Close detailed preview when collection query changes
-    setActiveProduct(null);
 
     // Scroll to category if present in the URL
     if (categoryParam) {
@@ -646,8 +643,6 @@ function CollectionsContent() {
       setActiveProductColor('Default');
     }
     setActiveProductQty(1);
-    
-    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   const renderCategoryIcon = (catId) => {
