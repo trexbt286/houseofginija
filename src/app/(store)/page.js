@@ -240,10 +240,10 @@ export default function Home() {
                         </h3>
                         <p style={cardDescStyle}>{col.description}</p>
                       </div>
-                      <span style={cardLinkStyle}>
-                        VIEW {col.name.toUpperCase()} &rarr;
-                      </span>
                     </div>
+                    <span style={cardLinkStyle}>
+                      VIEW {col.name.toUpperCase()} &rarr;
+                    </span>
                   </Link>
                 );
               })}
@@ -574,6 +574,7 @@ const collectionCardStyle = {
   flexDirection: 'column',
   transition: 'all 0.3s ease',
   border: '1px solid rgba(139, 119, 137, 0.05)',
+  height: '100%',
 };
 
 const collectionCardPinkStyle = {
@@ -587,6 +588,7 @@ const cardImageWrapperStyle = {
   width: '100%',
   height: '350px',
   overflow: 'hidden',
+  borderRadius: '8px',
 };
 
 const cardImgStyle = {
@@ -618,7 +620,6 @@ const cardContentStyle = {
   flexDirection: 'column',
   alignItems: 'center',
   textAlign: 'center',
-  justifyContent: 'space-between',
   flex: 1,
 };
 
@@ -654,6 +655,8 @@ const cardLinkStyle = {
   borderRadius: '25px',
   padding: '0.6rem 1.5rem',
   marginTop: 'auto',
+  alignSelf: 'center',
+  marginBottom: '1.8rem',
   display: 'inline-block',
 };
 
