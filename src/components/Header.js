@@ -397,9 +397,8 @@ export default function Header() {
           <div className="cart-drawer-header">
             {/* Mobile Back Button (on the left) */}
             <button className="cart-drawer-back-btn" onClick={() => setIsCartOpen(false)}>
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                <line x1="19" y1="12" x2="5" y2="12"></line>
-                <polyline points="12 19 5 12 12 5"></polyline>
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#666666" strokeWidth="2.0" strokeLinecap="round" strokeLinejoin="round">
+                <polyline points="6 9 12 15 18 9"></polyline>
               </svg>
             </button>
 
@@ -420,7 +419,7 @@ export default function Header() {
                 return (
                   <div key={`${item.id}-${item.size}-${item.color}-${idx}`} className="cart-drawer-item">
                     <img 
-                      src={item.images && item.images[0] ? item.images[0] : '/placeholder.jpg'} 
+                      src={item.images && item.images[0] ? item.images[0] : (item.image ? item.image : '/placeholder.jpg')} 
                       alt={item.name} 
                       className="cart-drawer-thumb" 
                       loading="lazy"

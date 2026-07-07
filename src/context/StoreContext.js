@@ -177,6 +177,7 @@ export function StoreProvider({ children }) {
             name: product.name,
             price: parseFloat(product.price),
             image: product.images[0] || '',
+            images: product.images || [],
             size,
             color,
             quantity,
