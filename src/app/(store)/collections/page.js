@@ -23,6 +23,13 @@ function MobileSearchBar({ allProducts, initialQuery, onSearch, handleProductCli
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
+  // Close suggestions on scroll
+  useEffect(() => {
+    const handleScroll = () => setShowSuggestions(false);
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
   const getSuggestions = () => {
     if (!localQuery) return [];
     const q = localQuery.toLowerCase().trim();
@@ -272,9 +279,6 @@ function CollectionsContent() {
     if (typeof window === 'undefined' || window.innerWidth > 768) return;
 
     const handleScroll = () => {
-      // Close mobile search suggestions dropdown on scroll
-      setShowSuggestions(false);
-
       if (searchQuery) {
         setActiveCategorySidebar('');
         return;
