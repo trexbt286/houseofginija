@@ -23,7 +23,7 @@ function CollectionsContent() {
   const [searchQuery, setSearchQuery] = useState(searchParams.get('search') || '');
   const [selectedSize, setSelectedSize] = useState('');
   const [selectedColor, setSelectedColor] = useState('');
-  const [selectedSort, setSelectedSort] = useState('newest');
+  const [selectedSort, setSelectedSort] = useState('price_asc');
 
   // Detailed view states
   const [activeProduct, setActiveProduct] = useState(null);
@@ -176,7 +176,7 @@ function CollectionsContent() {
   };
 
   // Static options matching our seed data
-  const sizes = ['XS', 'S', 'M', 'L', 'XL', 'One Size'];
+  const sizes = ['S', 'M', 'L', 'XL', 'XXL'];
   const colors = [
     'Champagne Pink',
     'Deep Plum',
@@ -192,18 +192,20 @@ function CollectionsContent() {
   ];
 
   // Helper to render filter controls (shared between desktop sidebar and mobile bottom sheet)
-  const renderFilters = () => (
+  const renderFilters = (isMobile = false) => (
     <>
-      <div style={filterGroupStyle}>
-        <h4 style={filterTitleStyle}>Search</h4>
-        <input
-          type="text"
-          placeholder="Search creations..."
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-          style={searchFieldStyle}
-        />
-      </div>
+      {!isMobile && (
+        <div style={filterGroupStyle}>
+          <h4 style={filterTitleStyle}>Search</h4>
+          <input
+            type="text"
+            placeholder="Search creations..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            style={searchFieldStyle}
+          />
+        </div>
+      )}
 
       <div style={filterGroupStyle}>
         <h4 style={filterTitleStyle}>Collections</h4>
@@ -236,8 +238,6 @@ function CollectionsContent() {
         </div>
       </div>
 
-
-
       <div style={filterGroupStyle}>
         <h4 style={filterTitleStyle}>Sort By</h4>
         <select
@@ -245,7 +245,6 @@ function CollectionsContent() {
           onChange={(e) => setSelectedSort(e.target.value)}
           style={selectFieldStyle}
         >
-          <option value="newest">Newest Additions</option>
           <option value="price_asc">Price: Low to High</option>
           <option value="price_desc">Price: High to Low</option>
           <option value="name_asc">Alphabetical</option>
@@ -359,7 +358,7 @@ function CollectionsContent() {
     setSearchQuery('');
     setSelectedSize('');
     setSelectedColor('');
-    setSelectedSort('newest');
+    setSelectedSort('price_asc');
   };
 
   const getCollectionTitle = () => {
@@ -932,7 +931,7 @@ function CollectionsContent() {
       <div className="catalog-grid-container-box" style={{ display: activeProduct ? 'none' : 'block' }}>
           {/* Filters Sidebar (Desktop only, hidden on mobile) */}
           <aside style={sidebarStyle} className="collections-sidebar-desktop">
-            {renderFilters()}
+            {renderFilters(false)}
           </aside>
 
           {/* Blinkit Mobile Category Sidebar (Mobile only, hidden on desktop) */}
@@ -1043,13 +1042,15 @@ function CollectionsContent() {
       <div className={`mobile-filter-backdrop ${isMobileFilterOpen ? 'open' : ''}`} onClick={() => setIsMobileFilterOpen(false)}>
         <div className="mobile-filter-drawer" onClick={(e) => e.stopPropagation()}>
           <div className="mobile-filter-drawer-header">
+            <button className="mobile-filter-drawer-close-btn" onClick={() => setIsMobileFilterOpen(false)}>
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#000000" strokeWidth="2.0" strokeLinecap="round" strokeLinejoin="round">
+                <polyline points="6 9 12 15 18 9"></polyline>
+              </svg>
+            </button>
             <h3 className="mobile-filter-drawer-title">Filters & Sort</h3>
-            <span className="mobile-filter-drawer-close" onClick={() => setIsMobileFilterOpen(false)}>
-              &times;
-            </span>
           </div>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '1.2rem' }}>
-            {renderFilters()}
+          <div className="mobile-filter-drawer-content" style={{ display: 'flex', flexDirection: 'column', gap: '0.8rem' }}>
+            {renderFilters(true)}
             <button 
               onClick={() => setIsMobileFilterOpen(false)}
               style={{
@@ -1062,7 +1063,7 @@ function CollectionsContent() {
                 textTransform: 'uppercase',
                 letterSpacing: '0.05em',
                 fontSize: '0.8rem',
-                marginTop: '1rem',
+                marginTop: '0.5rem',
                 cursor: 'pointer',
                 width: '100%',
                 textAlign: 'center'

@@ -681,11 +681,11 @@ body.scroll-locked {
   max-width: 500px;
   border-top-left-radius: 16px;
   border-top-right-radius: 16px;
-  padding: 2rem 1.5rem 2.5rem 1.5rem;
+  padding: 1.2rem 1.2rem 1.5rem 1.2rem !important; /* Compress padding */
   box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.15);
   transform: translateY(100%);
   transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-  max-height: 80vh;
+  max-height: 90vh !important;
   overflow-y: auto;
   box-sizing: border-box;
 }
@@ -695,26 +695,47 @@ body.scroll-locked {
 }
 
 .mobile-filter-drawer-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  border-bottom: 1px solid rgba(139, 119, 137, 0.15);
-  padding-bottom: 1rem;
-  margin-bottom: 1.5rem;
+  display: flex !important;
+  justify-content: flex-start !important;
+  align-items: center !important;
+  border-bottom: 1px solid rgba(139, 119, 137, 0.15) !important;
+  padding-bottom: 0.6rem !important;
+  margin-bottom: 0.8rem !important;
+  gap: 1rem !important;
 }
 
 .mobile-filter-drawer-title {
-  font-family: var(--font-serif);
-  font-size: 1.5rem;
-  color: #000000;
+  font-family: var(--font-serif) !important;
+  font-size: 1.25rem !important; /* Make title slightly smaller */
+  color: #000000 !important;
+  margin: 0 !important;
 }
 
-.mobile-filter-drawer-close {
-  font-size: 1.5rem;
-  cursor: pointer;
-  color: #000000;
-  line-height: 1;
-  padding: 0.2rem;
+.mobile-filter-drawer-close-btn {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  background-color: rgba(255, 255, 255, 0.85) !important;
+  border-radius: 50% !important;
+  width: 32px !important;
+  height: 32px !important;
+  border: none !important;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1) !important;
+  padding: 0 !important;
+  cursor: pointer !important;
+}
+
+.mobile-filter-drawer-close-btn svg {
+  transform: rotate(0deg) !important; /* pointing downwards */
+}
+
+/* Tighten child spacings inside mobile filter drawer */
+.mobile-filter-drawer-content > div {
+  gap: 0.3rem !important; /* Compress vertical gap inside each filter group */
+}
+
+.mobile-filter-drawer-content h4 {
+  margin-bottom: 0.1rem !important;
 }
 
 .blinkit-sidebar {
