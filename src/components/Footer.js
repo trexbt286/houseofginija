@@ -252,10 +252,14 @@ const formStyle = {
 };
 
 const inputStyle = {
+  flex: 1,
   backgroundColor: '#FFFFFF',
   border: '1px solid rgba(45, 36, 41, 0.2)',
   color: '#000000',
   borderRadius: '4px',
+  padding: '0.75rem 1rem',
+  fontSize: '0.875rem',
+  outline: 'none',
 };
 
 const buttonStyle = {
