@@ -2479,6 +2479,10 @@ body.cart-drawer-open header {
   .cart-drawer-item-remove {
     font-size: 0.7rem !important;
   }
+
+  .blinkit-feed-section {
+    scroll-margin-top: 242px !important;
+  }
 }
 
 /* Desktop default hide classes */
@@ -2486,4 +2490,8 @@ body.cart-drawer-open header {
 .mobile-sheet-drag-handle,
 .mobile-sheet-dismiss-btn {
   display: none;
+}
+
+.blinkit-feed-section {
+  scroll-margin-top: 100px;
 }

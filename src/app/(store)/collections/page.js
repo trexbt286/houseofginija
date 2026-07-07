@@ -178,6 +178,9 @@ function CollectionsContent() {
   const router = useRouter();
   const { user, cart, addToCart, updateCartQuantity, wishlist, toggleWishlist } = useStore();
 
+  const scrollToParam = searchParams.get('scrollTo') || '';
+  const [isJumping, setIsJumping] = useState(!!scrollToParam);
+
   // Filter States
   const [products, setProducts] = useState([]);
   const [allProducts, setAllProducts] = useState([]);
@@ -304,6 +307,33 @@ function CollectionsContent() {
       }, 300);
     }
   }, [categoryParam, loading, products]);
+
+  // Scroll to scrollToParam on load (Instantly jump and reveal)
+  useEffect(() => {
+    if (!loading && products.length > 0 && scrollToParam) {
+      let targetId = scrollToParam.toLowerCase();
+      if (targetId === 'necklace') targetId = 'necklaces';
+      
+      setTimeout(() => {
+        const element = document.getElementById(targetId);
+        if (element) {
+          const originalScrollBehavior = document.documentElement.style.scrollBehavior;
+          document.documentElement.style.scrollBehavior = 'auto';
+          
+          element.scrollIntoView({ behavior: 'instant', block: 'start' });
+          
+          if (originalScrollBehavior) {
+            document.documentElement.style.scrollBehavior = originalScrollBehavior;
+          } else {
+            document.documentElement.style.removeProperty('scroll-behavior');
+          }
+          
+          setActiveCategorySidebar(targetId);
+        }
+        setIsJumping(false);
+      }, 50);
+    }
+  }, [scrollToParam, loading, products]);
 
   // Scroll-Spy: Highlight active category on left panel as user scrolls the right panel feed
   useEffect(() => {
@@ -908,7 +938,7 @@ function CollectionsContent() {
 
 
   return (
-    <div style={pageStyle} className="collections-root-container">
+    <div style={{ ...pageStyle, opacity: isJumping ? 0 : 1, transition: 'opacity 0.1s ease' }} className="collections-root-container">
       {/* Mobile bottom sheet backdrop */}
       {activeProduct && (
         <div 
