@@ -1723,13 +1723,13 @@ header {
     pointer-events: auto !important; /* block all clicks underneath */
   }
 
-  /* Inner styled backdrop that starts below the header bar midpoint */
+  /* Inner styled backdrop that spans the entire screen to blur everything including the header */
   .mobile-bottom-sheet-backdrop-inner {
     position: absolute !important;
-    top: 70px !important;
+    top: 0 !important;
     left: 0 !important;
     width: 100% !important;
-    height: calc(100% - 70px) !important;
+    height: 100% !important;
     background-color: rgba(0, 0, 0, 0.45) !important; /* slightly lighter so blur is visible */
     backdrop-filter: blur(8px) !important;
     -webkit-backdrop-filter: blur(8px) !important;
