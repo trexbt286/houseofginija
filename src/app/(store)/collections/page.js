@@ -11,6 +11,8 @@ function MobileSearchBar({ allProducts, initialQuery, onSearch, handleProductCli
   const [showSuggestions, setShowSuggestions] = useState(false);
   const timeoutRef = useRef(null);
   
+  const inputRef = useRef(null);
+
   // Close suggestions if user clicks outside
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -40,13 +42,26 @@ function MobileSearchBar({ allProducts, initialQuery, onSearch, handleProductCli
 
   return (
     <div className="mobile-search-bar-row">
-      <div className="mobile-search-bar-inner" style={{ position: 'relative', width: '100%' }}>
+      <form 
+        className="mobile-search-bar-inner" 
+        style={{ position: 'relative', width: '100%', margin: 0 }}
+        onSubmit={(e) => {
+          e.preventDefault();
+          setShowSuggestions(false);
+          if (inputRef.current) {
+            inputRef.current.blur();
+          }
+          if (timeoutRef.current) clearTimeout(timeoutRef.current);
+          onSearch(localQuery);
+        }}
+      >
         <svg className="mobile-search-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="rgba(0, 0, 0, 0.4)" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" style={{ position: 'absolute', left: '1rem', top: '50%', transform: 'translateY(-50%)', pointerEvents: 'none' }}>
           <circle cx="11" cy="11" r="8"></circle>
           <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
         </svg>
         <input
-          type="text"
+          ref={inputRef}
+          type="search"
           placeholder="Search for products, collections..."
           value={localQuery}
           onChange={(e) => {
@@ -63,7 +78,6 @@ function MobileSearchBar({ allProducts, initialQuery, onSearch, handleProductCli
           onKeyDown={(e) => {
             if (e.key === 'Enter') {
               setShowSuggestions(false);
-              // Blur the input to programmatically close the mobile keyboard on Android/iOS
               e.currentTarget.blur();
               if (timeoutRef.current) clearTimeout(timeoutRef.current);
               onSearch(localQuery);
@@ -150,7 +164,7 @@ function MobileSearchBar({ allProducts, initialQuery, onSearch, handleProductCli
             )}
           </div>
         )}
-      </div>
+      </form>
     </div>
   );
 }
