@@ -71,7 +71,7 @@ export default function Header() {
         
         {/* 1. Left: Logo */}
         <div style={brandLogoWrapperStyle}>
-          <Link href="/" style={{ display: 'flex', alignItems: 'center', gap: '0.8rem', textDecoration: 'none' }}>
+          <a href="/" style={{ display: 'flex', alignItems: 'center', gap: '0.8rem', textDecoration: 'none', cursor: 'pointer' }}>
             <img 
               src="/brand_symbol_logo.png" 
               alt="House of Ginija Symbol" 
@@ -108,7 +108,7 @@ export default function Header() {
                 The Designer Label
               </span>
             </div>
-          </Link>
+          </a>
         </div>
 
         {/* 2. Center: Desktop Navigation Links (hidden on mobile via className) */}
