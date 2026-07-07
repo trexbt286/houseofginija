@@ -741,7 +741,7 @@ body.scroll-locked {
   .blinkit-sidebar {
     width: 100vw !important;
     height: auto !important;
-    overflow-x: auto !important; /* horizontal scroll */
+    overflow-x: hidden !important; /* disable horizontal scroll */
     overflow-y: hidden !important;
     background-color: #FFFFFF !important; /* Clean white */
     border-right: none !important;
@@ -749,12 +749,12 @@ body.scroll-locked {
     display: flex !important;
     flex-direction: row !important; /* horizontal items list */
     align-items: center !important;
-    padding: 0.6rem 1rem !important;
-    gap: 1rem !important;
+    justify-content: space-between !important; /* distribute evenly */
+    padding: 0.6rem 0.5rem !important;
+    gap: 0.2rem !important;
     box-sizing: border-box !important;
     flex-shrink: 0 !important;
     white-space: nowrap !important;
-    -webkit-overflow-scrolling: touch !important;
   }
 
   .blinkit-sidebar::-webkit-scrollbar {
@@ -768,7 +768,8 @@ body.scroll-locked {
     align-items: center !important;
     justify-content: center !important;
     padding: 0.2rem 0 !important;
-    min-width: 60px !important;
+    min-width: unset !important;
+    flex: 1 !important; /* equal width for all 5 items */
     cursor: pointer !important;
     text-align: center !important;
     border-left: none !important;
