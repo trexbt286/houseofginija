@@ -33,6 +33,7 @@ function CollectionsContent() {
   const [activeProductQty, setActiveProductQty] = useState(1);
   const [isMobileFilterOpen, setIsMobileFilterOpen] = useState(false);
   const [activeCategorySidebar, setActiveCategorySidebar] = useState('');
+  const [showSuggestions, setShowSuggestions] = useState(false);
 
   // Viewport width state for mobile sibling switcher centering
   const [viewportWidth, setViewportWidth] = useState(390);
@@ -195,6 +196,14 @@ function CollectionsContent() {
     selectedColor,
     searchQuery
   ].filter(Boolean).length;
+
+  const getSuggestions = () => {
+    if (!searchQuery) return [];
+    const q = searchQuery.toLowerCase().trim();
+    return allProducts
+      .filter((p) => p.name.toLowerCase().includes(q))
+      .slice(0, 5);
+  };
   const colors = [
     'Champagne Pink',
     'Deep Plum',
@@ -321,42 +330,40 @@ function CollectionsContent() {
   useEffect(() => {
     let filtered = [...allProducts];
 
-    // Filter by collection
-    if (selectedCollection) {
-      if (selectedCollection === 'suits') {
-        filtered = filtered.filter(p => p.collection_slug === 'suits');
-      } else if (selectedCollection === 'rings') {
-        filtered = filtered.filter(p => p.slug.toLowerCase().includes('ring'));
-      } else if (selectedCollection === 'necklaces') {
-        filtered = filtered.filter(p => p.slug.toLowerCase().includes('necklace'));
-      } else if (selectedCollection === 'bracelets') {
-        filtered = filtered.filter(p => p.slug.toLowerCase().includes('bracelet'));
-      } else {
-        filtered = filtered.filter(p => p.collection_slug === selectedCollection);
-      }
-    }
-
-    // Filter by search
-    if (searchQuery) {
-      const q = searchQuery.toLowerCase();
+    if (searchQuery.trim().length > 0) {
+      // Search mode: ignore other category and size/color filters
+      const q = searchQuery.toLowerCase().trim();
       filtered = filtered.filter(p => 
         p.name.toLowerCase().includes(q) || 
         (p.description && p.description.toLowerCase().includes(q))
       );
-    }
+    } else {
+      // Filter mode: apply collection, size, and color filters
+      if (selectedCollection) {
+        if (selectedCollection === 'suits') {
+          filtered = filtered.filter(p => p.collection_slug === 'suits');
+        } else if (selectedCollection === 'rings') {
+          filtered = filtered.filter(p => p.slug.toLowerCase().includes('ring'));
+        } else if (selectedCollection === 'necklaces') {
+          filtered = filtered.filter(p => p.slug.toLowerCase().includes('necklace'));
+        } else if (selectedCollection === 'bracelets') {
+          filtered = filtered.filter(p => p.slug.toLowerCase().includes('bracelet'));
+        } else {
+          filtered = filtered.filter(p => p.collection_slug === selectedCollection);
+        }
+      }
 
-    // Filter by size
-    if (selectedSize) {
-      filtered = filtered.filter(p => 
-        p.variants && p.variants.some(v => v.size === selectedSize && v.stock > 0)
-      );
-    }
+      if (selectedSize) {
+        filtered = filtered.filter(p => 
+          p.variants && p.variants.some(v => v.size === selectedSize && v.stock > 0)
+        );
+      }
 
-    // Filter by color
-    if (selectedColor) {
-      filtered = filtered.filter(p => 
-        p.variants && p.variants.some(v => v.color === selectedColor && v.stock > 0)
-      );
+      if (selectedColor) {
+        filtered = filtered.filter(p => 
+          p.variants && p.variants.some(v => v.color === selectedColor && v.stock > 0)
+        );
+      }
     }
 
     // Sort
@@ -400,7 +407,7 @@ function CollectionsContent() {
 
   // Group products for "All Collections" and "Jewellery" views
   const groupedProducts = {};
-  const shouldGroup = !selectedCollection || selectedCollection === 'jewellery';
+  const shouldGroup = searchQuery.trim().length > 0 || !selectedCollection || selectedCollection === 'jewellery';
 
   if (shouldGroup && products.length > 0) {
     products.forEach(p => {
@@ -976,7 +983,15 @@ function CollectionsContent() {
                 type="text"
                 placeholder="Search for products, collections..."
                 value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
+                onChange={(e) => {
+                  setSearchQuery(e.target.value);
+                  setShowSuggestions(true);
+                }}
+                onFocus={() => setShowSuggestions(true)}
+                onBlur={() => {
+                  // Slight timeout so click event on suggestion links registers before blur event closes dropdown
+                  setTimeout(() => setShowSuggestions(false), 200);
+                }}
                 className="mobile-search-input"
                 style={{
                   width: '100%',
@@ -992,6 +1007,66 @@ function CollectionsContent() {
                   outline: 'none'
                 }}
               />
+              
+              {/* Suggestions Dropdown */}
+              {showSuggestions && searchQuery.trim().length > 0 && (
+                <div className="search-suggestions-dropdown" style={{
+                  position: 'absolute',
+                  top: '44px',
+                  left: 0,
+                  right: 0,
+                  backgroundColor: '#FFFFFF',
+                  border: '1px solid rgba(139, 119, 137, 0.15)',
+                  borderRadius: '8px',
+                  boxShadow: '0 8px 24px rgba(0,0,0,0.12)',
+                  zIndex: 1001,
+                  maxHeight: '260px',
+                  overflowY: 'auto',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  padding: '0.4rem 0',
+                }}>
+                  {getSuggestions().map((p) => (
+                    <a
+                      key={p.id}
+                      href={`/products/${p.slug}`}
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '0.8rem',
+                        padding: '0.6rem 1rem',
+                        textDecoration: 'none',
+                        borderBottom: '1px solid rgba(139, 119, 137, 0.05)',
+                        color: '#000000',
+                      }}
+                      onClick={() => setShowSuggestions(false)}
+                    >
+                      <img 
+                        src={p.images?.[0] || '/placeholder.png'} 
+                        style={{
+                          width: '36px',
+                          height: '36px',
+                          objectFit: 'cover',
+                          borderRadius: '4px',
+                          border: '1px solid rgba(139, 119, 137, 0.1)',
+                        }} 
+                        alt="" 
+                      />
+                      <div style={{ display: 'flex', flexDirection: 'column' }}>
+                        <span style={{ fontSize: '0.85rem', fontWeight: '500', color: '#000000' }}>{p.name}</span>
+                        <span style={{ fontSize: '0.75rem', color: '#D98E9B', fontWeight: '600', marginTop: '0.1rem' }}>
+                          ₹{parseFloat(p.price).toLocaleString('en-IN')}
+                        </span>
+                      </div>
+                    </a>
+                  ))}
+                  {getSuggestions().length === 0 && (
+                    <div style={{ padding: '1rem', color: 'rgba(0,0,0,0.5)', fontSize: '0.85rem', textAlign: 'center' }}>
+                      No matching products found
+                    </div>
+                  )}
+                </div>
+              )}
             </div>
           </div>
 
