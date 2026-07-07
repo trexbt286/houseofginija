@@ -16,7 +16,7 @@ export default function AboutPage() {
 
       {/* Grid Story Section */}
       <section className="container info-page-container story-grid">
-        <div style={textColStyle}>
+        <div className="about-text-col" style={textColStyle}>
           <p className="brand-tagline about-tagline" style={taglineStyle}>Timeless Silhouettes</p>
           <h2 className="about-section-title" style={sectionTitleStyle}>Dedicated Couture Craftsmanship</h2>
           <p style={paragraphStyle}>
@@ -60,7 +60,7 @@ export default function AboutPage() {
             loading="lazy"
           />
         </div>
-        <div style={textColStyle}>
+        <div className="about-text-col" style={textColStyle}>
           <span style={sectionSubStyle}>The Studio</span>
           <h2 className="about-section-title" style={sectionTitleStyle}>Hand-Finished Heritage</h2>
           <p style={paragraphStyle}>

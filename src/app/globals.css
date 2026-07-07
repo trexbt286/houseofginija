@@ -786,6 +786,13 @@ body.scroll-locked {
 
   /* Ensure story grid sections have side padding on mobile */
   .story-grid, .story-grid-reverse {
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+  }
+
+  /* Give the text columns direct horizontal padding on mobile so
+     text never bleeds to screen edges, while images can still go full-width */
+  .about-text-col {
     padding-left: 1.25rem !important;
     padding-right: 1.25rem !important;
   }
