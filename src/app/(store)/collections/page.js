@@ -568,7 +568,6 @@ function CollectionsContent() {
           </div>
         </a>
         <div style={cardContentStyle} className="collections-product-card-content">
-          <span style={collectionLabelStyle}>{p.collection_name || 'Jewellery'}</span>
           <a href={`/products/${p.slug}`} style={{ textDecoration: 'none' }}>
             <h3 style={cardTitleStyle}>{p.name}</h3>
           </a>
@@ -993,7 +992,7 @@ function CollectionsContent() {
                         const group = cat.name;
                         const items = groupedProducts[group] || [];
                         return (
-                          <div key={cat.id} id={cat.id}>
+                          <div key={cat.id} id={cat.id} className="blinkit-feed-section">
                             <h2 className="blinkit-feed-section-title">
                               {group}
                             </h2>
@@ -1020,8 +1019,13 @@ function CollectionsContent() {
                     }
                   </div>
                 ) : (
-                  <div className="grid-cols-shop">
-                    {products.map((p) => renderProductCard(p))}
+                  <div className="blinkit-feed-section" id={selectedCollection}>
+                    <h2 className="blinkit-feed-section-title">
+                      {collections.find(c => c.slug === selectedCollection)?.name || 'Collection'}
+                    </h2>
+                    <div className="grid-cols-shop">
+                      {products.map((p) => renderProductCard(p))}
+                    </div>
                   </div>
                 )}
               </div>

@@ -754,7 +754,7 @@ body.scroll-locked {
     flex-direction: row !important; /* horizontal items list */
     align-items: center !important;
     justify-content: space-between !important; /* distribute evenly */
-    padding: 0.6rem 0.5rem !important;
+    padding: 0.4rem 0.5rem !important;
     gap: 0.2rem !important;
     box-sizing: border-box !important;
     flex-shrink: 0 !important;
@@ -780,30 +780,30 @@ body.scroll-locked {
     border-bottom: 2px solid transparent !important; /* underline active category */
     transition: all 0.2s ease !important;
     box-sizing: border-box !important;
-    font-size: 10px !important;
+    font-size: 9px !important;
     font-weight: 600 !important;
     color: rgba(0, 0, 0, 0.6) !important;
-    gap: 0.25rem !important;
+    gap: 0.2rem !important;
   }
 
   /* Category sidebar item avatar circle icon bubble */
   .blinkit-sidebar-icon {
-    width: 32px !important;
-    height: 32px !important;
+    width: 26px !important;
+    height: 26px !important;
     border-radius: 50% !important;
     background-color: #FBF0EC !important;
     border: 1px solid rgba(139, 119, 137, 0.12) !important;
     display: flex !important;
     align-items: center !important;
     justify-content: center !important;
-    font-size: 0.75rem !important;
+    font-size: 0.65rem !important;
     transition: all 0.2s ease !important;
     overflow: hidden !important;
   }
 
   .blinkit-sidebar-icon svg {
-    width: 14px !important;
-    height: 14px !important;
+    width: 12px !important;
+    height: 12px !important;
   }
 
   .blinkit-sidebar-icon img {
@@ -867,7 +867,11 @@ body.scroll-locked {
 
   .collections-layout-grid > main {
     padding: 0.8rem 0.8rem 6rem 0.8rem !important; /* Balanced left and right padding */
-    padding-top: 60px !important; /* Push content below fixed category navigation bar */
+    padding-top: 56px !important; /* Push content below fixed category navigation bar */
+  }
+
+  .blinkit-feed-section {
+    scroll-margin-top: 160px !important; /* clear fixed header (107px) + fixed category bar (~51px) */
   }
 }
 
