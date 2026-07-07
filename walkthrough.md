@@ -4,8 +4,9 @@ We have successfully restructured the mobile detailed view bottom sheet to match
 
 ## Changes Implemented
 
-### 1. Mobile Full-Screen Cart Drawer ([Header.js](file:///c:/Users/varun/OneDrive/Documents/houseofginija/src/components/Header.js) & [globals.css](file:///c:/Users/varun/OneDrive/Documents/houseofginija/src/app/globals.css))
+### 1. Mobile Full-Screen Cart Drawer & Z-Index Layering ([Header.js](file:///c:/Users/varun/OneDrive/Documents/houseofginija/src/components/Header.js) & [globals.css](file:///c:/Users/varun/OneDrive/Documents/houseofginija/src/app/globals.css))
 *   **Edge-to-Edge Overlay**: Overrode `.cart-drawer` on mobile viewports to occupy `width: 100vw !important` and `height: 100vh !important`, removing all rounded corners, floating offsets, borders, and margins. It slides in from the right edge and covers the viewport.
+*   **Z-Index Layering & Stack Context Fix**: Toggled the helper class `cart-drawer-open` on `document.body` whenever the cart is open. Set `body.cart-drawer-open header { z-index: 10000 !important; }` in `globals.css` to lift the header and its child cart drawer backdrop above the fixed announcement bar (`z-index: 1000`). This stops the announcement bar from cutting off the top of the cart drawer header.
 *   **Header Redesign**: Added a custom back button element (`.cart-drawer-back-btn` with a left-pointing arrow SVG) to the left side of the header and pushed the "Shopping Bag (count)" title to the right side using flex-box alignment:
     `margin-left: auto !important; text-align: right !important;`
 *   **Desktop Backward Compatibility**: Configured `.cart-drawer-back-btn` with `display: none` by default so it remains hidden on desktop viewports, preserving the standard desktop close "X" layout.
