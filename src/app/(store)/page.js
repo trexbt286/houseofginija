@@ -233,12 +233,16 @@ export default function Home() {
                       />
                     </div>
                     <div style={cardContentStyle} className="collections-grid-card-content">
+                      <div style={cardDividerStyle}></div>
                       <h3 style={cardTitleStyle}>
                         {col.name}
                       </h3>
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ marginBottom: '1.2rem' }}>
+                        <path d="M12 2L14.4 9.6L22 12L14.4 14.4L12 22L9.6 14.4L2 12L9.6 9.6L12 2Z" fill="#C5A880"/>
+                      </svg>
                       <p style={cardDescStyle}>{col.description}</p>
                       <span style={cardLinkStyle}>
-                        View Collection →
+                        VIEW {col.name.toUpperCase()} &rarr;
                       </span>
                     </div>
                   </Link>
@@ -610,37 +614,47 @@ const pinkCardBadgeStyle = {
 };
 
 const cardContentStyle = {
-  padding: '1.8rem',
+  padding: '1.8rem 1rem',
   display: 'flex',
   flexDirection: 'column',
+  alignItems: 'center',
+  textAlign: 'center',
   flex: 1,
 };
 
+const cardDividerStyle = {
+  width: '24px',
+  height: '1px',
+  backgroundColor: '#D98E9B',
+  marginBottom: '1.2rem',
+};
+
 const cardTitleStyle = {
-  fontSize: '1.4rem',
-  marginBottom: '0.5rem',
-  color: '#D98E9B',
+  fontSize: '1.8rem',
+  fontFamily: 'var(--font-serif)',
+  marginBottom: '0.6rem',
+  color: '#A06B79',
 };
 
 const cardDescStyle = {
   fontSize: '0.85rem',
-  color: '#000000',
-  lineHeight: 1.5,
-  marginBottom: '1.5rem',
+  color: 'rgba(0,0,0,0.7)',
+  lineHeight: 1.6,
+  marginBottom: '1.8rem',
   flex: 1,
 };
 
 const cardLinkStyle = {
-  fontSize: '0.8rem',
+  fontSize: '0.75rem',
   textTransform: 'uppercase',
-  letterSpacing: '0.05em',
-  fontWeight: '600',
-  color: '#000000',
-};
-
-const cardLinkPinkStyle = {
-  ...cardLinkStyle,
-  color: '#000000',
+  letterSpacing: '0.08em',
+  fontWeight: '700',
+  color: '#A06B79',
+  border: '1px solid rgba(217, 142, 155, 0.5)',
+  borderRadius: '25px',
+  padding: '0.6rem 1.5rem',
+  marginTop: 'auto',
+  display: 'inline-block',
 };
 
 // Atelier Promo Styles
