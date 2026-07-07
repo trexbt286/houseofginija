@@ -134,7 +134,7 @@ function CollectionsContent() {
         .map(c => c.id)
         .filter(id => id !== 'all' && id !== 'jewellery');
       
-      const scrollPosition = window.scrollY + 190; // offset of header + category bar + buffer
+      const scrollPosition = window.scrollY + 242; // offset of header + search bar + category bar + buffer
       let activeSection = '';
 
       for (const secId of sections) {
@@ -179,7 +179,7 @@ function CollectionsContent() {
     setTimeout(() => {
       const element = document.querySelector('.blinkit-feed');
       if (element) {
-        const yOffset = -180;
+        const yOffset = -232;
         const y = element.getBoundingClientRect().top + window.pageYOffset + yOffset;
         window.scrollTo({ top: y, behavior: 'smooth' });
       }
@@ -964,6 +964,36 @@ function CollectionsContent() {
           <aside style={sidebarStyle} className="collections-sidebar-desktop">
             {renderFilters(false)}
           </aside>
+
+          {/* Mobile Search Bar Row (Mobile only, sits between header and category nav bar) */}
+          <div className="mobile-search-bar-row">
+            <div className="mobile-search-bar-inner" style={{ position: 'relative', width: '100%' }}>
+              <svg className="mobile-search-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="rgba(0, 0, 0, 0.4)" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" style={{ position: 'absolute', left: '1rem', top: '50%', transform: 'translateY(-50%)', pointerEvents: 'none' }}>
+                <circle cx="11" cy="11" r="8"></circle>
+                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+              </svg>
+              <input
+                type="text"
+                placeholder="Search for products, collections..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="mobile-search-input"
+                style={{
+                  width: '100%',
+                  height: '38px',
+                  backgroundColor: '#FFFFFF',
+                  border: '1px solid rgba(139, 119, 137, 0.25)',
+                  borderRadius: '50px',
+                  paddingLeft: '2.6rem',
+                  paddingRight: '1rem',
+                  fontSize: '0.85rem',
+                  color: '#000000',
+                  boxSizing: 'border-box',
+                  outline: 'none'
+                }}
+              />
+            </div>
+          </div>
 
           {/* Blinkit Mobile Category Sidebar (Mobile only, hidden on desktop) */}
           <aside className="blinkit-sidebar">
