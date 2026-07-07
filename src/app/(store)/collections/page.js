@@ -165,18 +165,27 @@ function CollectionsContent() {
 
   const handleCategorySidebarClick = (catId) => {
     setActiveCategorySidebar(catId);
-    let targetId = catId;
-    if (targetId === 'jewellery') targetId = 'rings';
-    const element = document.getElementById(targetId);
-    if (element) {
-      const yOffset = -180;
-      const y = element.getBoundingClientRect().top + window.pageYOffset + yOffset;
-      window.scrollTo({ top: y, behavior: 'smooth' });
-    }
+    setSelectedCollection(catId);
+    
+    setTimeout(() => {
+      const element = document.querySelector('.blinkit-feed');
+      if (element) {
+        const yOffset = -180;
+        const y = element.getBoundingClientRect().top + window.pageYOffset + yOffset;
+        window.scrollTo({ top: y, behavior: 'smooth' });
+      }
+    }, 100);
   };
 
   // Static options matching our seed data
   const sizes = ['S', 'M', 'L', 'XL', 'XXL'];
+  
+  const activeFilterCount = [
+    selectedCollection,
+    selectedSize,
+    selectedColor,
+    searchQuery
+  ].filter(Boolean).length;
   const colors = [
     'Champagne Pink',
     'Deep Plum',
@@ -953,10 +962,31 @@ function CollectionsContent() {
               className="blinkit-sidebar-item blinkit-sidebar-filter-btn"
               onClick={() => setIsMobileFilterOpen(true)}
             >
-              <div className="blinkit-sidebar-icon">
+              <div className="blinkit-sidebar-icon" style={{ position: 'relative' }}>
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#B8860B" strokeWidth="2.5">
                   <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3" />
                 </svg>
+                {activeFilterCount > 0 && (
+                  <span style={{
+                    position: 'absolute',
+                    top: '-4px',
+                    right: '-4px',
+                    backgroundColor: '#D98E9B',
+                    color: '#FFFFFF',
+                    borderRadius: '50%',
+                    width: '13px',
+                    height: '13px',
+                    fontSize: '8px',
+                    fontWeight: '700',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    border: '1.5px solid #FFFFFF',
+                    zIndex: 5
+                  }}>
+                    {activeFilterCount}
+                  </span>
+                )}
               </div>
               <span>Filter</span>
             </div>
@@ -1037,7 +1067,7 @@ function CollectionsContent() {
                 ) : (
                   <div className="blinkit-feed-section" id={selectedCollection}>
                     <h2 className="blinkit-feed-section-title">
-                      {collections.find(c => c.slug === selectedCollection)?.name || 'Collection'}
+                      {getCollectionTitle()}
                     </h2>
                     <div className="grid-cols-shop">
                       {products.map((p) => renderProductCard(p))}
