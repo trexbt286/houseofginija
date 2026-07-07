@@ -1619,6 +1619,10 @@ header {
   box-sizing: border-box !important;
 }
 
+body.cart-drawer-open header {
+  z-index: 10000 !important;
+}
+
 .store-main {
   padding-top: 107px !important; /* Push main content down by total height of pinned header (32px + 75px) */
 }

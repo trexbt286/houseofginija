@@ -16,11 +16,14 @@ export default function Header() {
   useEffect(() => {
     if (isCartOpen) {
       document.body.classList.add('scroll-locked');
+      document.body.classList.add('cart-drawer-open');
     } else {
       document.body.classList.remove('scroll-locked');
+      document.body.classList.remove('cart-drawer-open');
     }
     return () => {
       document.body.classList.remove('scroll-locked');
+      document.body.classList.remove('cart-drawer-open');
     };
   }, [isCartOpen]);
 
