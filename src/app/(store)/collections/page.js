@@ -488,18 +488,13 @@ function CollectionsContent() {
   const getSidebarCategories = () => {
     const list = [];
     
-    // Add "All Items" option at the top
-    list.push({ id: 'all', name: 'All Items', emoji: '✨', targetId: '' });
-
     collections.forEach(col => {
       if (col.slug === 'suits') {
         list.push({ id: 'suits', name: col.name, emoji: '👔', targetId: 'suits' });
       } else if (col.slug === 'jewellery') {
-        list.push({ id: 'jewellery', name: col.name, emoji: '💎', targetId: 'jewellery' });
         list.push({ id: 'rings', name: 'Rings', emoji: '💍', targetId: 'rings' });
         list.push({ id: 'necklaces', name: 'Necklaces', emoji: '📿', targetId: 'necklaces' });
         list.push({ id: 'bracelets', name: 'Bracelets', emoji: '📿', targetId: 'bracelets' });
-        list.push({ id: 'earrings', name: 'Earrings', emoji: '✨', targetId: 'earrings' });
       }
     });
     
@@ -942,14 +937,13 @@ function CollectionsContent() {
             <div 
               className="blinkit-sidebar-item blinkit-sidebar-filter-btn"
               onClick={() => setIsMobileFilterOpen(true)}
-              style={{ borderBottom: '1px solid rgba(139, 119, 137, 0.08)', marginBottom: '0.4rem', paddingBottom: '0.6rem' }}
             >
               <div className="blinkit-sidebar-icon">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#D98E9B" strokeWidth="2.5">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#B8860B" strokeWidth="2.5">
                   <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3" />
                 </svg>
               </div>
-              <span style={{ fontWeight: '700', color: '#D98E9B' }}>Filter</span>
+              <span>Filter</span>
             </div>
 
             {getSidebarCategories().map(cat => (

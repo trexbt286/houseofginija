@@ -743,9 +743,9 @@ body.scroll-locked {
     height: auto !important;
     overflow-x: hidden !important; /* disable horizontal scroll */
     overflow-y: hidden !important;
-    background-color: #FFFFFF !important; /* Clean white */
+    background-color: #FBF0EC !important; /* light blush background */
     border-right: none !important;
-    border-bottom: 1px solid rgba(139, 119, 137, 0.08) !important;
+    border-bottom: 1px solid #F6DDE2 !important;
     display: flex !important;
     flex-direction: row !important; /* horizontal items list */
     align-items: center !important;
