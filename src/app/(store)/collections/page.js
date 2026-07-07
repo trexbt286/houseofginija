@@ -180,8 +180,13 @@ function CollectionsContent() {
   const router = useRouter();
   const { user, cart, addToCart, updateCartQuantity, wishlist, toggleWishlist } = useStore();
 
-  const sectionParam = searchParams.get('section') || '';
-  const [isJumping, setIsJumping] = useState(!!sectionParam);
+  const [isJumping, setIsJumping] = useState(false);
+
+  useEffect(() => {
+    if (typeof window !== 'undefined' && window.sessionStorage.getItem('collections_scroll_target')) {
+      setIsJumping(true);
+    }
+  }, []);
 
   // Filter States
   const [products, setProducts] = useState([]);
@@ -310,30 +315,34 @@ function CollectionsContent() {
     }
   }, [categoryParam, loading, products]);
 
-  // Scroll to sectionParam on load (Instantly jump and reveal using useLayoutEffect)
+  // Scroll to session target on load (Instantly jump and reveal using useLayoutEffect)
   useIsomorphicLayoutEffect(() => {
-    if (!loading && products.length > 0 && sectionParam) {
-      let targetId = sectionParam.toLowerCase();
-      if (targetId === 'necklace') targetId = 'necklaces';
-      
-      const element = document.getElementById(targetId);
-      if (element) {
-        const originalScrollBehavior = document.documentElement.style.scrollBehavior;
-        document.documentElement.style.scrollBehavior = 'auto';
+    if (!loading && products.length > 0) {
+      const scrollTarget = typeof window !== 'undefined' ? window.sessionStorage.getItem('collections_scroll_target') : null;
+      if (scrollTarget) {
+        let targetId = scrollTarget.toLowerCase();
+        if (targetId === 'necklace') targetId = 'necklaces';
         
-        element.scrollIntoView({ behavior: 'instant', block: 'start' });
-        
-        if (originalScrollBehavior) {
-          document.documentElement.style.scrollBehavior = originalScrollBehavior;
-        } else {
-          document.documentElement.style.removeProperty('scroll-behavior');
+        const element = document.getElementById(targetId);
+        if (element) {
+          const originalScrollBehavior = document.documentElement.style.scrollBehavior;
+          document.documentElement.style.scrollBehavior = 'auto';
+          
+          element.scrollIntoView({ behavior: 'instant', block: 'start' });
+          
+          if (originalScrollBehavior) {
+            document.documentElement.style.scrollBehavior = originalScrollBehavior;
+          } else {
+            document.documentElement.style.removeProperty('scroll-behavior');
+          }
+          
+          setActiveCategorySidebar(targetId);
         }
-        
-        setActiveCategorySidebar(targetId);
+        window.sessionStorage.removeItem('collections_scroll_target');
       }
       setIsJumping(false);
     }
-  }, [sectionParam, loading, products]);
+  }, [loading, products]);
 
   // Scroll-Spy: Highlight active category on left panel as user scrolls the right panel feed
   useEffect(() => {
