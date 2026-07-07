@@ -132,8 +132,12 @@ function MobileSearchBar({ allProducts, initialQuery, onSearch, handleProductCli
                 onMouseDown={(e) => {
                   e.preventDefault();
                   setShowSuggestions(false);
-                  setLocalQuery('');
-                  onSearch('');
+                  
+                  // When opening the bottom sheet, we do NOT clear the search state.
+                  // We also perform the search based on current input so feed populates beneath the sheet.
+                  if (timeoutRef.current) clearTimeout(timeoutRef.current);
+                  onSearch(localQuery);
+                  
                   handleProductClick(e, p);
                 }}
                 onClick={(e) => e.preventDefault()}
@@ -268,6 +272,9 @@ function CollectionsContent() {
     setSelectedCollection(colParam);
     setSearchQuery(searchParam);
     setActiveCategorySidebar(colParam);
+    
+    // Close detailed preview when collection query changes
+    setActiveProduct(null);
 
     // Scroll to category if present in the URL
     if (categoryParam) {
@@ -643,6 +650,8 @@ function CollectionsContent() {
       setActiveProductColor('Default');
     }
     setActiveProductQty(1);
+    
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   const renderCategoryIcon = (catId) => {
