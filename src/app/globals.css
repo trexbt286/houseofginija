@@ -2086,21 +2086,29 @@ header {
 
   /* Sibling switcher row rendering OUTSIDE/BELOW the card on the backdrop */
   .mobile-sibling-switcher-row-outer {
-    width: calc(100vw - 24px) !important; /* matches card width */
-    overflow-x: auto !important;
+    width: 100vw !important; /* full viewport width to center the active circle correctly */
+    position: relative !important;
+    overflow-x: hidden !important; /* disable manual scrollbar to keep layout strictly centered */
     display: flex !important;
     flex-direction: row !important;
     align-items: center !important;
     justify-content: flex-start !important;
     padding: 0.4rem 0 !important;
-    gap: 0.8rem !important;
     background-color: transparent !important; /* sits directly on dimmed backdrop */
     box-sizing: border-box !important;
     white-space: nowrap !important;
-    -webkit-overflow-scrolling: touch !important;
     margin-top: 24px !important; /* space below card — increased breathing room */
     pointer-events: auto !important; /* allow clicks on switcher circles */
     flex-shrink: 0 !important;
+  }
+
+  .mobile-sibling-switcher-row-inner {
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    justify-content: flex-start !important;
+    white-space: nowrap !important;
+    box-sizing: border-box !important;
   }
 
   .sibling-switcher-circle-btn {
