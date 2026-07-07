@@ -251,16 +251,7 @@ function CollectionsContent() {
             type="text"
             placeholder="Search creations..."
             value={searchQuery}
-            onChange={(e) => {
-              const val = e.target.value;
-              setSearchQuery(val);
-              if (val.trim().length > 0) {
-                setSelectedCollection('');
-                setSelectedSize('');
-                setSelectedColor('');
-                setActiveCategorySidebar('');
-              }
-            }}
+            onChange={(e) => setSearchQuery(e.target.value)}
             style={searchFieldStyle}
           />
         </div>
@@ -358,7 +349,7 @@ function CollectionsContent() {
     fetchAllProducts();
   }, []);
 
-  // Filter in memory instantly when selections change
+  // Filter in memory or fetch from API when selections change
   useEffect(() => {
     const filterAndFetch = async () => {
       if (searchQuery.trim().length > 0) {
@@ -367,19 +358,7 @@ function CollectionsContent() {
           const res = await fetch(`/api/products?search=${encodeURIComponent(searchQuery.trim())}`);
           if (res.ok) {
             const data = await res.json();
-            let list = data.products || [];
-            
-            // Sort
-            if (selectedSort === 'price_asc') {
-              list.sort((a, b) => parseFloat(a.price) - parseFloat(b.price));
-            } else if (selectedSort === 'price_desc') {
-              list.sort((a, b) => parseFloat(b.price) - parseFloat(a.price));
-            } else if (selectedSort === 'name_asc') {
-              list.sort((a, b) => a.name.localeCompare(b.name));
-            } else {
-              list.sort((a, b) => Number(b.id) - Number(a.id));
-            }
-            
+            const list = data.products || [];
             setProducts(list);
           }
         } catch (err) {
@@ -434,10 +413,13 @@ function CollectionsContent() {
 
     filterAndFetch();
 
-    // Sync URL params
+    // Sync URL params (Decoupled completely: search URL doesn't contain filter and vice versa)
     const urlParams = new URLSearchParams();
-    if (selectedCollection) urlParams.set('collection', selectedCollection);
-    if (searchQuery) urlParams.set('search', searchQuery);
+    if (searchQuery) {
+      urlParams.set('search', searchQuery);
+    } else {
+      if (selectedCollection) urlParams.set('collection', selectedCollection);
+    }
     router.replace(`/collections?${urlParams.toString()}`, { scroll: false });
 
   }, [selectedCollection, searchQuery, selectedSize, selectedColor, selectedSort, allProducts]);
@@ -1039,14 +1021,7 @@ function CollectionsContent() {
                 placeholder="Search for products, collections..."
                 value={searchQuery}
                 onChange={(e) => {
-                  const val = e.target.value;
-                  setSearchQuery(val);
-                  if (val.trim().length > 0) {
-                    setSelectedCollection('');
-                    setSelectedSize('');
-                    setSelectedColor('');
-                    setActiveCategorySidebar('');
-                  }
+                  setSearchQuery(e.target.value);
                   setShowSuggestions(true);
                 }}
                 onFocus={() => setShowSuggestions(true)}
@@ -1186,7 +1161,7 @@ function CollectionsContent() {
             {getSidebarCategories().map(cat => (
               <div 
                 key={cat.id} 
-                className={`blinkit-sidebar-item ${activeCategorySidebar === cat.id ? 'active' : ''}`}
+                className={`blinkit-sidebar-item ${(!searchQuery && activeCategorySidebar === cat.id) ? 'active' : ''}`}
                 onClick={() => handleCategorySidebarClick(cat.id)}
               >
                 <div className="blinkit-sidebar-icon">
