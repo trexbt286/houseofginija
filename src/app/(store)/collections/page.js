@@ -34,10 +34,8 @@ function CollectionsContent() {
   const [isMobileFilterOpen, setIsMobileFilterOpen] = useState(false);
   const [activeCategorySidebar, setActiveCategorySidebar] = useState('');
 
-  // Carousel states for mobile sibling switcher
+  // Viewport width state for mobile sibling switcher centering
   const [viewportWidth, setViewportWidth] = useState(390);
-  const [carouselIndex, setCarouselIndex] = useState(0);
-  const [isCarouselAnimating, setIsCarouselAnimating] = useState(false);
 
   // Manage scroll-lock on document.body and documentElement when mobile filter drawer is open
   useEffect(() => {
@@ -669,39 +667,7 @@ function CollectionsContent() {
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  // Initialize carouselIndex when activeProduct changes
-  useEffect(() => {
-    if (activeProduct && switcherProducts.length > 0) {
-      const activeIdx = switcherProducts.findIndex(p => p.id === activeProduct.id);
-      if (activeIdx > -1) {
-        const L = switcherProducts.length;
-        setCarouselIndex(2 * L + activeIdx);
-      }
-    }
-  }, [activeProduct?.id, switcherProducts.length]);
 
-  const handleCarouselClick = (targetProduct, targetIndex) => {
-    if (isCarouselAnimating) return;
-    setIsCarouselAnimating(true);
-    setCarouselIndex(targetIndex);
-    
-    setActiveProduct(targetProduct);
-    setActiveProductImage(targetProduct.images && targetProduct.images[0] ? targetProduct.images[0] : '/placeholder.jpg');
-    const vars = targetProduct.variants || [];
-    const inStockVar = vars.find(v => v.stock > 0) || vars[0];
-    setActiveProductSize(inStockVar ? inStockVar.size || '' : '');
-    setActiveProductColor(inStockVar ? inStockVar.color || '' : '');
-    setActiveProductQty(1);
-  };
-
-  const handleCarouselTransitionEnd = () => {
-    setIsCarouselAnimating(false);
-    if (switcherProducts.length > 0) {
-      const L = switcherProducts.length;
-      const equivalentIndex = 2 * L + (carouselIndex % L);
-      setCarouselIndex(equivalentIndex);
-    }
-  };
 
   return (
     <div style={pageStyle} className="collections-root-container">
@@ -911,10 +877,9 @@ function CollectionsContent() {
 
           {/* Sibling switcher row of 56px circular buttons (Outside the card!) */}
           {switcherProducts.length > 0 && (() => {
-            const L = switcherProducts.length;
-            const repeatedItems = Array(5).fill(switcherProducts).flat();
+            const activeIdx = switcherProducts.findIndex(p => p.id === activeProduct.id);
             const W = viewportWidth || 390;
-            const translateX = (W / 2) - 28 - (carouselIndex * 68.8);
+            const translateX = (W / 2) - 28 - (activeIdx * 68.8);
 
             return (
               <div className="mobile-sibling-switcher-row-outer hide-scrollbar">
@@ -925,20 +890,26 @@ function CollectionsContent() {
                     flexDirection: 'row',
                     gap: '0.8rem',
                     transform: `translateX(${translateX}px)`,
-                    transition: isCarouselAnimating ? 'transform 0.35s cubic-bezier(0.25, 1, 0.5, 1)' : 'none',
+                    transition: 'transform 0.35s cubic-bezier(0.25, 1, 0.5, 1)',
                     willChange: 'transform'
                   }}
-                  onTransitionEnd={handleCarouselTransitionEnd}
                 >
-                  {repeatedItems.map((sib, idx) => {
-                    const isActive = (idx % L) === (switcherProducts.findIndex(p => p.id === activeProduct.id));
+                  {switcherProducts.map((sib, idx) => {
+                    const isActive = sib.id === activeProduct.id;
                     return (
                       <button
-                        key={`${sib.id}-${idx}`}
+                        key={sib.id}
                         onClick={(e) => {
                           e.preventDefault();
                           e.stopPropagation();
-                          handleCarouselClick(sib, idx);
+                          
+                          setActiveProduct(sib);
+                          setActiveProductImage(sib.images && sib.images[0] ? sib.images[0] : '/placeholder.jpg');
+                          const vars = sib.variants || [];
+                          const inStockVar = vars.find(v => v.stock > 0) || vars[0];
+                          setActiveProductSize(inStockVar ? inStockVar.size || '' : '');
+                          setActiveProductColor(inStockVar ? inStockVar.color || '' : '');
+                          setActiveProductQty(1);
                         }}
                         className={`sibling-switcher-circle-btn ${isActive ? 'active' : ''}`}
                       >
