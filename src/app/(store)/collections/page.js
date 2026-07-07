@@ -662,7 +662,9 @@ function CollectionsContent() {
         <div 
           className="mobile-bottom-sheet-backdrop" 
           onClick={() => setActiveProduct(null)}
-        />
+        >
+          <div className="mobile-bottom-sheet-backdrop-inner" />
+        </div>
       )}
 
 
