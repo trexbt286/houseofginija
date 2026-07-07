@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, Suspense, useRef } from 'react';
+import { useState, useEffect, useLayoutEffect, Suspense, useRef } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
@@ -173,13 +173,15 @@ function MobileSearchBar({ allProducts, initialQuery, onSearch, handleProductCli
   );
 }
 
+const useIsomorphicLayoutEffect = typeof window !== 'undefined' ? useLayoutEffect : useEffect;
+
 function CollectionsContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const { user, cart, addToCart, updateCartQuantity, wishlist, toggleWishlist } = useStore();
 
-  const scrollToParam = searchParams.get('scrollTo') || '';
-  const [isJumping, setIsJumping] = useState(!!scrollToParam);
+  const sectionParam = searchParams.get('section') || '';
+  const [isJumping, setIsJumping] = useState(!!sectionParam);
 
   // Filter States
   const [products, setProducts] = useState([]);
@@ -308,10 +310,10 @@ function CollectionsContent() {
     }
   }, [categoryParam, loading, products]);
 
-  // Scroll to scrollToParam on load (Instantly jump and reveal)
-  useEffect(() => {
-    if (!loading && products.length > 0 && scrollToParam) {
-      let targetId = scrollToParam.toLowerCase();
+  // Scroll to sectionParam on load (Instantly jump and reveal using useLayoutEffect)
+  useIsomorphicLayoutEffect(() => {
+    if (!loading && products.length > 0 && sectionParam) {
+      let targetId = sectionParam.toLowerCase();
       if (targetId === 'necklace') targetId = 'necklaces';
       
       const element = document.getElementById(targetId);
@@ -331,7 +333,7 @@ function CollectionsContent() {
       }
       setIsJumping(false);
     }
-  }, [scrollToParam, loading, products]);
+  }, [sectionParam, loading, products]);
 
   // Scroll-Spy: Highlight active category on left panel as user scrolls the right panel feed
   useEffect(() => {
