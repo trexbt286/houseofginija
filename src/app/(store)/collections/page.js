@@ -277,9 +277,9 @@ function CollectionsContent() {
     setActiveProduct(null);
   }, [colParam, searchParam]);
 
-  // Scroll to category if present in the URL (Runs once products are loaded)
+  // Scroll to category if present in the URL (Runs once products are loaded and rendered)
   useEffect(() => {
-    if (!loading && categoryParam) {
+    if (!loading && products.length > 0 && categoryParam) {
       let targetId = categoryParam.toLowerCase();
       if (targetId === 'necklace') targetId = 'necklaces';
       
@@ -293,7 +293,7 @@ function CollectionsContent() {
         }
       }, 300);
     }
-  }, [categoryParam, loading]);
+  }, [categoryParam, loading, products]);
 
   // Scroll-Spy: Highlight active category on left panel as user scrolls the right panel feed
   useEffect(() => {
