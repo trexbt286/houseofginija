@@ -575,16 +575,8 @@ function CollectionsContent() {
 
     filterAndFetch();
 
-    // Sync URL params (Decoupled completely: search URL doesn't contain filter and vice versa)
-    const urlParams = new URLSearchParams();
-    if (searchQuery) {
-      urlParams.set('search', searchQuery);
-    } else {
-      if (selectedCollection) urlParams.set('collection', selectedCollection);
-    }
-    const newUrl = `/collections?${urlParams.toString()}`;
-    window.history.replaceState({ ...window.history.state, as: newUrl, url: newUrl }, '', newUrl);
-
+    // URL sync has been removed to prevent Next.js App Router Suspense bugs 
+    // where modifying history manually causes a remount on the next state change (like closing a bottom sheet).
   }, [selectedCollection, searchQuery, selectedSize, selectedColor, selectedSort, allProducts]);
 
   const handleClearFilters = () => {
