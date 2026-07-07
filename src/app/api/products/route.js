@@ -30,7 +30,7 @@ export async function GET(request) {
 
     // Filter by text search
     if (search) {
-      queryText += ` AND (p.name ILIKE $${paramIndex} OR p.description ILIKE $${paramIndex})`;
+      queryText += ` AND p.name ILIKE $${paramIndex}`;
       queryParams.push(`%${search}%`);
       paramIndex++;
     }

@@ -105,6 +105,7 @@ function CollectionsContent() {
   useEffect(() => {
     setSelectedCollection(colParam);
     setSearchQuery(searchParam);
+    setActiveCategorySidebar(colParam);
     
     // Close detailed preview when collection query changes
     setActiveProduct(null);
@@ -129,6 +130,10 @@ function CollectionsContent() {
   useEffect(() => {
     // Only active on mobile viewport width
     if (typeof window === 'undefined' || window.innerWidth > 768) return;
+    if (searchQuery) {
+      setActiveCategorySidebar('');
+      return;
+    }
 
     const handleScroll = () => {
       const sections = getSidebarCategories()
@@ -337,55 +342,79 @@ function CollectionsContent() {
 
   // Filter in memory instantly when selections change
   useEffect(() => {
-    let filtered = [...allProducts];
-
-    if (searchQuery.trim().length > 0) {
-      // Search mode: ignore other category and size/color filters
-      const q = searchQuery.toLowerCase().trim();
-      filtered = filtered.filter(p => 
-        p.name.toLowerCase().includes(q)
-      );
-    } else {
-      // Filter mode: apply collection, size, and color filters
-      if (selectedCollection) {
-        if (selectedCollection === 'suits') {
-          filtered = filtered.filter(p => p.collection_slug === 'suits');
-        } else if (selectedCollection === 'rings') {
-          filtered = filtered.filter(p => p.slug.toLowerCase().includes('ring'));
-        } else if (selectedCollection === 'necklaces') {
-          filtered = filtered.filter(p => p.slug.toLowerCase().includes('necklace'));
-        } else if (selectedCollection === 'bracelets') {
-          filtered = filtered.filter(p => p.slug.toLowerCase().includes('bracelet'));
-        } else {
-          filtered = filtered.filter(p => p.collection_slug === selectedCollection);
+    const filterAndFetch = async () => {
+      if (searchQuery.trim().length > 0) {
+        setLoading(true);
+        try {
+          const res = await fetch(`/api/products?search=${encodeURIComponent(searchQuery.trim())}`);
+          if (res.ok) {
+            const data = await res.json();
+            let list = data.products || [];
+            
+            // Sort
+            if (selectedSort === 'price_asc') {
+              list.sort((a, b) => parseFloat(a.price) - parseFloat(b.price));
+            } else if (selectedSort === 'price_desc') {
+              list.sort((a, b) => parseFloat(b.price) - parseFloat(a.price));
+            } else if (selectedSort === 'name_asc') {
+              list.sort((a, b) => a.name.localeCompare(b.name));
+            } else {
+              list.sort((a, b) => Number(b.id) - Number(a.id));
+            }
+            
+            setProducts(list);
+          }
+        } catch (err) {
+          console.error(err);
+        } finally {
+          setLoading(false);
         }
+      } else {
+        let filtered = [...allProducts];
+
+        // Filter mode: apply collection, size, and color filters
+        if (selectedCollection) {
+          if (selectedCollection === 'suits') {
+            filtered = filtered.filter(p => p.collection_slug === 'suits');
+          } else if (selectedCollection === 'rings') {
+            filtered = filtered.filter(p => p.slug.toLowerCase().includes('ring'));
+          } else if (selectedCollection === 'necklaces') {
+            filtered = filtered.filter(p => p.slug.toLowerCase().includes('necklace'));
+          } else if (selectedCollection === 'bracelets') {
+            filtered = filtered.filter(p => p.slug.toLowerCase().includes('bracelet'));
+          } else {
+            filtered = filtered.filter(p => p.collection_slug === selectedCollection);
+          }
+        }
+
+        if (selectedSize) {
+          filtered = filtered.filter(p => 
+            p.variants && p.variants.some(v => v.size === selectedSize && v.stock > 0)
+          );
+        }
+
+        if (selectedColor) {
+          filtered = filtered.filter(p => 
+            p.variants && p.variants.some(v => v.color === selectedColor && v.stock > 0)
+          );
+        }
+
+        // Sort
+        if (selectedSort === 'price_asc') {
+          filtered.sort((a, b) => parseFloat(a.price) - parseFloat(b.price));
+        } else if (selectedSort === 'price_desc') {
+          filtered.sort((a, b) => parseFloat(b.price) - parseFloat(a.price));
+        } else if (selectedSort === 'name_asc') {
+          filtered.sort((a, b) => a.name.localeCompare(b.name));
+        } else {
+          filtered.sort((a, b) => Number(b.id) - Number(a.id));
+        }
+
+        setProducts(filtered);
       }
+    };
 
-      if (selectedSize) {
-        filtered = filtered.filter(p => 
-          p.variants && p.variants.some(v => v.size === selectedSize && v.stock > 0)
-        );
-      }
-
-      if (selectedColor) {
-        filtered = filtered.filter(p => 
-          p.variants && p.variants.some(v => v.color === selectedColor && v.stock > 0)
-        );
-      }
-    }
-
-    // Sort
-    if (selectedSort === 'price_asc') {
-      filtered.sort((a, b) => parseFloat(a.price) - parseFloat(b.price));
-    } else if (selectedSort === 'price_desc') {
-      filtered.sort((a, b) => parseFloat(b.price) - parseFloat(a.price));
-    } else if (selectedSort === 'name_asc') {
-      filtered.sort((a, b) => a.name.localeCompare(b.name));
-    } else {
-      filtered.sort((a, b) => Number(b.id) - Number(a.id));
-    }
-
-    setProducts(filtered);
+    filterAndFetch();
 
     // Sync URL params
     const urlParams = new URLSearchParams();
@@ -415,7 +444,7 @@ function CollectionsContent() {
 
   // Group products for "All Collections" and "Jewellery" views
   const groupedProducts = {};
-  const shouldGroup = searchQuery.trim().length > 0 || !selectedCollection || selectedCollection === 'jewellery';
+  const shouldGroup = !searchQuery && (!selectedCollection || selectedCollection === 'jewellery');
 
   if (shouldGroup && products.length > 0) {
     products.forEach(p => {
