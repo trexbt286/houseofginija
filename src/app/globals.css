@@ -776,13 +776,28 @@ body.scroll-locked {
 
 @media (max-width: 768px) {
   /* About Page Mobile Optimizations */
-  .about-header-section { padding: 3rem 1rem 2rem 1rem !important; }
+  .about-header-section { padding: 3rem 1.5rem 2rem 1.5rem !important; }
   .about-title { font-size: 2.2rem !important; }
   .about-tagline { font-size: 1.8rem !important; margin-bottom: 0 !important; }
   .about-section-title { font-size: 1.6rem !important; }
-  .about-image-col { height: 300px !important; }
+  .about-image-col { height: 260px !important; }
   .about-philosophy-section { padding: 3rem 1.5rem !important; margin: 3rem 0 !important; }
   .about-philosophy-title { font-size: 1.6rem !important; }
+
+  /* On mobile, story-grid sections need side padding from container */
+  .story-grid, .story-grid-reverse {
+    padding-left: 1.5rem !important;
+    padding-right: 1.5rem !important;
+    margin-top: 2.5rem !important;
+  }
+
+  /* On mobile, reverse the column order in story-grid-reverse so text comes first */
+  .story-grid-reverse > .about-image-col {
+    order: 2 !important;
+  }
+  .story-grid-reverse > div:not(.about-image-col) {
+    order: 1 !important;
+  }
 
   /* Contact Page Grid */
   .contact-layout-grid {
