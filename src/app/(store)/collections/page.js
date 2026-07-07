@@ -130,12 +130,16 @@ function CollectionsContent() {
   useEffect(() => {
     // Only active on mobile viewport width
     if (typeof window === 'undefined' || window.innerWidth > 768) return;
-    if (searchQuery) {
-      setActiveCategorySidebar('');
-      return;
-    }
 
     const handleScroll = () => {
+      // Close mobile search suggestions dropdown on scroll
+      setShowSuggestions(false);
+
+      if (searchQuery) {
+        setActiveCategorySidebar('');
+        return;
+      }
+
       const sections = getSidebarCategories()
         .map(c => c.id)
         .filter(id => id !== 'all' && id !== 'jewellery');
@@ -167,7 +171,21 @@ function CollectionsContent() {
     return () => {
       window.removeEventListener('scroll', handleScroll);
     };
-  }, [loading, products, activeProduct]);
+  }, [loading, products, activeProduct, searchQuery]);
+
+  // Close search suggestions dropdown when user taps anywhere outside it
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      const searchRow = document.querySelector('.mobile-search-bar-row');
+      if (searchRow && !searchRow.contains(event.target)) {
+        setShowSuggestions(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
 
   // Sync nav bar highlight with active collection filter selection
   useEffect(() => {
@@ -1035,6 +1053,12 @@ function CollectionsContent() {
                 onBlur={() => {
                   // Slight timeout so click event on suggestion links registers before blur event closes dropdown
                   setTimeout(() => setShowSuggestions(false), 200);
+                }}
+                 onKeyDown={(e) => {
+                  if (e.key === 'Enter') {
+                    setShowSuggestions(false);
+                    e.currentTarget.blur();
+                  }
                 }}
                 className="mobile-search-input"
                 style={{
