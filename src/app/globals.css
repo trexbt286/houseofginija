@@ -1565,11 +1565,35 @@ body.scroll-locked {
 
   .collections-grid {
     grid-template-columns: repeat(2, 1fr) !important;
-    gap: 1rem !important;
+    gap: 0.75rem !important;
+  }
+
+  .collections-grid-card > div:first-child {
+    height: 130px !important;
   }
 
   .collections-grid-card-content {
-    padding: 1.2rem !important;
+    padding: 0.8rem 0.5rem !important;
+  }
+
+  .collections-grid-card-content > div {
+    margin-bottom: 0.5rem !important;
+  }
+
+  .collections-grid-card-content h3 {
+    font-size: 1.15rem !important;
+    margin-bottom: 0.3rem !important;
+  }
+
+  .collections-grid-card-content p {
+    font-size: 0.72rem !important;
+    margin-bottom: 0.8rem !important;
+    line-height: 1.35 !important;
+  }
+
+  .collections-grid-card-content span {
+    font-size: 0.65rem !important;
+    padding: 0.4rem 0.8rem !important;
   }
 
   .hero-value-props-bar {
