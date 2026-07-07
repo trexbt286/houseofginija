@@ -4,20 +4,34 @@ We have successfully restructured the mobile detailed view bottom sheet to match
 
 ## Changes Implemented
 
-### 1. Mobile Full-Screen Cart Drawer & Circular Chevron Dismiss ([Header.js](file:///c:/Users/varun/OneDrive/Documents/houseofginija/src/components/Header.js) & [globals.css](file:///c:/Users/varun/OneDrive/Documents/houseofginija/src/app/globals.css))
+### 1. Compact Cart Items on Mobile ([globals.css](file:///c:/Users/varun/OneDrive/Documents/houseofginija/src/app/globals.css))
+*   **Reduced Margins & Gaps**: Added overrides for mobile viewports to shrink the gap between the thumbnail and details text (`gap: 0.6rem !important;`), as well as reducing the padding and margin below each cart item to `0.8rem`. 
+*   **Smaller Thumbnails**: Scaled down the product image thumbnails from `80px` to `60px`.
+*   **Condensed Typography**: Shrunk all text sizing inside the cart items. Product titles are now `0.85rem`, variant text is `0.65rem`, and prices are `0.8rem`.
+*   **Smaller Quantity Controllers**: Reduced the height and width of the quantity increment/decrement block to `24px`. This makes each cart item significantly shorter vertically, allowing far more items to be visible simultaneously without needing to scroll.
+
+### 2. Cart Drawer Footer Styling ([globals.css](file:///c:/Users/varun/OneDrive/Documents/houseofginija/src/app/globals.css))
+*   **Brand Color Background**: Changed the `background-color` of `.cart-drawer-footer` from the generic ivory `#FBF0EC` to the exact pastel pink brand color (`#F6DDE2 !important`).
+*   **Black Text Contrast**: Enforced a solid black (`#000000 !important`) text color for the `Taxes and shipping calculated at checkout` subtext note to maintain strong contrast against the new pink background.
+
+### 3. Mobile Full-Screen Cart Drawer & Circular Chevron Dismiss ([Header.js](file:///c:/Users/varun/OneDrive/Documents/houseofginija/src/components/Header.js) & [globals.css](file:///c:/Users/varun/OneDrive/Documents/houseofginija/src/app/globals.css))
 *   **Forced Full-Screen Overlay**: Set absolute styling on `.cart-drawer-backdrop` and `.cart-drawer` on mobile viewports using `position: fixed !important; top: 0 !important; left: 0 !important; width: 100vw !important; height: 100vh !important; z-index: 9999 !important; margin: 0 !important; border-radius: 0 !important; box-shadow: none !important;`. This forces the cart drawer to span the entire mobile screen, covering the announcement bar and leaving no gaps.
 *   **Circular Chevron Back Button**: Updated the back button inside the cart drawer header to render as a circular white button with a grey downward chevron (`∨`) icon inside it. Configured `.cart-drawer-back-btn` inside the mobile media query in `globals.css` with `background-color: rgba(255, 255, 255, 0.85) !important; border-radius: 50% !important; width: 36px !important; height: 36px !important; box-shadow: 0 2px 8px rgba(0,0,0,0.1) !important;` to match the detailed card dismiss button style.
 *   **Header Title Alignment**: Styled `.cart-drawer-title` on mobile to position it on the right side of the header using `margin-left: auto !important; text-align: right !important;`.
 
-### 2. Cart Item Image Loading Fix ([Header.js](file:///c:/Users/varun/OneDrive/Documents/houseofginija/src/components/Header.js) & [StoreContext.js](file:///c:/Users/varun/OneDrive/Documents/houseofginija/src/context/StoreContext.js))
+### 4. Cart Item Image Loading Fix ([Header.js](file:///c:/Users/varun/OneDrive/Documents/houseofginija/src/components/Header.js) & [StoreContext.js](file:///c:/Users/varun/OneDrive/Documents/houseofginija/src/context/StoreContext.js))
 *   **Image Property Fallback**: Fixed the thumbnail rendering in `Header.js` to look for both the `images` array (`item.images && item.images[0]`) and the singular `image` property (`item.image`), which stores the first product image path. This fixes broken images for items inside the cart drawer.
 *   **Stored Cart Array Enhancement**: Updated `addToCart` in `StoreContext.js` to store `images: product.images` inside the cart item object to ensure full future-proofing.
 
-### 3. Homepage-Only Floating WhatsApp Button ([layout.js](file:///c:/Users/varun/OneDrive/Documents/houseofginija/src/app/(store)/layout.js) & [page.js](file:///c:/Users/varun/OneDrive/Documents/houseofginija/src/app/(store)/page.js))
+### 5. Fixed React Component Shorthand Property Bug ([collections/page.js](file:///c:/Users/varun/OneDrive/Documents/houseofginija/src/app/(store)/collections/page.js))
+*   **Border Warning**: Resolved a Next.js/React console warning `"Removing a style property during rerender (borderColor) when a conflicting property is set (border) can lead to styling bugs"`.
+*   **Solution**: Modified `activeSizeOptStyle` and `activeColorOptStyle` definitions to use the full `border: '1px solid #000000'` syntax rather than just modifying `borderColor`, explicitly matching the syntax used in the unselected states and preventing conflict rendering loops during state changes.
+
+### 6. Homepage-Only Floating WhatsApp Button ([layout.js](file:///c:/Users/varun/OneDrive/Documents/houseofginija/src/app/(store)/layout.js) & [page.js](file:///c:/Users/varun/OneDrive/Documents/houseofginija/src/app/(store)/page.js))
 *   **Removed Global Placement**: Removed the WhatsApp floating anchor widget markup from the store layout `src/app/(store)/layout.js`.
 *   **Homepage Specific Integration**: Appended the floating WhatsApp anchor button markup inside the home page component `src/app/(store)/page.js`, ensuring it is only loaded and rendered when viewing the homepage.
 
-### 4. Linear Centered Carousel Switcher ([collections/page.js](file:///c:/Users/varun/OneDrive/Documents/houseofginija/src/app/(store)/collections/page.js) & [globals.css](file:///c:/Users/varun/OneDrive/Documents/houseofginija/src/app/globals.css))
+### 7. Linear Centered Carousel Switcher ([collections/page.js](file:///c:/Users/varun/OneDrive/Documents/houseofginija/src/app/(store)/collections/page.js) & [globals.css](file:///c:/Users/varun/OneDrive/Documents/houseofginija/src/app/globals.css))
 *   **Removed Cloning & Loop Wrap-around**: Removed all infinite loop cloning and wrap-around logic entirely. The switcher circles now map directly 1:1 to the products in the active collection.
 *   **Left/Right Stopped Bounds**: The first product has nothing to its left, and the last product has nothing to its right. Selecting the first product positions it in the center with empty space to its left, and selecting the last product centers it with empty space to its right.
 *   **Viewport Width Centering**: Tracks the screen width (`viewportWidth`) via resize event listeners. Centered the active product circle dynamically in the exact horizontal middle of the viewport using `translateX` math:
@@ -25,24 +39,24 @@ We have successfully restructured the mobile detailed view bottom sheet to match
 *   **Seamless Slide Transition**: Tapping a circle on the right or left initiates a smooth transform-based translation animation (`transition: transform 0.35s cubic-bezier(0.25, 1, 0.5, 1)`), moving the tapped circle to the exact horizontal center.
 *   **Disabled Manual scrolling**: Updated `.mobile-sibling-switcher-row-outer` in `globals.css` with `width: 100vw !important` and `overflow-x: hidden !important`. This disables manual swipe scrolling to keep the layout strictly aligned and centered.
 
-### 5. Extended Full-Screen Blur Backdrop ([globals.css](file:///c:/Users/varun/OneDrive/Documents/houseofginija/src/app/globals.css))
+### 8. Extended Full-Screen Blur Backdrop ([globals.css](file:///c:/Users/varun/OneDrive/Documents/houseofginija/src/app/globals.css))
 *   **Full-Screen Blur Overlay**: Extended the inner backdrop `.mobile-bottom-sheet-backdrop-inner` to cover the entire screen from `top: 0` to `height: 100%`. This properly blurs and dims the announcement bar and the top half of the header in the background.
 *   **Unresponsive Background clicks**: Restructured `.mobile-bottom-sheet-backdrop` to span the entire screen (`top: 0`, `height: 100vh`) with a transparent background. This effectively captures and blocks all click events on the header logo, search icon, menu bar, and navigation tabs while the detailed view is active, making the background fully unresponsive. Clicking anywhere on this backdrop blocks background actions and dismisses the product modal.
 
-### 6. Header Overlap & Custom Backdrop Position ([globals.css](file:///c:/Users/varun/OneDrive/Documents/houseofginija/src/app/globals.css))
+### 9. Header Overlap & Custom Backdrop Position ([globals.css](file:///c:/Users/varun/OneDrive/Documents/houseofginija/src/app/globals.css))
 *   **Header Overlap Positioning**: Changed the `top` offset of the mobile sheet container wrapper `.mobile-sheet-wrapper-container` to `70px !important`. Since the announcement bar is `32px` and the header navigation bar is `75px` tall, this vertical position sits exactly at the midpoint of the header bar, covering the bottom half.
 *   **Switcher Row Spacing**: Increased the `margin-top` of `.mobile-sibling-switcher-row-outer` to `24px !important` (up from `12px`), providing clean, comfortable breathing room between the bottom of the card and the sibling thumbnail circles row.
 
-### 7. Card Sizing Stability & Cart State Persistence ([collections/page.js](file:///c:/Users/varun/OneDrive/Documents/houseofginija/src/app/(store)/collections/page.js) & [globals.css](file:///c:/Users/varun/OneDrive/Documents/houseofginija/src/app/globals.css))
+### 10. Card Sizing Stability & Cart State Persistence ([collections/page.js](file:///c:/Users/varun/OneDrive/Documents/houseofginija/src/app/(store)/collections/page.js) & [globals.css](file:///c:/Users/varun/OneDrive/Documents/houseofginija/src/app/globals.css))
 *   **Identical Counter Sizing**: Removed the redundant flex-column wrapper around `.blinkit-count-controller` (lines 787 and 809) when the item is in the cart, making it a direct child of `.detail-action-bottom-bar`. This mirrors the exact DOM structure and alignment of the `ADD` button.
 *   **CSS Selector Isolation**: Updated the CSS button rules in `globals.css` to use direct child selectors (`.detail-action-bottom-bar > button` and `.detail-action-bottom-bar > .blinkit-count-controller`). This styles only the top-level ADD button and the top-level quantity counter to the identical `32px` height, preventing any vertical shifts or resizing of the card.
 *   **Prevented Modal Auto-closing**: Extracted primitive dependencies (`colParam`, `searchParam`, `categoryParam`) out of the URL parameter synchronization `useEffect` hook. This stops the React state from clearing `activeProduct` and closing the detailed view modal when the cart state updates.
 
-### 8. Root-Level Scroll Locking ([collections/page.js](file:///c:/Users/varun/OneDrive/Documents/houseofginija/src/app/(store)/collections/page.js) & [globals.css](file:///c:/Users/varun/OneDrive/Documents/houseofginija/src/app/globals.css))
+### 11. Root-Level Scroll Locking ([collections/page.js](file:///c:/Users/varun/OneDrive/Documents/houseofginija/src/app/(store)/collections/page.js) & [globals.css](file:///c:/Users/varun/OneDrive/Documents/houseofginija/src/app/globals.css))
 *   **Disabled html and body Scroll**: Extended the React scroll locking `useEffect` hooks in `collections/page.js` to apply the `scroll-locked` class to `document.documentElement` (`html`) as well as `document.body`. This guarantees that background window scrolling is fully deactivated.
 *   **Scroll Lock styling**: Updated the `.scroll-locked` class in `globals.css` to target both `html.scroll-locked` and `body.scroll-locked`, enforcing `overflow: hidden !important`, `height: 100vh !important`, and `max-height: 100vh !important`.
 
-### 9. Zero-Scroll Layout & Spacing Optimization ([globals.css](file:///c:/Users/varun/OneDrive/Documents/houseofginija/src/app/globals.css))
+### 12. Zero-Scroll Layout & Spacing Optimization ([globals.css](file:///c:/Users/varun/OneDrive/Documents/houseofginija/src/app/globals.css))
 *   **Bottom Padding Breathing Room**: Changed the bottom padding of the details container `.detail-preview-grid > div:last-child` to exactly `12px` (`padding: 0.8rem 1.2rem 12px 1.2rem !important`). This provides clear and consistent breathing room between the bottom border of the card and the ADD button / quantity controller.
 *   **Prevented Padding Clipping**: Increased the details section `max-height` constraint from `35vh` to `40vh`. This ensures the details have plenty of vertical room to lay out naturally, preventing the bottom padding from being clipped by the height limits on small mobile viewports.
 *   **Disabled Scrolling**: Changed `overflow-y` to `hidden !important` on the details container. This completely prevents any vertical scrollbars from appearing, forcing a clean, static, non-scrollable card view.
