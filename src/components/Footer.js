@@ -257,7 +257,7 @@ const inputStyle = {
   border: '1px solid rgba(45, 36, 41, 0.2)',
   color: '#000000',
   borderRadius: '4px',
-  padding: '0.6rem 0.8rem',
+  padding: '0.5rem 0.8rem',
   fontSize: '0.8rem',
   outline: 'none',
 };
@@ -265,12 +265,13 @@ const inputStyle = {
 const buttonStyle = {
   backgroundColor: '#FFFFFF', // Gold Accent
   color: '#000000',
-  padding: '0.6rem 1.2rem',
+  padding: '0.5rem 0.8rem',
   borderRadius: '4px',
   fontWeight: '600',
-  fontSize: '0.75rem',
+  fontSize: '0.7rem',
   textTransform: 'uppercase',
-  letterSpacing: '0.05em',
+  letterSpacing: '0.02em',
+  flexShrink: 0,
 };
 
 const successMsgStyle = {
