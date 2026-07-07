@@ -15,7 +15,7 @@ export default function AboutPage() {
       </section>
 
       {/* Grid Story Section */}
-      <section className="container info-page-container story-grid">
+      <section className="container story-grid">
         <div className="about-text-col" style={textColStyle}>
           <p className="brand-tagline about-tagline" style={taglineStyle}>Timeless Silhouettes</p>
           <h2 className="about-section-title" style={sectionTitleStyle}>Dedicated Couture Craftsmanship</h2>
