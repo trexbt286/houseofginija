@@ -962,10 +962,12 @@ function CollectionsContent() {
               className="blinkit-sidebar-item blinkit-sidebar-filter-btn"
               onClick={() => setIsMobileFilterOpen(true)}
             >
-              <div className="blinkit-sidebar-icon" style={{ position: 'relative' }}>
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#B8860B" strokeWidth="2.5">
-                  <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3" />
-                </svg>
+              <div style={{ position: 'relative', display: 'inline-flex' }}>
+                <div className="blinkit-sidebar-icon">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#B8860B" strokeWidth="2.5">
+                    <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3" />
+                  </svg>
+                </div>
                 {activeFilterCount > 0 && (
                   <span style={{
                     position: 'absolute',
@@ -974,15 +976,15 @@ function CollectionsContent() {
                     backgroundColor: '#D98E9B',
                     color: '#FFFFFF',
                     borderRadius: '50%',
-                    width: '13px',
-                    height: '13px',
-                    fontSize: '8px',
+                    width: '14px',
+                    height: '14px',
+                    fontSize: '9px',
                     fontWeight: '700',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
                     border: '1.5px solid #FFFFFF',
-                    zIndex: 5
+                    zIndex: 10
                   }}>
                     {activeFilterCount}
                   </span>
