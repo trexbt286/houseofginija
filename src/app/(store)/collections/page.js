@@ -390,7 +390,7 @@ function CollectionsContent() {
 
   const getCollectionTitle = () => {
     if (!selectedCollection) return 'All collections';
-    if (selectedCollection === 'suits') return 'Suits Collection';
+    if (selectedCollection === 'suits') return 'Suits';
     if (selectedCollection === 'rings') return 'Rings';
     if (selectedCollection === 'necklaces') return 'Necklaces';
     if (selectedCollection === 'bracelets') return 'Bracelets';
