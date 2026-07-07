@@ -865,13 +865,12 @@ body.scroll-locked {
     max-width: 100% !important;
   }
 
-  .collections-layout-grid > main {
-    padding: 0.8rem 0.8rem 6rem 0.8rem !important; /* Balanced left and right padding */
-    padding-top: 56px !important; /* Push content below fixed category navigation bar */
+  .blinkit-feed {
+    padding: 72px 0.8rem 6rem 0.8rem !important; /* Push top below fixed header + category navigation bar */
   }
 
   .blinkit-feed-section {
-    scroll-margin-top: 160px !important; /* clear fixed header (107px) + fixed category bar (~51px) */
+    scroll-margin-top: 178px !important; /* clear fixed header (107px) + fixed category bar (~65px) + offset buffer */
   }
 }
 
