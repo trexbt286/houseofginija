@@ -228,7 +228,16 @@ function CollectionsContent() {
             type="text"
             placeholder="Search creations..."
             value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
+            onChange={(e) => {
+              const val = e.target.value;
+              setSearchQuery(val);
+              if (val.trim().length > 0) {
+                setSelectedCollection('');
+                setSelectedSize('');
+                setSelectedColor('');
+                setActiveCategorySidebar('');
+              }
+            }}
             style={searchFieldStyle}
           />
         </div>
@@ -334,8 +343,7 @@ function CollectionsContent() {
       // Search mode: ignore other category and size/color filters
       const q = searchQuery.toLowerCase().trim();
       filtered = filtered.filter(p => 
-        p.name.toLowerCase().includes(q) || 
-        (p.description && p.description.toLowerCase().includes(q))
+        p.name.toLowerCase().includes(q)
       );
     } else {
       // Filter mode: apply collection, size, and color filters
@@ -984,7 +992,14 @@ function CollectionsContent() {
                 placeholder="Search for products, collections..."
                 value={searchQuery}
                 onChange={(e) => {
-                  setSearchQuery(e.target.value);
+                  const val = e.target.value;
+                  setSearchQuery(val);
+                  if (val.trim().length > 0) {
+                    setSelectedCollection('');
+                    setSelectedSize('');
+                    setSelectedColor('');
+                    setActiveCategorySidebar('');
+                  }
                   setShowSuggestions(true);
                 }}
                 onFocus={() => setShowSuggestions(true)}
@@ -1133,7 +1148,7 @@ function CollectionsContent() {
               <div style={loadingStateStyle}>Curating items from the vault...</div>
             ) : products.length === 0 ? (
               <div style={emptyStateStyle}>
-                <p>No creations match your active filters.</p>
+                <p>{searchQuery ? 'No matching creations found.' : 'No creations match your active filters.'}</p>
                 <button onClick={handleClearFilters} style={resetBtnStyle}>
                   Clear Filters
                 </button>
@@ -1147,7 +1162,7 @@ function CollectionsContent() {
                 }}
               >
                 {shouldGroup ? (
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '2.5rem' }}>
+                   <div style={{ display: 'flex', flexDirection: 'column', gap: '2.5rem' }}>
                     {getSidebarCategories()
                       .filter(cat => cat.id !== 'all' && cat.id !== 'jewellery')
                       .map(cat => {
@@ -1182,9 +1197,11 @@ function CollectionsContent() {
                   </div>
                 ) : (
                   <div className="blinkit-feed-section" id={selectedCollection}>
-                    <h2 className="blinkit-feed-section-title">
-                      {getCollectionTitle()}
-                    </h2>
+                    {!searchQuery && (
+                      <h2 className="blinkit-feed-section-title">
+                        {getCollectionTitle()}
+                      </h2>
+                    )}
                     <div className="grid-cols-shop">
                       {products.map((p) => renderProductCard(p))}
                     </div>
