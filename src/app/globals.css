@@ -866,7 +866,7 @@ body.scroll-locked {
   }
 
   .blinkit-feed {
-    padding: 72px 0.8rem 6rem 0.8rem !important; /* Push top below fixed header + category navigation bar */
+    padding: 72px 0.8rem 1.5rem 0.8rem !important; /* Push top below fixed header + category navigation bar */
   }
 
   .blinkit-feed-section {
