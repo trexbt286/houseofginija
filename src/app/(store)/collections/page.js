@@ -1083,10 +1083,14 @@ function CollectionsContent() {
                         borderBottom: '1px solid rgba(139, 119, 137, 0.05)',
                         color: '#000000',
                       }}
-                      onClick={(e) => {
+                      onMouseDown={(e) => {
                         e.preventDefault();
                         setShowSuggestions(false);
+                        setSearchQuery('');
                         handleProductClick(e, p);
+                      }}
+                      onClick={(e) => {
+                        e.preventDefault();
                       }}
                     >
                       <img 
