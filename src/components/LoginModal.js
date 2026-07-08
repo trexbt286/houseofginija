@@ -243,7 +243,7 @@ export default function LoginModal() {
         </form>
 
         {/* OR Visual Divider */}
-        <div style={{ display: 'flex', alignItems: 'center', margin: '1.8rem 0 1.2rem 0', width: '100%' }}>
+        <div style={{ display: 'flex', alignItems: 'center', margin: '1rem 0 0.8rem 0', width: '100%' }}>
           <div style={{ flex: 1, height: '1px', backgroundColor: 'rgba(139, 119, 137, 0.15)' }}></div>
           <span style={{ padding: '0 1rem', fontSize: '0.7rem', color: '#D98E9B', fontWeight: '700', letterSpacing: '0.05em' }}>OR</span>
           <div style={{ flex: 1, height: '1px', backgroundColor: 'rgba(139, 119, 137, 0.15)' }}></div>
@@ -280,7 +280,7 @@ const backdropStyle = {
   display: 'flex',
   justifyContent: 'center',
   alignItems: 'flex-start', // align at top right below header
-  paddingTop: '2.5rem', // space between header and card
+  paddingTop: '1.25rem', // scaled down space between header and card
   zIndex: 9999,
   boxSizing: 'border-box',
 };
@@ -289,8 +289,10 @@ const cardStyle = {
   position: 'relative',
   maxWidth: '320px', // 75% of 430px
   width: 'calc(100% - 2.5rem)',
+  maxHeight: 'calc(100vh - 170px)', // ensure card never touches bottom of screen
+  overflowY: 'auto', // enable internal scroll if needed on tiny screens
   backgroundColor: '#FFFFFF',
-  padding: '2.5rem 1.6rem 2rem 1.6rem', // scaled down
+  padding: '1.8rem 1.6rem 1.2rem 1.6rem', // scaled down
   borderRadius: '16px',
   boxShadow: '0 20px 50px rgba(74, 52, 57, 0.15)',
   border: '1px solid rgba(139, 119, 137, 0.1)',
@@ -309,13 +311,13 @@ const dividerStyle = {
   width: '35px',
   height: '1.5px',
   backgroundColor: '#D98E9B',
-  margin: '0.8rem auto 1.5rem auto', // scaled down
+  margin: '0.6rem auto 1rem auto', // scaled down
 };
 
 const formStyle = {
   display: 'flex',
   flexDirection: 'column',
-  gap: '1rem', // scaled down
+  gap: '0.8rem', // scaled down
   textAlign: 'left',
 };
 
@@ -334,7 +336,7 @@ const labelStyle = {
 };
 
 const inputStyle = {
-  padding: '0.65rem 0.85rem', // scaled down
+  padding: '0.55rem 0.75rem', // scaled down
   border: '1px solid rgba(139, 119, 137, 0.2)',
   borderRadius: '8px',
   fontSize: '0.82rem', // scaled down
@@ -360,7 +362,7 @@ const btnStyle = {
   textTransform: 'uppercase',
   letterSpacing: '0.12em',
   borderRadius: '8px',
-  marginTop: '0.5rem', // scaled down
+  marginTop: '0.2rem', // scaled down
   border: 'none',
   cursor: 'pointer',
   transition: 'all 0.3s ease',
@@ -381,7 +383,7 @@ const footerStyle = {
   gap: '0.4rem',
   fontSize: '0.75rem', // scaled down
   color: '#000000',
-  marginTop: '0.9rem', // scaled down
+  marginTop: '0.6rem', // scaled down
 };
 
 const linkStyle = {
@@ -395,7 +397,7 @@ const tabsContainerStyle = {
   backgroundColor: '#FBF0EC',
   borderRadius: '30px',
   padding: '4px',
-  marginBottom: '1.5rem', // scaled down
+  marginBottom: '1rem', // scaled down
   border: '1px solid rgba(139, 119, 137, 0.08)',
 };
 
