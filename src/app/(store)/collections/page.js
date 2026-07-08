@@ -173,7 +173,7 @@ function MobileSearchBar({ allProducts, initialQuery, onSearch, handleProductCli
   );
 }
 
-function CollectionsContent({ mode = 'all' }) {
+function CollectionsContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const { user, cart, addToCart, updateCartQuantity, wishlist, toggleWishlist } = useStore();
@@ -186,9 +186,7 @@ function CollectionsContent({ mode = 'all' }) {
 
   // Read initial params
   const initialCollection = searchParams.get('collection') || '';
-  const [selectedCollection, setSelectedCollection] = useState(
-    initialCollection || (mode === 'suits' ? 'suits' : mode === 'jewellery' ? 'jewellery' : '')
-  );
+  const [selectedCollection, setSelectedCollection] = useState(initialCollection);
   const [searchQuery, setSearchQuery] = useState(searchParams.get('search') || '');
   const [selectedSize, setSelectedSize] = useState('');
   const [selectedColor, setSelectedColor] = useState('');
@@ -205,6 +203,14 @@ function CollectionsContent({ mode = 'all' }) {
 
   // Viewport width state for mobile sibling switcher centering
   const [viewportWidth, setViewportWidth] = useState(390);
+
+  // Page visibility state for initial scroll hiding
+  const startParam = searchParams.get('start') || '';
+  const isRingsStart = startParam.toLowerCase() === 'rings';
+  const needsScrollJump = !!(startParam && startParam.toLowerCase() !== 'suits' && !isRingsStart);
+  const [isPageVisible, setIsPageVisible] = useState(!needsScrollJump);
+  const [hideSuits, setHideSuits] = useState(isRingsStart);
+  const hasScrolledRef = useRef(false);
 
   // Manage scroll-lock on document.body and documentElement when mobile filter drawer is open
   useEffect(() => {
@@ -253,7 +259,7 @@ function CollectionsContent({ mode = 'all' }) {
   useEffect(() => {
     const handleReset = () => {
       setActiveProduct(null);
-      setSelectedCollection(mode === 'suits' ? 'suits' : mode === 'jewellery' ? 'jewellery' : '');
+      setSelectedCollection('');
       setSearchQuery('');
       setSelectedSize('');
       setSelectedColor('');
@@ -278,7 +284,51 @@ function CollectionsContent({ mode = 'all' }) {
     setActiveProduct(null);
   }, [colParam, searchParam]);
 
+  // Scroll to category if present in the URL (Runs once products are loaded)
+  useEffect(() => {
+    if (!loading && startParam && !hasScrolledRef.current) {
+      hasScrolledRef.current = true;
+      let targetId = startParam.toLowerCase();
+      if (targetId === 'necklace') targetId = 'necklaces';
+      
+      if (needsScrollJump) {
+        requestAnimationFrame(() => {
+          requestAnimationFrame(() => {
+            const element = document.getElementById(targetId);
+            if (element) {
+              let actualOffsetTop = 0;
+              let el = element;
+              while (el) {
+                actualOffsetTop += el.offsetTop;
+                el = el.offsetParent;
+              }
+              const stickyNavHeight = 180;
+              window.scrollTo(0, actualOffsetTop - stickyNavHeight);
+              setActiveCategorySidebar(targetId);
+              setIsPageVisible(true);
+              router.replace('/collections', undefined, { shallow: true });
+            } else {
+              setIsPageVisible(true);
+            }
+          });
+        });
+      } else {
+        router.replace('/collections', undefined, { shallow: true });
+      }
+    }
+  }, [startParam, loading, router, needsScrollJump]);
 
+  // Temporary hide Suits on load if startParam is rings
+  useEffect(() => {
+    if (isRingsStart) {
+      setActiveCategorySidebar('rings');
+      router.replace('/collections', undefined, { shallow: true });
+      const timer = setTimeout(() => {
+        setHideSuits(false);
+      }, 2000);
+      return () => clearTimeout(timer);
+    }
+  }, [isRingsStart, router]);
 
   // Scroll-Spy: Highlight active category on left panel as user scrolls the right panel feed
   useEffect(() => {
@@ -506,18 +556,6 @@ function CollectionsContent({ mode = 'all' }) {
       } else {
         let filtered = [...allProducts];
 
-        // Filter by page mode
-        if (mode === 'suits') {
-          filtered = filtered.filter(p => p.collection_slug === 'suits' || p.slug.toLowerCase().includes('suit'));
-        } else if (mode === 'jewellery') {
-          filtered = filtered.filter(p => 
-            p.collection_slug === 'jewellery' ||
-            p.slug.toLowerCase().includes('ring') ||
-            p.slug.toLowerCase().includes('necklace') ||
-            p.slug.toLowerCase().includes('bracelet')
-          );
-        }
-
         // Filter mode: apply collection, size, and color filters
         if (selectedCollection) {
           if (selectedCollection === 'suits') {
@@ -567,7 +605,7 @@ function CollectionsContent({ mode = 'all' }) {
   }, [selectedCollection, searchQuery, selectedSize, selectedColor, selectedSort, allProducts]);
 
   const handleClearFilters = () => {
-    setSelectedCollection(mode === 'suits' ? 'suits' : mode === 'jewellery' ? 'jewellery' : '');
+    setSelectedCollection('');
     setSelectedSize('');
     setSelectedColor('');
     setSelectedSort('price_asc');
@@ -708,9 +746,11 @@ function CollectionsContent({ mode = 'all' }) {
     const list = [];
     
     collections.forEach(col => {
-      if (col.slug === 'suits' && (mode === 'all' || mode === 'suits')) {
-        list.push({ id: 'suits', name: col.name, emoji: '👔', targetId: 'suits' });
-      } else if (col.slug === 'jewellery' && (mode === 'all' || mode === 'jewellery')) {
+      if (col.slug === 'suits') {
+        if (!hideSuits) {
+          list.push({ id: 'suits', name: col.name, emoji: '👔', targetId: 'suits' });
+        }
+      } else if (col.slug === 'jewellery') {
         list.push({ id: 'rings', name: 'Rings', emoji: '💍', targetId: 'rings' });
         list.push({ id: 'necklaces', name: 'Necklaces', emoji: '📿', targetId: 'necklaces' });
         list.push({ id: 'bracelets', name: 'Bracelets', emoji: '📿', targetId: 'bracelets' });
@@ -884,7 +924,7 @@ function CollectionsContent({ mode = 'all' }) {
 
   return (
     <div 
-      style={pageStyle} 
+      style={{ ...pageStyle, opacity: isPageVisible ? 1 : 0, transition: 'opacity 0.2s ease-in-out' }} 
       className="collections-root-container"
     >
       {/* Mobile bottom sheet backdrop */}
@@ -1331,10 +1371,10 @@ function CollectionsContent({ mode = 'all' }) {
   );
 }
 
-export default function Collections({ mode = 'all' }) {
+export default function Collections() {
   return (
     <Suspense fallback={<div>Loading Collections...</div>}>
-      <CollectionsContent mode={mode} />
+      <CollectionsContent />
     </Suspense>
   );
 }
