@@ -336,7 +336,7 @@ function CollectionsContent() {
     return () => {
       window.removeEventListener('scroll', handleScroll);
     };
-  }, [loading, products, activeProduct, searchQuery]);
+  }, [loading, products, activeProduct, searchQuery, collections]);
 
   // Close search suggestions dropdown when user taps anywhere outside it
   useEffect(() => {
