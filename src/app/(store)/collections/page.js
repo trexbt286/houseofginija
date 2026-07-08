@@ -277,6 +277,23 @@ function CollectionsContent() {
     setActiveProduct(null);
   }, [colParam, searchParam]);
 
+  // Handle native hash scroll timing fallback when products finish loading asynchronously
+  useEffect(() => {
+    if (!loading && typeof window !== 'undefined') {
+      const hash = window.location.hash;
+      if (hash) {
+        const id = hash.replace('#', '');
+        setTimeout(() => {
+          const el = document.getElementById(id);
+          if (el) {
+            el.scrollIntoView({ behavior: 'auto', block: 'start' });
+            setActiveCategorySidebar(id);
+          }
+        }, 150);
+      }
+    }
+  }, [loading]);
+
 
 
   // Scroll-Spy: Highlight active category on left panel as user scrolls the right panel feed
