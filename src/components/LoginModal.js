@@ -94,19 +94,18 @@ export default function LoginModal() {
         onClick={(e) => e.stopPropagation()}
         className="animate-slide-up"
       >
-        {/* Back Button (styled like filter and cart drawer dismiss button) */}
         <button
           onClick={() => setIsLoginOpen(false)}
           style={{
             position: 'absolute',
-            top: '1.25rem',
-            left: '1.25rem',
+            top: '0.8rem',
+            left: '0.8rem',
             backgroundColor: 'rgba(255, 255, 255, 0.9)',
             backdropFilter: 'blur(4px)',
             border: '1px solid rgba(139, 119, 137, 0.15)',
             borderRadius: '50%',
-            width: '36px',
-            height: '36px',
+            width: '28px',
+            height: '28px',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
@@ -126,7 +125,7 @@ export default function LoginModal() {
             e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.9)';
           }}
         >
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#000000" strokeWidth="2.0" strokeLinecap="round" strokeLinejoin="round">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#000000" strokeWidth="2.0" strokeLinecap="round" strokeLinejoin="round">
             <polyline points="6 9 12 15 18 9"></polyline>
           </svg>
         </button>
@@ -272,24 +271,26 @@ export default function LoginModal() {
 // Inline styles for Login Modal Backdrop & Card
 const backdropStyle = {
   position: 'fixed',
-  top: 0,
+  top: '107px', // start exactly below the header bottom border
   left: 0,
   width: '100vw',
-  height: '100vh',
+  height: 'calc(100vh - 107px)',
   backgroundColor: 'rgba(74, 52, 57, 0.25)', // tint overlay matching theme
   backdropFilter: 'blur(8px)',
   display: 'flex',
   justifyContent: 'center',
-  alignItems: 'center',
+  alignItems: 'flex-start', // align at top right below header
+  paddingTop: '2.5rem', // space between header and card
   zIndex: 9999,
+  boxSizing: 'border-box',
 };
 
 const cardStyle = {
   position: 'relative',
-  maxWidth: '430px',
+  maxWidth: '320px', // 75% of 430px
   width: 'calc(100% - 2.5rem)',
   backgroundColor: '#FFFFFF',
-  padding: '3.5rem 2.2rem 3rem 2.2rem',
+  padding: '2.5rem 1.6rem 2rem 1.6rem', // scaled down
   borderRadius: '16px',
   boxShadow: '0 20px 50px rgba(74, 52, 57, 0.15)',
   border: '1px solid rgba(139, 119, 137, 0.1)',
@@ -299,33 +300,33 @@ const cardStyle = {
 
 const titleStyle = {
   fontFamily: 'var(--font-serif)',
-  fontSize: '1.9rem',
+  fontSize: '1.45rem', // scaled down from 1.9rem
   color: '#B65C73',
   fontWeight: '400',
 };
 
 const dividerStyle = {
-  width: '45px',
+  width: '35px',
   height: '1.5px',
   backgroundColor: '#D98E9B',
-  margin: '1.2rem auto 2.2rem auto',
+  margin: '0.8rem auto 1.5rem auto', // scaled down
 };
 
 const formStyle = {
   display: 'flex',
   flexDirection: 'column',
-  gap: '1.4rem',
+  gap: '1rem', // scaled down
   textAlign: 'left',
 };
 
 const formGroupStyle = {
   display: 'flex',
   flexDirection: 'column',
-  gap: '0.4rem',
+  gap: '0.3rem',
 };
 
 const labelStyle = {
-  fontSize: '0.7rem',
+  fontSize: '0.65rem', // scaled down
   textTransform: 'uppercase',
   letterSpacing: '0.08em',
   color: '#000000',
@@ -333,19 +334,19 @@ const labelStyle = {
 };
 
 const inputStyle = {
-  padding: '0.85rem 1rem',
+  padding: '0.65rem 0.85rem', // scaled down
   border: '1px solid rgba(139, 119, 137, 0.2)',
   borderRadius: '8px',
-  fontSize: '0.9rem',
+  fontSize: '0.82rem', // scaled down
   outline: 'none',
   transition: 'border-color 0.2s ease',
 };
 
 const errorStyle = {
   color: '#000000',
-  fontSize: '0.8rem',
+  fontSize: '0.75rem',
   textAlign: 'center',
-  marginTop: '0.4rem',
+  marginTop: '0.3rem',
   fontWeight: '600',
 };
 
@@ -353,13 +354,13 @@ const btnStyle = {
   width: '100%',
   backgroundColor: '#C16C7D',
   color: '#FFFFFF',
-  padding: '0.95rem',
-  fontSize: '0.85rem',
+  padding: '0.75rem', // scaled down
+  fontSize: '0.78rem', // scaled down
   fontWeight: '700',
   textTransform: 'uppercase',
   letterSpacing: '0.12em',
   borderRadius: '8px',
-  marginTop: '0.8rem',
+  marginTop: '0.5rem', // scaled down
   border: 'none',
   cursor: 'pointer',
   transition: 'all 0.3s ease',
@@ -378,9 +379,9 @@ const footerStyle = {
   display: 'flex',
   justifyContent: 'center',
   gap: '0.4rem',
-  fontSize: '0.8rem',
+  fontSize: '0.75rem', // scaled down
   color: '#000000',
-  marginTop: '1.2rem',
+  marginTop: '0.9rem', // scaled down
 };
 
 const linkStyle = {
@@ -394,7 +395,7 @@ const tabsContainerStyle = {
   backgroundColor: '#FBF0EC',
   borderRadius: '30px',
   padding: '4px',
-  marginBottom: '2rem',
+  marginBottom: '1.5rem', // scaled down
   border: '1px solid rgba(139, 119, 137, 0.08)',
 };
 
@@ -403,13 +404,13 @@ const tabStyle = {
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
-  gap: '0.5rem',
-  padding: '0.6rem 1rem',
+  gap: '0.4rem',
+  padding: '0.45rem 0.6rem', // scaled down
   borderRadius: '26px',
   border: 'none',
   backgroundColor: 'transparent',
   color: 'rgba(0, 0, 0, 0.6)',
-  fontSize: '0.75rem',
+  fontSize: '0.68rem', // scaled down
   fontWeight: '700',
   textTransform: 'uppercase',
   letterSpacing: '0.08em',
