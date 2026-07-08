@@ -173,7 +173,7 @@ function MobileSearchBar({ allProducts, initialQuery, onSearch, handleProductCli
   );
 }
 
-function CollectionsContent() {
+function CollectionsContent({ mode = 'all' }) {
   const searchParams = useSearchParams();
   const router = useRouter();
   const { user, cart, addToCart, updateCartQuantity, wishlist, toggleWishlist } = useStore();
@@ -186,7 +186,9 @@ function CollectionsContent() {
 
   // Read initial params
   const initialCollection = searchParams.get('collection') || '';
-  const [selectedCollection, setSelectedCollection] = useState(initialCollection);
+  const [selectedCollection, setSelectedCollection] = useState(
+    initialCollection || (mode === 'suits' ? 'suits' : mode === 'jewellery' ? 'jewellery' : '')
+  );
   const [searchQuery, setSearchQuery] = useState(searchParams.get('search') || '');
   const [selectedSize, setSelectedSize] = useState('');
   const [selectedColor, setSelectedColor] = useState('');
@@ -203,12 +205,6 @@ function CollectionsContent() {
 
   // Viewport width state for mobile sibling switcher centering
   const [viewportWidth, setViewportWidth] = useState(390);
-
-  // Page visibility state for initial scroll hiding
-  const startParam = searchParams.get('start') || '';
-  const needsScrollJump = !!(startParam && startParam.toLowerCase() !== 'suits');
-  const [isPageVisible, setIsPageVisible] = useState(!needsScrollJump);
-  const hasScrolledRef = useRef(false);
 
   // Manage scroll-lock on document.body and documentElement when mobile filter drawer is open
   useEffect(() => {
@@ -257,7 +253,7 @@ function CollectionsContent() {
   useEffect(() => {
     const handleReset = () => {
       setActiveProduct(null);
-      setSelectedCollection('');
+      setSelectedCollection(mode === 'suits' ? 'suits' : mode === 'jewellery' ? 'jewellery' : '');
       setSearchQuery('');
       setSelectedSize('');
       setSelectedColor('');
@@ -282,39 +278,7 @@ function CollectionsContent() {
     setActiveProduct(null);
   }, [colParam, searchParam]);
 
-  // Scroll to category if present in the URL (Runs once products are loaded)
-  useEffect(() => {
-    if (!loading && startParam && !hasScrolledRef.current) {
-      hasScrolledRef.current = true;
-      let targetId = startParam.toLowerCase();
-      if (targetId === 'necklace') targetId = 'necklaces';
-      
-      if (needsScrollJump) {
-        requestAnimationFrame(() => {
-          requestAnimationFrame(() => {
-            const element = document.getElementById(targetId);
-            if (element) {
-              let actualOffsetTop = 0;
-              let el = element;
-              while (el) {
-                actualOffsetTop += el.offsetTop;
-                el = el.offsetParent;
-              }
-              const stickyNavHeight = 180;
-              window.scrollTo(0, actualOffsetTop - stickyNavHeight);
-              setActiveCategorySidebar(targetId);
-              setIsPageVisible(true);
-              router.replace('/collections', undefined, { shallow: true });
-            } else {
-              setIsPageVisible(true);
-            }
-          });
-        });
-      } else {
-        router.replace('/collections', undefined, { shallow: true });
-      }
-    }
-  }, [startParam, loading, router, needsScrollJump]);
+
 
   // Scroll-Spy: Highlight active category on left panel as user scrolls the right panel feed
   useEffect(() => {
@@ -542,6 +506,18 @@ function CollectionsContent() {
       } else {
         let filtered = [...allProducts];
 
+        // Filter by page mode
+        if (mode === 'suits') {
+          filtered = filtered.filter(p => p.collection_slug === 'suits' || p.slug.toLowerCase().includes('suit'));
+        } else if (mode === 'jewellery') {
+          filtered = filtered.filter(p => 
+            p.collection_slug === 'jewellery' ||
+            p.slug.toLowerCase().includes('ring') ||
+            p.slug.toLowerCase().includes('necklace') ||
+            p.slug.toLowerCase().includes('bracelet')
+          );
+        }
+
         // Filter mode: apply collection, size, and color filters
         if (selectedCollection) {
           if (selectedCollection === 'suits') {
@@ -591,7 +567,7 @@ function CollectionsContent() {
   }, [selectedCollection, searchQuery, selectedSize, selectedColor, selectedSort, allProducts]);
 
   const handleClearFilters = () => {
-    setSelectedCollection('');
+    setSelectedCollection(mode === 'suits' ? 'suits' : mode === 'jewellery' ? 'jewellery' : '');
     setSelectedSize('');
     setSelectedColor('');
     setSelectedSort('price_asc');
@@ -732,9 +708,9 @@ function CollectionsContent() {
     const list = [];
     
     collections.forEach(col => {
-      if (col.slug === 'suits') {
+      if (col.slug === 'suits' && (mode === 'all' || mode === 'suits')) {
         list.push({ id: 'suits', name: col.name, emoji: '👔', targetId: 'suits' });
-      } else if (col.slug === 'jewellery') {
+      } else if (col.slug === 'jewellery' && (mode === 'all' || mode === 'jewellery')) {
         list.push({ id: 'rings', name: 'Rings', emoji: '💍', targetId: 'rings' });
         list.push({ id: 'necklaces', name: 'Necklaces', emoji: '📿', targetId: 'necklaces' });
         list.push({ id: 'bracelets', name: 'Bracelets', emoji: '📿', targetId: 'bracelets' });
@@ -908,7 +884,7 @@ function CollectionsContent() {
 
   return (
     <div 
-      style={{ ...pageStyle, opacity: isPageVisible ? 1 : 0, transition: 'opacity 0.2s ease-in-out' }} 
+      style={pageStyle} 
       className="collections-root-container"
     >
       {/* Mobile bottom sheet backdrop */}
@@ -1355,10 +1331,10 @@ function CollectionsContent() {
   );
 }
 
-export default function Collections() {
+export default function Collections({ mode = 'all' }) {
   return (
     <Suspense fallback={<div>Loading Collections...</div>}>
-      <CollectionsContent />
+      <CollectionsContent mode={mode} />
     </Suspense>
   );
 }
