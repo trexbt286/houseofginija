@@ -511,6 +511,13 @@ function CollectionsContent() {
           if (res.ok) {
             const data = await res.json();
             const list = data.products || [];
+            // Sort prioritizing flash sale items first
+            list.sort((a, b) => {
+              const aFS = a.flash_sale ? 1 : 0;
+              const bFS = b.flash_sale ? 1 : 0;
+              if (aFS !== bFS) return bFS - aFS;
+              return Number(b.id) - Number(a.id);
+            });
             setProducts(list);
           }
         } catch (err) {
@@ -548,16 +555,22 @@ function CollectionsContent() {
           );
         }
 
-        // Sort
-        if (selectedSort === 'price_asc') {
-          filtered.sort((a, b) => parseFloat(a.price) - parseFloat(b.price));
-        } else if (selectedSort === 'price_desc') {
-          filtered.sort((a, b) => parseFloat(b.price) - parseFloat(a.price));
-        } else if (selectedSort === 'name_asc') {
-          filtered.sort((a, b) => a.name.localeCompare(b.name));
-        } else {
-          filtered.sort((a, b) => Number(b.id) - Number(a.id));
-        }
+        // Sort: prioritize flash sale first, then selected sort
+        filtered.sort((a, b) => {
+          const aFS = a.flash_sale ? 1 : 0;
+          const bFS = b.flash_sale ? 1 : 0;
+          if (aFS !== bFS) return bFS - aFS;
+
+          if (selectedSort === 'price_asc') {
+            return parseFloat(a.price) - parseFloat(b.price);
+          } else if (selectedSort === 'price_desc') {
+            return parseFloat(b.price) - parseFloat(a.price);
+          } else if (selectedSort === 'name_asc') {
+            return a.name.localeCompare(b.name);
+          } else {
+            return Number(b.id) - Number(a.id);
+          }
+        });
 
         setProducts(filtered);
       }
@@ -603,6 +616,25 @@ function CollectionsContent() {
       
       if (!groupedProducts[groupName]) groupedProducts[groupName] = [];
       groupedProducts[groupName].push(p);
+    });
+
+    // Sort each group prioritizing flash sale items first
+    Object.keys(groupedProducts).forEach(key => {
+      groupedProducts[key].sort((a, b) => {
+        const aFS = a.flash_sale ? 1 : 0;
+        const bFS = b.flash_sale ? 1 : 0;
+        if (aFS !== bFS) return bFS - aFS;
+
+        if (selectedSort === 'price_asc') {
+          return parseFloat(a.price) - parseFloat(b.price);
+        } else if (selectedSort === 'price_desc') {
+          return parseFloat(b.price) - parseFloat(a.price);
+        } else if (selectedSort === 'name_asc') {
+          return a.name.localeCompare(b.name);
+        } else {
+          return Number(b.id) - Number(a.id);
+        }
+      });
     });
   }
 
@@ -772,11 +804,29 @@ function CollectionsContent() {
               }}
               loading="lazy" 
             />
-            {outOfStock && (
+            {p.flash_sale && p.flash_sale_price && (
               <div style={{
                 position: 'absolute',
                 top: '12px',
                 left: '12px',
+                backgroundColor: '#D98E9B',
+                color: '#FFFFFF',
+                padding: '4px 10px',
+                borderRadius: '6px',
+                fontSize: '0.65rem',
+                fontWeight: '700',
+                textTransform: 'uppercase',
+                boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
+                zIndex: 10
+              }}>
+                -{Math.round(((parseFloat(p.price) - parseFloat(p.flash_sale_price)) / parseFloat(p.price)) * 100)}%
+              </div>
+            )}
+            {outOfStock && (
+              <div style={{
+                position: 'absolute',
+                top: '12px',
+                right: '12px',
                 backgroundColor: 'rgba(51, 51, 51, 0.85)',
                 color: '#FFFFFF',
                 padding: '4px 10px',
@@ -799,7 +849,18 @@ function CollectionsContent() {
           </a>
 
 
-          <p style={cardPriceStyle}>₹{parseFloat(p.price).toLocaleString('en-IN')}</p>
+          {p.flash_sale && p.flash_sale_price ? (
+            <p style={cardPriceStyle}>
+              <span style={{ color: '#B65C73', fontWeight: '700', marginRight: '0.5rem' }}>
+                ₹{parseFloat(p.flash_sale_price).toLocaleString('en-IN')}
+              </span>
+              <span style={{ color: 'rgba(0, 0, 0, 0.4)', textDecoration: 'line-through', fontSize: '0.85rem', fontWeight: '400' }}>
+                ₹{parseFloat(p.price).toLocaleString('en-IN')}
+              </span>
+            </p>
+          ) : (
+            <p style={cardPriceStyle}>₹{parseFloat(p.price).toLocaleString('en-IN')}</p>
+          )}
 
           {user && user.role === 'admin' ? (
             <Link
@@ -947,20 +1008,49 @@ function CollectionsContent() {
             {/* Grid container */}
             <div style={{}} className="detail-preview-grid">
               {/* Top Half: Image */}
-              <div style={detailMainImgWrapperStyle} className="detail-main-img-wrapper">
+              <div style={{ ...detailMainImgWrapperStyle, position: 'relative' }} className="detail-main-img-wrapper">
                 <img 
                   src={activeProductImage} 
                   alt={activeProduct.name} 
                   style={detailMainImgStyle} 
                   className="detail-main-img"
                 />
+                {activeProduct.flash_sale && activeProduct.flash_sale_price && (
+                  <div style={{
+                    position: 'absolute',
+                    top: '16px',
+                    left: '16px',
+                    backgroundColor: '#D98E9B',
+                    color: '#FFFFFF',
+                    padding: '6px 12px',
+                    borderRadius: '6px',
+                    fontSize: '0.8rem',
+                    fontWeight: '700',
+                    textTransform: 'uppercase',
+                    boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
+                    zIndex: 10
+                  }}>
+                    -{Math.round(((parseFloat(activeProduct.price) - parseFloat(activeProduct.flash_sale_price)) / parseFloat(activeProduct.price)) * 100)}%
+                  </div>
+                )}
               </div>
 
               {/* Bottom Half: Details */}
               <div style={detailInfoStyle}>
                 <span style={detailCollectionLabelStyle} className="detail-collection-label">{activeProduct.collection_name}</span>
                 <h1 style={detailTitleStyle} className="detail-product-name">{activeProduct.name}</h1>
-                <p style={detailPriceStyle} className="detail-product-price">₹{parseFloat(activeProduct.price).toLocaleString('en-IN')}</p>
+                {activeProduct.flash_sale && activeProduct.flash_sale_price ? (
+                  <p style={detailPriceStyle} className="detail-product-price">
+                    <span style={{ color: '#B65C73', fontWeight: '700', marginRight: '0.8rem' }}>
+                      ₹{parseFloat(activeProduct.flash_sale_price).toLocaleString('en-IN')}
+                    </span>
+                    <span style={{ color: 'rgba(0, 0, 0, 0.4)', textDecoration: 'line-through', fontSize: '1.1rem', fontWeight: '400' }}>
+                      ₹{parseFloat(activeProduct.price).toLocaleString('en-IN')}
+                    </span>
+                  </p>
+                ) : (
+                  <p style={detailPriceStyle} className="detail-product-price">₹{parseFloat(activeProduct.price).toLocaleString('en-IN')}</p>
+                )}
                 <div style={detailDividerStyle} className="detail-divider"></div>
                 <p style={detailDescStyle} className="detail-product-desc">{(activeProduct.description && activeProduct.description.trim()) ? activeProduct.description.trim() : 'Exclusive luxury item, crafted from premium archival coutures.'}</p>
 

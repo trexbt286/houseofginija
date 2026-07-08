@@ -2487,3 +2487,39 @@ body.cart-drawer-open header {
 .mobile-sheet-dismiss-btn {
   display: none;
 }
+
+/* Flash Sale Row Styles */
+.flash-sale-row-container {
+  display: flex;
+  gap: 1.5rem;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  padding: 0.5rem 0;
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE 10+ */
+  -webkit-overflow-scrolling: touch;
+}
+
+.flash-sale-row-container::-webkit-scrollbar {
+  display: none; /* Safari and Chrome */
+}
+
+.flash-sale-card {
+  flex: 0 0 calc(33.333% - 1rem);
+  scroll-snap-align: start;
+  min-width: 250px;
+  display: flex;
+  flex-direction: column;
+}
+
+@media (max-width: 991px) {
+  .flash-sale-card {
+    flex: 0 0 calc(50% - 0.75rem);
+  }
+}
+
+@media (max-width: 767px) {
+  .flash-sale-card {
+    flex: 0 0 calc(85% - 0.5rem);
+  }
+}

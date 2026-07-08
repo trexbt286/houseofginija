@@ -25,6 +25,12 @@ export default function AdminSidebar({ active }) {
           Products Manager
         </Link>
         <Link 
+          href="/admin/flash-sale" 
+          style={active === "flash-sale" ? activeNavLinkStyle : navLinkStyle}
+        >
+          Flash Sale Manager
+        </Link>
+        <Link 
           href="/admin/orders" 
           style={active === "orders" ? activeNavLinkStyle : navLinkStyle}
         >

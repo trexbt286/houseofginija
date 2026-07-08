@@ -69,7 +69,14 @@ export async function GET(request) {
 
     const result = await pool.query(queryText, queryParams);
 
-    return NextResponse.json({ products: result.rows });
+    // Fetch global settings
+    const settingsResult = await pool.query("SELECT value FROM settings WHERE key = 'flash_sale_enabled'");
+    const flash_sale_enabled = settingsResult.rows.length > 0 ? settingsResult.rows[0].value === 'true' : false;
+
+    return NextResponse.json({ 
+      products: result.rows,
+      flash_sale_enabled 
+    });
   } catch (error) {
     console.error('Fetch products error:', error);
     return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });

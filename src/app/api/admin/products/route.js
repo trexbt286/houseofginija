@@ -37,6 +37,8 @@ export async function POST(request) {
       is_out_of_stock,
       images,
       variants,
+      flash_sale,
+      flash_sale_price,
     } = await request.json();
 
     if (!name || !slug || !price || !images || !variants) {
@@ -46,11 +48,26 @@ export async function POST(request) {
     const priceNum = parseFloat(price);
     const collectionIdNum = collection_id ? parseInt(collection_id, 10) : null;
     const isOutOfStock = !!is_out_of_stock;
+    const flashSale = !!flash_sale;
+    let flashSalePriceNum = null;
+
+    if (flashSale) {
+      if (flash_sale_price === undefined || flash_sale_price === null || flash_sale_price === '') {
+        return NextResponse.json({ error: 'Flash sale price is required when flash sale is enabled.' }, { status: 400 });
+      }
+      flashSalePriceNum = parseFloat(flash_sale_price);
+      if (isNaN(flashSalePriceNum) || flashSalePriceNum <= 0) {
+        return NextResponse.json({ error: 'Flash sale price must be a valid positive number.' }, { status: 400 });
+      }
+      if (flashSalePriceNum >= priceNum) {
+        return NextResponse.json({ error: 'Flash sale price must be less than the original product price.' }, { status: 400 });
+      }
+    }
 
     const result = await pool.query(
       `INSERT INTO products 
-       (name, slug, description, price, collection_id, is_out_of_stock, images, variants)
-       VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+       (name, slug, description, price, collection_id, is_out_of_stock, images, variants, flash_sale, flash_sale_price)
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
        RETURNING *`,
       [
         name.trim(),
@@ -61,6 +78,8 @@ export async function POST(request) {
         isOutOfStock,
         JSON.stringify(images),
         JSON.stringify(variants),
+        flashSale,
+        flashSalePriceNum,
       ]
     );
 
@@ -87,6 +106,8 @@ export async function PUT(request) {
       is_out_of_stock,
       images,
       variants,
+      flash_sale,
+      flash_sale_price,
     } = await request.json();
 
     if (!id || !name || !slug || !price || !images || !variants) {
@@ -96,12 +117,27 @@ export async function PUT(request) {
     const priceNum = parseFloat(price);
     const collectionIdNum = collection_id ? parseInt(collection_id, 10) : null;
     const isOutOfStock = !!is_out_of_stock;
+    const flashSale = !!flash_sale;
+    let flashSalePriceNum = null;
+
+    if (flashSale) {
+      if (flash_sale_price === undefined || flash_sale_price === null || flash_sale_price === '') {
+        return NextResponse.json({ error: 'Flash sale price is required when flash sale is enabled.' }, { status: 400 });
+      }
+      flashSalePriceNum = parseFloat(flash_sale_price);
+      if (isNaN(flashSalePriceNum) || flashSalePriceNum <= 0) {
+        return NextResponse.json({ error: 'Flash sale price must be a valid positive number.' }, { status: 400 });
+      }
+      if (flashSalePriceNum >= priceNum) {
+        return NextResponse.json({ error: 'Flash sale price must be less than the original product price.' }, { status: 400 });
+      }
+    }
 
     const result = await pool.query(
       `UPDATE products 
        SET name = $1, slug = $2, description = $3, price = $4, collection_id = $5, 
-           is_out_of_stock = $6, images = $7, variants = $8
-       WHERE id = $9
+           is_out_of_stock = $6, images = $7, variants = $8, flash_sale = $9, flash_sale_price = $10
+       WHERE id = $11
        RETURNING *`,
       [
         name.trim(),
@@ -112,6 +148,8 @@ export async function PUT(request) {
         isOutOfStock,
         JSON.stringify(images),
         JSON.stringify(variants),
+        flashSale,
+        flashSalePriceNum,
         id,
       ]
     );

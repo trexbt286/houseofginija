@@ -6,10 +6,12 @@ import { useStore } from '@/context/StoreContext';
 import { useEffect, useState } from 'react';
 
 export default function Home() {
-  const { triggerSparkleConfetti } = useStore();
+  const { triggerSparkleConfetti, wishlist = [], toggleWishlist } = useStore();
   const [collections, setCollections] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedReview, setSelectedReview] = useState(null);
+  const [flashProducts, setFlashProducts] = useState([]);
+  const [flashSaleEnabled, setFlashSaleEnabled] = useState(false);
 
   const reviewImages = [
     {
@@ -91,7 +93,22 @@ export default function Home() {
       }
     };
 
+    const fetchFlashProducts = async () => {
+      try {
+        const res = await fetch('/api/products');
+        if (res.ok) {
+          const data = await res.json();
+          const fp = (data.products || []).filter(p => !!p.flash_sale);
+          setFlashProducts(fp);
+          setFlashSaleEnabled(!!data.flash_sale_enabled);
+        }
+      } catch (err) {
+        console.error(err);
+      }
+    };
+
     fetchCollections();
+    fetchFlashProducts();
   }, []);
 
   return (
@@ -197,6 +214,86 @@ export default function Home() {
           </div>
         </div>
       </section>
+
+      {/* FLASH SALE SECTION */}
+      {flashSaleEnabled && flashProducts.length > 0 && (
+        <section style={flashSaleSectionStyle}>
+          <div className="container animate-fade-in">
+            <div style={flashSaleHeaderStyle}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
+                {/* Flame Icon */}
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#B65C73" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" style={{ display: 'inline-block', verticalAlign: 'middle' }}>
+                  <path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z" />
+                </svg>
+                <span style={flashSaleTitleStyle}>FLASH SALE</span>
+                <span style={flashSaleTitleDividerStyle}>|</span>
+                <span style={flashSaleSubStyle}>Limited time. Exclusive pieces.</span>
+              </div>
+            </div>
+
+            <div className="flash-sale-row-container">
+              {flashProducts.map((product) => {
+                const discountPct = Math.round(((parseFloat(product.price) - parseFloat(product.flash_sale_price)) / parseFloat(product.price)) * 100);
+                const isWishlisted = wishlist.includes(product.id);
+
+                return (
+                  <div key={product.id} className="flash-sale-card" style={{ position: 'relative' }}>
+                    {/* Product Image Container */}
+                    <div style={flashSaleImgContainerStyle}>
+                      <Link href={`/products/${product.slug}`}>
+                        <img 
+                          src={product.images?.[0] || '/icon.png'} 
+                          alt={product.name} 
+                          style={flashSaleImgStyle} 
+                        />
+                      </Link>
+                      
+                      {/* Discount Badge on Top Left */}
+                      <div style={flashSaleBadgeStyle}>
+                        -{discountPct}%
+                      </div>
+
+                      {/* Wishlist Heart on Top Right */}
+                      <button 
+                        onClick={() => toggleWishlist(product.id)}
+                        style={flashSaleWishlistBtnStyle}
+                      >
+                        <svg 
+                          width="18" 
+                          height="18" 
+                          viewBox="0 0 24 24" 
+                          fill={isWishlisted ? '#D98E9B' : 'none'} 
+                          stroke={isWishlisted ? '#D98E9B' : '#000000'} 
+                          strokeWidth="2.0" 
+                          strokeLinecap="round" 
+                          strokeLinejoin="round"
+                        >
+                          <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+                        </svg>
+                      </button>
+                    </div>
+
+                    {/* Product Info */}
+                    <Link href={`/products/${product.slug}`} style={{ textDecoration: 'none', color: 'inherit' }}>
+                      <h3 style={flashSaleProductNameStyle}>{product.name}</h3>
+                    </Link>
+                    <div style={flashSalePriceRowStyle}>
+                      <span style={flashSaleDiscountPriceStyle}>₹{parseFloat(product.flash_sale_price).toLocaleString('en-IN')}</span>
+                      <span style={flashSaleOriginalPriceStyle}>₹{parseFloat(product.price).toLocaleString('en-IN')}</span>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+
+            <div style={{ textAlign: 'center', marginTop: '2.5rem', marginBottom: '1.5rem' }}>
+              <Link href="/collections" style={flashSaleShopAllStyle}>
+                SHOP ALL FLASH SALE &rarr;
+              </Link>
+            </div>
+          </div>
+        </section>
+      )}
 
       {/* 3. FEATURED COLLECTIONS SECTION */}
       <section style={collectionsSectionStyle}>
@@ -790,4 +887,121 @@ const lightboxImgStyle = {
   borderRadius: '8px',
   objectFit: 'contain',
   boxShadow: '0 10px 30px rgba(0,0,0,0.5)',
+};
+
+const flashSaleSectionStyle = {
+  padding: '3rem 0',
+  backgroundColor: '#FFFFFF',
+  borderBottom: '1px solid rgba(139, 119, 137, 0.1)',
+};
+
+const flashSaleHeaderStyle = {
+  display: 'flex',
+  justifyContent: 'space-between',
+  alignItems: 'center',
+  marginBottom: '2rem',
+};
+
+const flashSaleTitleStyle = {
+  fontFamily: 'var(--font-sans)',
+  fontSize: '1.1rem',
+  fontWeight: '700',
+  letterSpacing: '0.12em',
+  color: '#B65C73',
+};
+
+const flashSaleTitleDividerStyle = {
+  color: 'rgba(139, 119, 137, 0.25)',
+  margin: '0 0.2rem',
+  fontSize: '1.1rem',
+};
+
+const flashSaleSubStyle = {
+  fontSize: '0.82rem',
+  color: 'rgba(0, 0, 0, 0.6)',
+  fontWeight: '500',
+};
+
+const flashSaleImgContainerStyle = {
+  position: 'relative',
+  width: '100%',
+  aspectRatio: '1',
+  borderRadius: '12px',
+  overflow: 'hidden',
+  backgroundColor: '#F6DDE2',
+  marginBottom: '0.8rem',
+};
+
+const flashSaleImgStyle = {
+  width: '100%',
+  height: '100%',
+  objectFit: 'cover',
+};
+
+const flashSaleBadgeStyle = {
+  position: 'absolute',
+  top: '12px',
+  left: '12px',
+  backgroundColor: '#D98E9B',
+  color: '#FFFFFF',
+  padding: '0.25rem 0.6rem',
+  borderRadius: '6px',
+  fontSize: '0.75rem',
+  fontWeight: '700',
+  zIndex: 10,
+};
+
+const flashSaleWishlistBtnStyle = {
+  position: 'absolute',
+  top: '12px',
+  right: '12px',
+  backgroundColor: 'rgba(255, 255, 255, 0.9)',
+  border: 'none',
+  width: '32px',
+  height: '32px',
+  borderRadius: '50%',
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  cursor: 'pointer',
+  boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)',
+  zIndex: 10,
+};
+
+const flashSaleProductNameStyle = {
+  fontSize: '0.9rem',
+  fontWeight: '600',
+  color: '#000000',
+  marginBottom: '0.3rem',
+  whiteSpace: 'nowrap',
+  overflow: 'hidden',
+  textOverflow: 'ellipsis',
+};
+
+const flashSalePriceRowStyle = {
+  display: 'flex',
+  alignItems: 'baseline',
+  gap: '0.6rem',
+};
+
+const flashSaleDiscountPriceStyle = {
+  fontSize: '1rem',
+  fontWeight: '700',
+  color: '#B65C73',
+};
+
+const flashSaleOriginalPriceStyle = {
+  fontSize: '0.85rem',
+  color: 'rgba(0, 0, 0, 0.4)',
+  textDecoration: 'line-through',
+};
+
+const flashSaleShopAllStyle = {
+  fontSize: '0.75rem',
+  fontWeight: '700',
+  textTransform: 'uppercase',
+  letterSpacing: '0.12em',
+  color: '#B65C73',
+  borderBottom: '1.5px solid #B65C73',
+  paddingBottom: '2px',
 };
