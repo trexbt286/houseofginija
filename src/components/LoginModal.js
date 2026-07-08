@@ -1,19 +1,13 @@
 'use client';
 
-import { useState, useEffect, Suspense } from 'react';
+import { useState, useEffect } from 'react';
 import { useStore } from '@/context/StoreContext';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 
-function LoginContent() {
-  const { login, user, loading, setIsLoginOpen } = useStore();
+export default function LoginModal() {
+  const { login, user, loading, isLoginOpen, setIsLoginOpen } = useStore();
   const router = useRouter();
-  const searchParams = useSearchParams();
-
-  useEffect(() => {
-    setIsLoginOpen(true);
-    router.replace('/');
-  }, [setIsLoginOpen, router]);
 
   const [loginType, setLoginType] = useState('customer'); // 'customer' or 'admin'
   const [email, setEmail] = useState('');
@@ -22,25 +16,28 @@ function LoginContent() {
   const [formError, setFormError] = useState('');
   const [formLoading, setFormLoading] = useState(false);
 
-  const redirectUrl = searchParams.get('redirect') || '/account';
-
-  // Clear fields and errors when switching tabs
+  // Clear fields and errors when switching tabs or when modal opens/closes
   useEffect(() => {
     setEmail('');
     setPassword('');
     setFormError('');
-  }, [loginType]);
+    setShowPassword(false);
+  }, [loginType, isLoginOpen]);
 
-  // If already logged in, redirect
+  // Lock body/html scroll when modal is open (matching filter/cart drawer scroll-lock)
   useEffect(() => {
-    if (!loading && user) {
-      if (user.role === 'admin') {
-        router.push('/admin/dashboard');
-      } else {
-        router.push(redirectUrl);
-      }
+    if (isLoginOpen) {
+      document.body.classList.add('scroll-locked');
+      document.documentElement.classList.add('scroll-locked');
+    } else {
+      document.body.classList.remove('scroll-locked');
+      document.documentElement.classList.remove('scroll-locked');
     }
-  }, [user, loading, redirectUrl, router]);
+    return () => {
+      document.body.classList.remove('scroll-locked');
+      document.documentElement.classList.remove('scroll-locked');
+    };
+  }, [isLoginOpen]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -60,13 +57,18 @@ function LoginContent() {
         if (loginType === 'admin') {
           if (data.user.role === 'admin') {
             login(data.user);
+            setIsLoginOpen(false);
             router.push('/admin/dashboard');
           } else {
             setFormError('Access Denied: Admin credentials required.');
           }
         } else {
           login(data.user);
-          router.push(redirectUrl);
+          setIsLoginOpen(false);
+          // If we are on login page, redirect to account. Otherwise stay on current page.
+          if (window.location.pathname === '/login') {
+            router.push('/account');
+          }
         }
       } else {
         setFormError(data.error || 'Invalid credentials.');
@@ -79,16 +81,22 @@ function LoginContent() {
     }
   };
 
-  if (loading) {
-    return <div style={loadingContainerStyle}>Authenticating secure portal...</div>;
-  }
+  if (!isLoginOpen) return null;
 
   return (
-    <div style={pageStyle} className="container animate-fade-in">
-      <div style={cardStyle}>
+    <div 
+      style={backdropStyle} 
+      onClick={() => setIsLoginOpen(false)}
+      className="animate-fade-in"
+    >
+      <div 
+        style={cardStyle} 
+        onClick={(e) => e.stopPropagation()}
+        className="animate-slide-up"
+      >
         {/* Back Button (styled like filter and cart drawer dismiss button) */}
         <button
-          onClick={() => router.back()}
+          onClick={() => setIsLoginOpen(false)}
           style={{
             position: 'absolute',
             top: '1.25rem',
@@ -245,109 +253,53 @@ function LoginContent() {
         {loginType === 'customer' && (
           <div style={footerStyle}>
             <span>New client to our house?</span>
-            <Link href={`/signup${searchParams.get('redirect') ? `?redirect=${searchParams.get('redirect')}` : ''}`} style={linkStyle}>
+            <span 
+              onClick={() => {
+                setIsLoginOpen(false);
+                router.push('/signup');
+              }} 
+              style={{ ...linkStyle, cursor: 'pointer' }}
+            >
               Create an Account
-            </Link>
+            </span>
           </div>
         )}
-      </div>
-
-      {/* Value Props Bar at the Bottom */}
-      <div style={{
-        display: 'flex',
-        justifyContent: 'space-around',
-        alignItems: 'center',
-        width: '100%',
-        maxWidth: '450px',
-        marginTop: '2.5rem',
-        paddingTop: '1.5rem',
-        borderTop: '1px solid rgba(139, 119, 137, 0.15)',
-        boxSizing: 'border-box',
-      }}>
-        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.4rem', textAlign: 'center' }}>
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#C16C7D" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
-            <polyline points="9 11 11 13 15 9"></polyline>
-          </svg>
-          <div style={{ fontSize: '0.62rem', textTransform: 'uppercase', letterSpacing: '0.08em', fontWeight: '700', color: 'rgba(0, 0, 0, 0.6)', lineHeight: 1.3 }}>
-            <span>Authentic</span>
-            <br />
-            <span>Products</span>
-          </div>
-        </div>
-        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.4rem', textAlign: 'center' }}>
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#C16C7D" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-            <rect x="1" y="3" width="15" height="13"></rect>
-            <polygon points="16 8 20 8 23 11 23 16 16 16 16 8"></polygon>
-            <circle cx="5.5" cy="18.5" r="2.5"></circle>
-            <circle cx="18.5" cy="18.5" r="2.5"></circle>
-          </svg>
-          <div style={{ fontSize: '0.62rem', textTransform: 'uppercase', letterSpacing: '0.08em', fontWeight: '700', color: 'rgba(0, 0, 0, 0.6)', lineHeight: 1.3 }}>
-            <span>Express</span>
-            <br />
-            <span>Shipping</span>
-          </div>
-        </div>
-        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.4rem', textAlign: 'center' }}>
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#C16C7D" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
-            <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
-          </svg>
-          <div style={{ fontSize: '0.62rem', textTransform: 'uppercase', letterSpacing: '0.08em', fontWeight: '700', color: 'rgba(0, 0, 0, 0.6)', lineHeight: 1.3 }}>
-            <span>Secure</span>
-            <br />
-            <span>Payments</span>
-          </div>
-        </div>
       </div>
     </div>
   );
 }
 
-export default function LoginPage() {
-  return (
-    <Suspense fallback={<div>Loading Sign In...</div>}>
-      <LoginContent />
-    </Suspense>
-  );
-}
-
-// Inline styles for Login Page
-const pageStyle = {
-  paddingTop: '6rem',
-  paddingBottom: '8rem',
-  background: 'linear-gradient(135deg, #FBF0EC 0%, #F5E5E8 100%)',
+// Inline styles for Login Modal Backdrop & Card
+const backdropStyle = {
+  position: 'fixed',
+  top: 0,
+  left: 0,
+  width: '100vw',
+  height: '100vh',
+  backgroundColor: 'rgba(74, 52, 57, 0.25)', // tint overlay matching theme
+  backdropFilter: 'blur(8px)',
   display: 'flex',
-  flexDirection: 'column',
   justifyContent: 'center',
   alignItems: 'center',
-  minHeight: '85vh',
-};
-
-const loadingContainerStyle = {
-  textAlign: 'center',
-  padding: '10rem 0',
-  color: '#000000',
-  fontSize: '1.2rem',
-  fontFamily: 'var(--font-serif)',
+  zIndex: 9999,
 };
 
 const cardStyle = {
   position: 'relative',
-  maxWidth: '450px',
+  maxWidth: '430px',
   width: 'calc(100% - 2.5rem)',
   backgroundColor: '#FFFFFF',
-  padding: '3.5rem 2.5rem 3rem 2.5rem',
+  padding: '3.5rem 2.2rem 3rem 2.2rem',
   borderRadius: '16px',
-  boxShadow: '0 20px 40px rgba(74, 52, 57, 0.05)',
-  border: '1px solid rgba(139, 119, 137, 0.08)',
+  boxShadow: '0 20px 50px rgba(74, 52, 57, 0.15)',
+  border: '1px solid rgba(139, 119, 137, 0.1)',
   textAlign: 'center',
   boxSizing: 'border-box',
 };
 
 const titleStyle = {
   fontFamily: 'var(--font-serif)',
-  fontSize: '2rem',
+  fontSize: '1.9rem',
   color: '#B65C73',
   fontWeight: '400',
 };

@@ -1,5 +1,6 @@
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import LoginModal from "@/components/LoginModal";
 
 export default function StoreLayout({ children }) {
   return (
@@ -9,7 +10,7 @@ export default function StoreLayout({ children }) {
         {children}
       </main>
       <Footer />
-
+      <LoginModal />
     </>
   );
 }

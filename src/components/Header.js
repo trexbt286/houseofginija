@@ -6,7 +6,7 @@ import { useStore } from '@/context/StoreContext';
 import { usePathname } from 'next/navigation';
 
 export default function Header() {
-  const { cart, cartCount, updateCartQuantity, removeFromCart, wishlist, user, logout } = useStore();
+  const { cart, cartCount, updateCartQuantity, removeFromCart, wishlist, user, logout, setIsLoginOpen } = useStore();
   const [menuOpen, setMenuOpen] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [isCartOpen, setIsCartOpen] = useState(false);
@@ -281,7 +281,6 @@ export default function Header() {
           </ul>
         </nav>
         
-        {/* 3. Right: Header Actions */}
         <div style={headerActionsStyle} className="header-actions-row">
           {user ? (
             <Link href="/account" style={actionLinkStyle} title="My Account" className="header-action-btn">
@@ -292,13 +291,18 @@ export default function Header() {
               <span className="hide-mobile-label">Hello, {user.name.split(' ')[0]}</span>
             </Link>
           ) : (
-            <Link href="/login" style={actionLinkStyle} title="Sign In" className="header-action-btn">
+            <button 
+              onClick={() => setIsLoginOpen(true)} 
+              style={{ ...actionLinkStyle, background: 'none', border: 'none', cursor: 'pointer', padding: 0 }} 
+              title="Sign In" 
+              className="header-action-btn"
+            >
               <svg width="25" height="25" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
                 <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
                 <circle cx="12" cy="7" r="4" />
               </svg>
               <span className="hide-mobile-label">Sign In</span>
-            </Link>
+            </button>
           )}
 
           {!(user && user.role === 'admin') && (

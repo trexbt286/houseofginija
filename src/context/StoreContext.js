@@ -10,6 +10,7 @@ export function StoreProvider({ children }) {
   const [wishlist, setWishlist] = useState([]);
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [isLoginOpen, setIsLoginOpen] = useState(false);
   const router = useRouter();
 
   // Load cart, wishlist and session on mount
@@ -377,6 +378,8 @@ export function StoreProvider({ children }) {
         login,
         logout,
         triggerSparkleConfetti,
+        isLoginOpen,
+        setIsLoginOpen,
       }}
     >
       {children}
