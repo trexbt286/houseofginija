@@ -121,6 +121,7 @@ export default function Home() {
           loop
           muted
           playsInline
+          className="hero-video"
           style={{
             position: 'absolute',
             top: 0,
@@ -131,7 +132,7 @@ export default function Home() {
             zIndex: 0,
           }}
         />
-        <div style={heroOverlayStyle}>
+        <div style={heroOverlayStyle} className="hero-overlay">
           <div style={heroContentStyle} className="animate-fade-in hero-content-wrapper">
             <h1 style={heroTitleStyle}>
               House Of <br className="mobile-only-br" />
