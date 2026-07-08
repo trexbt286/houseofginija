@@ -898,8 +898,7 @@ const lightboxImgStyle = {
 
 const flashSaleSectionStyle = {
   padding: '6rem 0',
-  backgroundColor: '#FBF0EC',
-  borderBottom: '1px solid rgba(139, 119, 137, 0.1)',
+  backgroundColor: '#FFFFFF',
 };
 
 const flashSaleHeaderStyle = {
