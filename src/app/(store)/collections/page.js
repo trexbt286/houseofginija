@@ -1260,7 +1260,7 @@ function CollectionsContent() {
                         const items = groupedProducts[group] || [];
                         return (
                           <div key={cat.id} id={cat.id} className="blinkit-feed-section">
-                            <h2 className="blinkit-feed-section-title" id={cat.id}>
+                            <h2 className="blinkit-feed-section-title">
                               {group}
                             </h2>
                             {items.length > 0 ? (

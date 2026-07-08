@@ -221,7 +221,6 @@ export default function Home() {
                     key={col.id} 
                     style={collectionCardStyle}
                     className="collections-grid-card"
-                    scroll={false}
                   >
                     <div style={cardImageWrapperStyle}>
                       <Image 
