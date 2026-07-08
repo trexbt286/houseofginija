@@ -16,31 +16,31 @@ export default function AdminSidebar({ active }) {
           href="/admin/dashboard" 
           style={active === "dashboard" ? activeNavLinkStyle : navLinkStyle}
         >
-          Dashboard Overview
+          Dashboard
         </Link>
         <Link 
           href="/admin/products" 
           style={active === "products" ? activeNavLinkStyle : navLinkStyle}
         >
-          Products Manager
+          Products
         </Link>
         <Link 
           href="/admin/flash-sale" 
           style={active === "flash-sale" ? activeNavLinkStyle : navLinkStyle}
         >
-          Flash Sale Manager
+          Flash Sale
         </Link>
         <Link 
           href="/admin/orders" 
           style={active === "orders" ? activeNavLinkStyle : navLinkStyle}
         >
-          Orders Pipeline
+          Orders
         </Link>
         <Link 
           href="/admin/coupons" 
           style={active === "coupons" ? activeNavLinkStyle : navLinkStyle}
         >
-          Coupons Manager
+          Coupons
         </Link>
       </nav>
       <div style={sidebarFooterStyle}>
