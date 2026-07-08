@@ -460,7 +460,7 @@ const heroOverlayStyle = {
   alignItems: 'center',
   justifyContent: 'center',
   padding: '0 2rem',
-  background: 'linear-gradient(135deg, rgba(28, 22, 28, 0.45) 0%, rgba(28, 22, 28, 0.7) 100%)',
+  background: 'linear-gradient(to bottom, rgba(0, 0, 0, 0.12) 0%, rgba(0, 0, 0, 0.28) 100%)',
   position: 'relative',
   zIndex: 1,
 };
@@ -491,14 +491,14 @@ const heroTitleStyle = {
   color: '#FFFFFF',
   marginBottom: '0.5rem',
   letterSpacing: '0.05em',
-  textShadow: '0 2px 10px rgba(0, 0, 0, 0.15)',
+  textShadow: '0 2px 15px rgba(0, 0, 0, 0.4)',
 };
 
 const heroTaglineStyle = {
   fontSize: '3.2rem',
   color: '#D98E9B',
   marginBottom: '1.5rem',
-  textShadow: '0 2px 10px rgba(0, 0, 0, 0.15)',
+  textShadow: '0 2px 15px rgba(0, 0, 0, 0.4)',
   fontFamily: 'var(--font-serif)',
   fontStyle: 'italic',
   fontWeight: '400',
