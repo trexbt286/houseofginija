@@ -204,6 +204,9 @@ function CollectionsContent() {
   // Viewport width state for mobile sibling switcher centering
   const [viewportWidth, setViewportWidth] = useState(390);
 
+  // Page visibility state for initial scroll hiding
+  const [isPageVisible, setIsPageVisible] = useState(false);
+
   // Manage scroll-lock on document.body and documentElement when mobile filter drawer is open
   useEffect(() => {
     if (isMobileFilterOpen) {
@@ -266,7 +269,7 @@ function CollectionsContent() {
   // Synchronize state when URL query parameters change (e.g., from Header dropdown links)
   const colParam = searchParams.get('collection') || '';
   const searchParam = searchParams.get('search') || '';
-  const categoryParam = searchParams.get('category') || '';
+  const startParam = searchParams.get('start') || '';
 
   useEffect(() => {
     setSelectedCollection(colParam);
@@ -279,21 +282,28 @@ function CollectionsContent() {
 
   // Scroll to category if present in the URL (Runs once products are loaded)
   useEffect(() => {
-    if (!loading && categoryParam) {
-      let targetId = categoryParam.toLowerCase();
-      if (targetId === 'necklace') targetId = 'necklaces';
-      
-      setTimeout(() => {
-        const element = document.getElementById(targetId);
-        if (element) {
-          const yOffset = -180;
-          const y = element.getBoundingClientRect().top + window.pageYOffset + yOffset;
-          window.scrollTo({ top: y, behavior: 'smooth' });
-          setActiveCategorySidebar(targetId);
-        }
-      }, 300);
+    if (!loading) {
+      if (startParam) {
+        let targetId = startParam.toLowerCase();
+        if (targetId === 'necklace') targetId = 'necklaces';
+        
+        setTimeout(() => {
+          const element = document.getElementById(targetId);
+          if (element) {
+            const stickyNavHeight = 180;
+            document.documentElement.scrollTop = element.offsetTop - stickyNavHeight;
+            setActiveCategorySidebar(targetId);
+            setIsPageVisible(true);
+            router.replace('/collections', undefined, { shallow: true });
+          } else {
+            setIsPageVisible(true);
+          }
+        }, 50);
+      } else {
+        setIsPageVisible(true);
+      }
     }
-  }, [categoryParam, loading]);
+  }, [startParam, loading, router]);
 
   // Scroll-Spy: Highlight active category on left panel as user scrolls the right panel feed
   useEffect(() => {
@@ -898,7 +908,10 @@ function CollectionsContent() {
 
 
   return (
-    <div style={pageStyle} className="collections-root-container">
+    <div 
+      style={{ ...pageStyle, opacity: isPageVisible ? 1 : 0, transition: 'opacity 0.2s ease-in-out' }} 
+      className="collections-root-container"
+    >
       {/* Mobile bottom sheet backdrop */}
       {activeProduct && (
         <div 

@@ -722,19 +722,13 @@ function CollectionsContent() {
   const getSidebarCategories = () => {
     const list = [];
     
-    // First, push jewellery items
-    collections.forEach(col => {
-      if (col.slug === 'jewellery') {
-        list.push({ id: 'rings', name: 'Rings', emoji: '💍', targetId: 'rings' });
-        list.push({ id: 'necklaces', name: 'Necklaces', emoji: '📿', targetId: 'necklaces' });
-        list.push({ id: 'bracelets', name: 'Bracelets', emoji: '📿', targetId: 'bracelets' });
-      }
-    });
-
-    // Then push suits
     collections.forEach(col => {
       if (col.slug === 'suits') {
         list.push({ id: 'suits', name: col.name, emoji: '👔', targetId: 'suits' });
+      } else if (col.slug === 'jewellery') {
+        list.push({ id: 'rings', name: 'Rings', emoji: '💍', targetId: 'rings' });
+        list.push({ id: 'necklaces', name: 'Necklaces', emoji: '📿', targetId: 'necklaces' });
+        list.push({ id: 'bracelets', name: 'Bracelets', emoji: '📿', targetId: 'bracelets' });
       }
     });
     
