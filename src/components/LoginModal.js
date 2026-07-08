@@ -251,13 +251,13 @@ export default function LoginModal() {
  
         {loginType === 'customer' && (
           <div style={footerStyle}>
-            <span>New client to our house?</span>
+            <span style={{ whiteSpace: 'nowrap' }}>New client to our house?</span>
             <span 
               onClick={() => {
                 setIsLoginOpen(false);
                 router.push('/signup');
               }} 
-              style={{ ...linkStyle, cursor: 'pointer' }}
+              style={{ ...linkStyle, cursor: 'pointer', whiteSpace: 'nowrap' }}
             >
               Create an Account
             </span>
@@ -380,10 +380,11 @@ const disabledBtnStyle = {
 const footerStyle = {
   display: 'flex',
   justifyContent: 'center',
-  gap: '0.4rem',
-  fontSize: '0.75rem', // scaled down
+  alignItems: 'center',
+  gap: '0.35rem',
+  fontSize: '0.7rem', // scaled down to fit on single line
   color: '#000000',
-  marginTop: '0.6rem', // scaled down
+  marginTop: '0.6rem',
 };
 
 const linkStyle = {
