@@ -55,7 +55,7 @@ export default function AdminDashboard() {
   const chartHeight = 160;
 
   return (
-    <div style={dashboardLayoutStyle} className="animate-fade-in">
+    <div style={dashboardLayoutStyle} className="admin-page-root animate-fade-in">
       {/* Sidebar */}
       <AdminSidebar active="dashboard" />
 
@@ -102,7 +102,7 @@ export default function AdminDashboard() {
         </div>
 
         {/* Visits & Low Stock Alerts Grid */}
-        <div style={splitGridStyle}>
+        <div style={splitGridStyle} className="admin-split-grid">
           {/* SVG Site Visits Trend Chart */}
           <div style={panelCardStyle}>
             <h3 style={panelTitleStyle}>Site Visits (Last 30 Days)</h3>
@@ -199,7 +199,7 @@ export default function AdminDashboard() {
         </div>
 
         {/* Best Sellers & Subscriptions Grid */}
-        <div style={splitGridStyle}>
+        <div style={splitGridStyle} className="admin-split-grid">
           {/* Best Sellers */}
           <div style={panelCardStyle}>
             <h3 style={panelTitleStyle}>Top Performing Creations</h3>

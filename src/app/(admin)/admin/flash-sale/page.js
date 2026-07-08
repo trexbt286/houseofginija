@@ -193,7 +193,7 @@ export default function AdminFlashSalePage() {
   };
 
   return (
-    <div style={layoutStyle}>
+    <div style={layoutStyle} className="admin-page-root animate-fade-in">
       <AdminSidebar active="flash-sale" />
 
       <main style={mainContentStyle}>

@@ -305,7 +305,7 @@ function AdminProductsContent() {
   };
 
   return (
-    <div style={dashboardLayoutStyle} className="animate-fade-in">
+    <div style={dashboardLayoutStyle} className="admin-page-root animate-fade-in">
       {/* Sidebar */}
       <AdminSidebar active="products" />
 

@@ -4,14 +4,14 @@ import Link from "next/link";
 
 export default function AdminSidebar({ active }) {
   return (
-    <aside style={sidebarStyle}>
-      <Link href="/" style={sidebarHeaderLinkStyle}>
-        <div style={sidebarHeaderStyle}>
+    <aside style={sidebarStyle} className="admin-sidebar">
+      <Link href="/" style={sidebarHeaderLinkStyle} className="admin-sidebar-header-link">
+        <div style={sidebarHeaderStyle} className="admin-sidebar-header">
           <span style={sidebarTitleStyle}>Ginija Portal</span>
           <span style={adminBadgeStyle}>Management System</span>
         </div>
       </Link>
-      <nav style={sidebarNavStyle}>
+      <nav style={sidebarNavStyle} className="admin-sidebar-nav">
         <Link 
           href="/admin/dashboard" 
           style={active === "dashboard" ? activeNavLinkStyle : navLinkStyle}
