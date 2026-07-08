@@ -81,30 +81,40 @@ function LoginContent() {
   return (
     <div style={pageStyle} className="container animate-fade-in">
       <div style={cardStyle}>
-        {/* Back Button */}
+        {/* Back Button (styled like filter and cart drawer dismiss button) */}
         <button
           onClick={() => router.back()}
           style={{
             position: 'absolute',
-            top: '1.5rem',
-            left: '1.5rem',
-            background: 'none',
-            border: 'none',
-            cursor: 'pointer',
-            padding: '0.5rem',
+            top: '1.25rem',
+            left: '1.25rem',
+            backgroundColor: 'rgba(255, 255, 255, 0.9)',
+            backdropFilter: 'blur(4px)',
+            border: '1px solid rgba(139, 119, 137, 0.15)',
+            borderRadius: '50%',
+            width: '36px',
+            height: '36px',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
+            boxShadow: '0 2px 8px rgba(0,0,0,0.06)',
+            cursor: 'pointer',
+            padding: 0,
             color: '#000000',
-            opacity: 0.8,
-            transition: 'opacity 0.2s ease',
+            transition: 'transform 0.2s ease, opacity 0.2s ease',
+            zIndex: 10,
           }}
-          onMouseEnter={(e) => e.currentTarget.style.opacity = 0.5}
-          onMouseLeave={(e) => e.currentTarget.style.opacity = 0.8}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.transform = 'scale(1.05)';
+            e.currentTarget.style.backgroundColor = '#FFFFFF';
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.transform = 'scale(1)';
+            e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.9)';
+          }}
         >
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-            <line x1="19" y1="12" x2="5" y2="12"></line>
-            <polyline points="12 19 5 12 12 5"></polyline>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#000000" strokeWidth="2.0" strokeLinecap="round" strokeLinejoin="round">
+            <polyline points="6 9 12 15 18 9"></polyline>
           </svg>
         </button>
 
@@ -320,7 +330,7 @@ const loadingContainerStyle = {
 const cardStyle = {
   position: 'relative',
   maxWidth: '450px',
-  width: '100%',
+  width: 'calc(100% - 2.5rem)',
   backgroundColor: '#FFFFFF',
   padding: '3.5rem 2.5rem 3rem 2.5rem',
   borderRadius: '16px',
