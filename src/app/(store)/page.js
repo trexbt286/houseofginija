@@ -460,7 +460,7 @@ const heroOverlayStyle = {
   alignItems: 'center',
   justifyContent: 'center',
   padding: '0 2rem',
-  background: 'linear-gradient(to bottom, rgba(0, 0, 0, 0.12) 0%, rgba(0, 0, 0, 0.28) 100%)',
+  background: 'none',
   position: 'relative',
   zIndex: 1,
 };
