@@ -289,7 +289,7 @@ function CollectionsContent() {
             el.scrollIntoView({ behavior: 'auto', block: 'start' });
             setActiveCategorySidebar(id);
           }
-        }, 150);
+        }, 300);
       }
     }
   }, [loading]);
