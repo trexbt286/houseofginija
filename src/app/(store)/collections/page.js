@@ -206,10 +206,8 @@ function CollectionsContent() {
 
   // Page visibility state for initial scroll hiding
   const startParam = searchParams.get('start') || '';
-  const isRingsStart = startParam.toLowerCase() === 'rings';
-  const needsScrollJump = !!(startParam && startParam.toLowerCase() !== 'suits' && !isRingsStart);
+  const needsScrollJump = !!(startParam && startParam.toLowerCase() !== 'suits');
   const [isPageVisible, setIsPageVisible] = useState(!needsScrollJump);
-  const [hideSuits, setHideSuits] = useState(isRingsStart);
   const hasScrolledRef = useRef(false);
 
   // Manage scroll-lock on document.body and documentElement when mobile filter drawer is open
@@ -318,17 +316,7 @@ function CollectionsContent() {
     }
   }, [startParam, loading, router, needsScrollJump]);
 
-  // Temporary hide Suits on load if startParam is rings
-  useEffect(() => {
-    if (isRingsStart) {
-      setActiveCategorySidebar('rings');
-      router.replace('/collections', undefined, { shallow: true });
-      const timer = setTimeout(() => {
-        setHideSuits(false);
-      }, 2000);
-      return () => clearTimeout(timer);
-    }
-  }, [isRingsStart, router]);
+
 
   // Scroll-Spy: Highlight active category on left panel as user scrolls the right panel feed
   useEffect(() => {
@@ -747,9 +735,7 @@ function CollectionsContent() {
     
     collections.forEach(col => {
       if (col.slug === 'suits') {
-        if (!hideSuits) {
-          list.push({ id: 'suits', name: col.name, emoji: '👔', targetId: 'suits' });
-        }
+        list.push({ id: 'suits', name: col.name, emoji: '👔', targetId: 'suits' });
       } else if (col.slug === 'jewellery') {
         list.push({ id: 'rings', name: 'Rings', emoji: '💍', targetId: 'rings' });
         list.push({ id: 'necklaces', name: 'Necklaces', emoji: '📿', targetId: 'necklaces' });
