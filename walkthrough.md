@@ -118,3 +118,22 @@ We have optimized the entire admin portal for responsive viewing on tablets and 
 3. **Split Grid & Panel Adjustments**
    - Configured split columns (such as the Visits trend chart and Inventory stock alerts cards on the dashboard page) to stack vertically on mobile.
    - Main content padding is adjusted to a comfortable `1.5rem 1rem` on mobile.
+
+---
+
+## Homepage Mobile Spacing & Section Dividers
+
+We have added section dividing lines and optimized section spacing on the mobile storefront homepage.
+
+### Changes Implemented
+
+1. **Divider Lines between Sections**
+   - Wrapped all homepage sections in a `.home-section` helper class.
+   - Enforced a thin, light divider line (`border-bottom: 1px solid rgba(139, 119, 137, 0.12)`) under each section on mobile viewports.
+   - Excluded the last section (`home-reviews-section`) from having a bottom border to prevent line collision with the footer.
+   - Deactivated the redundant standalone separator divider div between Collections and Reviews on mobile.
+
+2. **Compressed Vertical Spacing**
+   - Compressed the vertical padding on all mobile homepage sections down to exactly `3.2rem 1rem` (down from `6rem`), creating a cozy and compact page flow without large, empty gaps.
+   - Preserved `padding-top: 0` on the Hero section to keep it correctly aligned with the header.
+
