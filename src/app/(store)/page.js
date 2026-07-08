@@ -219,7 +219,7 @@ export default function Home() {
                     className="collections-grid-card"
                     onClick={() => {
                       if (typeof window !== 'undefined') {
-                        window.sessionStorage.setItem('collections_scroll_target', col.slug === 'jewellery' ? 'rings' : col.slug);
+                        window.sessionStorage.setItem('scrollTarget', col.slug === 'jewellery' ? 'rings' : col.slug);
                       }
                     }}
                   >

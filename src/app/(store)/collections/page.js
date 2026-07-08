@@ -183,7 +183,7 @@ function CollectionsContent() {
   const [isJumping, setIsJumping] = useState(false);
 
   useEffect(() => {
-    if (typeof window !== 'undefined' && window.sessionStorage.getItem('collections_scroll_target')) {
+    if (typeof window !== 'undefined' && window.sessionStorage.getItem('scrollTarget')) {
       setIsJumping(true);
     }
   }, []);
@@ -318,17 +318,16 @@ function CollectionsContent() {
   // Scroll to session target on load (Instantly jump and reveal using useLayoutEffect)
   useIsomorphicLayoutEffect(() => {
     if (!loading && products.length > 0) {
-      const scrollTarget = typeof window !== 'undefined' ? window.sessionStorage.getItem('collections_scroll_target') : null;
-      if (scrollTarget) {
-        let targetId = scrollTarget.toLowerCase();
-        if (targetId === 'necklace') targetId = 'necklaces';
-        
-        const element = document.getElementById(targetId);
+      const scrollTarget = typeof window !== 'undefined' ? window.sessionStorage.getItem('scrollTarget') : null;
+      if (scrollTarget === 'rings' || scrollTarget === 'suits') {
+        const element = document.getElementById(scrollTarget);
         if (element) {
           const originalScrollBehavior = document.documentElement.style.scrollBehavior;
           document.documentElement.style.scrollBehavior = 'auto';
           
-          element.scrollIntoView({ behavior: 'instant', block: 'start' });
+          const isMobile = window.innerWidth <= 768;
+          const navbarHeight = isMobile ? 242 : 100;
+          window.scrollTo({ top: element.offsetTop - navbarHeight, behavior: 'instant' });
           
           if (originalScrollBehavior) {
             document.documentElement.style.scrollBehavior = originalScrollBehavior;
@@ -336,9 +335,9 @@ function CollectionsContent() {
             document.documentElement.style.removeProperty('scroll-behavior');
           }
           
-          setActiveCategorySidebar(targetId);
+          setActiveCategorySidebar(scrollTarget);
         }
-        window.sessionStorage.removeItem('collections_scroll_target');
+        window.sessionStorage.removeItem('scrollTarget');
       }
       setIsJumping(false);
     }
