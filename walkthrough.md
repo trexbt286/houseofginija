@@ -143,6 +143,6 @@ We have added section dividing lines and optimized section spacing on the mobile
    - Positioned the value prop feature strip (`hero-value-props-bar`) absolutely at `top: calc(100svh - 107px - 70px)` with a locked height of `70px` and compact icon/text constraints (`0.52rem` font size, `16px` icon sizes, and `8px` padding).
    - This formula-driven stacking uses `svh` (Short Viewport Height) units to guarantee the announcement bar, header navigation bar, hero media frame, and feature strip combine to exactly fit the visible screen height across all mobile viewport heights (from iPhone SE up to iPhone 14 Pro Max) with zero scroll clipping, even when browser address/navigation bars are fully expanded.
 4. **Hero video blackout removal**
-   - Replaced the dark purple/black diagonal overlay gradient (`linear-gradient(135deg, rgba(28, 22, 28, 0.45) 0%, rgba(28, 22, 28, 0.7) 100%)`) with a light, transparent vertical scrim (`linear-gradient(to bottom, rgba(0, 0, 0, 0.12) 0%, rgba(0, 0, 0, 0.28) 100%)`).
-   - This makes the hero video 100% bright, vibrant, and clear.
+   - Removed the background gradient overlay (`background: 'none'`) from the `hero-overlay` container entirely.
+   - This renders the hero video with 100% raw brightness, vibrancy, and clarity.
    - Enhanced the white text elements' shadows to `textShadow: '0 2px 15px rgba(0, 0, 0, 0.4)'` to maintain perfect, high-contrast readability against the bright video.
