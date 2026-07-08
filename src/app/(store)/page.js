@@ -211,17 +211,16 @@ export default function Home() {
           ) : (
             <div style={collectionsGridStyle} className="collections-grid">
               {collections.map((col) => {
+                const linkHref = col.slug === 'jewellery' 
+                  ? '/collections#rings' 
+                  : `/collections#${col.slug}`;
+
                 return (
                   <Link 
-                    href="/collections" 
+                    href={linkHref} 
                     key={col.id} 
                     style={collectionCardStyle}
                     className="collections-grid-card"
-                    onClick={() => {
-                      if (typeof window !== 'undefined') {
-                        window.sessionStorage.setItem('scrollTarget', col.slug === 'jewellery' ? 'rings' : col.slug);
-                      }
-                    }}
                   >
                     <div style={cardImageWrapperStyle}>
                       <Image 

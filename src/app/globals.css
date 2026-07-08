@@ -2479,10 +2479,6 @@ body.cart-drawer-open header {
   .cart-drawer-item-remove {
     font-size: 0.7rem !important;
   }
-
-  .blinkit-feed-section {
-    scroll-margin-top: 242px !important;
-  }
 }
 
 /* Desktop default hide classes */
@@ -2492,6 +2488,13 @@ body.cart-drawer-open header {
   display: none;
 }
 
+/* Category section anchor offsets for hash link scrolls */
 .blinkit-feed-section {
-  scroll-margin-top: 100px;
+  scroll-margin-top: 107px;
+}
+
+@media (max-width: 768px) {
+  .blinkit-feed-section {
+    scroll-margin-top: 159px !important;
+  }
 }

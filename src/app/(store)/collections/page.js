@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useLayoutEffect, Suspense, useRef } from 'react';
+import { useState, useEffect, Suspense, useRef } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
@@ -173,20 +173,10 @@ function MobileSearchBar({ allProducts, initialQuery, onSearch, handleProductCli
   );
 }
 
-const useIsomorphicLayoutEffect = typeof window !== 'undefined' ? useLayoutEffect : useEffect;
-
 function CollectionsContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const { user, cart, addToCart, updateCartQuantity, wishlist, toggleWishlist } = useStore();
-
-  const [isJumping, setIsJumping] = useState(false);
-
-  useEffect(() => {
-    if (typeof window !== 'undefined' && window.sessionStorage.getItem('scrollTarget')) {
-      setIsJumping(true);
-    }
-  }, []);
 
   // Filter States
   const [products, setProducts] = useState([]);
@@ -287,61 +277,7 @@ function CollectionsContent() {
     setActiveProduct(null);
   }, [colParam, searchParam]);
 
-  // Scroll to category if present in the URL (Runs once products are loaded and rendered)
-  useEffect(() => {
-    if (!loading && products.length > 0 && categoryParam) {
-      let targetId = categoryParam.toLowerCase();
-      if (targetId === 'necklace') targetId = 'necklaces';
-      
-      setTimeout(() => {
-        const element = document.getElementById(targetId);
-        if (element) {
-          const originalScrollBehavior = document.documentElement.style.scrollBehavior;
-          document.documentElement.style.scrollBehavior = 'auto';
-          
-          const yOffset = -242; // Offset for header + sticky category bar
-          const y = element.getBoundingClientRect().top + window.pageYOffset + yOffset;
-          window.scrollTo({ top: y, behavior: 'instant' });
-          
-          if (originalScrollBehavior) {
-            document.documentElement.style.scrollBehavior = originalScrollBehavior;
-          } else {
-            document.documentElement.style.removeProperty('scroll-behavior');
-          }
-          
-          setActiveCategorySidebar(targetId);
-        }
-      }, 300);
-    }
-  }, [categoryParam, loading, products]);
 
-  // Scroll to session target on load (Instantly jump and reveal using useLayoutEffect)
-  useIsomorphicLayoutEffect(() => {
-    if (!loading && products.length > 0) {
-      const scrollTarget = typeof window !== 'undefined' ? window.sessionStorage.getItem('scrollTarget') : null;
-      if (scrollTarget === 'rings' || scrollTarget === 'suits') {
-        const element = document.getElementById(scrollTarget);
-        if (element) {
-          const originalScrollBehavior = document.documentElement.style.scrollBehavior;
-          document.documentElement.style.scrollBehavior = 'auto';
-          
-          const isMobile = window.innerWidth <= 768;
-          const navbarHeight = isMobile ? 242 : 100;
-          window.scrollTo({ top: element.offsetTop - navbarHeight, behavior: 'instant' });
-          
-          if (originalScrollBehavior) {
-            document.documentElement.style.scrollBehavior = originalScrollBehavior;
-          } else {
-            document.documentElement.style.removeProperty('scroll-behavior');
-          }
-          
-          setActiveCategorySidebar(scrollTarget);
-        }
-        window.sessionStorage.removeItem('scrollTarget');
-      }
-      setIsJumping(false);
-    }
-  }, [loading, products]);
 
   // Scroll-Spy: Highlight active category on left panel as user scrolls the right panel feed
   useEffect(() => {
@@ -946,7 +882,7 @@ function CollectionsContent() {
 
 
   return (
-    <div style={{ ...pageStyle, opacity: isJumping ? 0 : 1, transition: 'opacity 0.1s ease' }} className="collections-root-container">
+    <div style={pageStyle} className="collections-root-container">
       {/* Mobile bottom sheet backdrop */}
       {activeProduct && (
         <div 
