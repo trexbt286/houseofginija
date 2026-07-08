@@ -92,7 +92,7 @@ export default function AdminDashboard() {
             <span style={metricValueStyle}>{metrics.totalOrders}</span>
           </div>
           <div style={metricCardStyle}>
-            <span style={metricLabelStyle}>Registered Clients</span>
+            <span style={metricLabelStyle}>Registered Customers</span>
             <span style={metricValueStyle}>{customers.length}</span>
           </div>
           <div style={metricCardStyle}>
@@ -227,7 +227,7 @@ export default function AdminDashboard() {
             <h3 style={panelTitleStyle}>Newsletter Circles ({subscribers.length})</h3>
             <div style={listContainerStyle}>
               {subscribers.length === 0 ? (
-                <div style={emptyStateStyle}>No clients subscribed.</div>
+                <div style={emptyStateStyle}>No customers subscribed.</div>
               ) : (
                 <div style={tableListStyle}>
                   {subscribers.slice(0, 5).map((sub, idx) => (

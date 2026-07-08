@@ -43,7 +43,7 @@ export default function ContactPage() {
     <div style={pageStyle} className="container animate-fade-in info-page-container">
       {/* Header */}
       <section style={headerSectionStyle}>
-        <span style={subHeaderStyle}>Client Services</span>
+        <span style={subHeaderStyle}>Customer Services</span>
         <h1 style={titleStyle}>Contact Us</h1>
         <div style={dividerStyle}></div>
       </section>
@@ -51,7 +51,7 @@ export default function ContactPage() {
       <div className="contact-layout-grid">
         {/* Info Column */}
         <div style={infoColStyle}>
-          <h3 style={sectionTitleStyle}>Client Inquiries</h3>
+          <h3 style={sectionTitleStyle}>Customer Inquiries</h3>
           <p style={descStyle}>
             For bespoke fitting adjustments, order tracking, private boutique viewing reservations, or sizing guidance, our concierge is at your disposal.
           </p>

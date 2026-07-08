@@ -224,7 +224,7 @@ export default function CartPage() {
               </button>
 
               <div style={notesPanelStyle}>
-                <span style={notesTitleStyle}>Client Note:</span>
+                <span style={notesTitleStyle}>Customer Note:</span>
                 <p style={notesTextStyle}>We craft our garments slowly. Delivery of our custom silhouettes generally takes 7-10 business days from placement.</p>
               </div>
             </div>

@@ -147,7 +147,7 @@ export default function AdminOrdersPage() {
               <thead>
                 <tr>
                   <th style={thStyle}>Order ID</th>
-                  <th style={thStyle}>Client Details</th>
+                  <th style={thStyle}>Customer Details</th>
                   <th style={thStyle}>Line Items</th>
                   <th style={thStyle}>Delivery Address</th>
                   <th style={thStyle}>Total Charge</th>
@@ -163,7 +163,7 @@ export default function AdminOrdersPage() {
                       <td style={{ ...tdStyle, fontWeight: '700' }}>#{order.id}</td>
                       <td style={tdStyle}>
                         <div>
-                          <strong>{order.user_name || 'Anonymous Client'}</strong>
+                          <strong>{order.user_name || 'Anonymous Customer'}</strong>
                           <span style={emailLabelStyle}>{order.user_email || 'no-email'}</span>
                           <span style={dateLabelStyle}>
                             {new Date(order.created_at).toLocaleString('en-IN', {

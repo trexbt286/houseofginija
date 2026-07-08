@@ -130,7 +130,7 @@ export default function LoginModal() {
           </svg>
         </button>
 
-        <h1 style={titleStyle}>{loginType === 'admin' ? 'Admin Sign In' : 'Client Sign In'}</h1>
+        <h1 style={titleStyle}>Sign In</h1>
         <div style={dividerStyle}></div>
  
         {/* Tab Selector */}
@@ -241,27 +241,28 @@ export default function LoginModal() {
               : 'Sign In'}
           </button>
         </form>
-
-        {/* OR Visual Divider */}
-        <div style={{ display: 'flex', alignItems: 'center', margin: '1rem 0 0.8rem 0', width: '100%' }}>
-          <div style={{ flex: 1, height: '1px', backgroundColor: 'rgba(139, 119, 137, 0.15)' }}></div>
-          <span style={{ padding: '0 1rem', fontSize: '0.7rem', color: '#D98E9B', fontWeight: '700', letterSpacing: '0.05em' }}>OR</span>
-          <div style={{ flex: 1, height: '1px', backgroundColor: 'rgba(139, 119, 137, 0.15)' }}></div>
-        </div>
- 
         {loginType === 'customer' && (
-          <div style={footerStyle}>
-            <span style={{ whiteSpace: 'nowrap' }}>New client to our house?</span>
-            <span 
-              onClick={() => {
-                setIsLoginOpen(false);
-                router.push('/signup');
-              }} 
-              style={{ ...linkStyle, cursor: 'pointer', whiteSpace: 'nowrap' }}
-            >
-              Create an Account
-            </span>
-          </div>
+          <>
+            {/* OR Visual Divider */}
+            <div style={{ display: 'flex', alignItems: 'center', margin: '1rem 0 0.8rem 0', width: '100%' }}>
+              <div style={{ flex: 1, height: '1px', backgroundColor: 'rgba(139, 119, 137, 0.15)' }}></div>
+              <span style={{ padding: '0 1rem', fontSize: '0.7rem', color: '#D98E9B', fontWeight: '700', letterSpacing: '0.05em' }}>OR</span>
+              <div style={{ flex: 1, height: '1px', backgroundColor: 'rgba(139, 119, 137, 0.15)' }}></div>
+            </div>
+
+            <div style={footerStyle}>
+              <span style={{ whiteSpace: 'nowrap' }}>New customer to our house?</span>
+              <span 
+                onClick={() => {
+                  setIsLoginOpen(false);
+                  router.push('/signup');
+                }} 
+                style={{ ...linkStyle, cursor: 'pointer', whiteSpace: 'nowrap' }}
+              >
+                Create an Account
+              </span>
+            </div>
+          </>
         )}
       </div>
     </div>

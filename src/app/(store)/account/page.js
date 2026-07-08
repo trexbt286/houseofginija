@@ -159,7 +159,7 @@ function AccountContent() {
   return (
     <div style={pageStyle} className="container animate-fade-in">
       <div style={headerStyle}>
-        <span style={subtitleStyle}>Client Portal</span>
+        <span style={subtitleStyle}>Customer Portal</span>
         <h1 style={titleStyle}>My Account</h1>
         <p style={welcomeStyle}>Welcome back, {user.name}</p>
         <button onClick={logout} style={logoutBtnStyle}>
@@ -174,7 +174,7 @@ function AccountContent() {
             onClick={() => handleTabChange('profile')}
             style={activeTab === 'profile' ? activeTabBtnStyle : tabBtnStyle}
           >
-            Client Profile
+            Customer Profile
           </button>
           <button
             onClick={() => handleTabChange('orders')}
@@ -207,7 +207,7 @@ function AccountContent() {
               
               <div style={profileGridStyle}>
                 <div style={infoGroupStyle}>
-                  <span style={infoLabelStyle}>Client Name</span>
+                  <span style={infoLabelStyle}>Customer Name</span>
                   <span style={infoValueStyle}>{user.name}</span>
                 </div>
                 <div style={infoGroupStyle}>
@@ -215,9 +215,9 @@ function AccountContent() {
                   <span style={infoValueStyle}>{user.email}</span>
                 </div>
                 <div style={infoGroupStyle}>
-                  <span style={infoLabelStyle}>Client Rank</span>
+                  <span style={infoLabelStyle}>Customer Rank</span>
                   <span style={{ ...infoValueStyle, textTransform: 'uppercase', color: '#000000' }}>
-                    {user.role} client
+                    {user.role} customer
                   </span>
                 </div>
                 <div style={infoGroupStyle}>
@@ -344,7 +344,7 @@ function AccountContent() {
               <div style={dividerLineStyle}></div>
 
               {addressesLoading ? (
-                <div>Loading client addresses...</div>
+                <div>Loading customer addresses...</div>
               ) : (
                 <div style={addressesGridStyle}>
                   {addresses.map((addr) => (

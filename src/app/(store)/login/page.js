@@ -123,7 +123,7 @@ function LoginContent() {
           </svg>
         </button>
 
-        <h1 style={titleStyle}>{loginType === 'admin' ? 'Admin Sign In' : 'Client Sign In'}</h1>
+        <h1 style={titleStyle}>Sign In</h1>
         <div style={dividerStyle}></div>
  
         {/* Tab Selector */}
@@ -234,71 +234,23 @@ function LoginContent() {
               : 'Sign In'}
           </button>
         </form>
-
-        {/* OR Visual Divider */}
-        <div style={{ display: 'flex', alignItems: 'center', margin: '1.8rem 0 1.2rem 0', width: '100%' }}>
-          <div style={{ flex: 1, height: '1px', backgroundColor: 'rgba(139, 119, 137, 0.15)' }}></div>
-          <span style={{ padding: '0 1rem', fontSize: '0.7rem', color: '#D98E9B', fontWeight: '700', letterSpacing: '0.05em' }}>OR</span>
-          <div style={{ flex: 1, height: '1px', backgroundColor: 'rgba(139, 119, 137, 0.15)' }}></div>
-        </div>
- 
         {loginType === 'customer' && (
-          <div style={footerStyle}>
-            <span>New client to our house?</span>
-            <Link href={`/signup${searchParams.get('redirect') ? `?redirect=${searchParams.get('redirect')}` : ''}`} style={linkStyle}>
-              Create an Account
-            </Link>
-          </div>
+          <>
+            {/* OR Visual Divider */}
+            <div style={{ display: 'flex', alignItems: 'center', margin: '1.8rem 0 1.2rem 0', width: '100%' }}>
+              <div style={{ flex: 1, height: '1px', backgroundColor: 'rgba(139, 119, 137, 0.15)' }}></div>
+              <span style={{ padding: '0 1rem', fontSize: '0.7rem', color: '#D98E9B', fontWeight: '700', letterSpacing: '0.05em' }}>OR</span>
+              <div style={{ flex: 1, height: '1px', backgroundColor: 'rgba(139, 119, 137, 0.15)' }}></div>
+            </div>
+     
+            <div style={footerStyle}>
+              <span>New customer to our house?</span>
+              <Link href={`/signup${searchParams.get('redirect') ? `?redirect=${searchParams.get('redirect')}` : ''}`} style={linkStyle}>
+                Create an Account
+              </Link>
+            </div>
+          </>
         )}
-      </div>
-
-      {/* Value Props Bar at the Bottom */}
-      <div style={{
-        display: 'flex',
-        justifyContent: 'space-around',
-        alignItems: 'center',
-        width: '100%',
-        maxWidth: '450px',
-        marginTop: '2.5rem',
-        paddingTop: '1.5rem',
-        borderTop: '1px solid rgba(139, 119, 137, 0.15)',
-        boxSizing: 'border-box',
-      }}>
-        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.4rem', textAlign: 'center' }}>
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#C16C7D" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
-            <polyline points="9 11 11 13 15 9"></polyline>
-          </svg>
-          <div style={{ fontSize: '0.62rem', textTransform: 'uppercase', letterSpacing: '0.08em', fontWeight: '700', color: 'rgba(0, 0, 0, 0.6)', lineHeight: 1.3 }}>
-            <span>Authentic</span>
-            <br />
-            <span>Products</span>
-          </div>
-        </div>
-        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.4rem', textAlign: 'center' }}>
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#C16C7D" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-            <rect x="1" y="3" width="15" height="13"></rect>
-            <polygon points="16 8 20 8 23 11 23 16 16 16 16 8"></polygon>
-            <circle cx="5.5" cy="18.5" r="2.5"></circle>
-            <circle cx="18.5" cy="18.5" r="2.5"></circle>
-          </svg>
-          <div style={{ fontSize: '0.62rem', textTransform: 'uppercase', letterSpacing: '0.08em', fontWeight: '700', color: 'rgba(0, 0, 0, 0.6)', lineHeight: 1.3 }}>
-            <span>Express</span>
-            <br />
-            <span>Shipping</span>
-          </div>
-        </div>
-        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.4rem', textAlign: 'center' }}>
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#C16C7D" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
-            <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
-          </svg>
-          <div style={{ fontSize: '0.62rem', textTransform: 'uppercase', letterSpacing: '0.08em', fontWeight: '700', color: 'rgba(0, 0, 0, 0.6)', lineHeight: 1.3 }}>
-            <span>Secure</span>
-            <br />
-            <span>Payments</span>
-          </div>
-        </div>
       </div>
     </div>
   );
