@@ -146,3 +146,9 @@ We have added section dividing lines and optimized section spacing on the mobile
    - Restored the background gradient overlay (`background: 'linear-gradient(135deg, rgba(28, 22, 28, 0.45) 0%, rgba(28, 22, 28, 0.7) 100%)'`) to the `hero-overlay` container.
    - The user preferred the original dark overlay because the high brightness of the raw video made the white header text difficult to read.
    - Retained the enhanced white text element shadows (`textShadow: '0 2px 15px rgba(0, 0, 0, 0.4)'`) for even better contrast and readability.
+
+5. **Admin Portal Mobile Responsiveness**
+   - **Top Navigation Bar:** Replaced the tall sidebar with a streamlined horizontal top navigation bar under 768px. Condensed the labels to single words (Dashboard, Products, Flash Sale, Orders, Coupons) and scaled down their font size so all 5 options fit seamlessly on a single row without horizontal scrolling.
+   - **Horizontal Table Scrolling:** Applied `display: block` and `overflow-x: auto` to all admin `<table>` components across the system. This allows data-heavy rows to scroll horizontally on mobile without squishing or omitting any critical telemetry columns.
+   - **Header Actions Restructuring:** Grouped all top-right header action buttons (Visit Storefront, Sign Out, Add Creation, etc.) onto a single, evenly distributed flex row. We hid the admin profile ID card (`admin@houseofginija.com`) exclusively on mobile to free up valuable screen real estate for these actionable buttons.
+   - **Zero Desktop Interference:** All layout structure updates are strictly confined within the `@media (max-width: 768px)` block, leaving the desktop Admin UI completely untouched and pristine.
