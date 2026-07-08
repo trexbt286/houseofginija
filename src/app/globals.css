@@ -2526,13 +2526,9 @@ body.cart-drawer-open header {
 
 /* --- ADMIN PORTAL MOBILE & TABLET UX OPTIMIZATIONS --- */
 
-.admin-page-root {
-  display: flex !important;
-  flex-direction: row !important;
-}
-
 @media (max-width: 768px) {
   .admin-page-root {
+    display: flex !important;
     flex-direction: column !important;
   }
   
