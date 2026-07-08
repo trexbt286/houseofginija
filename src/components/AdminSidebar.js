@@ -1,16 +1,24 @@
 "use client";
 
 import Link from "next/link";
+import { useStore } from '@/context/StoreContext';
 
 export default function AdminSidebar({ active }) {
+  const { logout } = useStore();
+
   return (
     <aside style={sidebarStyle} className="admin-sidebar">
-      <Link href="/" style={sidebarHeaderLinkStyle} className="admin-sidebar-header-link">
-        <div style={sidebarHeaderStyle} className="admin-sidebar-header">
-          <span style={sidebarTitleStyle}>Ginija Portal</span>
-          <span style={adminBadgeStyle}>Management System</span>
+      <div className="admin-sidebar-header-row">
+        <Link href="/" style={sidebarHeaderLinkStyle} className="admin-sidebar-header-link">
+          <div style={sidebarHeaderStyle} className="admin-sidebar-header">
+            <span className="desktop-title mobile-title" style={sidebarTitleStyle}>Admin Portal</span>
+          </div>
+        </Link>
+        <div className="admin-mobile-actions" style={{ display: 'none' }}>
+          <Link href="/" className="admin-mobile-btn">Store</Link>
+          <button onClick={logout} className="admin-mobile-btn outline">Sign Out</button>
         </div>
-      </Link>
+      </div>
       <nav style={sidebarNavStyle} className="admin-sidebar-nav">
         <Link 
           href="/admin/dashboard" 

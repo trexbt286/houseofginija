@@ -577,11 +577,11 @@ function AdminProductsContent() {
               <thead>
                 <tr>
                   <th style={thStyle}>Creation Details</th>
-                  <th style={thStyle}>Slug</th>
-                  <th style={thStyle}>Collection</th>
+                  <th style={thStyle} className="hide-on-mobile">Slug</th>
+                  <th style={thStyle} className="hide-on-mobile">Collection</th>
                   <th style={thStyle}>Price</th>
-                  <th style={thStyle}>Stock (Sum)</th>
-                  <th style={thStyle}>Status</th>
+                  <th style={thStyle} className="hide-on-mobile">Stock (Sum)</th>
+                  <th style={thStyle} className="hide-on-mobile">Status</th>
                   <th style={{ ...thStyle, width: '120px', textAlign: 'center' }}>Actions</th>
                 </tr>
               </thead>
@@ -601,17 +601,17 @@ function AdminProductsContent() {
                           </div>
                         </div>
                       </td>
-                      <td style={{ ...tdStyle, fontSize: '0.8rem', color: '#000000' }}>
+                      <td style={{ ...tdStyle, fontSize: '0.8rem', color: '#000000' }} className="hide-on-mobile">
                         {p.slug}
                       </td>
-                      <td style={tdStyle}>{p.collection_name}</td>
+                      <td style={tdStyle} className="hide-on-mobile">{p.collection_name}</td>
                       <td style={tdStyle}>₹{parseFloat(p.price).toLocaleString('en-IN')}</td>
-                      <td style={tdStyle}>
+                      <td style={tdStyle} className="hide-on-mobile">
                         <span style={totalStock <= 5 ? lowStockHighlightStyle : null}>
                           {totalStock} units
                         </span>
                       </td>
-                      <td style={tdStyle}>
+                      <td style={tdStyle} className="hide-on-mobile">
                         {isForcedOut ? (
                           <span style={statusBadgeForcedStyle}>Forced Out</span>
                         ) : totalStock === 0 ? (

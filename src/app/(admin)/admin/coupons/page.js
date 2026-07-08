@@ -285,9 +285,9 @@ export default function AdminCouponsPage() {
                 <tr>
                   <th style={thStyle}>Promo Code</th>
                   <th style={thStyle}>Discount</th>
-                  <th style={thStyle}>Expiry Date</th>
-                  <th style={thStyle}>Usages (Times used / Limit)</th>
-                  <th style={thStyle}>Campaign Status</th>
+                  <th style={thStyle} className="hide-on-mobile">Expiry Date</th>
+                  <th style={thStyle} className="hide-on-mobile">Usages (Times used / Limit)</th>
+                  <th style={thStyle} className="hide-on-mobile">Campaign Status</th>
                   <th style={{ ...thStyle, width: '120px', textAlign: 'center' }}>Actions</th>
                 </tr>
               </thead>
@@ -307,7 +307,7 @@ export default function AdminCouponsPage() {
                           ? `${parseFloat(c.discount_value)}% Off`
                           : `₹${parseFloat(c.discount_value).toLocaleString('en-IN')} Off`}
                       </td>
-                      <td style={tdStyle}>
+                      <td style={tdStyle} className="hide-on-mobile">
                         {new Date(c.expiry_date).toLocaleString('en-IN', {
                           year: 'numeric',
                           month: 'short',
@@ -317,11 +317,11 @@ export default function AdminCouponsPage() {
                         })}
                         {hasExpired && <span style={expiredLabelStyle}> (Expired)</span>}
                       </td>
-                      <td style={tdStyle}>
+                      <td style={tdStyle} className="hide-on-mobile">
                         {c.times_used} / {c.usage_limit}
                         {limitReached && <span style={expiredLabelStyle}> (Maxed)</span>}
                       </td>
-                      <td style={tdStyle}>
+                      <td style={tdStyle} className="hide-on-mobile">
                         {isActive ? (
                           <span style={statusBadgeActiveStyle}>Redeemable</span>
                         ) : (

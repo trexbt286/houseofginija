@@ -248,11 +248,11 @@ export default function AdminFlashSalePage() {
                 <thead>
                   <tr>
                     <th style={thStyle}>Product</th>
-                    <th style={thStyle}>Category</th>
-                    <th style={thStyle}>Original Price</th>
-                    <th style={thStyle}>Flash Sale Active</th>
+                    <th style={thStyle} className="hide-on-mobile">Category</th>
+                    <th style={thStyle} className="hide-on-mobile">Original Price</th>
+                    <th style={thStyle} className="hide-on-mobile">Flash Sale Active</th>
                     <th style={thStyle}>Flash Sale Price (₹)</th>
-                    <th style={thStyle}>Calculated Discount</th>
+                    <th style={thStyle} className="hide-on-mobile">Calculated Discount</th>
                     <th style={{ ...thStyle, textAlign: 'center' }}>Action</th>
                   </tr>
                 </thead>
@@ -281,9 +281,9 @@ export default function AdminFlashSalePage() {
                             <span style={productNameStyle}>{product.name}</span>
                           </div>
                         </td>
-                        <td style={tdStyle}>{product.collection_name || 'Unassigned'}</td>
-                        <td style={{ ...tdStyle, fontWeight: '600' }}>₹{parseFloat(product.price).toLocaleString('en-IN')}</td>
-                        <td style={tdStyle}>
+                        <td style={tdStyle} className="hide-on-mobile">{product.collection_name || 'Unassigned'}</td>
+                        <td style={{ ...tdStyle, fontWeight: '600' }} className="hide-on-mobile">₹{parseFloat(product.price).toLocaleString('en-IN')}</td>
+                        <td style={tdStyle} className="hide-on-mobile">
                           <input 
                             type="checkbox"
                             checked={edit.flash_sale}
@@ -304,7 +304,7 @@ export default function AdminFlashSalePage() {
                             }}
                           />
                         </td>
-                        <td style={tdStyle}>
+                        <td style={tdStyle} className="hide-on-mobile">
                           {discountBadge ? (
                             <span style={badgeStyle}>{discountBadge}</span>
                           ) : (

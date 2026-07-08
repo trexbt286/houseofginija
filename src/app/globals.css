@@ -2665,18 +2665,21 @@ body.cart-drawer-open .storefront-header {
     gap: 1.5rem !important;
   }
 
-  /* Admin Tables horizontal scrolling */
+  /* Admin Tables - no horizontal scroll, fit width */
   .admin-page-root table {
-    display: block !important;
+    display: table !important;
     width: 100% !important;
-    overflow-x: auto !important;
-    -webkit-overflow-scrolling: touch !important;
-    white-space: nowrap !important;
+    overflow-x: visible !important;
+    white-space: normal !important;
   }
   
   .admin-page-root th,
   .admin-page-root td {
-    white-space: nowrap !important;
+    white-space: normal !important;
+  }
+
+  .hide-on-mobile {
+    display: none !important;
   }
 }
 

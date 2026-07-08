@@ -147,11 +147,11 @@ export default function AdminOrdersPage() {
               <thead>
                 <tr>
                   <th style={thStyle}>Order ID</th>
-                  <th style={thStyle}>Customer Details</th>
-                  <th style={thStyle}>Line Items</th>
-                  <th style={thStyle}>Delivery Address</th>
+                  <th style={thStyle} className="hide-on-mobile">Customer Details</th>
+                  <th style={thStyle} className="hide-on-mobile">Line Items</th>
+                  <th style={thStyle} className="hide-on-mobile">Delivery Address</th>
                   <th style={thStyle}>Total Charge</th>
-                  <th style={thStyle}>Payment Status</th>
+                  <th style={thStyle} className="hide-on-mobile">Payment Status</th>
                   <th style={{ ...thStyle, width: '160px', textAlign: 'center' }}>Delivery State</th>
                 </tr>
               </thead>
@@ -161,7 +161,7 @@ export default function AdminOrdersPage() {
                   return (
                     <tr key={order.id} style={trStyle}>
                       <td style={{ ...tdStyle, fontWeight: '700' }}>#{order.id}</td>
-                      <td style={tdStyle}>
+                      <td style={tdStyle} className="hide-on-mobile">
                         <div>
                           <strong>{order.user_name || 'Anonymous Customer'}</strong>
                           <span style={emailLabelStyle}>{order.user_email || 'no-email'}</span>
@@ -174,7 +174,7 @@ export default function AdminOrdersPage() {
                           </span>
                         </div>
                       </td>
-                      <td style={{ ...tdStyle, maxWidth: '280px' }}>
+                      <td style={{ ...tdStyle, maxWidth: '280px' }} className="hide-on-mobile">
                         <div style={itemsListCellStyle}>
                           {order.items.map((item, idx) => (
                             <div key={idx} style={itemBadgeStyle}>
@@ -184,7 +184,7 @@ export default function AdminOrdersPage() {
                           ))}
                         </div>
                       </td>
-                      <td style={{ ...tdStyle, fontSize: '0.8rem', lineHeight: 1.4, maxWidth: '220px' }}>
+                      <td style={{ ...tdStyle, fontSize: '0.8rem', lineHeight: 1.4, maxWidth: '220px' }} className="hide-on-mobile">
                         {addr.line1}
                         {addr.line2 && `, ${addr.line2}`}
                         <br />
@@ -195,7 +195,7 @@ export default function AdminOrdersPage() {
                       <td style={{ ...tdStyle, fontWeight: '700' }}>
                         ₹{parseFloat(order.total).toLocaleString('en-IN')}
                       </td>
-                      <td style={tdStyle}>
+                      <td style={tdStyle} className="hide-on-mobile">
                         <span style={payStatusBadgeStyle(order.payment_status)}>
                           {order.payment_status}
                         </span>
