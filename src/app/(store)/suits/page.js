@@ -732,6 +732,10 @@ function CollectionsContent() {
       }
     });
     
+    // Sort to Suits -> Rings -> Necklaces -> Bracelets
+    const order = ['suits', 'rings', 'necklaces', 'bracelets'];
+    list.sort((a, b) => order.indexOf(a.id) - order.indexOf(b.id));
+    
     return list;
   };
 
@@ -1343,9 +1347,9 @@ function CollectionsContent() {
   );
 }
 
-export default function Collections() {
+export default function Suits() {
   return (
-    <Suspense fallback={<div>Loading Collections...</div>}>
+    <Suspense fallback={<div>Loading Suits...</div>}>
       <CollectionsContent />
     </Suspense>
   );
