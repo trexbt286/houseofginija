@@ -292,11 +292,16 @@ function CollectionsContent() {
       if (needsScrollJump) {
         requestAnimationFrame(() => {
           requestAnimationFrame(() => {
-            console.log('looking for:', targetId, 'found:', document.getElementById(targetId));
             const element = document.getElementById(targetId);
             if (element) {
+              let actualOffsetTop = 0;
+              let el = element;
+              while (el) {
+                actualOffsetTop += el.offsetTop;
+                el = el.offsetParent;
+              }
               const stickyNavHeight = 180;
-              window.scrollTo({ top: element.offsetTop - stickyNavHeight, behavior: 'instant' });
+              window.scrollTo(0, actualOffsetTop - stickyNavHeight);
               setActiveCategorySidebar(targetId);
               setIsPageVisible(true);
               router.replace('/collections', undefined, { shallow: true });
