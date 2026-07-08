@@ -2650,3 +2650,29 @@ body.cart-drawer-open .storefront-header {
     gap: 1.5rem !important;
   }
 }
+
+/* --- HOMEPAGE MOBILE UX SPACING & DIVIDER OVERRIDES --- */
+@media (max-width: 768px) {
+  .home-section {
+    padding-top: 3.2rem !important;
+    padding-bottom: 3.2rem !important;
+    border-bottom: 1px solid rgba(139, 119, 137, 0.12) !important;
+  }
+
+  /* Hero section has its own full height, no padding */
+  .home-hero-section {
+    padding-top: 0 !important;
+    padding-bottom: 0 !important;
+  }
+
+  /* Remove redundant divider div after collections section */
+  .home-collections-section + div {
+    display: none !important;
+  }
+
+  /* Last section has no bottom border */
+  .home-reviews-section {
+    border-bottom: none !important;
+    padding-bottom: 4.5rem !important; /* Extra bottom breathing room before footer */
+  }
+}

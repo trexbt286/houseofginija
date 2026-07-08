@@ -114,7 +114,7 @@ export default function Home() {
   return (
     <div style={pageContainerStyle}>
       {/* 1. HERO SECTION */}
-      <section style={heroSectionStyle}>
+      <section style={heroSectionStyle} className="home-section home-hero-section">
         <video
           src="/VID_20260702_111900_407_bsl~2.mp4"
           autoPlay
@@ -217,7 +217,7 @@ export default function Home() {
 
       {/* FLASH SALE SECTION */}
       {flashSaleEnabled && flashProducts.length > 0 && (
-        <section style={flashSaleSectionStyle}>
+        <section style={flashSaleSectionStyle} className="home-section home-flash-sale-section">
           <div className="container animate-fade-in">
             <div style={{ textAlign: 'center', marginBottom: '2.5rem' }} className="flash-sale-header-container">
               <h2 style={{ ...sectionTitleStyle, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.6rem' }}>
@@ -303,7 +303,7 @@ export default function Home() {
       )}
 
       {/* 3. FEATURED COLLECTIONS SECTION */}
-      <section style={collectionsSectionStyle}>
+      <section style={collectionsSectionStyle} className="home-section home-collections-section">
         <div className="container">
           <div style={sectionHeaderStyle}>
             <h2 style={sectionTitleStyle}>Signature Collections</h2>
@@ -360,7 +360,7 @@ export default function Home() {
       <div style={{ height: '1px', backgroundColor: 'rgba(139, 119, 137, 0.15)', width: '100%' }}></div>
 
       {/* 4. CLIENT REVIEWS SECTION */}
-      <section style={reviewsSectionStyle}>
+      <section style={reviewsSectionStyle} className="home-section home-reviews-section">
         <div className="container">
           <div style={sectionHeaderStyle}>
             <h2 style={sectionTitleStyle}>Reviews</h2>
