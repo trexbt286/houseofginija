@@ -2661,68 +2661,35 @@ body.cart-drawer-open .storefront-header {
     border-bottom: 1px solid rgba(139, 119, 137, 0.12) !important;
   }
 
-  /* Hero section has its own full height, no padding */
+  /* Hero section has its own full height, no padding, but has bottom border */
   .home-hero-section {
     padding-top: 0 !important;
     padding-bottom: 0 !important;
+    margin-top: 0 !important;
+    margin-bottom: 0 !important;
+    border-bottom: 1px solid rgba(139, 119, 137, 0.12) !important;
   }
 
-  /* Reduce feature strip padding */
-  .hero-value-props-bar {
-    padding: 10px 4px !important;
-    margin-bottom: 0.8rem !important;
-  }
-
-  /* Remove redundant divider div after collections section */
-  .home-collections-section + div {
-    display: none !important;
-  }
-
-  /* Last section has no bottom border */
-  .home-reviews-section {
-    border-bottom: none !important;
-    padding-bottom: 24px !important;
-  }
-
-  /* Footer Newsletter aggressive spacing reduction */
+  /* Newsletter section spacing and divider */
   .footer-newsletter {
     padding-top: 24px !important;
     padding-bottom: 24px !important;
     margin-top: 0 !important;
     margin-bottom: 0 !important;
+    border-top: none !important;
+    border-bottom: 1px solid rgba(139, 119, 137, 0.12) !important;
   }
 
-  /* Main Footer aggressive spacing reduction */
-  footer.storefront-footer {
-    padding: 24px 1rem 16px 1rem !important;
+  /* Footer spacing */
+  footer {
+    padding-top: 24px !important;
+    padding-bottom: 16px !important;
     margin-top: 0 !important;
+    border-top: none !important;
   }
 
-  /* Aggressively reduce spacing inside headings & subtitles on mobile homepage */
-  .home-section .flash-sale-header-container,
-  .home-section div[style*="marginBottom: '2.5rem'"],
-  .home-section div[style*="marginBottom: '2rem'"],
-  .home-section div[style*="margin-bottom: 2.5rem"],
-  .home-section div[style*="margin-bottom: 2rem"] {
-    margin-bottom: 16px !important;
-    margin-top: 0 !important;
-  }
-
-  .home-section h2 {
-    font-size: 1.5rem !important; /* Scale down heading font size slightly to fit nicely */
-  }
-
-  .home-section div[style*="width: '50px'"],
-  .home-section div[style*="width: 50px"] {
-    margin-top: 6px !important;
-    margin-bottom: 6px !important;
-  }
-
-  .home-section p[style*="marginTop: '0.8rem'"],
-  .home-section p[style*="margin-top: 0.8rem"],
-  .home-section p[style*="marginTop: '0.5rem'"],
-  .home-section p[style*="margin-top: 0.5rem"] {
-    margin-top: 6px !important;
-    font-size: 0.78rem !important;
+  /* Remove redundant divider div after collections section */
+  .home-collections-section + div {
+    display: none !important;
   }
 }
