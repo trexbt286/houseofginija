@@ -79,7 +79,7 @@ export default function Footer() {
       </div>
 
       {/* Main Footer with pink background */}
-      <footer style={footerStyle}>
+      <footer style={footerStyle} className="storefront-footer">
         <div style={containerStyle}>
           {/* Bottom: Footer Columns */}
           <div style={footerGridStyle} className="footer-grid">
