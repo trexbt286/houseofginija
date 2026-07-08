@@ -461,7 +461,9 @@ const heroOverlayStyle = {
   justifyContent: 'center',
   padding: '0 2rem',
   background: 'linear-gradient(135deg, rgba(28, 22, 28, 0.45) 0%, rgba(28, 22, 28, 0.7) 100%)',
-  position: 'relative',
+  position: 'absolute',
+  top: 0,
+  left: 0,
   zIndex: 1,
 };
 
