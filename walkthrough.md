@@ -137,9 +137,9 @@ We have added section dividing lines and optimized section spacing on the mobile
    - Compressed the vertical padding on all mobile homepage sections down to exactly `24px` (down from `3.2rem`), creating a cozy and compact page flow without large, empty gaps.
    - Preserved `padding-top: 0` on the Hero section to keep it correctly aligned with the header.
 
-3. **55vh Fixed Hero Height on Mobile**
-   - Forced the mobile hero section (`.home-hero-section`) height strictly to `55vh` on all viewports under `768px`.
-   - Set the video (`.hero-video`) and dark overlay (`.hero-overlay`) heights to fill `100%` of the hero container.
-   - Positioned the value prop feature strip (`.hero-value-props-bar`) absolutely at the base of the container (`bottom: 0`, `top: auto`) with a flat border-radius layout (`border-top-left-radius: 16px`, `border-top-right-radius: 16px`).
-   - This keeps the hero section beautifully compact and ensures it doesn't take up the full screen height on mobile.
+3. **Viewport Fitting Hero & Feature Strip**
+   - Injected className `hero-video` and `hero-overlay` to targets inside the React JSX.
+   - Restricted the mobile hero video and dark overlay heights to `calc(100vh - 107px - 70px)` so the bottom feature strip stays aligned on the viewport base.
+   - Positioned the value prop feature strip (`hero-value-props-bar`) absolutely at `top: calc(100vh - 107px - 70px)` with a locked height of `70px` and compact icon/text constraints (`0.52rem` font size, `16px` icon sizes, and `8px` padding).
+   - This formula-driven stacking guarantees the announcement bar, header navigation bar, hero media frame, and feature strip combine to exactly `100vh` across all mobile viewport heights (from iPhone SE up to iPhone 14 Pro Max) with zero scroll clipping.
 

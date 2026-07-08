@@ -2667,30 +2667,30 @@ body.cart-drawer-open .storefront-header {
     padding-bottom: 0 !important;
     margin-top: 0 !important;
     margin-bottom: 0 !important;
-    height: 55vh !important;
+    height: calc(100svh - 107px) !important;
     border-bottom: 1px solid rgba(139, 119, 137, 0.12) !important;
   }
 
   .home-hero-section .hero-video {
-    height: 100% !important;
+    height: calc(100svh - 107px - 70px) !important;
   }
 
   .home-hero-section .hero-overlay {
-    height: 100% !important;
+    height: calc(100svh - 107px - 70px) !important;
   }
 
   .home-hero-section .hero-value-props-bar {
     position: absolute !important;
-    bottom: 0 !important;
-    top: auto !important;
+    top: calc(100svh - 107px - 70px) !important;
+    bottom: auto !important;
     left: 0 !important;
     transform: none !important;
     width: 100% !important;
     height: 70px !important;
     padding: 8px 4px !important;
     border-radius: 0 !important;
-    border-top-left-radius: 16px !important;
-    border-top-right-radius: 16px !important;
+    border-top-left-radius: 0 !important;
+    border-top-right-radius: 0 !important;
     box-shadow: none !important;
     border-top: 1px solid rgba(139, 119, 137, 0.1) !important;
   }
