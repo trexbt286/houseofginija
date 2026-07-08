@@ -139,7 +139,7 @@ We have added section dividing lines and optimized section spacing on the mobile
 
 3. **Viewport Fitting Hero & Feature Strip**
    - Injected className `hero-video` and `hero-overlay` to targets inside the React JSX.
-   - Restricted the mobile hero video and dark overlay heights to `calc(100vh - 107px - 70px)` so the bottom feature strip stays aligned on the viewport base.
-   - Positioned the value prop feature strip (`hero-value-props-bar`) absolutely at `top: calc(100vh - 107px - 70px)` with a locked height of `70px` and compact icon/text constraints (`0.52rem` font size, `16px` icon sizes, and `8px` padding).
-   - This formula-driven stacking guarantees the announcement bar, header navigation bar, hero media frame, and feature strip combine to exactly `100vh` across all mobile viewport heights (from iPhone SE up to iPhone 14 Pro Max) with zero scroll clipping.
+   - Restricted the mobile hero video and dark overlay heights to `calc(100svh - 107px - 70px)` so the bottom feature strip stays aligned on the viewport base.
+   - Positioned the value prop feature strip (`hero-value-props-bar`) absolutely at `top: calc(100svh - 107px - 70px)` with a locked height of `70px` and compact icon/text constraints (`0.52rem` font size, `16px` icon sizes, and `8px` padding).
+   - This formula-driven stacking uses `svh` (Short Viewport Height) units to guarantee the announcement bar, header navigation bar, hero media frame, and feature strip combine to exactly fit the visible screen height across all mobile viewport heights (from iPhone SE up to iPhone 14 Pro Max) with zero scroll clipping, even when browser address/navigation bars are fully expanded.
 
