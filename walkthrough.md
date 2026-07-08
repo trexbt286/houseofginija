@@ -66,8 +66,36 @@ We have successfully restructured the mobile detailed view bottom sheet to match
 
 ---
 
-## Live Mobile Interface Preview
+## Flash Sale Manager & Homepage Row Implementation
 
-Here is the live screenshot of the updated mobile card layout with the ADD button actions footer visible, description text rendered fully, and the sibling switcher circles floating outside/below:
+We have successfully implemented the Flash Sale features, adding database columns, admin manager panel, conditional homepage slider row, and category feed priority sorting.
 
-![Restructured Swiggy Instamart Mobile Card Layout](/C:/Users/varun/.gemini/antigravity/brain/595ca06b-7507-4f99-bb0f-ce14dcdaa722/live_mobile_collections.png)
+### Changes Implemented
+
+1. **Database Schema & Migrations**
+   - Added `flash_sale` (BOOLEAN, default `false`) and `flash_sale_price` (DECIMAL) columns to `products` table.
+   - Created `settings` table to store global configurations like `flash_sale_enabled` (seeded as `false`).
+
+2. **Backend API Endpoints**
+   - Created `/api/admin/settings` endpoint supporting GET (fetch settings) and POST (save/update settings).
+   - Updated `/api/admin/products` PUT and POST routes to handle flash sale values, including server-side validation to reject flash sale prices that are greater than or equal to the original product price.
+   - Updated client products GET API (`/api/products`) to expose the flash sale fields and return the global `flash_sale_enabled` state to the client storefront.
+
+3. **Admin Flash Sale Manager Page**
+   - Implemented a dedicated management page at `/admin/flash-sale`.
+   - Admin can globally toggle the flash sale section.
+   - Admin can manage products individually: toggle flash sale active/inactive, input discount prices, view calculated discount percentages, and save row changes with instant inline validation feedback.
+   - Added a "Flash Sale Manager" tab to the admin sidebar links.
+
+4. **Homepage Flash Sale Row**
+   - Implemented a horizontal scrolling row layout on `/` that renders if the flash sale is enabled globally and at least one product has it active.
+   - Display responsive product cards (3 visible on desktop, 2 on tablet, and 1.2 swipeable on mobile).
+   - Display a pink (`#D98E9B`) discount percentage badge on the top left of each image and a heart wishlist button on the top right.
+   - Display bold brand-colored discount price next to strikethrough original price in grey.
+   - Added "SHOP ALL FLASH SALE →" button linking to `/collections`.
+
+5. **Category Prioritization & Detail Badges**
+   - Integrated custom sorting on `/collections`, `/suits`, and `/jewellery` pages so flash sale items appear at the very top of each category section (e.g. Rings section has flash sale rings rendered first).
+   - Added the pink (`#D98E9B`) discount percentage badge on product cards in all collection feeds, and moved the "Out of Stock" badge to the top right to prevent overlaps.
+   - Displayed the pink (`#D98E9B`) discount percentage badge on the product detail bottom sheet card and formatted the price display to show discounted and original prices next to each other.
+
