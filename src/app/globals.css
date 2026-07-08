@@ -1460,31 +1460,31 @@ body.scroll-locked {
     display: inline !important;
   }
 
-  header {
+  .storefront-header {
     background-color: #FBF0EC !important; /* Blush background */
     width: 100vw !important;
     max-width: 100vw !important;
   }
 
-  header > div {
+  .storefront-header > div {
     padding: 0 0.8rem !important; /* Shrunk padding on mobile to save space */
   }
 
   /* Shrank logo text and separator spacing */
-  header img[src*="brand_symbol_logo"] {
+  .storefront-header img[src*="brand_symbol_logo"] {
     height: 30px !important;
   }
 
-  header div[style*="width: 1px"] {
+  .storefront-header div[style*="width: 1px"] {
     margin: 0 0.2rem !important;
     height: 20px !important;
   }
 
-  header span[style*="font-size: 0.95rem"] {
+  .storefront-header span[style*="font-size: 0.95rem"] {
     font-size: 0.76rem !important; /* Shrunk title */
   }
 
-  header span[style*="font-size: 0.52rem"] {
+  .storefront-header span[style*="font-size: 0.52rem"] {
     font-size: 0.44rem !important; /* Shrunk subtitle tagline */
     letter-spacing: 0.12em !important;
   }
@@ -1817,7 +1817,7 @@ body.scroll-locked {
   overflow: hidden !important;
 }
 
-header {
+.storefront-header {
   position: fixed !important;
   top: 32px !important; /* Position directly below the 32px announcement bar */
   left: 0 !important;
@@ -1829,7 +1829,7 @@ header {
   box-sizing: border-box !important;
 }
 
-body.cart-drawer-open header {
+body.cart-drawer-open .storefront-header {
   z-index: 10000 !important;
 }
 

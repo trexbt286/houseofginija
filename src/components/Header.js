@@ -65,7 +65,7 @@ export default function Header() {
         </div>
       </div>
 
-      <header style={headerContainerStyle}>
+      <header className="storefront-header" style={headerContainerStyle}>
       {/* Brand Header */}
       <div style={brandHeaderStyle}>
         
