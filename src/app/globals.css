@@ -2519,8 +2519,49 @@ body.cart-drawer-open .storefront-header {
 }
 
 @media (max-width: 767px) {
+  .flash-sale-row-container {
+    gap: 0.6rem !important;
+    padding: 0.2rem 1rem !important;
+  }
   .flash-sale-card {
-    flex: 0 0 calc(85% - 0.5rem);
+    flex: 0 0 calc(33.333% - 0.4rem) !important;
+    min-width: 0 !important;
+  }
+  .flash-sale-card .flash-sale-img-container {
+    aspect-ratio: 1 !important;
+    border-radius: 8px !important;
+    margin-bottom: 0.4rem !important;
+  }
+  .flash-sale-card h3.flash-sale-product-name {
+    font-size: 0.68rem !important;
+    margin-bottom: 0.15rem !important;
+  }
+  .flash-sale-card .flash-sale-price-row {
+    font-size: 0.72rem !important;
+    gap: 0.3rem !important;
+  }
+  .flash-sale-card .flash-sale-discount-price {
+    font-size: 0.72rem !important;
+  }
+  .flash-sale-card .flash-sale-original-price {
+    font-size: 0.6rem !important;
+  }
+  .flash-sale-card button.flash-sale-wishlist-btn {
+    width: 22px !important;
+    height: 22px !important;
+    top: 6px !important;
+    right: 6px !important;
+  }
+  .flash-sale-card button.flash-sale-wishlist-btn svg {
+    width: 12px !important;
+    height: 12px !important;
+  }
+  .flash-sale-card .flash-sale-badge {
+    top: 6px !important;
+    left: 6px !important;
+    font-size: 0.55rem !important;
+    padding: 0.15rem 0.35rem !important;
+    border-radius: 3px !important;
   }
 }
 

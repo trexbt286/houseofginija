@@ -219,16 +219,20 @@ export default function Home() {
       {flashSaleEnabled && flashProducts.length > 0 && (
         <section style={flashSaleSectionStyle}>
           <div className="container animate-fade-in">
-            <div style={flashSaleHeaderStyle}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
-                {/* Flame Icon */}
-                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#B65C73" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" style={{ display: 'inline-block', verticalAlign: 'middle' }}>
-                  <path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z" />
-                </svg>
-                <span style={flashSaleTitleStyle}>FLASH SALE</span>
-                <span style={flashSaleTitleDividerStyle}>|</span>
-                <span style={flashSaleSubStyle}>Limited time. Exclusive pieces.</span>
-              </div>
+            <div style={{ textAlign: 'center', marginBottom: '2.5rem' }} className="flash-sale-header-container">
+              <h2 style={{ ...sectionTitleStyle, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.6rem' }}>
+                <span style={{ display: 'inline-block', filter: 'sepia(100%) hue-rotate(300deg) saturate(500%) brightness(100%)' }}>🔥</span>
+                Flash Sale
+              </h2>
+              <p style={{
+                fontSize: '0.85rem',
+                color: 'rgba(0, 0, 0, 0.5)',
+                fontWeight: '500',
+                marginTop: '0.5rem',
+              }}>
+                Limited time. Exclusive pieces.
+              </p>
+              <div style={sectionDividerLineStyle}></div>
             </div>
 
             <div className="flash-sale-row-container">
@@ -239,7 +243,7 @@ export default function Home() {
                 return (
                   <div key={product.id} className="flash-sale-card" style={{ position: 'relative' }}>
                     {/* Product Image Container */}
-                    <div style={flashSaleImgContainerStyle}>
+                    <div style={flashSaleImgContainerStyle} className="flash-sale-img-container">
                       <Link href={`/products/${product.slug}`}>
                         <img 
                           src={product.images?.[0] || '/icon.png'} 
@@ -249,7 +253,7 @@ export default function Home() {
                       </Link>
                       
                       {/* Discount Badge on Top Left */}
-                      <div style={flashSaleBadgeStyle}>
+                      <div style={flashSaleBadgeStyle} className="flash-sale-badge">
                         -{discountPct}%
                       </div>
 
@@ -257,6 +261,7 @@ export default function Home() {
                       <button 
                         onClick={() => toggleWishlist(product.id)}
                         style={flashSaleWishlistBtnStyle}
+                        className="flash-sale-wishlist-btn"
                       >
                         <svg 
                           width="18" 
@@ -275,11 +280,11 @@ export default function Home() {
 
                     {/* Product Info */}
                     <Link href={`/products/${product.slug}`} style={{ textDecoration: 'none', color: 'inherit' }}>
-                      <h3 style={flashSaleProductNameStyle}>{product.name}</h3>
+                      <h3 style={flashSaleProductNameStyle} className="flash-sale-product-name">{product.name}</h3>
                     </Link>
-                    <div style={flashSalePriceRowStyle}>
-                      <span style={flashSaleDiscountPriceStyle}>₹{parseFloat(product.flash_sale_price).toLocaleString('en-IN')}</span>
-                      <span style={flashSaleOriginalPriceStyle}>₹{parseFloat(product.price).toLocaleString('en-IN')}</span>
+                    <div style={flashSalePriceRowStyle} className="flash-sale-price-row">
+                      <span style={flashSaleDiscountPriceStyle} className="flash-sale-discount-price">₹{parseFloat(product.flash_sale_price).toLocaleString('en-IN')}</span>
+                      <span style={flashSaleOriginalPriceStyle} className="flash-sale-original-price">₹{parseFloat(product.price).toLocaleString('en-IN')}</span>
                     </div>
                   </div>
                 );
