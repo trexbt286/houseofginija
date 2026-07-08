@@ -292,6 +292,7 @@ function CollectionsContent() {
       if (needsScrollJump) {
         requestAnimationFrame(() => {
           requestAnimationFrame(() => {
+            console.log('looking for:', targetId, 'found:', document.getElementById(targetId));
             const element = document.getElementById(targetId);
             if (element) {
               const stickyNavHeight = 180;
