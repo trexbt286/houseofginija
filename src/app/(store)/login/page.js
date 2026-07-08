@@ -81,9 +81,36 @@ function LoginContent() {
   return (
     <div style={pageStyle} className="container animate-fade-in">
       <div style={cardStyle}>
+        {/* Back Button */}
+        <button
+          onClick={() => router.back()}
+          style={{
+            position: 'absolute',
+            top: '1.5rem',
+            left: '1.5rem',
+            background: 'none',
+            border: 'none',
+            cursor: 'pointer',
+            padding: '0.5rem',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            color: '#000000',
+            opacity: 0.8,
+            transition: 'opacity 0.2s ease',
+          }}
+          onMouseEnter={(e) => e.currentTarget.style.opacity = 0.5}
+          onMouseLeave={(e) => e.currentTarget.style.opacity = 0.8}
+        >
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+            <line x1="19" y1="12" x2="5" y2="12"></line>
+            <polyline points="12 19 5 12 12 5"></polyline>
+          </svg>
+        </button>
+
         <h1 style={titleStyle}>{loginType === 'admin' ? 'Admin Sign In' : 'Client Sign In'}</h1>
         <div style={dividerStyle}></div>
-
+ 
         {/* Tab Selector */}
         <div style={tabsContainerStyle}>
           <button
@@ -91,6 +118,10 @@ function LoginContent() {
             onClick={() => setLoginType('customer')}
             style={loginType === 'customer' ? activeTabStyle : tabStyle}
           >
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+              <circle cx="12" cy="7" r="4"></circle>
+            </svg>
             Customer
           </button>
           <button
@@ -98,73 +129,86 @@ function LoginContent() {
             onClick={() => setLoginType('admin')}
             style={loginType === 'admin' ? activeTabStyle : tabStyle}
           >
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+            </svg>
             Admin
           </button>
         </div>
-
+ 
         <form onSubmit={handleSubmit} style={formStyle}>
           <div style={formGroupStyle}>
             <label style={labelStyle}>
               {loginType === 'admin' ? 'Administrator Email' : 'Email Address'}
             </label>
-            <input
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              style={inputStyle}
-              required
-              placeholder="Enter email address"
-              disabled={formLoading}
-            />
+            <div style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="rgba(0, 0, 0, 0.4)" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" style={{ position: 'absolute', left: '1rem' }}>
+                <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+                <polyline points="22,6 12,13 2,6"></polyline>
+              </svg>
+              <input
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                style={{ ...inputStyle, width: '100%', paddingLeft: '2.8rem', boxSizing: 'border-box' }}
+                required
+                placeholder="Enter email address"
+                disabled={formLoading}
+              />
+            </div>
           </div>
-
+ 
           <div style={formGroupStyle}>
             <label style={labelStyle}>
               {loginType === 'admin' ? 'Security Password' : 'Password'}
             </label>
             <div style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
-               <input
-                 type={showPassword ? 'text' : 'password'}
-                 value={password}
-                 onChange={(e) => setPassword(e.target.value)}
-                 style={{ ...inputStyle, width: '100%', paddingRight: '2.5rem', boxSizing: 'border-box' }}
-                 required
-                 placeholder="Enter password"
-                 disabled={formLoading}
-               />
-               <button
-                 type="button"
-                 onClick={() => setShowPassword(!showPassword)}
-                 style={{
-                   position: 'absolute',
-                   right: '0.75rem',
-                   background: 'none',
-                   border: 'none',
-                   cursor: 'pointer',
-                   color: 'rgba(0, 0, 0, 0.4)',
-                   padding: 0,
-                   display: 'flex',
-                   alignItems: 'center',
-                   justifyContent: 'center',
-                 }}
-               >
-                 {showPassword ? (
-                   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                     <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path>
-                     <line x1="1" y1="1" x2="23" y2="23"></line>
-                   </svg>
-                 ) : (
-                   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                     <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
-                     <circle cx="12" cy="12" r="3"></circle>
-                   </svg>
-                 )}
-               </button>
-             </div>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="rgba(0, 0, 0, 0.4)" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" style={{ position: 'absolute', left: '1rem' }}>
+                <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+              </svg>
+              <input
+                type={showPassword ? 'text' : 'password'}
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                style={{ ...inputStyle, width: '100%', paddingLeft: '2.8rem', paddingRight: '2.8rem', boxSizing: 'border-box' }}
+                required
+                placeholder="Enter password"
+                disabled={formLoading}
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                style={{
+                  position: 'absolute',
+                  right: '1rem',
+                  background: 'none',
+                  border: 'none',
+                  cursor: 'pointer',
+                  color: 'rgba(0, 0, 0, 0.4)',
+                  padding: 0,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}
+              >
+                {showPassword ? (
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path>
+                    <line x1="1" y1="1" x2="23" y2="23"></line>
+                  </svg>
+                ) : (
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                    <circle cx="12" cy="12" r="3"></circle>
+                  </svg>
+                )}
+              </button>
+            </div>
           </div>
-
+ 
           {formError && <p style={errorStyle}>{formError}</p>}
-
+ 
           <button
             type="submit"
             style={formLoading ? disabledBtnStyle : btnStyle}
@@ -176,6 +220,13 @@ function LoginContent() {
           </button>
         </form>
 
+        {/* OR Visual Divider */}
+        <div style={{ display: 'flex', alignItems: 'center', margin: '1.8rem 0 1.2rem 0', width: '100%' }}>
+          <div style={{ flex: 1, height: '1px', backgroundColor: 'rgba(139, 119, 137, 0.15)' }}></div>
+          <span style={{ padding: '0 1rem', fontSize: '0.7rem', color: '#D98E9B', fontWeight: '700', letterSpacing: '0.05em' }}>OR</span>
+          <div style={{ flex: 1, height: '1px', backgroundColor: 'rgba(139, 119, 137, 0.15)' }}></div>
+        </div>
+ 
         {loginType === 'customer' && (
           <div style={footerStyle}>
             <span>New client to our house?</span>
@@ -184,6 +235,55 @@ function LoginContent() {
             </Link>
           </div>
         )}
+      </div>
+
+      {/* Value Props Bar at the Bottom */}
+      <div style={{
+        display: 'flex',
+        justifyContent: 'space-around',
+        alignItems: 'center',
+        width: '100%',
+        maxWidth: '450px',
+        marginTop: '2.5rem',
+        paddingTop: '1.5rem',
+        borderTop: '1px solid rgba(139, 119, 137, 0.15)',
+        boxSizing: 'border-box',
+      }}>
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.4rem', textAlign: 'center' }}>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#C16C7D" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+            <polyline points="9 11 11 13 15 9"></polyline>
+          </svg>
+          <div style={{ fontSize: '0.62rem', textTransform: 'uppercase', letterSpacing: '0.08em', fontWeight: '700', color: 'rgba(0, 0, 0, 0.6)', lineHeight: 1.3 }}>
+            <span>Authentic</span>
+            <br />
+            <span>Products</span>
+          </div>
+        </div>
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.4rem', textAlign: 'center' }}>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#C16C7D" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+            <rect x="1" y="3" width="15" height="13"></rect>
+            <polygon points="16 8 20 8 23 11 23 16 16 16 16 8"></polygon>
+            <circle cx="5.5" cy="18.5" r="2.5"></circle>
+            <circle cx="18.5" cy="18.5" r="2.5"></circle>
+          </svg>
+          <div style={{ fontSize: '0.62rem', textTransform: 'uppercase', letterSpacing: '0.08em', fontWeight: '700', color: 'rgba(0, 0, 0, 0.6)', lineHeight: 1.3 }}>
+            <span>Express</span>
+            <br />
+            <span>Shipping</span>
+          </div>
+        </div>
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.4rem', textAlign: 'center' }}>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#C16C7D" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+            <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+          </svg>
+          <div style={{ fontSize: '0.62rem', textTransform: 'uppercase', letterSpacing: '0.08em', fontWeight: '700', color: 'rgba(0, 0, 0, 0.6)', lineHeight: 1.3 }}>
+            <span>Secure</span>
+            <br />
+            <span>Payments</span>
+          </div>
+        </div>
       </div>
     </div>
   );
@@ -199,12 +299,14 @@ export default function LoginPage() {
 
 // Inline styles for Login Page
 const pageStyle = {
-  paddingTop: '5rem',
-  paddingBottom: '7rem',
-  backgroundColor: '#FFFFFF',
+  paddingTop: '6rem',
+  paddingBottom: '8rem',
+  background: 'linear-gradient(135deg, #FBF0EC 0%, #F5E5E8 100%)',
   display: 'flex',
+  flexDirection: 'column',
   justifyContent: 'center',
   alignItems: 'center',
+  minHeight: '85vh',
 };
 
 const loadingContainerStyle = {
@@ -216,36 +318,28 @@ const loadingContainerStyle = {
 };
 
 const cardStyle = {
+  position: 'relative',
   maxWidth: '450px',
   width: '100%',
   backgroundColor: '#FFFFFF',
-  padding: '3rem 2.5rem',
-  borderRadius: '8px',
-  boxShadow: 'var(--shadow-md)',
-  border: '1px solid rgba(139, 119, 137, 0.12)',
+  padding: '3.5rem 2.5rem 3rem 2.5rem',
+  borderRadius: '16px',
+  boxShadow: '0 20px 40px rgba(74, 52, 57, 0.05)',
+  border: '1px solid rgba(139, 119, 137, 0.08)',
   textAlign: 'center',
-};
-
-const subtitleStyle = {
-  fontSize: '0.72rem',
-  textTransform: 'uppercase',
-  letterSpacing: '0.15em',
-  color: '#D98E9B',
-  fontWeight: '600',
-  display: 'block',
-  marginBottom: '0.5rem',
+  boxSizing: 'border-box',
 };
 
 const titleStyle = {
   fontFamily: 'var(--font-serif)',
   fontSize: '2rem',
-  color: '#D98E9B',
+  color: '#B65C73',
   fontWeight: '400',
 };
 
 const dividerStyle = {
-  width: '50px',
-  height: '1px',
+  width: '45px',
+  height: '1.5px',
   backgroundColor: '#D98E9B',
   margin: '1.2rem auto 2.2rem auto',
 };
@@ -253,7 +347,7 @@ const dividerStyle = {
 const formStyle = {
   display: 'flex',
   flexDirection: 'column',
-  gap: '1.2rem',
+  gap: '1.4rem',
   textAlign: 'left',
 };
 
@@ -272,9 +366,12 @@ const labelStyle = {
 };
 
 const inputStyle = {
-  padding: '0.75rem',
-  border: '1px solid rgba(139, 119, 137, 0.25)',
-  borderRadius: '4px',
+  padding: '0.85rem 1rem',
+  border: '1px solid rgba(139, 119, 137, 0.2)',
+  borderRadius: '8px',
+  fontSize: '0.9rem',
+  outline: 'none',
+  transition: 'border-color 0.2s ease',
 };
 
 const errorStyle = {
@@ -282,20 +379,24 @@ const errorStyle = {
   fontSize: '0.8rem',
   textAlign: 'center',
   marginTop: '0.4rem',
+  fontWeight: '600',
 };
 
 const btnStyle = {
   width: '100%',
-  backgroundColor: '#D98E9B',
-  color: '#000000',
-  padding: '0.9rem',
+  backgroundColor: '#C16C7D',
+  color: '#FFFFFF',
+  padding: '0.95rem',
   fontSize: '0.85rem',
-  fontWeight: '600',
+  fontWeight: '700',
   textTransform: 'uppercase',
-  letterSpacing: '0.1em',
-  borderRadius: '4px',
-  marginTop: '0.5rem',
-  boxShadow: 'var(--shadow-sm)',
+  letterSpacing: '0.12em',
+  borderRadius: '8px',
+  marginTop: '0.8rem',
+  border: 'none',
+  cursor: 'pointer',
+  transition: 'all 0.3s ease',
+  boxShadow: '0 4px 12px rgba(193, 108, 125, 0.15)',
 };
 
 const disabledBtnStyle = {
@@ -312,40 +413,46 @@ const footerStyle = {
   gap: '0.4rem',
   fontSize: '0.8rem',
   color: '#000000',
-  marginTop: '1.8rem',
+  marginTop: '1.2rem',
 };
 
 const linkStyle = {
-  color: '#000000',
-  fontWeight: '600',
+  color: '#C16C7D',
+  fontWeight: '700',
   textDecoration: 'underline',
 };
 
 const tabsContainerStyle = {
   display: 'flex',
-  backgroundColor: '#F6DDE2', // Blush Cream background
-  borderRadius: '4px',
+  backgroundColor: '#FBF0EC',
+  borderRadius: '30px',
   padding: '4px',
   marginBottom: '2rem',
-  border: '1px solid rgba(139, 119, 137, 0.12)',
+  border: '1px solid rgba(139, 119, 137, 0.08)',
 };
 
 const tabStyle = {
   flex: 1,
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  gap: '0.5rem',
   padding: '0.6rem 1rem',
-  fontSize: '0.78rem',
-  fontWeight: '600',
+  borderRadius: '26px',
+  border: 'none',
+  backgroundColor: 'transparent',
+  color: 'rgba(0, 0, 0, 0.6)',
+  fontSize: '0.75rem',
+  fontWeight: '700',
   textTransform: 'uppercase',
   letterSpacing: '0.08em',
-  borderRadius: '2px',
-  color: '#000000',
-  backgroundColor: 'transparent',
   cursor: 'pointer',
+  transition: 'all 0.3s ease',
 };
 
 const activeTabStyle = {
   ...tabStyle,
-  backgroundColor: '#D98E9B', // Deep Plum/Pink
+  backgroundColor: '#C16C7D',
   color: '#FFFFFF',
-  boxShadow: 'var(--shadow-sm)',
+  boxShadow: '0 4px 10px rgba(193, 108, 125, 0.2)',
 };
