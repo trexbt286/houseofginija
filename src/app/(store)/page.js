@@ -221,18 +221,20 @@ export default function Home() {
           <div className="container animate-fade-in">
             <div style={{ textAlign: 'center', marginBottom: '2.5rem' }} className="flash-sale-header-container">
               <h2 style={{ ...sectionTitleStyle, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.6rem' }}>
-                <span style={{ display: 'inline-block', filter: 'sepia(100%) hue-rotate(300deg) saturate(500%) brightness(100%)' }}>🔥</span>
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="#D98E9B" stroke="none" style={{ display: 'inline-block', verticalAlign: 'middle' }}>
+                  <path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z" />
+                </svg>
                 Flash Sale
               </h2>
+              <div style={sectionDividerLineStyle}></div>
               <p style={{
                 fontSize: '0.85rem',
                 color: 'rgba(0, 0, 0, 0.5)',
                 fontWeight: '500',
-                marginTop: '0.5rem',
+                marginTop: '0.8rem',
               }}>
                 Limited time. Exclusive pieces.
               </p>
-              <div style={sectionDividerLineStyle}></div>
             </div>
 
             <div className="flash-sale-row-container">
@@ -895,8 +897,8 @@ const lightboxImgStyle = {
 };
 
 const flashSaleSectionStyle = {
-  padding: '3rem 0',
-  backgroundColor: '#FFFFFF',
+  padding: '6rem 0',
+  backgroundColor: '#FBF0EC',
   borderBottom: '1px solid rgba(139, 119, 137, 0.1)',
 };
 
