@@ -98,4 +98,23 @@ We have successfully implemented the Flash Sale features, adding database column
    - Integrated custom sorting on `/collections`, `/suits`, and `/jewellery` pages so flash sale items appear at the very top of each category section (e.g. Rings section has flash sale rings rendered first).
    - Added the pink (`#D98E9B`) discount percentage badge on product cards in all collection feeds, and moved the "Out of Stock" badge to the top right to prevent overlaps.
    - Displayed the pink (`#D98E9B`) discount percentage badge on the product detail bottom sheet card and formatted the price display to show discounted and original prices next to each other.
+---
 
+## Admin Portal Mobile Optimizations
+
+We have optimized the entire admin portal for responsive viewing on tablets and mobile screen sizes.
+
+### Changes Implemented
+
+1. **Flexible Sidebar Stacking & Layouts**
+   - Wrapped the entire admin page structure inside the `.admin-page-root` layout class.
+   - On mobile viewports (widths <= 768px), the layout automatically shifts to a vertical column format (`flex-direction: column`).
+   - The admin sidebar turns into a header bar at the top, displaying the portal title and a horizontal scrolling row for the 5 navigation tabs. 
+   - Hid the sidebar brand footer on mobile screens to preserve vertical space.
+
+2. **Form Layout Stacking**
+   - Enforced vertical stacking on all flex form rows (`formRowStyle`) on mobile viewports so inputs don't squash.
+
+3. **Split Grid & Panel Adjustments**
+   - Configured split columns (such as the Visits trend chart and Inventory stock alerts cards on the dashboard page) to stack vertically on mobile.
+   - Main content padding is adjusted to a comfortable `1.5rem 1rem` on mobile.
