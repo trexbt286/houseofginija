@@ -277,9 +277,9 @@ function CollectionsContent() {
     setActiveProduct(null);
   }, [colParam, searchParam]);
 
-  // Handle native hash scroll timing fallback when products finish loading asynchronously
+  // Handle native hash scroll timing fallback when products and collections finish loading asynchronously
   useEffect(() => {
-    if (!loading && typeof window !== 'undefined') {
+    if (!loading && collections.length > 0 && typeof window !== 'undefined') {
       const hash = window.location.hash;
       if (hash) {
         const id = hash.replace('#', '');
@@ -289,10 +289,10 @@ function CollectionsContent() {
             el.scrollIntoView({ behavior: 'auto', block: 'start' });
             setActiveCategorySidebar(id);
           }
-        }, 300);
+        }, 150);
       }
     }
-  }, [loading]);
+  }, [loading, collections]);
 
 
 
