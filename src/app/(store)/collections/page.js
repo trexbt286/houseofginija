@@ -290,21 +290,20 @@ function CollectionsContent() {
       if (targetId === 'necklace') targetId = 'necklaces';
       
       if (needsScrollJump) {
-        setTimeout(() => {
-          const element = document.getElementById(targetId);
-          if (element) {
-            const stickyNavHeight = 180;
-            document.documentElement.scrollTop = element.offsetTop - stickyNavHeight;
-            if (document.documentElement.scrollTop === 0) {
-              window.scrollTo({ top: element.offsetTop - stickyNavHeight });
+        requestAnimationFrame(() => {
+          requestAnimationFrame(() => {
+            const element = document.getElementById(targetId);
+            if (element) {
+              const stickyNavHeight = 180;
+              window.scrollTo({ top: element.offsetTop - stickyNavHeight, behavior: 'instant' });
+              setActiveCategorySidebar(targetId);
+              setIsPageVisible(true);
+              router.replace('/collections', undefined, { shallow: true });
+            } else {
+              setIsPageVisible(true);
             }
-            setActiveCategorySidebar(targetId);
-            setIsPageVisible(true);
-            router.replace('/collections', undefined, { shallow: true });
-          } else {
-            setIsPageVisible(true);
-          }
-        }, 50);
+          });
+        });
       } else {
         router.replace('/collections', undefined, { shallow: true });
       }
