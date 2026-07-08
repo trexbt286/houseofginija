@@ -134,6 +134,12 @@ We have added section dividing lines and optimized section spacing on the mobile
    - Deactivated the redundant standalone separator divider div between Collections and Reviews on mobile.
 
 2. **Compressed Vertical Spacing**
-   - Compressed the vertical padding on all mobile homepage sections down to exactly `3.2rem 1rem` (down from `6rem`), creating a cozy and compact page flow without large, empty gaps.
+   - Compressed the vertical padding on all mobile homepage sections down to exactly `24px` (down from `3.2rem`), creating a cozy and compact page flow without large, empty gaps.
    - Preserved `padding-top: 0` on the Hero section to keep it correctly aligned with the header.
+
+3. **Viewport Fitting Hero & Feature Strip**
+   - Injected className `hero-video` and `hero-overlay` to targets inside the React JSX.
+   - Restricted the mobile hero video and dark overlay heights to `calc(100vh - 107px - 70px)` so the bottom feature strip stays aligned on the viewport base.
+   - Positioned the value prop feature strip (`hero-value-props-bar`) absolutely at `top: calc(100vh - 107px - 70px)` with a locked height of `70px` and compact icon/text constraints (`0.52rem` font size, `16px` icon sizes, and `8px` padding).
+   - This formula-driven stacking guarantees the announcement bar, header navigation bar, hero media frame, and feature strip combine to exactly `100vh` across all mobile viewport heights (from iPhone SE up to iPhone 14 Pro Max) with zero scroll clipping.
 
