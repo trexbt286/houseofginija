@@ -2487,14 +2487,3 @@ body.cart-drawer-open header {
 .mobile-sheet-dismiss-btn {
   display: none;
 }
-
-/* Category section anchor offsets for hash link scrolls */
-.blinkit-feed-section {
-  scroll-margin-top: 107px;
-}
-
-@media (max-width: 768px) {
-  .blinkit-feed-section {
-    scroll-margin-top: 159px !important;
-  }
-}
