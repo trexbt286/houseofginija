@@ -2728,23 +2728,53 @@ body.cart-drawer-open .storefront-header {
   /* Give the first column (usually image + name) more room to prevent overflow */
   .admin-page-root th:first-child,
   .admin-page-root td:first-child {
-    width: 45% !important;
+    width: 48% !important;
+  }
+  
+  .admin-page-root th:nth-child(4), /* Price */
+  .admin-page-root td:nth-child(4) {
+    width: 22% !important;
+  }
+
+  .admin-page-root th:last-child,
+  .admin-page-root td:last-child {
+    width: 30% !important;
+  }
+
+  /* Specific overrides for Product Info Cell to keep text on one line */
+  .admin-page-root td > div[style*="align-items: center"] {
+    gap: 0.3rem !important; /* reduce gap between image and text */
+    flex-wrap: nowrap !important;
+  }
+  
+  .admin-page-root td img {
+    width: 35px !important;
+    height: 35px !important;
+  }
+  
+  .admin-page-root td strong,
+  .admin-page-root td span {
+    font-size: 0.65rem !important;
+    white-space: nowrap !important; /* Force words into a single line */
   }
 
   /* Ensure flex containers inside td (like action groups) can wrap their contents */
-  .admin-page-root td > div {
-    flex-wrap: wrap !important;
-    gap: 0.4rem !important;
+  .admin-page-root td > div:not([style*="align-items: center"]) {
+    flex-wrap: nowrap !important;
+    flex-direction: row !important;
+    gap: 0.3rem !important;
   }
 
   .admin-page-root td button,
   .admin-page-root td a {
-    font-size: 0.6rem !important;
-    padding: 0.3rem !important;
+    font-size: 0.55rem !important;
+    padding: 0.3rem 0.2rem !important;
     margin: 0 !important;
-    width: 100% !important; /* force them to stack if wrapped */
+    width: auto !important; /* let them sit side-by-side if there's room */
+    flex: 1 !important; /* distribute space equally */
     box-sizing: border-box !important;
     text-align: center !important;
+    white-space: nowrap !important;
   }
 
   .hide-on-mobile {
