@@ -2690,10 +2690,50 @@ body.cart-drawer-open .storefront-header {
   /* Admin Forms stacking */
   .admin-page-root form > div {
     flex-direction: column !important;
-    gap: 1rem !important;
+    gap: 0.6rem !important;
   }
-  
-  /* Split Grids stacking */
+
+  /* Compact the form container itself */
+  .admin-page-root section {
+    padding: 1rem !important;
+    margin-bottom: 1rem !important;
+  }
+
+  /* Form header row — keep title and close button on one line */
+  .admin-page-root section > div:first-child {
+    margin-bottom: 1rem !important;
+    flex-direction: row !important;
+    align-items: center !important;
+  }
+
+  /* Form title — shrink font */
+  .admin-page-root section h2,
+  .admin-page-root section h3 {
+    font-size: 1.1rem !important;
+  }
+
+  /* Form — reduce gap between fields */
+  .admin-page-root form {
+    gap: 0.8rem !important;
+  }
+
+  /* Each form group — tighter */
+  .admin-page-root form label {
+    font-size: 0.65rem !important;
+    margin-bottom: 0.2rem !important;
+  }
+
+  /* Inputs, selects, textareas — less padding and shorter height */
+  .admin-page-root form input,
+  .admin-page-root form select,
+  .admin-page-root form textarea {
+    padding: 0.5rem 0.6rem !important;
+    font-size: 0.75rem !important;
+  }
+
+  .admin-page-root form textarea {
+    min-height: 70px !important;
+  }
   .admin-page-root .admin-split-grid {
     grid-template-columns: 1fr !important;
     gap: 1.5rem !important;

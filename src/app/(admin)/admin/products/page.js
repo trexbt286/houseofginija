@@ -39,11 +39,6 @@ function AdminProductsContent() {
   const [uploadingImage, setUploadingImage] = useState(false);
   const [imageError, setImageError] = useState('');
 
-  // Preview bottom sheet state (reuses collections page bottom sheet)
-  const [previewProduct, setPreviewProduct] = useState(null);
-  const [previewImage, setPreviewImage] = useState('');
-  const [previewSize, setPreviewSize] = useState('');
-
   const sizesOptions = ['XS', 'S', 'M', 'L', 'XL', 'XXL', 'One Size'];
   const colorsOptions = [
     'Champagne Pink',
@@ -236,14 +231,6 @@ function AdminProductsContent() {
     setIsFormOpen(true);
   };
 
-  const openPreviewSheet = (product) => {
-    setPreviewProduct(product);
-    setPreviewImage(product.images && product.images.length > 0 ? product.images[0] : '/placeholder.jpg');
-    const vars = product.variants || [];
-    const inStockVar = vars.find(v => v.stock > 0);
-    setPreviewSize(inStockVar ? inStockVar.size || '' : vars.length > 0 ? vars[0].size || '' : '');
-  };
-
   const handleFormSubmit = async (e) => {
     e.preventDefault();
     setError('');
@@ -319,163 +306,6 @@ function AdminProductsContent() {
 
   return (
     <div style={dashboardLayoutStyle} className="admin-page-root animate-fade-in">
-
-      {/* ===== PRODUCT PREVIEW BOTTOM SHEET (reuses collections page UI) ===== */}
-      {previewProduct && (
-        <>
-          {/* Backdrop */}
-          <div
-            className="mobile-bottom-sheet-backdrop"
-            onClick={() => setPreviewProduct(null)}
-          >
-            <div className="mobile-bottom-sheet-backdrop-inner" />
-          </div>
-
-          {/* Floating card */}
-          <div className="mobile-sheet-wrapper-container animate-fade-in">
-            <div className="container detail-container-box" style={previewContainerStyle} onClick={(e) => e.stopPropagation()}>
-              {/* Drag handle */}
-              <div className="mobile-sheet-drag-handle" />
-
-              {/* Header row */}
-              <div style={previewHeaderStyle} className="detail-header-mobile-overlay">
-                <button onClick={() => setPreviewProduct(null)} style={previewBackBtnStyle} className="desktop-back-btn detail-back-btn-overlay">
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.0" strokeLinecap="round" strokeLinejoin="round" style={{ marginRight: '8px' }}>
-                    <line x1="19" y1="12" x2="5" y2="12"></line>
-                    <polyline points="12 19 5 12 12 5"></polyline>
-                  </svg>
-                  Back to Products
-                </button>
-                {/* Mobile dismiss chevron */}
-                <button onClick={() => setPreviewProduct(null)} className="mobile-sheet-dismiss-btn">
-                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#000000" strokeWidth="2.0" strokeLinecap="round" strokeLinejoin="round">
-                    <polyline points="6 9 12 15 18 9"></polyline>
-                  </svg>
-                </button>
-              </div>
-
-              {/* Grid: image + details */}
-              <div className="detail-preview-grid">
-                {/* Image */}
-                <div style={{ width: '100%', maxHeight: '430px', overflow: 'hidden', borderRadius: '8px', border: '1px solid rgba(139,119,137,0.1)', backgroundColor: '#FBF0EC', position: 'relative' }} className="detail-main-img-wrapper">
-                  <img
-                    src={previewImage}
-                    alt={previewProduct.name}
-                    style={{ width: '100%', height: '100%', maxHeight: '430px', objectFit: 'cover', display: 'block' }}
-                    className="detail-main-img"
-                  />
-                  {previewProduct.flash_sale && previewProduct.flash_sale_price && (
-                    <div style={{ position: 'absolute', top: '16px', left: '16px', backgroundColor: '#D98E9B', color: '#FFFFFF', padding: '6px 12px', borderRadius: '6px', fontSize: '0.8rem', fontWeight: '700', textTransform: 'uppercase', zIndex: 10 }}>
-                      -{Math.round(((parseFloat(previewProduct.price) - parseFloat(previewProduct.flash_sale_price)) / parseFloat(previewProduct.price)) * 100)}%
-                    </div>
-                  )}
-                </div>
-
-                {/* Details */}
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
-                  <span style={{ fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.12em', color: '#D98E9B', fontWeight: '700' }} className="detail-collection-label">{previewProduct.collection_name}</span>
-                  <h1 style={{ fontSize: '1.8rem', fontFamily: 'var(--font-serif)', color: '#000000', fontWeight: '400', lineHeight: '1.15', margin: '0.1rem 0' }} className="detail-product-name">{previewProduct.name}</h1>
-                  {previewProduct.flash_sale && previewProduct.flash_sale_price ? (
-                    <p style={{ fontSize: '1.4rem', color: '#000000', fontWeight: '600' }} className="detail-product-price">
-                      <span style={{ color: '#B65C73', fontWeight: '700', marginRight: '0.8rem' }}>₹{parseFloat(previewProduct.flash_sale_price).toLocaleString('en-IN')}</span>
-                      <span style={{ color: 'rgba(0,0,0,0.4)', textDecoration: 'line-through', fontSize: '1.1rem', fontWeight: '400' }}>₹{parseFloat(previewProduct.price).toLocaleString('en-IN')}</span>
-                    </p>
-                  ) : (
-                    <p style={{ fontSize: '1.4rem', color: '#000000', fontWeight: '600' }} className="detail-product-price">₹{parseFloat(previewProduct.price).toLocaleString('en-IN')}</p>
-                  )}
-                  <div style={{ height: '1px', backgroundColor: 'rgba(139,119,137,0.15)', margin: '0.2rem 0' }} className="detail-divider" />
-                  <p style={{ fontSize: '0.88rem', lineHeight: '1.5', color: 'rgba(0,0,0,0.7)' }} className="detail-product-desc">
-                    {(previewProduct.description && previewProduct.description.trim()) ? previewProduct.description.trim() : 'Exclusive luxury item, crafted from premium archival coutures.'}
-                  </p>
-
-                  {/* Stock indicator */}
-                  <div className="detail-stock-warning" style={{ marginTop: '0.5rem', marginBottom: '1rem', fontSize: '0.85rem', color: '#B8860B', fontWeight: '600' }}>
-                    {(() => {
-                      const totalStock = (previewProduct.variants || []).reduce((s, v) => s + v.stock, 0);
-                      return totalStock <= 3
-                        ? <span style={{ color: '#D9534F' }}>⚠️ Only {totalStock} left in our vaults!</span>
-                        : <span>Remaining stock: {totalStock} available</span>;
-                    })()}
-                  </div>
-
-                  {/* Sizes */}
-                  {previewProduct.variants && previewProduct.variants.some(v => v.size) && (() => {
-                    const hasClothingSizes = previewProduct.variants.some(v => ['S','M','L','XL','XXL'].includes((v.size || '').toUpperCase()));
-                    const sizesToRender = hasClothingSizes
-                      ? ['S','M','L','XL','XXL']
-                      : [...new Set(previewProduct.variants.map(v => v.size))].filter(Boolean);
-                    return (
-                      <div style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem', marginTop: '0.2rem' }} className="detail-option-group">
-                        <h4 style={{ fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.08em', color: '#D98E9B', fontWeight: '700' }} className="detail-option-title">Select Size</h4>
-                        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.6rem' }} className="detail-sizes-row">
-                          {sizesToRender.map(size => {
-                            const variantForSize = previewProduct.variants.find(v => (v.size || '').toUpperCase() === size.toUpperCase());
-                            const hasStock = variantForSize && variantForSize.stock > 0;
-                            const isSelected = previewSize === size;
-                            return (
-                              <button
-                                key={size}
-                                disabled={!hasStock}
-                                onClick={() => setPreviewSize(size)}
-                                style={{
-                                  padding: '0.4rem 1rem',
-                                  border: isSelected ? '1px solid #000000' : '1px solid rgba(139,119,137,0.25)',
-                                  borderRadius: '4px',
-                                  fontSize: '0.75rem',
-                                  fontWeight: '600',
-                                  backgroundColor: isSelected ? '#000000' : '#FFFFFF',
-                                  color: isSelected ? '#FFFFFF' : '#000000',
-                                  cursor: hasStock ? 'pointer' : 'not-allowed',
-                                  opacity: hasStock ? 1 : 0.35,
-                                  textDecoration: hasStock ? 'none' : 'line-through',
-                                  transition: 'all 0.2s ease',
-                                }}
-                              >
-                                {size}
-                              </button>
-                            );
-                          })}
-                        </div>
-                      </div>
-                    );
-                  })()}
-
-                  {/* Sticky footer: ADMIN PREVIEW: EDIT PRODUCT */}
-                  <div className="card-sticky-footer">
-                    <div style={{ display: 'flex', gap: '0.8rem', marginTop: '0.6rem' }} className="detail-action-bottom-bar">
-                      <Link
-                        href={`/admin/products?edit=${previewProduct.slug}`}
-                        onClick={() => setPreviewProduct(null)}
-                        style={{
-                          flex: 1,
-                          backgroundColor: '#FFFFFF',
-                          color: '#000000',
-                          border: '1px solid #000000',
-                          borderRadius: '4px',
-                          fontSize: '0.8rem',
-                          fontWeight: '700',
-                          textTransform: 'uppercase',
-                          letterSpacing: '0.08em',
-                          cursor: 'pointer',
-                          height: '40px',
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                          textDecoration: 'none',
-                          transition: 'all 0.3s ease',
-                        }}
-                      >
-                        Admin Preview: Edit Product
-                      </Link>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </>
-      )}
-      {/* ===== END PREVIEW BOTTOM SHEET ===== */}
       {/* Sidebar */}
       <AdminSidebar active="products" />
 
@@ -792,16 +622,7 @@ function AdminProductsContent() {
                       </td>
                       <td style={{ ...tdStyle, textAlign: 'center' }}>
                         <div style={actionsGroupStyle}>
-                          <button
-                            onClick={() => {
-                              if (typeof window !== 'undefined' && window.innerWidth <= 768) {
-                                openPreviewSheet(p);
-                              } else {
-                                openEditForm(p);
-                              }
-                            }}
-                            style={editActionBtnStyle}
-                          >
+                          <button onClick={() => openEditForm(p)} style={editActionBtnStyle}>
                             Edit
                           </button>
                           <button onClick={() => handleDelete(p.id, p.name)} style={deleteActionBtnStyle}>
@@ -1310,35 +1131,3 @@ export default function AdminProductsPage() {
     </Suspense>
   );
 }
-
-// ===== Preview bottom sheet style constants (matches collections page) =====
-
-const previewContainerStyle = {
-  padding: '1.5rem',
-  backgroundColor: '#FFFFFF',
-  borderRadius: '8px',
-  boxShadow: 'var(--shadow-md)',
-  border: '1px solid rgba(139, 119, 137, 0.1)',
-  marginTop: '1.5rem',
-};
-
-const previewHeaderStyle = {
-  display: 'flex',
-  justifyContent: 'space-between',
-  alignItems: 'center',
-  marginBottom: '1rem',
-};
-
-const previewBackBtnStyle = {
-  display: 'flex',
-  alignItems: 'center',
-  backgroundColor: 'transparent',
-  border: 'none',
-  color: '#000000',
-  fontSize: '0.9rem',
-  fontWeight: '600',
-  cursor: 'pointer',
-  padding: '0.5rem 0',
-  letterSpacing: '0.05em',
-  textTransform: 'uppercase',
-};
