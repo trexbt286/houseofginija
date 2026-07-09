@@ -33,7 +33,7 @@ function AdminProductsContent() {
   const [tempVariant, setTempVariant] = useState({
     size: 'S',
     color: 'Default',
-    stock: '10',
+    stock: '',
   });
 
   const [uploadingImage, setUploadingImage] = useState(false);
@@ -183,7 +183,7 @@ function AdminProductsContent() {
   const syncStandardSizes = () => {
     const standardSizes = ['S', 'M', 'L', 'XL', 'XXL'];
     const defaultColor = 'Default';
-    const defaultStock = 10;
+    const defaultStock = 0;
 
     const existingSizes = new Set(variants.map(v => v.size));
     const newVariants = [...variants];
