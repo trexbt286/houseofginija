@@ -337,15 +337,21 @@ function AdminProductsContent() {
 
         {/* CRUD FORM PANEL */}
         {isFormOpen && (
-          <section style={formContainerStyle} className="animate-fade-in">
-            <div style={formHeaderRowStyle}>
-              <h2 style={formTitleStyle}>
-                {editingId ? `Edit: ${formFields.name}` : 'Create New Creation'}
-              </h2>
-              <button onClick={() => setIsFormOpen(false)} style={closeFormBtnStyle}>
-                ✕ Close Form
-              </button>
-            </div>
+          <div style={formBackdropStyle} onClick={() => setIsFormOpen(false)} className="animate-fade-in">
+            <section style={formContainerStyle} onClick={(e) => e.stopPropagation()}>
+              <div style={formHeaderRowStyle}>
+                <button type="button" onClick={() => setIsFormOpen(false)} style={closeFormBtnStyle}>
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.0" strokeLinecap="round" strokeLinejoin="round" style={{ marginRight: '8px' }}>
+                    <line x1="19" y1="12" x2="5" y2="12"></line>
+                    <polyline points="12 19 5 12 12 5"></polyline>
+                  </svg>
+                  Back
+                </button>
+                <h2 style={formTitleStyle}>
+                  {editingId ? `Edit: ${formFields.name}` : 'Create New Creation'}
+                </h2>
+                <div style={{ width: '60px' }}></div>
+              </div>
             
             <form onSubmit={handleFormSubmit} style={formStyle}>
               {/* Row 1: Name & Slug */}
@@ -565,7 +571,8 @@ function AdminProductsContent() {
                 {editingId ? 'Save Configuration Changes' : 'Create Product Catalog Item'}
               </button>
             </form>
-          </section>
+            </section>
+          </div>
         )}
 
         {/* PRODUCTS LIST TABLE */}
@@ -740,14 +747,30 @@ const errorBannerStyle = {
   border: '1px solid #ffcdd2',
 };
 
-// Form Container Styles
+const formBackdropStyle = {
+  position: 'fixed',
+  top: 0,
+  left: 0,
+  right: 0,
+  bottom: 0,
+  backgroundColor: 'rgba(0, 0, 0, 0.5)',
+  zIndex: 1000,
+  display: 'flex',
+  justifyContent: 'center',
+  alignItems: 'center',
+  padding: '1rem',
+};
+
 const formContainerStyle = {
   backgroundColor: '#FFFFFF',
-  padding: '2.5rem',
-  borderRadius: '8px',
-  border: '1px solid rgba(139, 119, 137, 0.15)',
-  boxShadow: 'var(--shadow-md)',
-  marginBottom: '3rem',
+  padding: '2rem',
+  borderRadius: '12px',
+  boxShadow: '0 20px 40px rgba(0,0,0,0.2)',
+  width: '100%',
+  maxWidth: '900px',
+  maxHeight: '90vh',
+  overflowY: 'auto',
+  position: 'relative',
 };
 
 const formHeaderRowStyle = {
@@ -755,19 +778,29 @@ const formHeaderRowStyle = {
   justifyContent: 'space-between',
   alignItems: 'center',
   marginBottom: '2rem',
+  borderBottom: '1px solid rgba(0,0,0,0.05)',
+  paddingBottom: '1rem',
 };
 
 const formTitleStyle = {
   fontFamily: 'var(--font-serif)',
-  fontSize: '1.6rem',
-  color: '#D98E9B',
-  fontWeight: '500',
+  fontSize: '1.4rem',
+  color: '#000000',
+  fontWeight: '600',
+  textAlign: 'center',
+  flex: 1,
 };
 
 const closeFormBtnStyle = {
+  display: 'flex',
+  alignItems: 'center',
   color: '#000000',
   fontSize: '0.85rem',
   fontWeight: '600',
+  background: 'none',
+  border: 'none',
+  cursor: 'pointer',
+  padding: 0,
 };
 
 const formStyle = {
