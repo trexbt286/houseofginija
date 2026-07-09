@@ -2718,17 +2718,31 @@ body.cart-drawer-open .storefront-header {
   .admin-page-root th,
   .admin-page-root td {
     white-space: normal !important;
-    word-wrap: break-word !important;
+    word-break: break-word !important;
+    overflow-wrap: anywhere !important;
     font-size: 0.7rem !important; /* smaller text */
     padding: 0.5rem 0.2rem !important; /* tight padding */
+    vertical-align: top !important; /* align top so varying heights look good */
+  }
+
+  /* Give the first column (usually image + name) more room to prevent overflow */
+  .admin-page-root th:first-child,
+  .admin-page-root td:first-child {
+    width: 45% !important;
+  }
+
+  /* Ensure flex containers inside td (like action groups) can wrap their contents */
+  .admin-page-root td > div {
+    flex-wrap: wrap !important;
+    gap: 0.4rem !important;
   }
 
   .admin-page-root td button,
   .admin-page-root td a {
-    font-size: 0.55rem !important;
-    padding: 0.3rem 0.2rem !important;
-    margin: 0.1rem 0 !important;
-    width: 100% !important;
+    font-size: 0.6rem !important;
+    padding: 0.3rem !important;
+    margin: 0 !important;
+    width: 100% !important; /* force them to stack if wrapped */
     box-sizing: border-box !important;
     text-align: center !important;
   }
