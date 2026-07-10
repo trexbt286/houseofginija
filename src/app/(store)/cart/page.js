@@ -122,7 +122,19 @@ export default function CartPage() {
                       {item.name}
                     </Link>
                     <span style={itemMetaStyle}>Size: {item.size} | Color: {item.color}</span>
-                    <span style={itemUnitPriceStyle}>₹{item.price.toLocaleString('en-IN')} each</span>
+                    <span style={itemUnitPriceStyle}>
+                      {item.flash_sale && item.original_price ? (
+                        <>
+                          <span style={{ fontWeight: 'bold' }}>₹{parseFloat(item.price).toLocaleString('en-IN')}</span>
+                          <span style={{ textDecoration: 'line-through', color: '#999', marginLeft: '6px', fontSize: '0.85em', fontWeight: '400' }}>
+                            ₹{parseFloat(item.original_price).toLocaleString('en-IN')}
+                          </span>
+                        </>
+                      ) : (
+                        <span>₹{item.price.toLocaleString('en-IN')}</span>
+                      )}
+                      {' '}each
+                    </span>
                     <button
                       onClick={() => removeFromCart(item.id, item.size, item.color)}
                       style={removeBtnStyle}
@@ -149,7 +161,17 @@ export default function CartPage() {
                 </div>
 
                 <div style={itemTotalStyle}>
-                  ₹{(item.price * item.quantity).toLocaleString('en-IN')}
+                  {item.flash_sale && item.original_price ? (
+                    <>
+                      <span style={{ fontWeight: 'bold' }}>₹{(item.price * item.quantity).toLocaleString('en-IN')}</span>
+                      <br />
+                      <span style={{ textDecoration: 'line-through', color: '#999', fontSize: '0.85em', fontWeight: '400' }}>
+                        ₹{(item.original_price * item.quantity).toLocaleString('en-IN')}
+                      </span>
+                    </>
+                  ) : (
+                    <span>₹{(item.price * item.quantity).toLocaleString('en-IN')}</span>
+                  )}
                 </div>
               </div>
             ))}

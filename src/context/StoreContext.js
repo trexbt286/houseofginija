@@ -179,6 +179,8 @@ export function StoreProvider({ children }) {
             price: (product.flash_sale && product.flash_sale_price) 
               ? parseFloat(product.flash_sale_price) 
               : parseFloat(product.price),
+            original_price: parseFloat(product.price),
+            flash_sale: product.flash_sale || false,
             image: product.images[0] || '',
             images: product.images || [],
             size,
@@ -272,7 +274,7 @@ export function StoreProvider({ children }) {
   };
 
   // Auth actions
-  const login = (userData) => {
+  const login = async (userData) => {
     setUser(userData);
     if (typeof window !== 'undefined') {
       const userCartKey = userData.role === 'admin' ? null : `ginija_cart_${userData.id}`;
@@ -281,7 +283,29 @@ export function StoreProvider({ children }) {
       if (userCartKey) {
         const storedCart = localStorage.getItem(userCartKey);
         if (storedCart) {
-          try { setCart(JSON.parse(storedCart)); } catch (e) {}
+          try {
+            const parsedStoredCart = JSON.parse(storedCart);
+            let mergedCart = [...parsedStoredCart];
+            
+            for (const guestItem of cart) {
+              const existingIndex = mergedCart.findIndex(
+                (item) => Number(item.id) === Number(guestItem.id) && 
+                          (item.size || '') === (guestItem.size || '') && 
+                          (item.color || '') === (guestItem.color || '')
+              );
+              
+              if (existingIndex > -1) {
+                const stock = guestItem.stock || 10;
+                mergedCart[existingIndex].quantity = Math.min(mergedCart[existingIndex].quantity + guestItem.quantity, stock);
+              } else {
+                mergedCart.push(guestItem);
+              }
+            }
+            setCart(mergedCart);
+            localStorage.setItem(userCartKey, JSON.stringify(mergedCart));
+          } catch (e) {
+            console.error('Failed to merge cart', e);
+          }
         } else {
           localStorage.setItem(userCartKey, JSON.stringify(cart));
         }
@@ -290,15 +314,36 @@ export function StoreProvider({ children }) {
       }
 
       if (userWishlistKey) {
-        const storedWishlist = localStorage.getItem(userWishlistKey);
-        if (storedWishlist) {
-          try { setWishlist(JSON.parse(storedWishlist)); } catch (e) {}
-        } else {
-          localStorage.setItem(userWishlistKey, JSON.stringify(wishlist));
+        try {
+          const res = await fetch('/api/account/wishlist/merge', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ guestWishlist: wishlist }),
+          });
+          
+          if (res.ok) {
+            const data = await res.json();
+            setWishlist(data.wishlist || []);
+            localStorage.setItem(userWishlistKey, JSON.stringify(data.wishlist || []));
+          } else {
+            // Fallback
+             const storedWishlist = localStorage.getItem(userWishlistKey);
+             if (storedWishlist) {
+               try { setWishlist(JSON.parse(storedWishlist)); } catch (e) {}
+             } else {
+               localStorage.setItem(userWishlistKey, JSON.stringify(wishlist));
+             }
+          }
+        } catch (e) {
+          console.error('Failed to merge wishlist with server', e);
         }
       } else {
         setWishlist([]); // Admin has no wishlist
       }
+
+      // Clear guest local storage
+      localStorage.removeItem('ginija_cart_guest');
+      localStorage.removeItem('ginija_wishlist_guest');
     }
     router.refresh();
   };

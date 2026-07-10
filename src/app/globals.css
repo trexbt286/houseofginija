@@ -1257,6 +1257,26 @@ body.scroll-locked {
   color: #000000;
 }
 
+.wishlist-add-cart-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(139, 119, 137, 0.2);
+  color: #000000;
+  background-color: transparent;
+  border-radius: 4px;
+  height: 28px;
+  padding: 0 12px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  cursor: pointer;
+  text-transform: uppercase;
+}
+
+.wishlist-add-cart-btn:active {
+  background-color: rgba(139, 119, 137, 0.05);
+}
+
 .cart-drawer-item-remove {
   background: transparent;
   border: none;

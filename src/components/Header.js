@@ -7,15 +7,18 @@ import { usePathname } from 'next/navigation';
 import ImageWithSkeleton from '@/components/ImageWithSkeleton';
 
 export default function Header() {
-  const { cart, cartCount, updateCartQuantity, removeFromCart, wishlist, user, logout, setIsLoginOpen } = useStore();
+  const { cart, cartCount, updateCartQuantity, removeFromCart, wishlist, toggleWishlist, addToCart, user, logout, setIsLoginOpen } = useStore();
   const [menuOpen, setMenuOpen] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [isCartOpen, setIsCartOpen] = useState(false);
+  const [isWishlistOpen, setIsWishlistOpen] = useState(false);
+  const [wishlistDetails, setWishlistDetails] = useState([]);
+  const [wishlistLoading, setWishlistLoading] = useState(false);
   const pathname = usePathname();
 
-  // Manage scroll-lock on document.body when cart drawer is open
+  // Manage scroll-lock on document.body when cart or wishlist drawer is open
   useEffect(() => {
-    if (isCartOpen) {
+    if (isCartOpen || isWishlistOpen) {
       document.body.classList.add('scroll-locked');
       document.body.classList.add('cart-drawer-open');
     } else {
@@ -26,13 +29,30 @@ export default function Header() {
       document.body.classList.remove('scroll-locked');
       document.body.classList.remove('cart-drawer-open');
     };
-  }, [isCartOpen]);
+  }, [isCartOpen, isWishlistOpen]);
 
-  // Trap Escape key to close cart drawer
+  // Fetch guest wishlist details
+  useEffect(() => {
+    if (isWishlistOpen && !user && wishlist.length > 0) {
+      setWishlistLoading(true);
+      fetch(`/api/products?ids=${wishlist.join(',')}`)
+        .then(res => res.json())
+        .then(data => {
+          setWishlistDetails(data.products || []);
+        })
+        .catch(err => console.error(err))
+        .finally(() => setWishlistLoading(false));
+    } else if (wishlist.length === 0) {
+      setWishlistDetails([]);
+    }
+  }, [isWishlistOpen, wishlist, user]);
+
+  // Trap Escape key to close cart or wishlist drawer
   useEffect(() => {
     const handleKeyDown = (e) => {
       if (e.key === 'Escape') {
         setIsCartOpen(false);
+        setIsWishlistOpen(false);
       }
     };
     window.addEventListener('keydown', handleKeyDown);
@@ -308,7 +328,12 @@ export default function Header() {
 
           {!(user && user.role === 'admin') && (
             <>
-              <Link href="/account?tab=wishlist" style={actionLinkStyle} title="Wishlist" className="header-action-btn">
+              <Link href="/account?tab=wishlist" style={actionLinkStyle} title="Wishlist" className="header-action-btn" onClick={(e) => {
+                if (!user) {
+                  e.preventDefault();
+                  setIsWishlistOpen(true);
+                }
+              }}>
                 <div style={badgeWrapperStyle}>
                   <svg width="25" height="25" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
                     <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
@@ -434,7 +459,17 @@ export default function Header() {
                         {item.size || 'One Size'} {item.color ? `• ${item.color}` : ''}
                       </span>
                       <span className="cart-drawer-item-price">
-                        ₹{parseFloat(item.price).toLocaleString('en-IN')} x {item.quantity}
+                        {item.flash_sale && item.original_price ? (
+                          <>
+                            <span style={{ fontWeight: 'bold' }}>₹{parseFloat(item.price).toLocaleString('en-IN')}</span>
+                            <span style={{ textDecoration: 'line-through', color: '#999', marginLeft: '6px', fontSize: '0.85em', fontWeight: '400' }}>
+                              ₹{parseFloat(item.original_price).toLocaleString('en-IN')}
+                            </span>
+                          </>
+                        ) : (
+                          <span>₹{parseFloat(item.price).toLocaleString('en-IN')}</span>
+                        )}
+                        {' '}x {item.quantity}
                       </span>
                       
                       <div className="cart-drawer-item-actions">
@@ -504,6 +539,91 @@ export default function Header() {
               </Link>
             </div>
           )}
+        </div>
+      </div>
+      {/* Slide-Out Wishlist Drawer (Guest only) */}
+      <div className={`cart-drawer-backdrop ${isWishlistOpen ? 'open' : ''}`} onClick={() => setIsWishlistOpen(false)}>
+        <div className="cart-drawer" onClick={(e) => e.stopPropagation()}>
+          <div className="cart-drawer-header">
+            {/* Mobile Back Button (on the left) */}
+            <button className="cart-drawer-back-btn" onClick={() => setIsWishlistOpen(false)}>
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#000000" strokeWidth="2.0" strokeLinecap="round" strokeLinejoin="round">
+                <polyline points="6 9 12 15 18 9"></polyline>
+              </svg>
+            </button>
+
+            <h3 className="cart-drawer-title">Wishlist ({wishlist.length})</h3>
+
+            <button className="cart-drawer-close" onClick={() => setIsWishlistOpen(false)}>
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <line x1="18" y1="6" x2="6" y2="18"></line>
+                <line x1="6" y1="6" x2="18" y2="18"></line>
+              </svg>
+            </button>
+          </div>
+
+          <div className="cart-drawer-feed hide-scrollbar">
+            {wishlistLoading ? (
+              <div className="cart-drawer-empty-state">
+                <span className="cart-drawer-empty-text">Loading wishlist...</span>
+              </div>
+            ) : wishlistDetails && wishlistDetails.length > 0 ? (
+              wishlistDetails.map((item, idx) => {
+                const defaultVariant = item.variants && item.variants.length > 0 ? item.variants[0] : {};
+                return (
+                  <div key={`${item.id}-${idx}`} className="cart-drawer-item">
+                    <ImageWithSkeleton 
+                      src={item.images && item.images[0] ? item.images[0] : (item.image ? item.image : '/placeholder.jpg')} 
+                      alt={item.name} 
+                      className="cart-drawer-thumb" 
+                    />
+                    <div className="cart-drawer-item-details">
+                      <h4 className="cart-drawer-item-title">{item.name}</h4>
+                      <span className="cart-drawer-item-price">
+                        {item.flash_sale && item.flash_sale_price ? (
+                          <>
+                            <span style={{ fontWeight: 'bold' }}>₹{parseFloat(item.flash_sale_price).toLocaleString('en-IN')}</span>
+                            <span style={{ textDecoration: 'line-through', color: '#999', marginLeft: '6px', fontSize: '0.85em', fontWeight: '400' }}>
+                              ₹{parseFloat(item.price).toLocaleString('en-IN')}
+                            </span>
+                          </>
+                        ) : (
+                          <span>₹{parseFloat(item.price).toLocaleString('en-IN')}</span>
+                        )}
+                      </span>
+                      
+                      <div className="cart-drawer-item-actions">
+                        <button 
+                          className="wishlist-add-cart-btn"
+                          onClick={() => {
+                            addToCart(item, defaultVariant.size || 'One Size', defaultVariant.color || 'Default', 1);
+                            toggleWishlist(item.id);
+                          }}
+                        >
+                          ADD TO CART
+                        </button>
+                        <button 
+                          className="cart-drawer-item-remove"
+                          onClick={() => toggleWishlist(item.id)}
+                        >
+                          Remove
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                );
+              })
+            ) : (
+              <div className="cart-drawer-empty-state">
+                <div className="cart-drawer-empty-icon">
+                  <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+                    <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+                  </svg>
+                </div>
+                <span className="cart-drawer-empty-text">No products in the wishlist.</span>
+              </div>
+            )}
+          </div>
         </div>
       </div>
     </header>

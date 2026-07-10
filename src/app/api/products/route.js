@@ -21,6 +21,16 @@ export async function GET(request) {
     const queryParams = [];
     let paramIndex = 1;
 
+    const ids = searchParams.get('ids');
+    if (ids) {
+      const idArray = ids.split(',').map(id => parseInt(id, 10)).filter(id => !isNaN(id));
+      if (idArray.length > 0) {
+        queryText += ` AND p.id = ANY($${paramIndex})`;
+        queryParams.push(idArray);
+        paramIndex++;
+      }
+    }
+
     // Filter by collection slug
     if (collection) {
       queryText += ` AND c.slug = $${paramIndex}`;
