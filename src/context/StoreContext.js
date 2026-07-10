@@ -176,7 +176,9 @@ export function StoreProvider({ children }) {
             id: product.id,
             slug: product.slug,
             name: product.name,
-            price: parseFloat(product.price),
+            price: (product.flash_sale && product.flash_sale_price) 
+              ? parseFloat(product.flash_sale_price) 
+              : parseFloat(product.price),
             image: product.images[0] || '',
             images: product.images || [],
             size,

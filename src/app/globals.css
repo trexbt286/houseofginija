@@ -586,21 +586,6 @@ body.scroll-locked {
     line-height: 1.25 !important;
     margin-bottom: 0.25rem !important;
   }
-
-  .collections-product-card-content span {
-    font-size: 0.65rem !important;
-  }
-
-  .collections-product-card-content div {
-    font-size: 0.65rem !important;
-  }
-  
-  /* Compact card action buttons and variant elements */
-  .grid-cols-shop > div button {
-    padding: 0.4rem 0 !important;
-    font-size: 0.68rem !important;
-    margin-top: 0.4rem !important;
-  }
 }
 
 /* Mobile Detailed preview grid */
@@ -989,10 +974,10 @@ body.scroll-locked {
 /* --- BLINKIT CARD ACTION BUTTONS --- */
 .blinkit-add-btn {
   background-color: #FFFFFF !important;
-  color: #D98E9B !important; /* Brand accent pink */
-  border: 1px solid #D98E9B !important;
-  padding: 0.4rem 1.2rem !important;
-  border-radius: 4px !important;
+  color: #B97285 !important; /* Brand accent pink */
+  border: 1px solid #B97285 !important;
+  padding: 0 1.2rem !important;
+  border-radius: 6px !important;
   font-size: 0.8rem !important;
   font-weight: 700 !important;
   text-transform: uppercase !important;
@@ -1000,10 +985,10 @@ body.scroll-locked {
   cursor: pointer !important;
   transition: all 0.2s cubic-bezier(0.25, 1, 0.5, 1) !important;
   box-shadow: var(--shadow-sm) !important;
-  display: inline-flex !important;
+  display: flex !important;
   align-items: center !important;
   justify-content: center !important;
-  height: 32px !important;
+  height: 36px !important;
   min-width: 76px !important;
   box-sizing: border-box !important;
 }
@@ -1022,14 +1007,14 @@ body.scroll-locked {
 }
 
 .blinkit-count-controller {
-  display: inline-flex !important;
+  display: flex !important;
   align-items: center !important;
   justify-content: space-between !important;
-  background-color: #D98E9B !important; /* Highlight pink active container */
+  background-color: #B97285 !important; /* Highlight pink active container */
   color: #FFFFFF !important;
-  border: 1px solid #D98E9B !important;
-  border-radius: 4px !important;
-  height: 32px !important;
+  border: 1px solid #B97285 !important;
+  border-radius: 6px !important;
+  height: 36px !important;
   min-width: 76px !important;
   overflow: hidden !important;
   box-sizing: border-box !important;
@@ -2557,8 +2542,8 @@ body.cart-drawer-open .storefront-header {
     height: 12px !important;
   }
   .flash-sale-card .flash-sale-badge {
-    top: 6px !important;
-    left: 6px !important;
+    top: 8px !important;
+    left: 8px !important;
     font-size: 0.55rem !important;
     padding: 0.15rem 0.35rem !important;
     border-radius: 3px !important;
@@ -2902,4 +2887,40 @@ body.cart-drawer-open .storefront-header {
   .home-collections-section + div {
     display: none !important;
   }
+}
+
+/* Universal Shimmer Skeleton Loading */
+@keyframes skeleton-shimmer {
+  0% {
+    background-position: -1000px 0;
+  }
+  100% {
+    background-position: 1000px 0;
+  }
+}
+
+.skeleton-shimmer {
+  background: #E8E8E8;
+  background-image: linear-gradient(
+    90deg, 
+    #E8E8E8 0px, 
+    #F5F5F5 40px, 
+    #E8E8E8 80px
+  );
+  background-size: 1000px 100%;
+  animation: skeleton-shimmer 1.2s infinite linear;
+  border-radius: 4px;
+}
+
+/* Homepage specific Pulse Skeleton Loading */
+@keyframes skeleton-pulse {
+  0% { opacity: 0.6; }
+  50% { opacity: 1; }
+  100% { opacity: 0.6; }
+}
+
+.skeleton-pulse {
+  background-color: #F6DDE2;
+  animation: skeleton-pulse 1.5s infinite ease-in-out;
+  border-radius: 4px;
 }

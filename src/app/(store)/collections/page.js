@@ -5,6 +5,8 @@ import { useSearchParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useStore } from '@/context/StoreContext';
+import ImageWithSkeleton from '@/components/ImageWithSkeleton';
+import SkeletonCard from '@/components/SkeletonCard';
 
 function MobileSearchBar({ allProducts, initialQuery, onSearch, handleProductClick }) {
   const [localQuery, setLocalQuery] = useState(initialQuery || '');
@@ -142,7 +144,7 @@ function MobileSearchBar({ allProducts, initialQuery, onSearch, handleProductCli
                 }}
                 onClick={(e) => e.preventDefault()}
               >
-                <img 
+                <ImageWithSkeleton 
                   src={p.images?.[0] || '/placeholder.png'} 
                   style={{
                     width: '36px',
@@ -755,7 +757,7 @@ function CollectionsContent() {
     return list;
   };
 
-  const renderProductCard = (p) => {
+  const renderProductCard = (p, index = 0) => {
     const outOfStock = p.is_out_of_stock;
     const rating = (4.0 + ((p.id * 13) % 10) / 10).toFixed(1);
     const reviews = (p.id * 37) % 950 + 50; 
@@ -788,24 +790,24 @@ function CollectionsContent() {
       >
         <a href={`/products/${p.slug}`} onClick={(e) => handleProductClick(e, p)} style={{ display: 'block' }}>
           <div style={cardImageWrapperStyle} className="collections-product-image-wrapper">
-            <Image 
+            <ImageWithSkeleton 
               src={p.images && p.images[0] ? p.images[0] : '/placeholder.jpg'} 
               alt={p.name} 
-              fill
-              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 25vw"
+              eager={index < 2}
               style={{ 
+                width: '100%',
+                height: '100%',
                 objectFit: 'cover',
                 filter: outOfStock ? 'grayscale(100%) opacity(50%)' : 'none',
-                transition: 'filter 0.3s ease'
+                transition: 'filter 0.3s ease, background-color 0.4s ease, opacity 0.4s ease'
               }}
-              loading="lazy" 
             />
             {p.flash_sale && p.flash_sale_price && (
               <div style={{
                 position: 'absolute',
-                top: '12px',
-                left: '12px',
-                backgroundColor: '#D98E9B',
+                top: '8px',
+                left: '8px',
+                backgroundColor: '#B97285',
                 color: '#FFFFFF',
                 padding: '4px 10px',
                 borderRadius: '6px',
@@ -821,7 +823,7 @@ function CollectionsContent() {
             {outOfStock && (
               <div style={{
                 position: 'absolute',
-                top: '12px',
+                bottom: '12px',
                 right: '12px',
                 backgroundColor: 'rgba(51, 51, 51, 0.85)',
                 color: '#FFFFFF',
@@ -837,20 +839,58 @@ function CollectionsContent() {
                 Out of Stock
               </div>
             )}
+            {/* Wishlist Heart on Top Right */}
+            <button 
+              onClick={(e) => {
+                e.stopPropagation();
+                e.preventDefault();
+                toggleWishlist(p.id);
+              }}
+              style={{
+                position: 'absolute',
+                top: '2px',
+                right: '4px',
+                backgroundColor: 'rgba(255, 255, 255, 0.9)',
+                border: 'none',
+                width: '28px',
+                height: '28px',
+                borderRadius: '50%',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                cursor: 'pointer',
+                boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)',
+                zIndex: 11
+              }}
+              className="card-wishlist-btn"
+            >
+              <svg 
+                width="16" 
+                height="16" 
+                viewBox="0 0 24 24" 
+                fill={wishlist.includes(p.id) ? '#B97285' : 'none'} 
+                stroke={wishlist.includes(p.id) ? '#B97285' : '#000000'} 
+                strokeWidth="2.0" 
+                strokeLinecap="round" 
+                strokeLinejoin="round"
+              >
+                <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+              </svg>
+            </button>
           </div>
         </a>
         <div style={cardContentStyle} className="collections-product-card-content">
-          <a href={`/products/${p.slug}`} style={{ textDecoration: 'none' }}>
+          <a href={`/products/${p.slug}`} style={{ textDecoration: 'none', color: '#B97285' }}>
             <h3 style={cardTitleStyle}>{p.name}</h3>
           </a>
 
 
           {p.flash_sale && p.flash_sale_price ? (
             <p style={cardPriceStyle}>
-              <span style={{ color: '#B65C73', fontWeight: '700', marginRight: '0.5rem' }}>
+              <span style={{ color: '#B97285', marginRight: '0.5rem' }}>
                 ₹{parseFloat(p.flash_sale_price).toLocaleString('en-IN')}
               </span>
-              <span style={{ color: 'rgba(0, 0, 0, 0.4)', textDecoration: 'line-through', fontSize: '0.85rem', fontWeight: '400' }}>
+              <span style={{ color: 'rgba(0, 0, 0, 0.4)', textDecoration: 'line-through' }}>
                 ₹{parseFloat(p.price).toLocaleString('en-IN')}
               </span>
             </p>
@@ -858,57 +898,60 @@ function CollectionsContent() {
             <p style={cardPriceStyle}>₹{parseFloat(p.price).toLocaleString('en-IN')}</p>
           )}
 
-          {user && user.role === 'admin' ? (
-            <Link
-              href={`/admin/products?edit=${p.slug}`}
-              style={adminPreviewBadgeLinkStyle}
-              onClick={(e) => e.stopPropagation()}
-            >
-              Admin Preview: Edit
-            </Link>
-          ) : currentQty > 0 ? (
-            /* Items already added to cart */
-            <div className="blinkit-count-controller" onClick={(e) => e.stopPropagation()}>
+          <div style={{ height: '44px', display: 'flex', alignItems: 'center', marginTop: '0.5rem' }}>
+            {user && user.role === 'admin' ? (
+              <Link
+                href={`/admin/products?edit=${p.slug}`}
+                style={adminPreviewBadgeLinkStyle}
+                onClick={(e) => e.stopPropagation()}
+              >
+                Admin Preview: Edit
+              </Link>
+            ) : currentQty > 0 ? (
+              /* Items already added to cart */
+              <div className="blinkit-count-controller" style={{ width: '100%', borderRadius: '6px' }} onClick={(e) => e.stopPropagation()}>
+                <button 
+                  className="blinkit-count-btn"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    e.preventDefault();
+                    updateCartQuantity(p.id, defaultVariant.size || 'One Size', defaultVariant.color || 'Default', currentQty - 1);
+                  }}
+                >
+                  -
+                </button>
+                <span className="blinkit-count-val">{currentQty}</span>
+                <button 
+                  className="blinkit-count-btn"
+                  disabled={currentQty >= (defaultVariant.stock || 10)}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    e.preventDefault();
+                    const maxStock = defaultVariant.stock || 10;
+                    if (currentQty >= maxStock) return;
+                    updateCartQuantity(p.id, defaultVariant.size || 'One Size', defaultVariant.color || 'Default', currentQty + 1);
+                  }}
+                >
+                  +
+                </button>
+              </div>
+            ) : (
+              /* Add item directly to cart */
               <button 
-                className="blinkit-count-btn"
+                className="blinkit-add-btn"
+                disabled={outOfStock}
+                style={{ width: '100%', borderRadius: '6px' }}
                 onClick={(e) => {
                   e.stopPropagation();
                   e.preventDefault();
-                  updateCartQuantity(p.id, defaultVariant.size || 'One Size', defaultVariant.color || 'Default', currentQty - 1);
+                  if (outOfStock) return;
+                  addToCart(p, defaultVariant.size || 'One Size', defaultVariant.color || 'Default');
                 }}
               >
-                -
+                {outOfStock ? 'Sold Out' : 'ADD'}
               </button>
-              <span className="blinkit-count-val">{currentQty}</span>
-              <button 
-                className="blinkit-count-btn"
-                disabled={currentQty >= (defaultVariant.stock || 10)}
-                onClick={(e) => {
-                  e.stopPropagation();
-                  e.preventDefault();
-                  const maxStock = defaultVariant.stock || 10;
-                  if (currentQty >= maxStock) return;
-                  updateCartQuantity(p.id, defaultVariant.size || 'One Size', defaultVariant.color || 'Default', currentQty + 1);
-                }}
-              >
-                +
-              </button>
-            </div>
-          ) : (
-            /* Add item directly to cart */
-            <button 
-              className="blinkit-add-btn"
-              disabled={outOfStock}
-              onClick={(e) => {
-                e.stopPropagation();
-                e.preventDefault();
-                if (outOfStock) return;
-                addToCart(p, defaultVariant.size || 'One Size', defaultVariant.color || 'Default');
-              }}
-            >
-              {outOfStock ? 'Sold Out' : 'ADD'}
-            </button>
-          )}
+            )}
+          </div>
         </div>
       </div>
     );
@@ -926,7 +969,9 @@ function CollectionsContent() {
     : [];
 
   const switcherProducts = activeProduct
-    ? products.filter(sib => sib.collection_id === activeProduct.collection_id)
+    ? (activeProduct.flash_sale
+        ? allProducts.filter(sib => sib.flash_sale)
+        : products.filter(sib => sib.collection_id === activeProduct.collection_id))
     : [];
 
   const activeMatchingVar = activeProduct && activeProduct.variants && activeProduct.variants.find(
@@ -1005,7 +1050,7 @@ function CollectionsContent() {
             <div style={{}} className="detail-preview-grid">
               {/* Top Half: Image */}
               <div style={{ ...detailMainImgWrapperStyle, position: 'relative' }} className="detail-main-img-wrapper">
-                <img 
+                <ImageWithSkeleton 
                   src={activeProductImage} 
                   alt={activeProduct.name} 
                   style={detailMainImgStyle} 
@@ -1014,15 +1059,14 @@ function CollectionsContent() {
                 {activeProduct.flash_sale && activeProduct.flash_sale_price && (
                   <div style={{
                     position: 'absolute',
-                    top: '16px',
-                    left: '16px',
+                    top: '22px',
+                    right: '64px',
                     backgroundColor: '#D98E9B',
                     color: '#FFFFFF',
-                    padding: '6px 12px',
+                    padding: '0.25rem 0.6rem',
                     borderRadius: '6px',
-                    fontSize: '0.8rem',
+                    fontSize: '0.75rem',
                     fontWeight: '700',
-                    textTransform: 'uppercase',
                     boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
                     zIndex: 10
                   }}>
@@ -1037,7 +1081,7 @@ function CollectionsContent() {
                 <h1 style={detailTitleStyle} className="detail-product-name">{activeProduct.name}</h1>
                 {activeProduct.flash_sale && activeProduct.flash_sale_price ? (
                   <p style={detailPriceStyle} className="detail-product-price">
-                    <span style={{ color: '#B65C73', fontWeight: '700', marginRight: '0.8rem' }}>
+                    <span style={{ color: '#000000', fontWeight: '700', marginRight: '0.8rem' }}>
                       ₹{parseFloat(activeProduct.flash_sale_price).toLocaleString('en-IN')}
                     </span>
                     <span style={{ color: 'rgba(0, 0, 0, 0.4)', textDecoration: 'line-through', fontSize: '1.1rem', fontWeight: '400' }}>
@@ -1219,7 +1263,7 @@ function CollectionsContent() {
                         }}
                         className={`sibling-switcher-circle-btn ${isActive ? 'active' : ''}`}
                       >
-                        <img 
+                        <ImageWithSkeleton 
                           src={sib.images && sib.images[0] ? sib.images[0] : '/placeholder.jpg'} 
                           alt={sib.name} 
                           className="sibling-switcher-circle-img"
@@ -1312,7 +1356,11 @@ function CollectionsContent() {
             </section>
 
             {loading && products.length === 0 ? (
-              <div style={loadingStateStyle}>Curating items from the vault...</div>
+              <div className="grid-cols-shop">
+                {Array.from({ length: 8 }).map((_, i) => (
+                  <SkeletonCard key={i} type="collection" />
+                ))}
+              </div>
             ) : products.length === 0 ? (
               <div style={emptyStateStyle}>
                 <p>{searchQuery ? 'No matching creations found.' : 'No creations match your active filters.'}</p>
@@ -1342,7 +1390,7 @@ function CollectionsContent() {
                             </h2>
                             {items.length > 0 ? (
                               <div className="grid-cols-shop">
-                                {items.map(p => renderProductCard(p))}
+                                {items.map((p, index) => renderProductCard(p, index))}
                               </div>
                             ) : (
                               <div style={{
@@ -1370,7 +1418,7 @@ function CollectionsContent() {
                       </h2>
                     )}
                     <div className="grid-cols-shop">
-                      {products.map((p) => renderProductCard(p))}
+                      {products.map((p, index) => renderProductCard(p, index))}
                     </div>
                   </div>
                 )}
@@ -1641,6 +1689,8 @@ const cardContentStyle = {
   padding: '1.2rem',
   display: 'flex',
   flexDirection: 'column',
+  justifyContent: 'space-between',
+  flexGrow: 1,
   gap: '0.3rem',
 };
 
@@ -1655,14 +1705,17 @@ const collectionLabelStyle = {
 const cardTitleStyle = {
   fontSize: '1.1rem',
   fontFamily: 'var(--font-serif)',
-  color: '#D98E9B',
-  fontWeight: '500',
+  color: '#B97285',
+  fontWeight: '600',
 };
 
 const cardPriceStyle = {
   fontSize: '0.9rem',
   color: '#000000',
   fontWeight: '600',
+  minHeight: '24px',
+  display: 'flex',
+  alignItems: 'center',
 };
 
 const cardCartBtnStyle = {

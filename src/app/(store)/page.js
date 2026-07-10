@@ -4,14 +4,33 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { useStore } from '@/context/StoreContext';
 import { useEffect, useState } from 'react';
+import ImageWithSkeleton from '@/components/ImageWithSkeleton';
+import SkeletonCard from '@/components/SkeletonCard';
 
 export default function Home() {
-  const { triggerSparkleConfetti, wishlist = [], toggleWishlist } = useStore();
+  const { 
+    triggerSparkleConfetti, 
+    wishlist = [], 
+    toggleWishlist, 
+    cart = [], 
+    addToCart, 
+    updateCartQuantity, 
+    user 
+  } = useStore();
+  
   const [collections, setCollections] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedReview, setSelectedReview] = useState(null);
   const [flashProducts, setFlashProducts] = useState([]);
-  const [flashSaleEnabled, setFlashSaleEnabled] = useState(false);
+  const [flashSaleEnabled, setFlashSaleEnabled] = useState(true);
+
+  // States for product detail bottom sheet modal
+  const [activeProduct, setActiveProduct] = useState(null);
+  const [activeProductImage, setActiveProductImage] = useState('');
+  const [activeProductSize, setActiveProductSize] = useState('');
+  const [activeProductColor, setActiveProductColor] = useState('');
+  const [activeProductQty, setActiveProductQty] = useState(1);
+  const [viewportWidth, setViewportWidth] = useState(390);
 
   const reviewImages = [
     {
@@ -78,13 +97,15 @@ export default function Home() {
       triggerSparkleConfetti();
     }, 1200);
 
-    // Fetch collections from db via API
-    const fetchCollections = async () => {
+    // Fetch unified homepage data
+    const fetchHomepageData = async () => {
       try {
-        const res = await fetch('/api/collections');
+        const res = await fetch('/api/homepage');
         if (res.ok) {
           const data = await res.json();
           setCollections(data.collections || []);
+          setFlashProducts(data.flashProducts || []);
+          setFlashSaleEnabled(!!data.flash_sale_enabled);
         }
       } catch (err) {
         console.error(err);
@@ -93,23 +114,92 @@ export default function Home() {
       }
     };
 
-    const fetchFlashProducts = async () => {
-      try {
-        const res = await fetch('/api/products');
-        if (res.ok) {
-          const data = await res.json();
-          const fp = (data.products || []).filter(p => !!p.flash_sale);
-          setFlashProducts(fp);
-          setFlashSaleEnabled(!!data.flash_sale_enabled);
-        }
-      } catch (err) {
-        console.error(err);
-      }
-    };
-
-    fetchCollections();
-    fetchFlashProducts();
+    fetchHomepageData();
   }, []);
+
+  // Handle window resizing for sibling switcher translateX calculations
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const handleResize = () => setViewportWidth(window.innerWidth);
+    window.addEventListener('resize', handleResize);
+    handleResize(); // set initial viewport width
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  // Lock body scroll when flash sale bottom sheet is open, restore on close
+  useEffect(() => {
+    if (activeProduct) {
+      document.body.style.overflow = 'hidden';
+      
+      const preventScroll = (e) => {
+        // Only prevent scroll if it's not inside the bottom sheet
+        if (e.cancelable) {
+          // Check if the touch is inside the bottom sheet
+          const bottomSheet = document.querySelector('.mobile-bottom-sheet');
+          if (bottomSheet && bottomSheet.contains(e.target)) {
+            return; // Allow scrolling inside the bottom sheet
+          }
+          e.preventDefault();
+        }
+      };
+      
+      document.addEventListener('touchmove', preventScroll, { passive: false });
+      
+      return () => {
+        document.body.style.overflow = '';
+        document.removeEventListener('touchmove', preventScroll);
+      };
+    }
+  }, [activeProduct]);
+
+  const handleProductClick = (e, product) => {
+    if (e.metaKey || e.ctrlKey || e.shiftKey || e.button !== 0) {
+      return;
+    }
+    e.preventDefault();
+    setActiveProduct(product);
+    if (product.images && product.images.length > 0) {
+      setActiveProductImage(product.images[0]);
+    } else {
+      setActiveProductImage('/placeholder.jpg');
+    }
+    
+    // Auto-select size/color combinations
+    const vars = product.variants || [];
+    const inStockVar = vars.find(v => v.stock > 0);
+    if (inStockVar) {
+      setActiveProductSize(inStockVar.size || '');
+      setActiveProductColor(inStockVar.color || '');
+    } else if (vars.length > 0) {
+      setActiveProductSize(vars[0].size || '');
+      setActiveProductColor(vars[0].color || '');
+    } else {
+      setActiveProductSize('One Size');
+      setActiveProductColor('Default');
+    }
+    setActiveProductQty(1);
+  };
+
+  const activeCartItem = activeProduct && cart && cart.find(
+    item => Number(item.id) === Number(activeProduct.id) && 
+            (item.size || '') === (activeProductSize || '') && 
+            (item.color || '') === (activeProductColor || '')
+  );
+  const currentQtyInCart = activeCartItem ? activeCartItem.quantity : 0;
+
+  const activeMatchingVar = activeProduct && activeProduct.variants && activeProduct.variants.find(
+    v => (v.size || '') === (activeProductSize || '') && (v.color || '') === (activeProductColor || '')
+  );
+  const maxStock = activeMatchingVar ? activeMatchingVar.stock : 10;
+  const isPlusDisabled = currentQtyInCart > 0 ? (currentQtyInCart >= maxStock) : (activeProductQty >= maxStock);
+
+  const switcherProducts = activeProduct
+    ? (activeProduct.flash_sale
+        ? flashProducts
+        : [])
+    : [];
+
+  const cartSubtotal = cart.reduce((total, item) => total + item.price * item.quantity, 0);
 
   return (
     <div style={pageContainerStyle}>
@@ -217,8 +307,14 @@ export default function Home() {
       </section>
 
       {/* FLASH SALE SECTION */}
-      {flashSaleEnabled && flashProducts.length > 0 && (
-        <section style={flashSaleSectionStyle} className="home-section home-flash-sale-section">
+      <section 
+        style={{ 
+          ...flashSaleSectionStyle, 
+          display: (loading || (flashSaleEnabled && flashProducts.length > 0)) ? 'block' : 'none' 
+        }} 
+        className="home-section home-flash-sale-section"
+      >
+        {(loading || (flashSaleEnabled && flashProducts.length > 0)) && (
           <div className="container animate-fade-in">
             <div style={{ textAlign: 'center', marginBottom: '2.5rem' }} className="flash-sale-header-container">
               <h2 style={{ ...sectionTitleStyle, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.6rem' }}>
@@ -239,21 +335,27 @@ export default function Home() {
             </div>
 
             <div className="flash-sale-row-container">
-              {flashProducts.map((product) => {
-                const discountPct = Math.round(((parseFloat(product.price) - parseFloat(product.flash_sale_price)) / parseFloat(product.price)) * 100);
-                const isWishlisted = wishlist.includes(product.id);
+              {loading ? (
+                Array.from({ length: 3 }).map((_, i) => (
+                  <SkeletonCard key={i} type="home-flash" />
+                ))
+              ) : (
+                flashProducts.map((product, index) => {
+                  const discountPct = Math.round(((parseFloat(product.price) - parseFloat(product.flash_sale_price)) / parseFloat(product.price)) * 100);
+                  const isWishlisted = wishlist.includes(product.id);
 
-                return (
-                  <div key={product.id} className="flash-sale-card" style={{ position: 'relative' }}>
+                  return (
+                    <div key={product.id} className="flash-sale-card" style={{ position: 'relative' }}>
                     {/* Product Image Container */}
                     <div style={flashSaleImgContainerStyle} className="flash-sale-img-container">
-                      <Link href={`/products/${product.slug}`}>
-                        <img 
+                      <a href={`/products/${product.slug}`} onClick={(e) => handleProductClick(e, product)}>
+                        <ImageWithSkeleton 
                           src={product.images?.[0] || '/icon.png'} 
                           alt={product.name} 
+                          eager={index < 2}
                           style={flashSaleImgStyle} 
                         />
-                      </Link>
+                      </a>
                       
                       {/* Discount Badge on Top Left */}
                       <div style={flashSaleBadgeStyle} className="flash-sale-badge">
@@ -282,16 +384,17 @@ export default function Home() {
                     </div>
 
                     {/* Product Info */}
-                    <Link href={`/products/${product.slug}`} style={{ textDecoration: 'none', color: 'inherit' }}>
+                    <a href={`/products/${product.slug}`} onClick={(e) => handleProductClick(e, product)} style={{ textDecoration: 'none', color: 'inherit' }}>
                       <h3 style={flashSaleProductNameStyle} className="flash-sale-product-name">{product.name}</h3>
-                    </Link>
+                    </a>
                     <div style={flashSalePriceRowStyle} className="flash-sale-price-row">
                       <span style={flashSaleDiscountPriceStyle} className="flash-sale-discount-price">₹{parseFloat(product.flash_sale_price).toLocaleString('en-IN')}</span>
                       <span style={flashSaleOriginalPriceStyle} className="flash-sale-original-price">₹{parseFloat(product.price).toLocaleString('en-IN')}</span>
                     </div>
                   </div>
                 );
-              })}
+              })
+            )}
             </div>
 
             <div style={{ textAlign: 'center', marginTop: '2.5rem', marginBottom: '1.5rem' }}>
@@ -300,8 +403,8 @@ export default function Home() {
               </Link>
             </div>
           </div>
-        </section>
-      )}
+        )}
+      </section>
 
       {/* 3. FEATURED COLLECTIONS SECTION */}
       <section style={collectionsSectionStyle} className="home-section home-collections-section">
@@ -312,7 +415,10 @@ export default function Home() {
           </div>
 
           {loading ? (
-            <div style={loadingWrapperStyle}>Loading collections...</div>
+            <div style={collectionsGridStyle} className="collections-grid">
+              <SkeletonCard type="home-signature" />
+              <SkeletonCard type="home-signature" />
+            </div>
           ) : (
             <div style={collectionsGridStyle} className="collections-grid">
               {collections.map((col) => {
@@ -397,6 +503,299 @@ export default function Home() {
           </div>
         </div>
       </section>
+
+      {/* Mobile bottom sheet backdrop */}
+      {activeProduct && (
+        <div 
+          className="homepage-flash-sale-backdrop" 
+          onClick={() => setActiveProduct(null)}
+          style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            width: '100vw',
+            height: '100vh',
+            backgroundColor: 'rgba(0, 0, 0, 0.4)',
+            zIndex: 9999,
+            display: 'block',
+            pointerEvents: 'auto',
+            animation: 'fadeInBackdrop 0.3s ease-out forwards',
+          }}
+        />
+      )}
+
+      {activeProduct && (
+        <div className="mobile-sheet-wrapper-container animate-fade-in">
+          {/* Floating Card */}
+          <div className="container detail-container-box" style={detailContainerStyle} onClick={(e) => e.stopPropagation()}>
+            {/* Mobile Drag handle pill */}
+            <div className="mobile-sheet-drag-handle" />
+
+            {/* Back button and wishlist toggle on top */}
+            <div style={detailHeaderStyle} className="detail-header-mobile-overlay">
+              <button onClick={() => setActiveProduct(null)} style={detailBackButtonStyle} className="desktop-back-btn detail-back-btn-overlay">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.0" strokeLinecap="round" strokeLinejoin="round" style={{ marginRight: '8px' }}>
+                  <line x1="19" y1="12" x2="5" y2="12"></line>
+                  <polyline points="12 19 5 12 12 5"></polyline>
+                </svg>
+                Back to Store
+              </button>
+
+              {/* Mobile Down Chevron dismiss button */}
+              <button onClick={() => setActiveProduct(null)} className="mobile-sheet-dismiss-btn">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#000000" strokeWidth="2.0" strokeLinecap="round" strokeLinejoin="round">
+                  <polyline points="6 9 12 15 18 9"></polyline>
+                </svg>
+              </button>
+              
+              {/* Heart Wishlist button */}
+              <button 
+                onClick={(e) => {
+                  e.stopPropagation();
+                  toggleWishlist(activeProduct.id);
+                }} 
+                className="detail-wishlist-btn-overlay"
+                style={{
+                  color: wishlist.includes(activeProduct.id) ? '#D98E9B' : '#000000',
+                  marginRight: '6px',
+                }}
+              >
+                <svg width="20" height="20" viewBox="0 0 24 24" fill={wishlist.includes(activeProduct.id) ? 'currentColor' : 'none'} stroke="currentColor" strokeWidth="2">
+                  <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+                </svg>
+              </button>
+            </div>
+
+            {/* Grid container */}
+            <div style={{}} className="detail-preview-grid">
+              {/* Top Half: Image */}
+              <div style={{ ...detailMainImgWrapperStyle, position: 'relative' }} className="detail-main-img-wrapper">
+                <ImageWithSkeleton 
+                  src={activeProductImage} 
+                  alt={activeProduct.name} 
+                  style={detailMainImgStyle} 
+                  className="detail-main-img"
+                />
+                {activeProduct.flash_sale && activeProduct.flash_sale_price && (
+                  <div style={{
+                    position: 'absolute',
+                    top: '22px',
+                    right: '64px',
+                    backgroundColor: '#D98E9B',
+                    color: '#FFFFFF',
+                    padding: '0.25rem 0.6rem',
+                    borderRadius: '6px',
+                    fontSize: '0.75rem',
+                    fontWeight: '700',
+                    boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
+                    zIndex: 10
+                  }}>
+                    -{Math.round(((parseFloat(activeProduct.price) - parseFloat(activeProduct.flash_sale_price)) / parseFloat(activeProduct.price)) * 100)}%
+                  </div>
+                )}
+              </div>
+
+              {/* Bottom Half: Details */}
+              <div style={detailInfoStyle}>
+                <span style={detailCollectionLabelStyle} className="detail-collection-label">{activeProduct.collection_name}</span>
+                <h1 style={detailTitleStyle} className="detail-product-name">{activeProduct.name}</h1>
+                {activeProduct.flash_sale && activeProduct.flash_sale_price ? (
+                  <p style={detailPriceStyle} className="detail-product-price">
+                    <span style={{ color: '#000000', fontWeight: '700', marginRight: '0.8rem' }}>
+                      ₹{parseFloat(activeProduct.flash_sale_price).toLocaleString('en-IN')}
+                    </span>
+                    <span style={{ color: 'rgba(0, 0, 0, 0.4)', textDecoration: 'line-through', fontSize: '1.1rem', fontWeight: '400' }}>
+                      ₹{parseFloat(activeProduct.price).toLocaleString('en-IN')}
+                    </span>
+                  </p>
+                ) : (
+                  <p style={detailPriceStyle} className="detail-product-price">₹{parseFloat(activeProduct.price).toLocaleString('en-IN')}</p>
+                )}
+                <div style={detailDividerStyle} className="detail-divider"></div>
+                <p style={detailDescStyle} className="detail-product-desc">{(activeProduct.description && activeProduct.description.trim()) ? activeProduct.description.trim() : 'Exclusive luxury item, crafted from premium archival coutures.'}</p>
+
+                <div className="detail-stock-warning" style={{ marginTop: '0.5rem', marginBottom: '1rem', fontSize: '0.85rem', color: '#B8860B', fontWeight: '600' }}>
+                  {maxStock <= 3 ? (
+                    <span style={{ color: '#D9534F' }}>⚠️ Only {maxStock} left in our vaults!</span>
+                  ) : (
+                    <span>Remaining stock: {maxStock} available</span>
+                  )}
+                </div>
+
+                {/* Sizes selector */}
+                {activeProduct.variants && activeProduct.variants.some(v => v.size) && (() => {
+                  const hasClothingSizes = activeProduct.variants.some(v => ['S', 'M', 'L', 'XL', 'XXL'].includes(v.size?.toUpperCase()));
+                  const sizesToRender = hasClothingSizes 
+                    ? ['S', 'M', 'L', 'XL', 'XXL'] 
+                    : [...new Set(activeProduct.variants.map(v => v.size))].filter(Boolean);
+
+                  return (
+                    <div style={detailOptionGroupStyle} className="detail-option-group">
+                      <h4 style={detailOptionTitleStyle} className="detail-option-title">Select Size</h4>
+                      <div style={detailSizesRowStyle} className="detail-sizes-row">
+                        {sizesToRender.map(size => {
+                          const variantForSize = activeProduct.variants.find(v => (v.size || '').toUpperCase() === size.toUpperCase());
+                          const hasStock = variantForSize && variantForSize.stock > 0;
+                          const isSelected = activeProductSize === size;
+                          
+                          return (
+                            <button 
+                              key={size}
+                              disabled={!hasStock}
+                              onClick={() => setActiveProductSize(size)}
+                              style={{
+                                ...(isSelected ? activeSizeOptStyle : sizeOptStyle),
+                                ...(!hasStock ? { opacity: 0.35, cursor: 'not-allowed', textDecoration: 'line-through' } : {})
+                              }}
+                            >
+                              {size}
+                            </button>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  );
+                })()}
+
+                {/* Sticky Actions Footer (inside card) */}
+                <div className="card-sticky-footer">
+                  <div style={detailActionWrapperStyle} className="detail-action-bottom-bar">
+                    {user && user.role === 'admin' ? (
+                      <Link
+                        href={`/admin/products?edit=${activeProduct.slug}`}
+                        style={detailAdminEditBtnStyle}
+                      >
+                        Admin Preview: Edit Product
+                      </Link>
+                    ) : currentQtyInCart > 0 ? (
+                      /* Counter controller when product is already in cart */
+                      <div className="blinkit-count-controller" style={{ ...detailAddBtnStyle, backgroundColor: '#FFFFFF', border: '1px solid #D98E9B', display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 1rem', cursor: 'default', width: '100%' }}>
+                        <button 
+                          style={{ border: 'none', backgroundColor: 'transparent', fontSize: '1.4rem', color: '#D98E9B', cursor: 'pointer', fontWeight: 'bold', padding: '0 0.8rem' }}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            updateCartQuantity(activeProduct.id, activeProductSize, activeProductColor, currentQtyInCart - 1);
+                          }}
+                        >
+                          -
+                        </button>
+                        <span style={{ fontWeight: '700', color: '#000000', fontSize: '1rem' }}>{currentQtyInCart} in bag</span>
+                        <button 
+                          style={{ border: 'none', backgroundColor: 'transparent', fontSize: '1.4rem', color: '#D98E9B', cursor: 'pointer', fontWeight: 'bold', padding: '0 0.8rem', opacity: currentQtyInCart >= maxStock ? 0.35 : 1 }}
+                          disabled={currentQtyInCart >= maxStock}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            updateCartQuantity(activeProduct.id, activeProductSize, activeProductColor, currentQtyInCart + 1);
+                          }}
+                        >
+                          +
+                        </button>
+                      </div>
+                    ) : (
+                      /* Standard Add to Cart button when not in cart */
+                      <>
+                        <div className="mobile-hide-qty" style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem' }}>
+                          <div style={detailQtyControlStyle}>
+                            <button 
+                              style={detailQtyBtnStyle}
+                              onClick={() => {
+                                if (activeProductQty > 1) {
+                                  setActiveProductQty(activeProductQty - 1);
+                                }
+                              }}
+                            >
+                              -
+                            </button>
+                            <span style={detailQtyValStyle}>{activeProductQty}</span>
+                            <button 
+                              style={{
+                                ...detailQtyBtnStyle,
+                                opacity: isPlusDisabled ? 0.35 : 1,
+                                cursor: isPlusDisabled ? 'not-allowed' : 'pointer'
+                              }}
+                              disabled={isPlusDisabled}
+                              onClick={() => {
+                                if (activeProductQty < maxStock) {
+                                  setActiveProductQty(activeProductQty + 1);
+                                }
+                              }}
+                            >
+                              +
+                            </button>
+                          </div>
+                        </div>
+
+                        <button 
+                          style={detailAddBtnStyle}
+                          disabled={activeProduct.is_out_of_stock || isPlusDisabled}
+                          onClick={() => {
+                            if (activeProduct.is_out_of_stock || isPlusDisabled) return;
+                            addToCart(activeProduct, activeProductSize, activeProductColor, activeProductQty);
+                            setActiveProductQty(1);
+                          }}
+                        >
+                          {activeProduct.is_out_of_stock ? 'Sold Out' : 'ADD'}
+                        </button>
+                      </>
+                    )}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Sibling switcher row of 56px circular switcher circles */}
+          {switcherProducts.length > 0 && (() => {
+            const activeIdx = switcherProducts.findIndex(p => p.id === activeProduct.id);
+            const W = viewportWidth || 390;
+            const translateX = (W / 2) - 28 - (activeIdx * 68.8);
+
+            return (
+              <div className="mobile-sibling-switcher-row-outer hide-scrollbar">
+                <div 
+                  className="mobile-sibling-switcher-row-inner"
+                  style={{
+                    display: 'flex',
+                    flexDirection: 'row',
+                    gap: '0.8rem',
+                    transform: `translateX(${translateX}px)`,
+                    transition: 'transform 0.35s cubic-bezier(0.25, 1, 0.5, 1)',
+                    willChange: 'transform'
+                  }}
+                >
+                  {switcherProducts.map((sib) => {
+                    const isActive = sib.id === activeProduct.id;
+                    return (
+                      <button
+                        key={sib.id}
+                        onClick={(e) => {
+                          e.preventDefault();
+                          e.stopPropagation();
+                          
+                          setActiveProduct(sib);
+                          setActiveProductImage(sib.images && sib.images[0] ? sib.images[0] : '/placeholder.jpg');
+                          const vars = sib.variants || [];
+                          const inStockVar = vars.find(v => v.stock > 0) || vars[0];
+                          setActiveProductSize(inStockVar ? inStockVar.size || '' : '');
+                          setActiveProductColor(inStockVar ? inStockVar.color || '' : '');
+                          setActiveProductQty(1);
+                        }}
+                        className={`sibling-switcher-circle-btn ${isActive ? 'active' : ''}`}
+                      >
+                        <ImageWithSkeleton 
+                          src={sib.images && sib.images[0] ? sib.images[0] : '/placeholder.jpg'} 
+                          alt={sib.name} 
+                          className="sibling-switcher-circle-img"
+                        />
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+            );
+          })()}
+        </div>
+      )}
 
       {/* Lightbox Modal */}
       {selectedReview && (
@@ -741,7 +1140,7 @@ const cardTitleStyle = {
   fontSize: '1.8rem',
   fontFamily: 'var(--font-serif)',
   marginBottom: '0.6rem',
-  color: '#A06B79',
+  color: '#B97285',
 };
 
 const cardDescStyle = {
@@ -949,9 +1348,9 @@ const flashSaleImgStyle = {
 
 const flashSaleBadgeStyle = {
   position: 'absolute',
-  top: '12px',
-  left: '12px',
-  backgroundColor: '#D98E9B',
+  top: '8px',
+  left: '8px',
+  backgroundColor: '#B97285',
   color: '#FFFFFF',
   padding: '0.25rem 0.6rem',
   borderRadius: '6px',
@@ -962,8 +1361,8 @@ const flashSaleBadgeStyle = {
 
 const flashSaleWishlistBtnStyle = {
   position: 'absolute',
-  top: '12px',
-  right: '12px',
+  top: '8px',
+  right: '8px',
   backgroundColor: 'rgba(255, 255, 255, 0.9)',
   border: 'none',
   width: '32px',
@@ -980,7 +1379,7 @@ const flashSaleWishlistBtnStyle = {
 const flashSaleProductNameStyle = {
   fontSize: '0.9rem',
   fontWeight: '600',
-  color: '#000000',
+  color: '#B97285',
   marginBottom: '0.3rem',
   whiteSpace: 'nowrap',
   overflow: 'hidden',
@@ -994,13 +1393,14 @@ const flashSalePriceRowStyle = {
 };
 
 const flashSaleDiscountPriceStyle = {
-  fontSize: '1rem',
-  fontWeight: '700',
-  color: '#B65C73',
+  fontSize: '0.9rem',
+  fontWeight: '600',
+  color: '#B97285',
 };
 
 const flashSaleOriginalPriceStyle = {
-  fontSize: '0.85rem',
+  fontSize: '0.9rem',
+  fontWeight: '600',
   color: 'rgba(0, 0, 0, 0.4)',
   textDecoration: 'line-through',
 };
@@ -1014,3 +1414,198 @@ const flashSaleShopAllStyle = {
   borderBottom: '1.5px solid #B65C73',
   paddingBottom: '2px',
 };
+
+// Bottom Sheet Product Detail card styles
+const detailContainerStyle = {
+  padding: '1.5rem',
+  backgroundColor: '#FFFFFF',
+  borderRadius: '8px',
+  boxShadow: 'var(--shadow-md)',
+  border: '1px solid rgba(139, 119, 137, 0.1)',
+  marginTop: '1.5rem',
+};
+
+const detailHeaderStyle = {
+  display: 'flex',
+  justifyContent: 'space-between',
+  alignItems: 'center',
+  marginBottom: '1rem',
+};
+
+const detailBackButtonStyle = {
+  display: 'flex',
+  alignItems: 'center',
+  backgroundColor: 'transparent',
+  border: 'none',
+  color: '#000000',
+  fontSize: '0.9rem',
+  fontWeight: '600',
+  cursor: 'pointer',
+  padding: '0.5rem 0',
+  letterSpacing: '0.05em',
+  textTransform: 'uppercase',
+};
+
+const detailMainImgWrapperStyle = {
+  width: '100%',
+  maxHeight: '430px',
+  overflow: 'hidden',
+  borderRadius: '8px',
+  border: '1px solid rgba(139, 119, 137, 0.1)',
+  backgroundColor: '#FBF0EC',
+};
+
+const detailMainImgStyle = {
+  width: '100%',
+  height: '100%',
+  maxHeight: '430px',
+  objectFit: 'cover',
+  display: 'block',
+};
+
+const detailInfoStyle = {
+  display: 'flex',
+  flexDirection: 'column',
+  gap: '0.75rem',
+};
+
+const detailCollectionLabelStyle = {
+  fontSize: '0.75rem',
+  textTransform: 'uppercase',
+  letterSpacing: '0.12em',
+  color: '#D98E9B',
+  fontWeight: '700',
+};
+
+const detailTitleStyle = {
+  fontSize: '1.8rem',
+  fontFamily: 'var(--font-serif)',
+  color: '#000000',
+  fontWeight: '400',
+  lineHeight: '1.15',
+  margin: '0.1rem 0',
+};
+
+const detailPriceStyle = {
+  fontSize: '1.4rem',
+  color: '#000000',
+  fontWeight: '600',
+};
+
+const detailDividerStyle = {
+  height: '1px',
+  backgroundColor: 'rgba(139, 119, 137, 0.15)',
+  margin: '0.2rem 0',
+};
+
+const detailDescStyle = {
+  fontSize: '0.88rem',
+  lineHeight: '1.5',
+  color: 'rgba(0,0,0,0.7)',
+};
+
+const detailOptionGroupStyle = {
+  display: 'flex',
+  flexDirection: 'column',
+  gap: '0.4rem',
+  marginTop: '0.2rem',
+};
+
+const detailOptionTitleStyle = {
+  fontSize: '0.75rem',
+  textTransform: 'uppercase',
+  letterSpacing: '0.08em',
+  color: '#D98E9B',
+  fontWeight: '700',
+};
+
+const detailSizesRowStyle = {
+  display: 'flex',
+  flexWrap: 'wrap',
+  gap: '0.6rem',
+};
+
+const sizeOptStyle = {
+  padding: '0.4rem 1rem',
+  border: '1px solid rgba(139, 119, 137, 0.25)',
+  borderRadius: '4px',
+  fontSize: '0.75rem',
+  fontWeight: '600',
+  backgroundColor: '#FFFFFF',
+  color: '#000000',
+  cursor: 'pointer',
+  transition: 'all 0.2s ease',
+};
+
+const activeSizeOptStyle = {
+  ...sizeOptStyle,
+  backgroundColor: '#000000',
+  border: '1px solid #000000',
+  color: '#FFFFFF',
+};
+
+const detailActionWrapperStyle = {
+  display: 'flex',
+  gap: '0.8rem',
+  marginTop: '0.6rem',
+};
+
+const detailQtyControlStyle = {
+  display: 'flex',
+  alignItems: 'center',
+  border: '1px solid rgba(139, 119, 137, 0.25)',
+  borderRadius: '4px',
+  overflow: 'hidden',
+  height: '40px',
+};
+
+const detailQtyBtnStyle = {
+  width: '36px',
+  height: '100%',
+  backgroundColor: 'transparent',
+  border: 'none',
+  fontSize: '1.1rem',
+  cursor: 'pointer',
+  color: '#000000',
+};
+
+const detailQtyValStyle = {
+  padding: '0 0.8rem',
+  fontWeight: '600',
+  fontSize: '0.95rem',
+};
+
+const detailAddBtnStyle = {
+  flex: 1,
+  backgroundColor: '#D98E9B',
+  color: '#FFFFFF',
+  border: 'none',
+  borderRadius: '4px',
+  fontSize: '0.8rem',
+  fontWeight: '700',
+  textTransform: 'uppercase',
+  letterSpacing: '0.08em',
+  cursor: 'pointer',
+  height: '40px',
+  transition: 'all 0.3s ease',
+};
+
+const detailAdminEditBtnStyle = {
+  flex: 1,
+  backgroundColor: '#FFFFFF',
+  color: '#000000',
+  border: '1px solid #000000',
+  borderRadius: '4px',
+  fontSize: '0.8rem',
+  fontWeight: '700',
+  textTransform: 'uppercase',
+  letterSpacing: '0.08em',
+  cursor: 'pointer',
+  height: '40px',
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  textDecoration: 'none',
+  transition: 'all 0.3s ease',
+};
+

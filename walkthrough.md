@@ -1,11 +1,15 @@
 # Walkthrough: Swiggy Instamart-style Restructured Mobile Sheet, Admin Sizing Sync & Zero-Scroll Layout
 
-We have successfully restructured the mobile detailed view bottom sheet to match the premium Swiggy Instamart layout, resolved element vertical height collapse bugs, completely removed color options from the admin product manager and storefront views, configured dynamic height autoscaling for the card wrapper, moved the ADD actions button in-flow to ensure comfortable, equal spacing throughout, disabled vertical scrolling entirely for a flawless zero-scroll experience, added padding below the ADD button to prevent collision with the bottom rounded edge of the card, fully disabled collections background scrolling when the detailed view is active, stabilized card container sizing when adding items to the cart, repositioned the card to overlap the bottom half of the header bar, blocked all background clicks so the entire screen is unresponsive when the preview is active, extended the blur overlay to cover the entire background screen including the announcement bar and the top half of the header, implemented a linear centered carousel for the switcher product circles, limited the floating WhatsApp "Chat With Us" button exclusively to the homepage, and redesigned the mobile cart drawer to be a full-screen, edge-to-edge overlay with a circular chevron back button on the left and title on the right, along with a fix for cart thumbnail images.
+## What's New
 
-## Changes Implemented
+### 🚀 Performance & Loading State Overhaul
+- **Universal Skeleton Shimmer**: Implemented a global `.skeleton-shimmer` CSS class with a sweeping left-to-right `#E8E8E8`/`#F5F5F5` gradient animation (1.2s loop) to replace the static pulsing opacity skeleton.
+- **Card-Level Loading Skeletons**: Eliminated the jarring "Curating items from the vault..." full-page loading screen across `/collections`, `/suits`, and `/jewellery`. It has been replaced by a responsive grid of 8 `SkeletonCard` components that perfectly match the aspect ratio and dimension of real product cards.
+- **Sitewide Image Lazy Loading**: Reconfigured the `<ImageWithSkeleton>` component to default to `loading="lazy"` sitewide. Added an `eager` prop to bypass lazy-loading for above-the-fold items (the first two items in any grid) to boost LCP (Largest Contentful Paint) scores.
+- **Zero Layout Shift Homepage (Reimplemented)**: Refactored the homepage data fetching to use the unified API route (`/api/homepage`). While pending, the homepage strictly renders 3 squarish `.skeleton-pulse` cards (with a `#F6DDE2` base) for the Flash Sale slot (horizontal scroll) and 2 tall full-bleed skeleton cards for the Signature Collections slot. The default state expects `flash_sale_enabled` to be true on first load. Once resolved, if enabled, they populate seamlessly; if disabled, the flash sale slot collapses automatically.
 
-### 1. Compact Cart Items on Mobile ([globals.css](file:///c:/Users/varun/OneDrive/Documents/houseofginija/src/app/globals.css))
-*   **Reduced Margins & Gaps**: Added overrides for mobile viewports to shrink the gap between the thumbnail and details text (`gap: 0.6rem !important;`), as well as reducing the padding and margin below each cart item to `0.8rem`. 
+## Previous Fixes
+
 *   **Smaller Thumbnails**: Scaled down the product image thumbnails from `80px` to `60px`.
 *   **Condensed Typography**: Shrunk all text sizing inside the cart items. Product titles are now `0.85rem`, variant text is `0.65rem`, and prices are `0.8rem`.
 *   **Smaller Quantity Controllers**: Reduced the height and width of the quantity increment/decrement block to `24px`. This makes each cart item significantly shorter vertically, allowing far more items to be visible simultaneously without needing to scroll.
@@ -152,3 +156,59 @@ We have added section dividing lines and optimized section spacing on the mobile
    - **Streamlined Header:** Changed "Ginija Portal" and "Management System" into a unified "Admin Portal" title on mobile. Moved the "Store" and "Sign Out" global action buttons directly into the same header row, perfectly aligned to the right, via a flex container. The `+ ADD CREATION` button remains in the main panel header space. 
    - **Column-Selective Tables:** Completely eliminated horizontal scrolling from all tables by setting `table-layout: fixed` and `overflow-x: hidden`. Using `.hide-on-mobile`, the system strictly limits the table to the 3 most essential columns (e.g. Product Details, Price, Actions). The Action column buttons (Edit/Delete) were styled to automatically wrap and stack, allowing the table content to effortlessly fit within the mobile viewport without getting clipped.
    - **Zero Desktop Interference:** All layout structure updates are strictly confined within the `@media (max-width: 768px)` block, leaving the desktop Admin UI completely untouched and pristine.
+
+## Card Title Color Customization & Layout Order Verification
+
+We have updated the card titles and verified the layout order matching all user requirements:
+
+### 1. Card Title Color Customization
+- **Product Name Text Color**: Changed the product name text color on the catalog/product cards across the storefront to match the subtitle color `#B97285` (from "THE DESIGNER LABEL" header).
+- **Locations Updated**:
+  - `collections/page.js` (`cardTitleStyle` color updated to `#B97285`)
+  - `suits/page.js` (`cardTitleStyle` color updated to `#B97285`)
+  - `jewellery/page.js` (`cardTitleStyle` color updated to `#B97285`)
+  - Homepage `page.js` (`flashSaleProductNameStyle` color updated to `#B97285`)
+  - Homepage `page.js` (`cardTitleStyle` for Signature Collections updated to `#B97285`)
+
+### 2. Homepage Layout Order & Gap Verification
+- **JSX DOM Order**: The Flash Sale section is placed structurally before Signature Collections in the JSX.
+- **Dynamic Collapse**: Controlled its space footprint using `display: (flashSaleEnabled && flashProducts.length > 0) ? 'block' : 'none'`.
+- **Flow Coordinates (Verified with Puppeteer)**:
+  - **Flash Sale Enabled**: `Hero (top: 107, height: 737)` → `Feature Strip (top: 774, height: 70)` → `Flash Sale (top: 844, height: 438)` → `Signature Collections (top: 1281, height: 494)`.
+  - **Flash Sale Disabled**: `Hero (top: 107, height: 737)` → `Feature Strip (top: 774, height: 70)` → `Flash Sale (height: 0, display: none)` → `Signature Collections (top: 844, height: 494)`. Signature Collections moves up directly below the Feature Strip with no empty gap.
+
+### 3. Homepage Flash Sale Scroll Locking & Backdrop Customization
+- **iOS Safari & Mobile Scroll Lock Fix**: Updated the reactive `useEffect` hook in homepage `page.js` to not only toggle `document.body.style.overflow = 'hidden'` but also add a non-passive `touchmove` event listener to `document` when the modal is active. This reactively blocks all touch-drag events from reaching the background window on iOS Safari and mobile viewports, and cleanly cleanups the listener on close/unmount.
+- **Visual Background Preservation (No Blur)**: Replaced the standard backdrop container inside homepage `page.js` with a customized `.homepage-flash-sale-backdrop` styled with `backgroundColor: 'rgba(0, 0, 0, 0.4)'` and no `backdrop-filter` / `WebkitBackdropFilter`. This leaves the page content behind the homepage bottom sheet fully visible and dimmed, but not blurred out, perfectly preserving context.
+- **Scope Isolation**: Kept all scroll locking and blur backdrop behaviors on other pages (`/collections`, `/suits`, `/jewellery`) completely untouched and operating exactly as they were.
+
+## Discount Badge, Wishlist Heart, and Card Symmetry Adjustments
+
+We have successfully refined the layouts and styling to achieve perfect alignment and branding consistency:
+
+### 1. Discount Badge Positioning & Color
+- **Move to Top-Left**: Moved the discount badge to the top-left corner (`left: '12px'`, `top: '12px'`) on collection page cards.
+- **Brand Pink Styling**: Changed the background color of the discount badge on collection page cards to the secondary brand pink `#B97285`.
+- **Homepage Badges Synced**: Synced this same color (`#B97285`) to the flash sale section badges on the homepage.
+- **Scope Limit**: Left the layout and positioning of everything else (including bottom sheets) completely untouched.
+
+### 2. Wishlist Heart Alignment
+- **True Top-Right Alignment**: Repositioned the wishlist heart icon button on homepage flash sale cards to the true top-right corner of the image wrapper (`top: '8px'`, `right: '8px'`), correcting the misalignment.
+
+### 3. Flash Sale Price & Card Symmetry
+- **Standardized Price Font**: Removed bold/enlarged overrides (`fontWeight: '700'`, `fontSize` overrides) from the flash sale price and strikethrough price spans on collection cards. Both now inherit from `cardPriceStyle` (`fontSize: '0.9rem'`, `fontWeight: '600'`) for uniform presentation.
+- **Price Row Alignment**: Set a fixed `minHeight: '24px'` with flex-alignment (`display: 'flex'`, `alignItems: 'center'`) on the card price row (`cardPriceStyle`) across collections, suits, and jewellery. This enforces perfect card heights regardless of whether a product is on flash sale.
+
+### 4. Wishlist Heart Restoration & Card Symmetry Fix
+- **Card Wishlist Heart Button Added**: Added the absolute positioned wishlist heart button (`top: '8px'`, `right: '8px'`, `zIndex: 11`) to the image wrapper on all product cards in `/collections`, `/suits`, and `/jewellery`. It uses the correct theme pink `#B97285` when toggled.
+- **Out of Stock Repositioned**: Moved the "Out of Stock" badge to the bottom-right corner (`bottom: '12px'`, `right: '12px'`) of the image wrapper to prevent overlapping with the wishlist heart button in the top-right.
+- **Fixed Button Container Height**: Wrapped the direct cart action buttons (`ADD` / `Sold Out` / quantity selector controller) in a fixed-height row wrapper (`height: '44px'`, `display: 'flex'`, `alignItems: 'center'`). This guarantees that both cards retain identical dimensions regardless of whether they show the `ADD` button or the quantity selector controls.
+- **Wishlist Heart Precision Styling**: Shrunk the wishlist heart button overall dimensions to `28px` (with `16px` SVG) and nudged coordinates to `top: 2px`, `right: 4px` on all product cards to stay perfectly contained in the top-right corner.
+- **Title and Price Color Sync**: Configured the product name anchor links and flash sale price spans to match secondary brand pink `#B97285`. Both flash price and original price inherit normal font properties (size `0.9rem`, weight `600`) to guarantee alignment.
+- **Product Name Weight**: Styled product names with `font-weight: 600` for both flash sale and normal products.
+- **Identical ADD & Quantity Controller Blocks**: Unified `.blinkit-add-btn` and `.blinkit-count-controller` in `globals.css` with identical attributes (`height: 36px`, `border-radius: 6px`, `border: 1px solid #B97285`, `display: flex`). Combined with `width: 100%` inline, both blocks look identical and take exactly the same footprint in the `44px` card action row, completely eliminating asymmetrical jumps.
+- **Homepage Flash Sale Price Sync**: Synchronized the flash sale price and original price on the homepage to `0.9rem` / `600` weight (updating `flashSaleDiscountPriceStyle` and `flashSaleOriginalPriceStyle`) to ensure they exactly match the standard product price scale.
+- **Rogue Mobile Font Override Fix**: Discovered and removed aggressive CSS overrides (`.collections-product-card-content span`) in `globals.css` that were forcefully scaling down the flash sale price (which is wrapped in a `span`) to `0.65rem` on mobile layouts, while the standard price remained `0.9rem`. They are now completely perfectly matched.
+- **Absolute Flex-Grow Anchoring**: Refactored the `cardContentStyle` wrapper across `/collections`, `/suits`, and `/jewellery` to utilize `flexGrow: 1` and `justifyContent: 'space-between'`. This locks the action button row perfectly to the bottom of the card and guarantees 0px vertical reflow (jumping) regardless of the button state.
+- **Badge Bleeding Fix**: Unified the flash sale badge inset position to `top: 8px, left: 8px` across both the global stylesheet (`.flash-sale-badge`) and all collection component files. This perfectly anchors the badge inside the image without its sharp corners bleeding outside the bounds of the image's rounded corners.
+- **Homepage Background Scroll Fix**: Reverted to the strict `touchmove` interception method to fully disable background scrolling on mobile iOS devices when the flash sale detailed view is open. Added an exception boundary so internal scrolling inside the bottom sheet remains functional.

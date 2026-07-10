@@ -25,9 +25,13 @@ export async function POST(request) {
     }
 
     // 1. RECALCULATE PRICES SERVER-SIDE TO PREVENT PRICE TAMPERING
+    // Query flash sale enabled setting
+    const settingsResult = await pool.query("SELECT value FROM settings WHERE key = 'flash_sale_enabled'");
+    const flashSaleEnabled = settingsResult.rows.length > 0 ? settingsResult.rows[0].value === 'true' : false;
+
     const productIds = items.map((i) => i.id);
     const dbResult = await pool.query(
-      'SELECT id, name, price, variants, is_out_of_stock FROM products WHERE id = ANY($1)',
+      'SELECT id, name, price, variants, is_out_of_stock, flash_sale, flash_sale_price FROM products WHERE id = ANY($1)',
       [productIds]
     );
 
@@ -62,7 +66,8 @@ export async function POST(request) {
         );
       }
 
-      const itemPrice = parseFloat(dbProduct.price);
+      const isFlashActive = flashSaleEnabled && dbProduct.flash_sale && dbProduct.flash_sale_price;
+      const itemPrice = isFlashActive ? parseFloat(dbProduct.flash_sale_price) : parseFloat(dbProduct.price);
       subtotal += itemPrice * item.quantity;
       verifiedItems.push({
         id: item.id,

@@ -4,6 +4,7 @@ import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { useStore } from '@/context/StoreContext';
 import { usePathname } from 'next/navigation';
+import ImageWithSkeleton from '@/components/ImageWithSkeleton';
 
 export default function Header() {
   const { cart, cartCount, updateCartQuantity, removeFromCart, wishlist, user, logout, setIsLoginOpen } = useStore();
@@ -422,11 +423,10 @@ export default function Header() {
                 const itemSubtotal = item.price * item.quantity;
                 return (
                   <div key={`${item.id}-${item.size}-${item.color}-${idx}`} className="cart-drawer-item">
-                    <img 
+                    <ImageWithSkeleton 
                       src={item.images && item.images[0] ? item.images[0] : (item.image ? item.image : '/placeholder.jpg')} 
                       alt={item.name} 
                       className="cart-drawer-thumb" 
-                      loading="lazy"
                     />
                     <div className="cart-drawer-item-details">
                       <h4 className="cart-drawer-item-title">{item.name}</h4>

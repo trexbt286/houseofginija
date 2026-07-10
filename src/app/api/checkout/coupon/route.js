@@ -52,3 +52,74 @@ export async function GET(request) {
     return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
   }
 }
+
+export async function POST(request) {
+  try {
+    const { items, couponCode } = await request.json();
+
+    if (!items || items.length === 0) {
+      return NextResponse.json({ error: 'Cart items are required' }, { status: 400 });
+    }
+
+    // Query flash sale enabled setting
+    const settingsResult = await pool.query("SELECT value FROM settings WHERE key = 'flash_sale_enabled'");
+    const flashSaleEnabled = settingsResult.rows.length > 0 ? settingsResult.rows[0].value === 'true' : false;
+
+    // Recalculate prices using flash_sale_price if applicable
+    const productIds = items.map((i) => i.id);
+    const dbResult = await pool.query(
+      'SELECT id, price, flash_sale, flash_sale_price FROM products WHERE id = ANY($1)',
+      [productIds]
+    );
+
+    const dbProducts = {};
+    dbResult.rows.forEach((p) => {
+      dbProducts[p.id] = p;
+    });
+
+    let subtotal = 0;
+    for (const item of items) {
+      const dbProduct = dbProducts[item.id];
+      if (dbProduct) {
+        const isFlashActive = flashSaleEnabled && dbProduct.flash_sale && dbProduct.flash_sale_price;
+        const itemPrice = isFlashActive ? parseFloat(dbProduct.flash_sale_price) : parseFloat(dbProduct.price);
+        subtotal += itemPrice * item.quantity;
+      }
+    }
+
+    let discountAmount = 0;
+    let valid = false;
+    let coupon = null;
+
+    if (couponCode) {
+      const codeUpper = couponCode.toUpperCase().trim();
+      const couponResult = await pool.query(
+        'SELECT * FROM coupons WHERE code = $1 AND active = true AND expiry_date > NOW()',
+        [codeUpper]
+      );
+
+      if (couponResult.rows.length > 0) {
+        coupon = couponResult.rows[0];
+        if (coupon.times_used < coupon.usage_limit) {
+          valid = true;
+          if (coupon.discount_type === 'percentage') {
+            discountAmount = (subtotal * parseFloat(coupon.discount_value)) / 100;
+          } else {
+            discountAmount = Math.min(subtotal, parseFloat(coupon.discount_value));
+          }
+        }
+      }
+    }
+
+    return NextResponse.json({
+      valid,
+      subtotal,
+      discountAmount,
+      total: subtotal - discountAmount,
+    });
+  } catch (error) {
+    console.error('Coupon validation POST error:', error);
+    return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
+  }
+}
+

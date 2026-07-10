@@ -277,6 +277,7 @@ export default function AdminFlashSalePage() {
                               src={product.images?.[0] || '/icon.png'} 
                               alt={product.name} 
                               style={productImgStyle} 
+                              loading="lazy"
                             />
                             <span style={productNameStyle}>{product.name}</span>
                           </div>
