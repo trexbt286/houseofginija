@@ -249,6 +249,7 @@ function AccountContent() {
             </svg>
           </button>
         </div>
+        </div>
       )}
 
       {/* ACTIVE SECTION VIEW */}
