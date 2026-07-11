@@ -355,14 +355,14 @@ export default function Home() {
                     <div key={product.id} className="flash-sale-card" style={{ position: 'relative' }}>
                     {/* Product Image Container */}
                     <div style={flashSaleImgContainerStyle} className="flash-sale-img-container">
-                      <a href={`/products/${product.slug}`} onClick={(e) => handleProductClick(e, product)}>
+                      <div onClick={(e) => handleProductClick(e, product)} style={{ cursor: 'pointer' }}>
                         <ImageWithSkeleton 
                           src={product.images?.[0] || '/icon.png'} 
                           alt={product.name} 
                           eager={index < 2}
                           style={flashSaleImgStyle} 
                         />
-                      </a>
+                      </div>
                       
                       {/* Discount Badge on Top Left */}
                       <div style={flashSaleBadgeStyle} className="flash-sale-badge">
@@ -391,9 +391,9 @@ export default function Home() {
                     </div>
 
                     {/* Product Info */}
-                    <a href={`/products/${product.slug}`} onClick={(e) => handleProductClick(e, product)} style={{ textDecoration: 'none', color: 'inherit' }}>
+                    <div onClick={(e) => handleProductClick(e, product)} style={{ cursor: 'pointer', color: 'inherit' }}>
                       <h3 style={flashSaleProductNameStyle} className="flash-sale-product-name">{product.name}</h3>
-                    </a>
+                    </div>
                     <div style={flashSalePriceRowStyle} className="flash-sale-price-row">
                       <span style={flashSaleDiscountPriceStyle} className="flash-sale-discount-price">₹{parseFloat(product.flash_sale_price).toLocaleString('en-IN')}</span>
                       <span style={flashSaleOriginalPriceStyle} className="flash-sale-original-price">₹{parseFloat(product.price).toLocaleString('en-IN')}</span>

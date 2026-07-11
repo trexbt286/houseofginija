@@ -792,7 +792,7 @@ function CollectionsContent() {
         }} 
         className="collections-product-card"
       >
-        <a href={`/products/${p.slug}`} onClick={(e) => handleProductClick(e, p)} style={{ display: 'block' }}>
+        <div onClick={(e) => handleProductClick(e, p)} style={{ display: 'block', cursor: 'pointer' }}>
           <div style={cardImageWrapperStyle} className="collections-product-image-wrapper">
             <ImageWithSkeleton 
               src={p.images && p.images[0] ? p.images[0] : '/placeholder.jpg'} 
@@ -882,11 +882,11 @@ function CollectionsContent() {
               </svg>
             </button>
           </div>
-        </a>
+        </div>
         <div style={cardContentStyle} className="collections-product-card-content">
-          <a href={`/products/${p.slug}`} style={{ textDecoration: 'none', color: '#B97285' }}>
+          <div onClick={(e) => handleProductClick(e, p)} style={{ cursor: 'pointer', color: '#B97285' }}>
             <h3 style={cardTitleStyle}>{p.name}</h3>
-          </a>
+          </div>
 
 
           {p.flash_sale && p.flash_sale_price ? (
