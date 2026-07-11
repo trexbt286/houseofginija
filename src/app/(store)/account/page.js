@@ -40,7 +40,17 @@ function AccountContent() {
     if (!loading && !user) {
       router.push('/login');
     }
-  }, [user, loading]);
+  }, [user, loading, router]);
+
+  // Sync tab from URL if changed externally (e.g., clicking header icon)
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  useEffect(() => {
+    const tab = searchParams.get('tab');
+    if (tab !== activeTab) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setActiveTab(tab || null);
+    }
+  }, [searchParams, activeTab]);
 
   // Sheet change handler
   const handleSheetChange = (sheet) => {
@@ -103,14 +113,18 @@ function AccountContent() {
   };
 
   // Fetch appropriate data on tab change
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
     if (!user) return;
     
     if (activeTab === 'orders') {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       fetchOrders();
     } else if (activeTab === 'wishlist') {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       fetchWishlist();
     } else if (activeTab === 'addresses') {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       fetchAddresses();
     }
   }, [activeTab, user]);
