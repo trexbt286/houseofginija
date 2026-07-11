@@ -404,9 +404,9 @@ function AccountContent() {
                   <button onClick={handleMoveAllToBag} style={moveAllToBagBtnStyle}>
                     MOVE ALL TO BAG
                   </button>
-                  <div className="cart-drawer-feed hide-scrollbar" style={{ padding: 0 }}>
+                  <div className="cart-drawer-feed hide-scrollbar" style={{ padding: 0, gap: 0 }}>
                     {wishlistItems.map((item) => (
-                      <div key={item.id} className="cart-drawer-item">
+                      <div key={item.id} className="cart-drawer-item" style={{ paddingBottom: '1rem', paddingTop: '1rem', borderBottom: '1px solid rgba(139, 119, 137, 0.15)' }}>
                         <img src={item.images[0]} alt={item.name} className="cart-drawer-thumb" loading="lazy" />
                         <div className="cart-drawer-item-details">
                           <h4 className="cart-drawer-item-title">{item.name}</h4>
@@ -866,7 +866,7 @@ const orderTotalStyle = {
 const wishlistContainerStyle = {
   display: 'flex',
   flexDirection: 'column',
-  gap: '1rem',
+  gap: '0.5rem',
 };
 
 const moveAllToBagBtnStyle = {
