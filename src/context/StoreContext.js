@@ -65,6 +65,23 @@ export function StoreProvider({ children }) {
               } else {
                 setWishlist([]); // Admin has no wishlist
               }
+
+              // Background sync to ensure localStorage isn't out of sync with database
+              if (data.user.role !== 'admin') {
+                fetch('/api/account/cart').then(res => res.json()).then(cartData => {
+                  if (cartData.cart) {
+                    setCart(cartData.cart);
+                    localStorage.setItem(userCartKey, JSON.stringify(cartData.cart));
+                  }
+                }).catch(e => console.error('Background cart sync failed', e));
+
+                fetch('/api/account/wishlist').then(res => res.json()).then(wishlistData => {
+                  if (wishlistData.wishlist) {
+                    setWishlist(wishlistData.wishlist);
+                    localStorage.setItem(userWishlistKey, JSON.stringify(wishlistData.wishlist));
+                  }
+                }).catch(e => console.error('Background wishlist sync failed', e));
+              }
             } else {
               loadGuestData();
             }
