@@ -408,7 +408,9 @@ function AccountContent() {
             <div style={tabContentStyle}>
               
 
-              {wishlistLoading ? null : wishlistItems.length === 0 ? (
+              {wishlistLoading ? (
+                <div style={{ padding: '2rem', textAlign: 'center', color: '#666' }}>Loading wishlist...</div>
+              ) : wishlistItems.length === 0 ? (
                 <div style={emptyTabStyle}>
                   <p>Your wishlist is currently empty.</p>
                   <Link href="/collections" style={shopLinkStyle}>Save Creations</Link>
