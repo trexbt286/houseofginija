@@ -904,8 +904,8 @@ const wishlistCardStyle = {
 };
 
 const wishlistImgWrapperStyle = {
-  width: '90px',
-  height: '110px',
+  width: '64px',
+  height: '64px',
   flexShrink: 0,
   borderRadius: '4px',
   overflow: 'hidden',
@@ -927,7 +927,7 @@ const wishlistContentStyle = {
 };
 
 const wishlistNameStyle = {
-  fontSize: '1.1rem',
+  fontSize: '0.9rem',
   fontFamily: 'var(--font-serif)',
   color: '#000000',
   fontWeight: '400',
@@ -935,7 +935,7 @@ const wishlistNameStyle = {
 };
 
 const wishlistPriceStyle = {
-  fontSize: '0.9rem',
+  fontSize: '0.8rem',
   color: '#000000',
   display: 'flex',
   alignItems: 'center',
