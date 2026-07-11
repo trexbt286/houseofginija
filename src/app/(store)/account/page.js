@@ -271,7 +271,7 @@ function AccountContent() {
         <div className="animate-fade-in" style={{ maxWidth: '600px', margin: '0 auto' }}>
           
           {/* Section Header */}
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '2rem', position: 'relative' }}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '0.5rem', position: 'relative' }}>
             <button 
               onClick={() => handleSheetChange(null)} 
               style={{ position: 'absolute', left: '0', width: '40px', height: '40px', borderRadius: '50%', border: '1px solid rgba(139, 119, 137, 0.25)', display: 'flex', alignItems: 'center', justifyContent: 'center', backgroundColor: 'transparent', cursor: 'pointer' }}
@@ -345,7 +345,7 @@ function AccountContent() {
                         <div>
                           <span style={orderIdLabelStyle}>Order ID: #{order.id}</span>
                           <span style={orderDateStyle}>
-                            Placd on {new Date(order.created_at).toLocaleDateString('en-IN')}
+                            Placed on {new Date(order.created_at).toLocaleDateString('en-IN')}
                           </span>
                         </div>
                         <div style={statusBadgeGroupStyle}>
@@ -361,7 +361,11 @@ function AccountContent() {
                           <div key={idx} style={orderItemRowStyle}>
                             <div style={orderItemMetaStyle}>
                               <strong>{item.name}</strong>
-                              <span>Size: {item.size} | Color: {item.color} | Qty: {item.quantity}</span>
+                              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.2rem', marginTop: '0.2rem', color: '#666' }}>
+                                <span>Size: {item.size}</span>
+                                <span>Color: {item.color}</span>
+                                <span>Qty: {item.quantity}</span>
+                              </div>
                             </div>
                             <span style={orderItemPriceStyle}>₹{(item.price * item.quantity).toLocaleString('en-IN')}</span>
                           </div>
@@ -682,7 +686,7 @@ const contentPanelStyle = {
 
 const tabContentStyle = {
   backgroundColor: '#FFFFFF',
-  padding: '2.5rem',
+  padding: '1.2rem',
   borderRadius: '8px',
   border: '1px solid rgba(139, 119, 137, 0.12)',
   boxShadow: 'var(--shadow-sm)',
@@ -759,7 +763,7 @@ const orderCardStyle = {
 const orderHeaderStyle = {
   backgroundColor: '#FFFFFF',
   color: '#000000',
-  padding: '1rem 1.5rem',
+  padding: '0.8rem 1rem',
   display: 'flex',
   justifyContent: 'space-between',
   alignItems: 'center',
@@ -815,7 +819,7 @@ const payStatusBadgeStyle = (status) => {
 };
 
 const orderItemsStyle = {
-  padding: '1.2rem 1.5rem',
+  padding: '0.8rem 1rem',
   display: 'flex',
   flexDirection: 'column',
   gap: '0.8rem',
@@ -841,7 +845,7 @@ const orderItemPriceStyle = {
 
 const orderFooterStyle = {
   borderTop: '1px solid rgba(139, 119, 137, 0.1)',
-  padding: '1rem 1.5rem',
+  padding: '0.8rem 1rem',
   display: 'flex',
   justifyContent: 'space-between',
   alignItems: 'center',
