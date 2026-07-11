@@ -206,7 +206,6 @@ export default function Home() {
       {/* 1. HERO SECTION */}
       <section style={heroSectionStyle} className="home-section home-hero-section">
         <video
-          src="/VID_20260702_111900_407_bsl~2.mp4"
           autoPlay
           loop
           muted
@@ -222,13 +221,14 @@ export default function Home() {
             height: '100%',
             objectFit: 'cover',
             zIndex: 0,
+            pointerEvents: 'none',
             transform: 'translateZ(0)',
-            backfaceVisibility: 'hidden',
-            perspective: 1000,
+            willChange: 'transform',
             WebkitTransform: 'translateZ(0)',
-            WebkitBackfaceVisibility: 'hidden',
           }}
-        />
+        >
+          <source src="/VID_20260702_111900_407_bsl~2.mp4" type="video/mp4" />
+        </video>
         <div style={heroOverlayStyle} className="hero-overlay">
           <div style={heroContentStyle} className="animate-fade-in hero-content-wrapper">
             <h1 style={heroTitleStyle}>
