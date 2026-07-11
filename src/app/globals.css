@@ -1306,10 +1306,6 @@ body.scroll-locked {
 }
 
 .cart-drawer-footer {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  width: 100%;
   padding: 1.5rem;
   border-top: 1px solid rgba(139, 119, 137, 0.15);
   background-color: #F6DDE2 !important; /* Brand pastel pink */
