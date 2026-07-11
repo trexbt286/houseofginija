@@ -308,7 +308,7 @@ function AccountContent() {
                 <div style={infoGroupStyle}>
                   <span style={infoLabelStyle}>Customer Rank</span>
                   <span style={{ ...infoValueStyle, textTransform: 'uppercase', color: '#000000' }}>
-                    {user.role} customer
+                    {user.role}
                   </span>
                 </div>
                 <div style={infoGroupStyle}>
@@ -587,7 +587,7 @@ export default function AccountPage() {
 
 const pageStyle = {
   paddingTop: '1rem',
-  paddingBottom: '6rem',
+  paddingBottom: '2rem',
   backgroundColor: '#FFFFFF',
 };
 
@@ -708,7 +708,7 @@ const dividerLineStyle = {
 // Profile style
 const profileGridStyle = {
   display: 'grid',
-  gridTemplateColumns: '1fr 1fr',
+  gridTemplateColumns: '1fr',
   gap: '2rem',
 };
 
@@ -730,6 +730,7 @@ const infoValueStyle = {
   fontSize: '1rem',
   fontWeight: '600',
   color: '#000000',
+  wordBreak: 'break-word',
 };
 
 const emptyTabStyle = {
