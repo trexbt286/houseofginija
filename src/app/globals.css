@@ -685,7 +685,8 @@ body.scroll-locked {
   transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
   max-height: 85vh !important;
   max-height: 85dvh !important;
-  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
   box-sizing: border-box;
 }
 

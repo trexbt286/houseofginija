@@ -1440,8 +1440,12 @@ function CollectionsContent() {
             </button>
             <h3 className="mobile-filter-drawer-title">Filters & Sort</h3>
           </div>
-          <div className="mobile-filter-drawer-content" style={{ display: 'flex', flexDirection: 'column', gap: '0.8rem' }}>
+          
+          <div className="mobile-filter-drawer-body" style={{ flex: 1, overflowY: 'auto', minHeight: 0, display: 'flex', flexDirection: 'column', gap: '0.8rem', paddingTop: '0.8rem' }}>
             {renderFilters(true)}
+          </div>
+
+          <div className="mobile-filter-drawer-footer" style={{ marginTop: '0.8rem', flexShrink: 0 }}>
             <button 
               onClick={() => setIsMobileFilterOpen(false)}
               style={{
@@ -1454,7 +1458,6 @@ function CollectionsContent() {
                 textTransform: 'uppercase',
                 letterSpacing: '0.05em',
                 fontSize: '0.8rem',
-                marginTop: '0.5rem',
                 cursor: 'pointer',
                 width: '100%',
                 textAlign: 'center'
