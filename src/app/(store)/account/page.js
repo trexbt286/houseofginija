@@ -6,7 +6,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 
 function AccountContent() {
-  const { user, loading, logout, toggleWishlist } = useStore();
+  const { user, loading, logout, toggleWishlist, addToCart } = useStore();
   const router = useRouter();
   const searchParams = useSearchParams();
 
@@ -153,6 +153,22 @@ function AccountContent() {
     await toggleWishlist(id);
     // Optimistic UI update
     setWishlistItems(prev => prev.filter(item => item.id !== id));
+  };
+
+  const handleMoveToBag = (item) => {
+    const defaultVariant = item.variants?.[0] || {};
+    const price = item.is_flash_sale ? item.flash_sale_price : item.price;
+    addToCart(item, defaultVariant.size || 'One Size', defaultVariant.color || 'Default', 1);
+    handleRemoveWishlistItem(item.id);
+  };
+
+  const handleMoveAllToBag = () => {
+    wishlistItems.forEach(item => {
+      const defaultVariant = item.variants?.[0] || {};
+      const price = item.is_flash_sale ? item.flash_sale_price : item.price;
+      addToCart(item, defaultVariant.size || 'One Size', defaultVariant.color || 'Default', 1);
+      handleRemoveWishlistItem(item.id);
+    });
   };
 
   if (loading || !user) {
@@ -384,29 +400,43 @@ function AccountContent() {
                   <Link href="/collections" style={shopLinkStyle}>Save Creations</Link>
                 </div>
               ) : (
-                <div style={wishlistGridStyle}>
-                  {wishlistItems.map((item) => (
-                    <div key={item.id} style={wishlistCardStyle}>
-                      <div style={wishlistImgWrapperStyle}>
-                        <img src={item.images[0]} alt={item.name} style={wishlistImgStyle} loading="lazy" />
-                        <button
-                          onClick={() => handleRemoveWishlistItem(item.id)}
-                          style={removeWishlistBtnStyle}
-                          title="Remove item"
-                        >
-                          ✕
-                        </button>
+                <div style={wishlistContainerStyle}>
+                  <button onClick={handleMoveAllToBag} style={moveAllToBagBtnStyle}>
+                    MOVE ALL TO BAG
+                  </button>
+                  <div style={wishlistGridStyle}>
+                    {wishlistItems.map((item) => (
+                      <div key={item.id} style={wishlistCardStyle}>
+                        <div style={wishlistImgWrapperStyle}>
+                          <img src={item.images[0]} alt={item.name} style={wishlistImgStyle} loading="lazy" />
+                        </div>
+                        <div style={wishlistContentStyle}>
+                          <h4 style={wishlistNameStyle}>{item.name}</h4>
+                          <div style={wishlistPriceStyle}>
+                            {item.is_flash_sale ? (
+                              <>
+                                <span style={{ fontWeight: 'bold' }}>₹{parseFloat(item.flash_sale_price).toLocaleString('en-IN')}</span>
+                                <span style={{ textDecoration: 'line-through', color: '#8B7789', fontWeight: '400', fontSize: '0.8rem' }}>
+                                  ₹{parseFloat(item.price).toLocaleString('en-IN')}
+                                </span>
+                              </>
+                            ) : (
+                              <span style={{ fontWeight: 'bold' }}>₹{parseFloat(item.price).toLocaleString('en-IN')}</span>
+                            )}
+                          </div>
+                          
+                          <div style={wishlistActionRowStyle}>
+                            <button onClick={() => handleMoveToBag(item)} style={moveToBagBtnStyle}>
+                              MOVE TO BAG
+                            </button>
+                            <button onClick={() => handleRemoveWishlistItem(item.id)} style={removeLinkStyle}>
+                              Remove
+                            </button>
+                          </div>
+                        </div>
                       </div>
-                      <div style={wishlistContentStyle}>
-                        <span style={wishlistColLabelStyle}>{item.collection_name}</span>
-                        <h4 style={wishlistNameStyle}>{item.name}</h4>
-                        <span style={wishlistPriceStyle}>₹{parseFloat(item.price).toLocaleString('en-IN')}</span>
-                        <Link href={`/products/${item.slug}`} style={viewProductBtnStyle}>
-                          View Product
-                        </Link>
-                      </div>
-                    </div>
-                  ))}
+                    ))}
+                  </div>
                 </div>
               )}
             </div>
@@ -835,25 +865,51 @@ const orderTotalStyle = {
 };
 
 // Wishlist style
+const wishlistContainerStyle = {
+  display: 'flex',
+  flexDirection: 'column',
+  gap: '2rem',
+};
+
+const moveAllToBagBtnStyle = {
+  width: '100%',
+  padding: '1rem',
+  backgroundColor: 'transparent',
+  color: '#000000',
+  border: '1px solid #000000',
+  borderRadius: '4px',
+  fontSize: '0.8rem',
+  textTransform: 'uppercase',
+  letterSpacing: '0.05em',
+  fontWeight: '600',
+  cursor: 'pointer',
+  textAlign: 'center',
+};
+
 const wishlistGridStyle = {
-  display: 'grid',
-  gridTemplateColumns: 'repeat(auto-fill, minmax(180px, 1fr))',
+  display: 'flex',
+  flexDirection: 'column',
   gap: '1.5rem',
 };
 
 const wishlistCardStyle = {
-  backgroundColor: '#FFFFFF',
-  borderRadius: '4px',
-  overflow: 'hidden',
-  border: '1px solid rgba(139, 119, 137, 0.1)',
   display: 'flex',
-  flexDirection: 'column',
+  flexDirection: 'row',
+  alignItems: 'center',
+  gap: '1.5rem',
+  backgroundColor: 'transparent',
+  border: 'none',
+  borderBottom: '1px solid rgba(139, 119, 137, 0.15)',
+  paddingBottom: '1.5rem',
 };
 
 const wishlistImgWrapperStyle = {
-  position: 'relative',
-  width: '100%',
-  height: '200px',
+  width: '90px',
+  height: '110px',
+  flexShrink: 0,
+  borderRadius: '4px',
+  overflow: 'hidden',
+  backgroundColor: '#f5f5f5',
 };
 
 const wishlistImgStyle = {
@@ -862,66 +918,58 @@ const wishlistImgStyle = {
   objectFit: 'cover',
 };
 
-const removeWishlistBtnStyle = {
-  position: 'absolute',
-  top: '0.5rem',
-  right: '0.5rem',
-  backgroundColor: 'rgba(255, 255, 255, 0.8)',
-  color: '#000000',
-  border: 'none',
-  width: '24px',
-  height: '24px',
-  borderRadius: '50%',
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'center',
-  fontSize: '0.75rem',
-  fontWeight: 'bold',
-  cursor: 'pointer',
-  boxShadow: '0 2px 5px rgba(0,0,0,0.1)',
-};
-
 const wishlistContentStyle = {
-  padding: '1rem',
+  flex: 1,
   display: 'flex',
   flexDirection: 'column',
-  gap: '0.2rem',
-  flex: 1,
-};
-
-const wishlistColLabelStyle = {
-  fontSize: '0.62rem',
-  color: '#000000',
-  textTransform: 'uppercase',
-  letterSpacing: '0.05em',
+  gap: '0.4rem',
+  justifyContent: 'center',
 };
 
 const wishlistNameStyle = {
-  fontSize: '0.9rem',
+  fontSize: '1.1rem',
   fontFamily: 'var(--font-serif)',
   color: '#000000',
-  fontWeight: '500',
-  flex: 1,
+  fontWeight: '400',
+  margin: 0,
 };
 
 const wishlistPriceStyle = {
-  fontSize: '0.85rem',
-  fontWeight: '600',
+  fontSize: '0.9rem',
   color: '#000000',
-  marginBottom: '0.8rem',
+  display: 'flex',
+  alignItems: 'center',
+  gap: '0.5rem',
 };
 
-const viewProductBtnStyle = {
-  display: 'block',
-  width: '100%',
-  textAlign: 'center',
-  backgroundColor: '#D98E9B',
+const wishlistActionRowStyle = {
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'space-between',
+  marginTop: '0.5rem',
+};
+
+const moveToBagBtnStyle = {
+  backgroundColor: 'transparent',
   color: '#000000',
-  fontSize: '0.75rem',
-  padding: '0.5rem',
-  borderRadius: '2px',
+  border: '1px solid rgba(139, 119, 137, 0.3)',
+  padding: '0.5rem 1rem',
+  borderRadius: '4px',
+  fontSize: '0.7rem',
   textTransform: 'uppercase',
   letterSpacing: '0.05em',
+  fontWeight: '600',
+  cursor: 'pointer',
+};
+
+const removeLinkStyle = {
+  backgroundColor: 'transparent',
+  border: 'none',
+  color: '#8B7789',
+  fontSize: '0.8rem',
+  textDecoration: 'underline',
+  cursor: 'pointer',
+  padding: 0,
 };
 
 // Addresses style
