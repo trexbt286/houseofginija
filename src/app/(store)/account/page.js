@@ -170,7 +170,7 @@ function AccountContent() {
   };
 
   if (loading || !user) {
-    return <div style={loadingContainerStyle}>Accessing secured profile...</div>;
+    return null;
   }
 
   return (
