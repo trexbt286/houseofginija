@@ -10,7 +10,7 @@ function AccountContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
 
-  const [activeTab, setActiveTab] = useState(searchParams.get('tab') || 'profile');
+  const [activeTab, setActiveTab] = useState(searchParams.get('tab') || null);
 
   // Data states
   const [orders, setOrders] = useState([]);
@@ -42,12 +42,15 @@ function AccountContent() {
     }
   }, [user, loading]);
 
-  // Tab change handler
-  const handleTabChange = (tab) => {
-    setActiveTab(tab);
-    // Update URL query parameter silently
+  // Sheet change handler
+  const handleSheetChange = (sheet) => {
+    setActiveTab(sheet);
     const params = new URLSearchParams(window.location.search);
-    params.set('tab', tab);
+    if (sheet) {
+      params.set('tab', sheet);
+    } else {
+      params.delete('tab');
+    }
     router.replace(`/account?${params.toString()}`, { scroll: false });
   };
 
@@ -159,7 +162,6 @@ function AccountContent() {
   return (
     <div style={pageStyle} className="container animate-fade-in">
       <div style={headerStyle}>
-        <span style={subtitleStyle}>Customer Portal</span>
         <h1 style={titleStyle}>My Account</h1>
         <p style={welcomeStyle}>Welcome back, {user.name}</p>
         <button onClick={logout} style={logoutBtnStyle}>
@@ -167,43 +169,132 @@ function AccountContent() {
         </button>
       </div>
 
-      <div style={portalLayoutStyle}>
-        {/* Navigation Tabs (Sidebar) */}
-        <aside style={tabsSidebarStyle}>
-          <button
-            onClick={() => handleTabChange('profile')}
-            style={activeTab === 'profile' ? activeTabBtnStyle : tabBtnStyle}
-          >
-            Customer Profile
+      {!activeTab && (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', marginTop: '2rem', maxWidth: '600px', margin: '2rem auto 0 auto' }}>
+          {/* My Profile */}
+          <button style={menuRowStyle} onClick={() => handleSheetChange('profile')}>
+            <div style={menuRowLeftStyle}>
+              <div style={menuIconStyle}>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.0">
+                  <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                  <circle cx="12" cy="7" r="4"></circle>
+                </svg>
+              </div>
+              <div style={menuTextGroupStyle}>
+                <span style={menuTitleStyle}>My Profile</span>
+                <span style={menuSubtitleStyle}>Manage your personal details</span>
+              </div>
+            </div>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#000000" strokeWidth="2.0" strokeLinecap="round" strokeLinejoin="round">
+              <polyline points="9 18 15 12 9 6"></polyline>
+            </svg>
           </button>
-          <button
-            onClick={() => handleTabChange('orders')}
-            style={activeTab === 'orders' ? activeTabBtnStyle : tabBtnStyle}
-          >
-            Order History
+          
+          {/* Order History */}
+          <button style={menuRowStyle} onClick={() => handleSheetChange('orders')}>
+            <div style={menuRowLeftStyle}>
+              <div style={menuIconStyle}>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.0">
+                  <circle cx="9" cy="21" r="1"></circle>
+                  <circle cx="20" cy="21" r="1"></circle>
+                  <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+                </svg>
+              </div>
+              <div style={menuTextGroupStyle}>
+                <span style={menuTitleStyle}>Order History</span>
+                <span style={menuSubtitleStyle}>View and track your orders</span>
+              </div>
+            </div>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#000000" strokeWidth="2.0" strokeLinecap="round" strokeLinejoin="round">
+              <polyline points="9 18 15 12 9 6"></polyline>
+            </svg>
           </button>
-          <button
-            onClick={() => handleTabChange('wishlist')}
-            style={activeTab === 'wishlist' ? activeTabBtnStyle : tabBtnStyle}
-          >
-            My Wishlist
-          </button>
-          <button
-            onClick={() => handleTabChange('addresses')}
-            style={activeTab === 'addresses' ? activeTabBtnStyle : tabBtnStyle}
-          >
-            Saved Addresses
-          </button>
-        </aside>
 
-        {/* Tab Contents */}
-        <main style={contentPanelStyle}>
+          {/* My Wishlist */}
+          <button style={menuRowStyle} onClick={() => handleSheetChange('wishlist')}>
+            <div style={menuRowLeftStyle}>
+              <div style={menuIconStyle}>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.0">
+                  <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+                </svg>
+              </div>
+              <div style={menuTextGroupStyle}>
+                <span style={menuTitleStyle}>My Wishlist</span>
+                <span style={menuSubtitleStyle}>View your saved items</span>
+              </div>
+            </div>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#000000" strokeWidth="2.0" strokeLinecap="round" strokeLinejoin="round">
+              <polyline points="9 18 15 12 9 6"></polyline>
+            </svg>
+          </button>
+
+          {/* Saved Addresses */}
+          <button style={menuRowStyle} onClick={() => handleSheetChange('addresses')}>
+            <div style={menuRowLeftStyle}>
+              <div style={menuIconStyle}>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.0">
+                  <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                  <circle cx="12" cy="10" r="3"></circle>
+                </svg>
+              </div>
+              <div style={menuTextGroupStyle}>
+                <span style={menuTitleStyle}>Saved Addresses</span>
+                <span style={menuSubtitleStyle}>Manage your addresses</span>
+              </div>
+            </div>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#000000" strokeWidth="2.0" strokeLinecap="round" strokeLinejoin="round">
+              <polyline points="9 18 15 12 9 6"></polyline>
+            </svg>
+          </button>
+        </div>
+      )}
+
+      {/* Bottom Sheet Modal */}
+      {activeTab && (
+        <>
+          <div 
+            className="mobile-bottom-sheet-backdrop" 
+            onClick={() => handleSheetChange(null)}
+          >
+            <div className="mobile-bottom-sheet-backdrop-inner" />
+          </div>
+          
+          <div className="mobile-sheet-wrapper-container animate-fade-in" style={{ zIndex: 10001, display: 'flex', justifyContent: 'center' }}>
+            <div className="container detail-container-box" style={{ 
+              backgroundColor: '#FFFFFF', 
+              width: '100%', 
+              maxWidth: '600px', 
+              height: '100%', 
+              display: 'flex', 
+              flexDirection: 'column', 
+              borderTopLeftRadius: '16px', 
+              borderTopRightRadius: '16px',
+              position: 'relative',
+              overflow: 'hidden'
+            }} onClick={(e) => e.stopPropagation()}>
+              
+              <div className="mobile-sheet-drag-handle" />
+
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1rem', borderBottom: '1px solid rgba(139, 119, 137, 0.15)', position: 'relative' }}>
+                <button onClick={() => handleSheetChange(null)} style={{ position: 'absolute', left: '1rem', width: '36px', height: '36px', borderRadius: '50%', border: '1px solid rgba(139, 119, 137, 0.25)', display: 'flex', alignItems: 'center', justifyContent: 'center', backgroundColor: '#FFFFFF' }}>
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#000000" strokeWidth="2.0" strokeLinecap="round" strokeLinejoin="round">
+                    <polyline points="15 18 9 12 15 6"></polyline>
+                  </svg>
+                </button>
+                <h3 style={{ margin: 0, fontSize: '1.2rem', fontFamily: 'var(--font-serif)', fontWeight: '400', color: '#000000' }}>
+                  {activeTab === 'profile' && 'My Profile'}
+                  {activeTab === 'orders' && 'Order History'}
+                  {activeTab === 'wishlist' && 'My Wishlist'}
+                  {activeTab === 'addresses' && 'Saved Addresses'}
+                </h3>
+              </div>
+
+              <div style={{ flex: 1, overflowY: 'auto', padding: '1.5rem', backgroundColor: '#FFFFFF' }}>
           
           {/* PROFILE TAB */}
           {activeTab === 'profile' && (
             <div style={tabContentStyle}>
-              <h2 style={tabTitleStyle}>Profile Information</h2>
-              <div style={dividerLineStyle}></div>
+              
               
               <div style={profileGridStyle}>
                 <div style={infoGroupStyle}>
@@ -237,8 +328,7 @@ function AccountContent() {
           {/* ORDERS TAB */}
           {activeTab === 'orders' && (
             <div style={tabContentStyle}>
-              <h2 style={tabTitleStyle}>Past Orders</h2>
-              <div style={dividerLineStyle}></div>
+              
 
               {ordersLoading ? (
                 <div>Retrieving order records...</div>
@@ -298,8 +388,7 @@ function AccountContent() {
           {/* WISHLIST TAB */}
           {activeTab === 'wishlist' && (
             <div style={tabContentStyle}>
-              <h2 style={tabTitleStyle}>Starred Creations</h2>
-              <div style={dividerLineStyle}></div>
+              
 
               {wishlistLoading ? (
                 <div>Accessing vault wishlist...</div>
@@ -340,8 +429,7 @@ function AccountContent() {
           {/* ADDRESSES TAB */}
           {activeTab === 'addresses' && (
             <div style={tabContentStyle}>
-              <h2 style={tabTitleStyle}>Saved Addresses</h2>
-              <div style={dividerLineStyle}></div>
+              
 
               {addressesLoading ? (
                 <div>Loading customer addresses...</div>
@@ -468,9 +556,11 @@ function AccountContent() {
               </div>
             </div>
           )}
-
-        </main>
-      </div>
+              </div>
+            </div>
+          </div>
+        </>
+      )}
     </div>
   );
 }
@@ -958,4 +1048,47 @@ const addressSubmitBtnStyle = {
   letterSpacing: '0.05em',
   alignSelf: 'flex-start',
   boxShadow: 'var(--shadow-sm)',
+};
+
+const menuRowStyle = {
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'space-between',
+  backgroundColor: '#F6DDE2', // Light pink
+  padding: '1.2rem',
+  borderRadius: '8px',
+  border: 'none',
+  width: '100%',
+  cursor: 'pointer',
+  textAlign: 'left',
+};
+
+const menuRowLeftStyle = {
+  display: 'flex',
+  alignItems: 'center',
+  gap: '1rem',
+};
+
+const menuIconStyle = {
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  color: '#000000',
+};
+
+const menuTextGroupStyle = {
+  display: 'flex',
+  flexDirection: 'column',
+};
+
+const menuTitleStyle = {
+  fontSize: '1rem',
+  fontWeight: '600',
+  color: '#000000',
+  marginBottom: '0.2rem',
+};
+
+const menuSubtitleStyle = {
+  fontSize: '0.75rem',
+  color: '#555555',
 };
