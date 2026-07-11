@@ -658,8 +658,6 @@ body.scroll-locked {
   left: 0;
   width: 100vw;
   height: 100vh;
-  height: -webkit-fill-available;
-  height: 100dvh;
   background-color: rgba(0, 0, 0, 0.5);
   z-index: 1000;
   display: flex;
@@ -685,11 +683,9 @@ body.scroll-locked {
   box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.15);
   transform: translateY(100%);
   transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-  height: 100vh !important;
-  height: -webkit-fill-available !important;
-  height: 100dvh !important;
-  display: flex !important;
-  flex-direction: column !important;
+  max-height: 85vh !important;
+  max-height: 85dvh !important;
+  overflow-y: auto;
   box-sizing: border-box;
 }
 

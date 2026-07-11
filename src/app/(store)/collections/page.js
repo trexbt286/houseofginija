@@ -1440,29 +1440,29 @@ function CollectionsContent() {
             </button>
             <h3 className="mobile-filter-drawer-title">Filters & Sort</h3>
           </div>
-          <div className="mobile-filter-drawer-content" style={{ flex: 1, minHeight: 0, overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '0.8rem', paddingBottom: '1rem' }}>
+          <div className="mobile-filter-drawer-content" style={{ display: 'flex', flexDirection: 'column', gap: '0.8rem' }}>
             {renderFilters(true)}
+            <button 
+              onClick={() => setIsMobileFilterOpen(false)}
+              style={{
+                backgroundColor: '#D98E9B',
+                color: '#000000',
+                padding: '0.8rem',
+                border: 'none',
+                borderRadius: '4px',
+                fontWeight: '700',
+                textTransform: 'uppercase',
+                letterSpacing: '0.05em',
+                fontSize: '0.8rem',
+                marginTop: '0.5rem',
+                cursor: 'pointer',
+                width: '100%',
+                textAlign: 'center'
+              }}
+            >
+              Apply Filters
+            </button>
           </div>
-          <button 
-            className="mobile-filter-apply-btn"
-            onClick={() => setIsMobileFilterOpen(false)}
-            style={{
-              backgroundColor: '#D98E9B',
-              color: '#000000',
-              padding: '0.8rem',
-              border: 'none',
-              borderRadius: '4px',
-              fontWeight: '700',
-              textTransform: 'uppercase',
-              letterSpacing: '0.05em',
-              cursor: 'pointer',
-              width: '100%',
-              flexShrink: 0,
-              marginTop: '0.5rem'
-            }}
-          >
-            Apply Filters
-          </button>
         </div>
       </div>
     </div>
