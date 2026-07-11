@@ -160,16 +160,18 @@ function AccountContent() {
   }
 
   return (
-    <div style={pageStyle} className="container animate-fade-in">
-      <div style={headerStyle}>
-        <h1 style={titleStyle}>My Account</h1>
-        <p style={welcomeStyle}>Welcome back, {user.name}</p>
-        <button onClick={logout} style={logoutBtnStyle}>
-          Sign Out of Account
-        </button>
-      </div>
-
+    <div style={pageStyle} className="container">
+      
+      {/* MAIN MENU VIEW */}
       {!activeTab && (
+        <div className="animate-fade-in">
+          <div style={headerStyle}>
+            <h1 style={titleStyle}>My Account</h1>
+            <p style={welcomeStyle}>Welcome back, {user.name}</p>
+            <button onClick={logout} style={logoutBtnStyle}>
+              Sign Out of Account
+            </button>
+          </div>
         <div style={{ display: 'flex', flexDirection: 'column', gap: '0', maxWidth: '600px', margin: '0.5rem auto 0 auto', borderRadius: '8px', overflow: 'hidden' }}>
           {/* My Profile */}
           <button style={menuRowStyle} onClick={() => handleSheetChange('profile')}>
@@ -249,47 +251,30 @@ function AccountContent() {
         </div>
       )}
 
-      {/* Bottom Sheet Modal */}
+      {/* ACTIVE SECTION VIEW */}
       {activeTab && (
-        <>
-          <div 
-            className="mobile-bottom-sheet-backdrop" 
-            onClick={() => handleSheetChange(null)}
-          >
-            <div className="mobile-bottom-sheet-backdrop-inner" />
-          </div>
+        <div className="animate-fade-in" style={{ maxWidth: '600px', margin: '0 auto' }}>
           
-          <div className="mobile-sheet-wrapper-container animate-fade-in" style={{ zIndex: 10001, display: 'flex', justifyContent: 'center' }}>
-            <div className="container detail-container-box" style={{ 
-              backgroundColor: '#FFFFFF', 
-              width: '100%', 
-              maxWidth: '600px', 
-              height: '100%', 
-              display: 'flex', 
-              flexDirection: 'column', 
-              borderTopLeftRadius: '16px', 
-              borderTopRightRadius: '16px',
-              position: 'relative',
-              overflow: 'hidden'
-            }} onClick={(e) => e.stopPropagation()}>
-              
-              <div className="mobile-sheet-drag-handle" />
+          {/* Section Header */}
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '2rem', position: 'relative' }}>
+            <button 
+              onClick={() => handleSheetChange(null)} 
+              style={{ position: 'absolute', left: '0', width: '40px', height: '40px', borderRadius: '50%', border: '1px solid rgba(139, 119, 137, 0.25)', display: 'flex', alignItems: 'center', justifyContent: 'center', backgroundColor: 'transparent', cursor: 'pointer' }}
+            >
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#000000" strokeWidth="2.0" strokeLinecap="round" strokeLinejoin="round">
+                <polyline points="15 18 9 12 15 6"></polyline>
+              </svg>
+            </button>
+            <h1 style={titleStyle}>
+              {activeTab === 'profile' && 'My Profile'}
+              {activeTab === 'orders' && 'Order History'}
+              {activeTab === 'wishlist' && 'My Wishlist'}
+              {activeTab === 'addresses' && 'Saved Addresses'}
+            </h1>
+          </div>
 
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1rem', borderBottom: '1px solid rgba(139, 119, 137, 0.15)', position: 'relative' }}>
-                <button onClick={() => handleSheetChange(null)} style={{ position: 'absolute', left: '1rem', width: '36px', height: '36px', borderRadius: '50%', border: '1px solid rgba(139, 119, 137, 0.25)', display: 'flex', alignItems: 'center', justifyContent: 'center', backgroundColor: '#FFFFFF' }}>
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#000000" strokeWidth="2.0" strokeLinecap="round" strokeLinejoin="round">
-                    <polyline points="15 18 9 12 15 6"></polyline>
-                  </svg>
-                </button>
-                <h3 style={{ margin: 0, fontSize: '1.2rem', fontFamily: 'var(--font-serif)', fontWeight: '400', color: '#000000' }}>
-                  {activeTab === 'profile' && 'My Profile'}
-                  {activeTab === 'orders' && 'Order History'}
-                  {activeTab === 'wishlist' && 'My Wishlist'}
-                  {activeTab === 'addresses' && 'Saved Addresses'}
-                </h3>
-              </div>
-
-              <div style={{ flex: 1, overflowY: 'auto', padding: '1.5rem', backgroundColor: '#FFFFFF' }}>
+          {/* Section Content */}
+          <div style={{ backgroundColor: '#FFFFFF' }}>
           
           {/* PROFILE TAB */}
           {activeTab === 'profile' && (
@@ -556,10 +541,8 @@ function AccountContent() {
               </div>
             </div>
           )}
-              </div>
-            </div>
           </div>
-        </>
+        </div>
       )}
     </div>
   );
