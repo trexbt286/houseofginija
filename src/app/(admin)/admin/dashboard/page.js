@@ -388,9 +388,6 @@ const splitGridStyle = {
   gridTemplateColumns: '1.2fr 1fr',
   gap: '2rem',
   marginBottom: '2rem',
-  '@media (max-width: 991px)': {
-    gridTemplateColumns: '1fr',
-  },
 };
 
 const panelCardStyle = {
