@@ -227,7 +227,7 @@ export default function Home() {
             WebkitTransform: 'translateZ(0)',
           }}
         >
-          <source src="/VID_20260702_111900_407_bsl~2.mp4" type="video/mp4" />
+          <source src="/hero_video_mobile.mp4" type="video/mp4" />
         </video>
         <div style={heroOverlayStyle} className="hero-overlay">
           <div style={heroContentStyle} className="animate-fade-in hero-content-wrapper">
