@@ -404,32 +404,30 @@ function AccountContent() {
                   <button onClick={handleMoveAllToBag} style={moveAllToBagBtnStyle}>
                     MOVE ALL TO BAG
                   </button>
-                  <div style={wishlistGridStyle}>
+                  <div className="cart-drawer-feed hide-scrollbar" style={{ padding: 0 }}>
                     {wishlistItems.map((item) => (
-                      <div key={item.id} style={wishlistCardStyle}>
-                        <div style={wishlistImgWrapperStyle}>
-                          <img src={item.images[0]} alt={item.name} style={wishlistImgStyle} loading="lazy" />
-                        </div>
-                        <div style={wishlistContentStyle}>
-                          <h4 style={wishlistNameStyle}>{item.name}</h4>
-                          <div style={wishlistPriceStyle}>
+                      <div key={item.id} className="cart-drawer-item">
+                        <img src={item.images[0]} alt={item.name} className="cart-drawer-thumb" loading="lazy" />
+                        <div className="cart-drawer-item-details">
+                          <h4 className="cart-drawer-item-title">{item.name}</h4>
+                          <span className="cart-drawer-item-price">
                             {item.is_flash_sale ? (
                               <>
                                 <span style={{ fontWeight: 'bold' }}>₹{parseFloat(item.flash_sale_price).toLocaleString('en-IN')}</span>
-                                <span style={{ textDecoration: 'line-through', color: '#8B7789', fontWeight: '400', fontSize: '0.8rem' }}>
+                                <span style={{ textDecoration: 'line-through', color: '#999', marginLeft: '6px', fontSize: '0.85em', fontWeight: '400' }}>
                                   ₹{parseFloat(item.price).toLocaleString('en-IN')}
                                 </span>
                               </>
                             ) : (
-                              <span style={{ fontWeight: 'bold' }}>₹{parseFloat(item.price).toLocaleString('en-IN')}</span>
+                              <span>₹{parseFloat(item.price).toLocaleString('en-IN')}</span>
                             )}
-                          </div>
+                          </span>
                           
-                          <div style={wishlistActionRowStyle}>
-                            <button onClick={() => handleMoveToBag(item)} style={moveToBagBtnStyle}>
+                          <div className="cart-drawer-item-actions">
+                            <button onClick={() => handleMoveToBag(item)} className="wishlist-add-cart-btn">
                               MOVE TO BAG
                             </button>
-                            <button onClick={() => handleRemoveWishlistItem(item.id)} style={removeLinkStyle}>
+                            <button onClick={() => handleRemoveWishlistItem(item.id)} className="cart-drawer-item-remove">
                               Remove
                             </button>
                           </div>
@@ -886,91 +884,7 @@ const moveAllToBagBtnStyle = {
   textAlign: 'center',
 };
 
-const wishlistGridStyle = {
-  display: 'flex',
-  flexDirection: 'column',
-  gap: '0',
-};
 
-const wishlistCardStyle = {
-  display: 'flex',
-  flexDirection: 'row',
-  alignItems: 'center',
-  gap: '1.5rem',
-  backgroundColor: 'transparent',
-  border: 'none',
-  borderBottom: '1px solid rgba(139, 119, 137, 0.15)',
-  padding: '0.8rem 0',
-};
-
-const wishlistImgWrapperStyle = {
-  width: '64px',
-  height: '64px',
-  flexShrink: 0,
-  borderRadius: '4px',
-  overflow: 'hidden',
-  backgroundColor: '#f5f5f5',
-};
-
-const wishlistImgStyle = {
-  width: '100%',
-  height: '100%',
-  objectFit: 'cover',
-};
-
-const wishlistContentStyle = {
-  flex: 1,
-  display: 'flex',
-  flexDirection: 'column',
-  gap: '0.4rem',
-  justifyContent: 'center',
-};
-
-const wishlistNameStyle = {
-  fontSize: '0.9rem',
-  fontFamily: 'var(--font-serif)',
-  color: '#000000',
-  fontWeight: '400',
-  margin: 0,
-};
-
-const wishlistPriceStyle = {
-  fontSize: '0.8rem',
-  color: '#000000',
-  display: 'flex',
-  alignItems: 'center',
-  gap: '0.5rem',
-};
-
-const wishlistActionRowStyle = {
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'space-between',
-  marginTop: '0.5rem',
-};
-
-const moveToBagBtnStyle = {
-  backgroundColor: 'transparent',
-  color: '#000000',
-  border: '1px solid rgba(139, 119, 137, 0.3)',
-  padding: '0.5rem 1rem',
-  borderRadius: '4px',
-  fontSize: '0.7rem',
-  textTransform: 'uppercase',
-  letterSpacing: '0.05em',
-  fontWeight: '600',
-  cursor: 'pointer',
-};
-
-const removeLinkStyle = {
-  backgroundColor: 'transparent',
-  border: 'none',
-  color: '#8B7789',
-  fontSize: '0.8rem',
-  textDecoration: 'underline',
-  cursor: 'pointer',
-  padding: 0,
-};
 
 // Addresses style
 const addressesGridStyle = {
