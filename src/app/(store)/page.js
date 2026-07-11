@@ -211,6 +211,8 @@ export default function Home() {
           loop
           muted
           playsInline
+          preload="auto"
+          disablePictureInPicture
           className="hero-video"
           style={{
             position: 'absolute',
@@ -220,6 +222,11 @@ export default function Home() {
             height: '100%',
             objectFit: 'cover',
             zIndex: 0,
+            transform: 'translateZ(0)',
+            backfaceVisibility: 'hidden',
+            perspective: 1000,
+            WebkitTransform: 'translateZ(0)',
+            WebkitBackfaceVisibility: 'hidden',
           }}
         />
         <div style={heroOverlayStyle} className="hero-overlay">
