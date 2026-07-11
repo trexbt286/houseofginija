@@ -170,7 +170,7 @@ function AccountContent() {
       </div>
 
       {!activeTab && (
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', marginTop: '2rem', maxWidth: '600px', margin: '2rem auto 0 auto' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '0', maxWidth: '600px', margin: '0.5rem auto 0 auto', borderRadius: '8px', overflow: 'hidden' }}>
           {/* My Profile */}
           <button style={menuRowStyle} onClick={() => handleSheetChange('profile')}>
             <div style={menuRowLeftStyle}>
@@ -573,9 +573,8 @@ export default function AccountPage() {
   );
 }
 
-// Inline styles for Account Page
 const pageStyle = {
-  paddingTop: '3rem',
+  paddingTop: '1rem',
   paddingBottom: '6rem',
   backgroundColor: '#FFFFFF',
 };
@@ -590,7 +589,7 @@ const loadingContainerStyle = {
 
 const headerStyle = {
   textAlign: 'center',
-  marginBottom: '3rem',
+  marginBottom: '1rem',
 };
 
 const subtitleStyle = {
@@ -609,12 +608,13 @@ const titleStyle = {
   color: '#D98E9B',
   fontWeight: '400',
   lineHeight: 1.1,
+  marginBottom: '0',
 };
 
 const welcomeStyle = {
   fontSize: '0.95rem',
   color: '#000000',
-  marginTop: '0.5rem',
+  marginTop: '0',
 };
 
 const logoutBtnStyle = {
@@ -627,7 +627,7 @@ const logoutBtnStyle = {
   textTransform: 'uppercase',
   letterSpacing: '0.05em',
   fontWeight: '600',
-  marginTop: '1rem',
+  marginTop: '0.5rem',
 };
 
 const portalLayoutStyle = {
@@ -1056,8 +1056,9 @@ const menuRowStyle = {
   justifyContent: 'space-between',
   backgroundColor: '#F6DDE2', // Light pink
   padding: '1.2rem',
-  borderRadius: '8px',
+  borderRadius: '0',
   border: 'none',
+  borderBottom: '1px solid rgba(139, 119, 137, 0.15)',
   width: '100%',
   cursor: 'pointer',
   textAlign: 'left',
