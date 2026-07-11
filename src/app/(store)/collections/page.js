@@ -1441,7 +1441,7 @@ function CollectionsContent() {
             <h3 className="mobile-filter-drawer-title">Filters & Sort</h3>
           </div>
           
-          <div className="mobile-filter-drawer-body" style={{ flex: 1, overflowY: 'auto', minHeight: 0, display: 'flex', flexDirection: 'column', gap: '0.8rem', paddingTop: '0.8rem' }}>
+          <div className="mobile-filter-drawer-content" style={{ flex: 1, overflowY: 'auto', minHeight: 0, display: 'flex', flexDirection: 'column', gap: '0.8rem', paddingTop: '0.8rem' }}>
             {renderFilters(true)}
           </div>
 
