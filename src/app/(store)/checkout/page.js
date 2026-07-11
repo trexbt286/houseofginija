@@ -487,10 +487,6 @@ const layoutGridStyle = {
   gridTemplateColumns: '1.2fr 1fr',
   gap: '4rem',
   alignItems: 'start',
-  '@media (max-width: 991px)': {
-    gridTemplateColumns: '1fr',
-    gap: '2.5rem',
-  },
 };
 
 const formStyle = {
