@@ -314,7 +314,7 @@ function AccountContent() {
                 <div style={infoGroupStyle}>
                   <span style={infoLabelStyle}>Registered Since</span>
                   <span style={infoValueStyle}>
-                    {new Date(user.created_at || Date.now()).toLocaleDateString('en-IN', {
+                    {new Date(user.created_at || '2026-01-01').toLocaleDateString('en-IN', {
                       year: 'numeric',
                       month: 'long',
                       day: 'numeric',
@@ -407,7 +407,7 @@ function AccountContent() {
                   <div className="cart-drawer-feed hide-scrollbar" style={{ padding: 0, gap: 0 }}>
                     {wishlistItems.map((item) => (
                       <div key={item.id} className="cart-drawer-item" style={{ paddingBottom: '1rem', paddingTop: '1rem', borderBottom: '1px solid rgba(139, 119, 137, 0.15)' }}>
-                        <img src={item.images[0]} alt={item.name} className="cart-drawer-thumb" loading="lazy" />
+                        <img src={Array.isArray(item.images) && item.images.length > 0 ? item.images[0] : (typeof item.images === 'string' ? JSON.parse(item.images)[0] : 'https://placehold.co/400x500/eeeeee/cccccc?text=No+Image')} alt={item.name} className="cart-drawer-thumb" loading="lazy" />
                         <div className="cart-drawer-item-details">
                           <h4 className="cart-drawer-item-title">{item.name}</h4>
                           <span className="cart-drawer-item-price">
