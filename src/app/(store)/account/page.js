@@ -868,12 +868,12 @@ const orderTotalStyle = {
 const wishlistContainerStyle = {
   display: 'flex',
   flexDirection: 'column',
-  gap: '2rem',
+  gap: '1rem',
 };
 
 const moveAllToBagBtnStyle = {
   width: '100%',
-  padding: '1rem',
+  padding: '0.6rem 1rem',
   backgroundColor: 'transparent',
   color: '#000000',
   border: '1px solid #000000',
@@ -889,7 +889,7 @@ const moveAllToBagBtnStyle = {
 const wishlistGridStyle = {
   display: 'flex',
   flexDirection: 'column',
-  gap: '1.5rem',
+  gap: '0',
 };
 
 const wishlistCardStyle = {
@@ -900,7 +900,7 @@ const wishlistCardStyle = {
   backgroundColor: 'transparent',
   border: 'none',
   borderBottom: '1px solid rgba(139, 119, 137, 0.15)',
-  paddingBottom: '1.5rem',
+  padding: '0.8rem 0',
 };
 
 const wishlistImgWrapperStyle = {
