@@ -249,13 +249,13 @@ export function StoreProvider({ children }) {
 
   // Wishlist actions
   const toggleWishlist = async (productId) => {
-    let updatedWishlist;
-    if (wishlist.includes(productId)) {
-      updatedWishlist = wishlist.filter((id) => id !== productId);
-    } else {
-      updatedWishlist = [...wishlist, productId];
-    }
-    setWishlist(updatedWishlist);
+    setWishlist(prevWishlist => {
+      if (prevWishlist.includes(productId)) {
+        return prevWishlist.filter((id) => id !== productId);
+      } else {
+        return [...prevWishlist, productId];
+      }
+    });
 
     // If logged in, sync with database
     if (user) {

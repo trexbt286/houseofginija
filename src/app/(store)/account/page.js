@@ -157,18 +157,16 @@ function AccountContent() {
 
   const handleMoveToBag = (item) => {
     const defaultVariant = item.variants?.[0] || {};
-    const price = item.is_flash_sale ? item.flash_sale_price : item.price;
     addToCart(item, defaultVariant.size || 'One Size', defaultVariant.color || 'Default', 1);
     handleRemoveWishlistItem(item.id);
   };
 
-  const handleMoveAllToBag = () => {
-    wishlistItems.forEach(item => {
+  const handleMoveAllToBag = async () => {
+    await Promise.all(wishlistItems.map(async (item) => {
       const defaultVariant = item.variants?.[0] || {};
-      const price = item.is_flash_sale ? item.flash_sale_price : item.price;
       addToCart(item, defaultVariant.size || 'One Size', defaultVariant.color || 'Default', 1);
-      handleRemoveWishlistItem(item.id);
-    });
+      await handleRemoveWishlistItem(item.id);
+    }));
   };
 
   if (loading || !user) {
