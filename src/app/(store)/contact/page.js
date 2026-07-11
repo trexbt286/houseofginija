@@ -43,7 +43,6 @@ export default function ContactPage() {
     <div style={pageStyle} className="container animate-fade-in info-page-container">
       {/* Header */}
       <section style={headerSectionStyle}>
-        <span style={subHeaderStyle}>Customer Services</span>
         <h1 style={titleStyle}>Contact Us</h1>
         <div style={dividerStyle}></div>
       </section>

@@ -535,7 +535,7 @@ export default function Header() {
                 className="cart-drawer-checkout-btn"
                 onClick={() => setIsCartOpen(false)}
               >
-                Check Out
+                Checkout
               </Link>
             </div>
           )}

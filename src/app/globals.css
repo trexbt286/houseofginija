@@ -49,6 +49,7 @@ html, body {
   line-height: 1.6;
   -webkit-font-smoothing: antialiased;
   scroll-behavior: smooth;
+  scroll-padding-top: 107px; /* 75px sticky header + 32px announcement bar */
   overflow-x: hidden;
   max-width: 100vw;
 }
