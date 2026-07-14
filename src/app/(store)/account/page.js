@@ -14,6 +14,11 @@ function AccountContent() {
 
   // Data states
   const [orders, setOrders] = useState([]);
+  const [expandedOrders, setExpandedOrders] = useState({});
+
+  const toggleOrderDetails = (orderId) => {
+    setExpandedOrders(prev => ({ ...prev, [orderId]: !prev[orderId] }));
+  };
   const [wishlistItems, setWishlistItems] = useState([]);
   const [addresses, setAddresses] = useState([]);
 
@@ -352,50 +357,109 @@ function AccountContent() {
                   <Link href="/collections" style={shopLinkStyle}>Browse Collections</Link>
                 </div>
               ) : (
-                <div style={ordersListStyle}>
+                <div style={ordersWrapperStyle}>
+                  {/* Summary Row */}
+                  <div style={ordersSummaryRowStyle}>
+                    <div style={ordersSummaryIconText}>
+                      <div style={ordersSummaryIconWrapper}>
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                          <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path>
+                          <line x1="3" y1="6" x2="21" y2="6"></line>
+                          <path d="M16 10a4 4 0 0 1-8 0"></path>
+                        </svg>
+                      </div>
+                      <div>
+                        <h2 style={ordersSummaryTitle}>{orders.length} Orders</h2>
+                        <span style={ordersSummarySubtitle}>You've placed {orders.length} order(s) with us</span>
+                      </div>
+                    </div>
+                    <button style={ordersFilterBtnStyle}>
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <line x1="4" y1="21" x2="4" y2="14"></line>
+                        <line x1="4" y1="10" x2="4" y2="3"></line>
+                        <line x1="12" y1="21" x2="12" y2="12"></line>
+                        <line x1="12" y1="8" x2="12" y2="3"></line>
+                        <line x1="20" y1="21" x2="20" y2="16"></line>
+                        <line x1="20" y1="12" x2="20" y2="3"></line>
+                        <line x1="1" y1="14" x2="7" y2="14"></line>
+                        <line x1="9" y1="8" x2="15" y2="8"></line>
+                        <line x1="17" y1="16" x2="23" y2="16"></line>
+                      </svg>
+                      Filter
+                    </button>
+                  </div>
+                  
+                  {/* Orders List */}
                   {orders.map((order) => (
-                    <div key={order.id} style={orderCardStyle}>
-                      <div style={orderHeaderStyle}>
+                    <div key={order.id} style={newOrderCardStyle}>
+                      
+                      {/* Top Row */}
+                      <div style={newOrderCardTopStyle}>
                         <div>
-                          <span style={orderIdLabelStyle}>Order ID: #{order.id}</span>
-                          <span style={orderDateStyle}>
-                            Placed on {new Date(order.created_at).toLocaleDateString('en-IN')}
-                          </span>
+                          <div style={newOrderCardId}>ORDER #HG{order.id}</div>
+                          <div style={newOrderCardDate}>{new Date(order.created_at).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })}</div>
                         </div>
-                        <div style={statusBadgeGroupStyle}>
-                          <span style={orderStatusBadgeStyle(order.status)}>{order.status}</span>
-                          <span style={payStatusBadgeStyle(order.payment_status)}>
-                            Payment: {order.payment_status}
-                          </span>
+                        <div>
+                          <div style={newOrderCardLabel}>TOTAL</div>
+                          <div style={newOrderCardValue}>₹{parseFloat(order.total).toLocaleString('en-IN')}</div>
+                        </div>
+                        <div>
+                          <div style={newOrderCardLabel}>STATUS</div>
+                          <span style={newOrderCardStatus(order.status)}>{order.status}</span>
+                        </div>
+                        <div style={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center' }}>
+                          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#666" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                            <polyline points="9 18 15 12 9 6"></polyline>
+                          </svg>
                         </div>
                       </div>
 
-                      <div style={orderItemsStyle}>
-                        {order.items.map((item, idx) => (
-                          <div key={idx} style={orderItemRowStyle}>
-                            <div style={orderItemMetaStyle}>
-                              <strong>{item.name}</strong>
-                              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.2rem', marginTop: '0.2rem', color: '#666' }}>
-                                <span>Size: {item.size}</span>
-                                <span>Color: {item.color}</span>
-                                <span>Qty: {item.quantity}</span>
-                              </div>
+                      {/* Bottom Row */}
+                      <div style={newOrderCardBottomStyle}>
+                        <div style={newOrderCardImages}>
+                          {order.items.slice(0, 4).map((item, idx) => (
+                            <img 
+                              key={idx} 
+                              src={item.image || 'https://placehold.co/70x85/eeeeee/cccccc?text=No+Image'} 
+                              alt={item.name} 
+                              style={newOrderCardImg} 
+                            />
+                          ))}
+                          {order.items.length > 4 && (
+                            <div style={{ ...newOrderCardImg, display: 'flex', alignItems: 'center', justifyContent: 'center', backgroundColor: '#eee', color: '#666', fontSize: '0.8rem', fontWeight: 'bold' }}>
+                              +{order.items.length - 4}
                             </div>
-                            <span style={orderItemPriceStyle}>₹{(item.price * item.quantity).toLocaleString('en-IN')}</span>
-                          </div>
-                        ))}
-                      </div>
-
-                      <div style={orderFooterStyle}>
-                        <div>
-                          {order.razorpay_payment_id && (
-                            <span style={txIdStyle}>Processor ID: {order.razorpay_payment_id}</span>
                           )}
                         </div>
-                        <span style={orderTotalStyle}>
-                          Total: <strong>₹{parseFloat(order.total).toLocaleString('en-IN')}</strong>
-                        </span>
+                        <div style={newOrderCardDetailsBtn}>
+                          <span style={{ fontSize: '0.85rem', fontWeight: '700' }}>{order.items.length} Items</span>
+                          <button 
+                            onClick={() => toggleOrderDetails(order.id)} 
+                            style={{ background: 'none', border: 'none', padding: 0, color: '#B97285', textDecoration: 'underline', fontSize: '0.8rem', fontWeight: '600', cursor: 'pointer' }}
+                          >
+                            View Details
+                          </button>
+                        </div>
                       </div>
+
+                      {/* Expanded View */}
+                      {expandedOrders[order.id] && (
+                        <div style={itemTextExpandStyle}>
+                          {order.items.map((item, idx) => (
+                            <div key={idx} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingBottom: '0.8rem', borderBottom: idx !== order.items.length - 1 ? '1px solid rgba(139, 119, 137, 0.1)' : 'none' }}>
+                              <div style={{ fontSize: '0.85rem' }}>
+                                <strong>{item.name}</strong>
+                                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.2rem', marginTop: '0.2rem', color: '#666' }}>
+                                  <span>Size: {item.size}</span>
+                                  <span>Color: {item.color}</span>
+                                  <span>Qty: {item.quantity}</span>
+                                </div>
+                              </div>
+                              <span style={{ fontSize: '0.85rem', fontWeight: '600' }}>₹{(item.price * item.quantity).toLocaleString('en-IN')}</span>
+                            </div>
+                          ))}
+                        </div>
+                      )}
                     </div>
                   ))}
                 </div>
@@ -764,119 +828,163 @@ const shopLinkStyle = {
 };
 
 // Orders style
-const ordersListStyle = {
+const ordersWrapperStyle = {
   display: 'flex',
   flexDirection: 'column',
-  gap: '1.8rem',
+  gap: '1.25rem',
+  padding: '1.5rem',
+  border: '1px solid #eaeaea',
+  borderRadius: '12px',
+  backgroundColor: '#fff'
 };
 
-const orderCardStyle = {
-  border: '1px solid rgba(139, 119, 137, 0.15)',
-  borderRadius: '6px',
-  overflow: 'hidden',
-  backgroundColor: '#FFFFFF',
-};
-
-const orderHeaderStyle = {
-  backgroundColor: '#FFFFFF',
-  color: '#000000',
-  padding: '0.8rem 1rem',
+const ordersSummaryRowStyle = {
   display: 'flex',
   justifyContent: 'space-between',
   alignItems: 'center',
+  paddingBottom: '1.5rem',
+  borderBottom: '1px solid #eaeaea',
   flexWrap: 'wrap',
+  gap: '1rem'
+};
+
+const ordersSummaryIconText = {
+  display: 'flex',
   gap: '1rem',
+  alignItems: 'center'
 };
 
-const orderIdLabelStyle = {
-  fontSize: '0.82rem',
+const ordersSummaryIconWrapper = {
+  width: '45px',
+  height: '45px',
+  borderRadius: '50%',
+  backgroundColor: '#fdf2f4',
+  display: 'flex',
+  justifyContent: 'center',
+  alignItems: 'center',
+  color: '#B97285'
+};
+
+const ordersSummaryTitle = {
+  fontSize: '1.1rem',
   fontWeight: '700',
+  color: '#000',
+  marginBottom: '0.2rem'
+};
+
+const ordersSummarySubtitle = {
+  fontSize: '0.85rem',
+  color: '#666'
+};
+
+const ordersFilterBtnStyle = {
+  display: 'flex',
+  alignItems: 'center',
+  gap: '0.5rem',
+  padding: '0.5rem 0.8rem',
+  border: '1px solid #eaeaea',
+  borderRadius: '6px',
+  backgroundColor: '#fff',
+  fontSize: '0.85rem',
+  color: '#333',
+  cursor: 'pointer'
+};
+
+const newOrderCardStyle = {
+  border: '1px solid #eaeaea',
+  borderRadius: '12px',
+  padding: '1.25rem',
+  display: 'flex',
+  flexDirection: 'column',
+  gap: '1.25rem'
+};
+
+const newOrderCardTopStyle = {
+  display: 'grid',
+  gridTemplateColumns: 'repeat(auto-fit, minmax(120px, 1fr)) 24px',
+  alignItems: 'center',
+  gap: '1rem'
+};
+
+const newOrderCardLabel = {
+  fontSize: '0.7rem',
+  color: '#666',
   textTransform: 'uppercase',
+  fontWeight: '600',
   letterSpacing: '0.05em',
-  display: 'block',
+  marginBottom: '0.4rem'
 };
 
-const orderDateStyle = {
-  fontSize: '0.72rem',
-  color: '#000000',
+const newOrderCardId = {
+  fontSize: '0.9rem',
+  fontWeight: '600',
+  color: '#B97285',
+  marginBottom: '0.4rem'
 };
 
-const statusBadgeGroupStyle = {
+const newOrderCardDate = {
+  fontSize: '0.8rem',
+  color: '#333'
+};
+
+const newOrderCardValue = {
+  fontSize: '0.95rem',
+  fontWeight: '700',
+  color: '#000'
+};
+
+const newOrderCardStatus = (status) => {
+  const s = status || 'Pending';
+  const isDelivered = s === 'Delivered';
+  const isPending = s === 'Pending';
+  return {
+    display: 'inline-block',
+    padding: '0.35rem 0.8rem',
+    borderRadius: '99px',
+    fontSize: '0.75rem',
+    fontWeight: '600',
+    backgroundColor: isDelivered ? '#e8f5e9' : (isPending ? '#fff8e1' : '#fff3e0'),
+    color: isDelivered ? '#2e7d32' : (isPending ? '#f57f17' : '#e65100')
+  };
+};
+
+const newOrderCardBottomStyle = {
+  display: 'flex',
+  alignItems: 'flex-start',
+  justifyContent: 'space-between',
+  flexWrap: 'wrap',
+  gap: '1rem'
+};
+
+const newOrderCardImages = {
   display: 'flex',
   gap: '0.6rem',
-  alignItems: 'center',
-  flexWrap: 'wrap',
+  flexWrap: 'wrap'
 };
 
-const orderStatusBadgeStyle = (status) => {
-  const isDelivered = status === 'Delivered';
-  const isCancelled = status === 'Cancelled';
-  return {
-    backgroundColor: isDelivered ? '#e8f5e9' : isCancelled ? '#ffebee' : '#fff8e1',
-    color: isDelivered ? '#2e7d32' : isCancelled ? '#c62828' : '#f57f17',
-    fontSize: '0.65rem',
-    fontWeight: '700',
-    padding: '0.25rem 0.6rem',
-    borderRadius: '99px',
-    textTransform: 'uppercase',
-  };
+const newOrderCardImg = {
+  width: '70px',
+  height: '85px',
+  objectFit: 'cover',
+  borderRadius: '6px',
+  backgroundColor: '#f5f5f5'
 };
 
-const payStatusBadgeStyle = (status) => {
-  const isPaid = status === 'Paid';
-  return {
-    backgroundColor: isPaid ? '#e8f5e9' : '#ffebee',
-    color: isPaid ? '#2e7d32' : '#c62828',
-    fontSize: '0.65rem',
-    fontWeight: '700',
-    padding: '0.25rem 0.6rem',
-    borderRadius: '99px',
-    textTransform: 'uppercase',
-  };
-};
-
-const orderItemsStyle = {
-  padding: '0.8rem 1rem',
+const newOrderCardDetailsBtn = {
   display: 'flex',
   flexDirection: 'column',
-  gap: '0.8rem',
+  alignItems: 'flex-start',
+  gap: '0.4rem',
+  minWidth: '100px'
 };
 
-const orderItemRowStyle = {
-  display: 'flex',
-  justifyContent: 'space-between',
-  alignItems: 'center',
-};
-
-const orderItemMetaStyle = {
+const itemTextExpandStyle = {
+  padding: '1rem 0 0 0',
+  borderTop: '1px solid #eaeaea',
+  marginTop: '0.5rem',
   display: 'flex',
   flexDirection: 'column',
-  gap: '0.1rem',
-};
-
-const orderItemPriceStyle = {
-  fontSize: '0.85rem',
-  fontWeight: '600',
-  color: '#000000',
-};
-
-const orderFooterStyle = {
-  borderTop: '1px solid rgba(139, 119, 137, 0.1)',
-  padding: '0.8rem 1rem',
-  display: 'flex',
-  justifyContent: 'space-between',
-  alignItems: 'center',
-  fontSize: '0.85rem',
-  backgroundColor: 'rgba(60, 48, 58, 0.02)',
-};
-
-const txIdStyle = {
-  fontSize: '0.7rem',
-  color: '#000000',
-};
-
-const orderTotalStyle = {
-  color: '#000000',
+  gap: '0.8rem'
 };
 
 // Wishlist style
