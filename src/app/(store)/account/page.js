@@ -406,11 +406,11 @@ function AccountContent() {
                       
                       {/* Top Row */}
                       <div style={newOrderCardTopStyle}>
-                        <div style={{ flex: '0 0 38%', minWidth: 0, borderRight: '1px solid #f0f0f0', paddingRight: '0.25rem' }}>
+                        <div style={{ flex: '0 0 34%', minWidth: 0, borderRight: '1px solid #f0f0f0', paddingRight: '0.2rem' }}>
                           <div style={newOrderCardId}>ORDER #HG{order.id}</div>
                           <div style={newOrderCardDate}>{new Date(order.created_at).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}</div>
                         </div>
-                        <div style={{ flex: '0 0 32%', minWidth: 0, borderRight: '1px solid #f0f0f0', padding: '0 0.25rem' }}>
+                        <div style={{ flex: '0 0 36%', minWidth: 0, borderRight: '1px solid #f0f0f0', padding: '0 0.2rem' }}>
                           <div style={newOrderCardLabel}>TOTAL</div>
                           <div style={newOrderCardValue}>₹{parseFloat(order.total).toLocaleString('en-IN')}</div>
                         </div>
@@ -428,7 +428,7 @@ function AccountContent() {
                       {/* Bottom Row */}
                       <div style={newOrderCardBottomStyle}>
                         <div style={newOrderCardImages}>
-                          {order.items.slice(0, 4).map((item, idx) => (
+                          {order.items.slice(0, 2).map((item, idx) => (
                             <img 
                               key={idx} 
                               src={item.image || 'https://placehold.co/70x85/eeeeee/cccccc?text=No+Image'} 
@@ -436,9 +436,9 @@ function AccountContent() {
                               style={newOrderCardImg} 
                             />
                           ))}
-                          {order.items.length > 4 && (
+                          {order.items.length > 2 && (
                             <div style={{ ...newOrderCardImg, display: 'flex', alignItems: 'center', justifyContent: 'center', backgroundColor: '#eee', color: '#666', fontSize: '0.8rem', fontWeight: 'bold' }}>
-                              +{order.items.length - 4}
+                              +{order.items.length - 2}
                             </div>
                           )}
                         </div>
@@ -921,7 +921,7 @@ const newOrderCardTopStyle = {
 };
 
 const newOrderCardLabel = {
-  fontSize: '0.6rem',
+  fontSize: '0.55rem',
   color: '#666',
   textTransform: 'uppercase',
   fontWeight: '600',
@@ -933,7 +933,7 @@ const newOrderCardLabel = {
 };
 
 const newOrderCardId = {
-  fontSize: '0.75rem',
+  fontSize: '0.7rem',
   fontWeight: '600',
   color: '#B97285',
   marginBottom: '0.2rem',
@@ -943,13 +943,13 @@ const newOrderCardId = {
 };
 
 const newOrderCardDate = {
-  fontSize: '0.7rem',
+  fontSize: '0.65rem',
   color: '#666',
   whiteSpace: 'nowrap'
 };
 
 const newOrderCardValue = {
-  fontSize: '0.75rem',
+  fontSize: '0.7rem',
   fontWeight: '700',
   whiteSpace: 'nowrap',
   overflow: 'hidden',
