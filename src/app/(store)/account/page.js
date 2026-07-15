@@ -290,7 +290,17 @@ function AccountContent() {
         <div className="animate-fade-in" style={{ maxWidth: '600px', margin: '0 auto' }}>
           
           {/* Section Header */}
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '0.5rem', position: 'relative' }}>
+          <div style={{ 
+            display: 'flex', 
+            alignItems: 'center', 
+            justifyContent: 'center', 
+            marginBottom: '0.5rem', 
+            position: activeTab === 'orders' ? 'sticky' : 'relative',
+            top: activeTab === 'orders' ? '70px' : 'auto',
+            backgroundColor: '#FFF',
+            zIndex: 40,
+            padding: '1rem 0'
+          }}>
             <button 
               onClick={() => handleSheetChange(null)} 
               style={{ position: 'absolute', left: '0', width: '40px', height: '40px', borderRadius: '50%', border: '1px solid rgba(139, 119, 137, 0.25)', display: 'flex', alignItems: 'center', justifyContent: 'center', backgroundColor: 'transparent', cursor: 'pointer' }}
@@ -395,19 +405,19 @@ function AccountContent() {
                       
                       {/* Top Row */}
                       <div style={newOrderCardTopStyle}>
-                        <div>
+                        <div style={{ flex: '1 1 auto', borderRight: '1px solid #f0f0f0', paddingRight: '1rem' }}>
                           <div style={newOrderCardId}>ORDER #HG{order.id}</div>
                           <div style={newOrderCardDate}>{new Date(order.created_at).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })}</div>
                         </div>
-                        <div>
+                        <div style={{ flex: '1 1 auto', borderRight: '1px solid #f0f0f0', padding: '0 1rem' }}>
                           <div style={newOrderCardLabel}>TOTAL</div>
                           <div style={newOrderCardValue}>₹{parseFloat(order.total).toLocaleString('en-IN')}</div>
                         </div>
-                        <div>
+                        <div style={{ flex: '1 1 auto', padding: '0 1rem' }}>
                           <div style={newOrderCardLabel}>STATUS</div>
                           <span style={newOrderCardStatus(order.status)}>{order.status}</span>
                         </div>
-                        <div style={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center' }}>
+                        <div style={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center', paddingLeft: '0.5rem' }}>
                           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#666" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                             <polyline points="9 18 15 12 9 6"></polyline>
                           </svg>
@@ -900,10 +910,12 @@ const newOrderCardStyle = {
 };
 
 const newOrderCardTopStyle = {
-  display: 'grid',
-  gridTemplateColumns: 'repeat(auto-fit, minmax(120px, 1fr)) 24px',
+  display: 'flex',
+  justifyContent: 'space-between',
   alignItems: 'center',
-  gap: '1rem'
+  paddingBottom: '1.25rem',
+  borderBottom: '1px solid #f0f0f0',
+  flexWrap: 'nowrap'
 };
 
 const newOrderCardLabel = {
