@@ -294,12 +294,11 @@ function AccountContent() {
             display: 'flex', 
             alignItems: 'center', 
             justifyContent: 'center', 
-            position: activeTab === 'orders' ? 'fixed' : 'relative',
+            position: activeTab === 'orders' ? 'sticky' : 'relative',
             top: activeTab === 'orders' ? '107px' : 'auto',
-            left: activeTab === 'orders' ? '0' : 'auto',
             width: activeTab === 'orders' ? '100%' : 'auto',
             backgroundColor: '#FFF',
-            zIndex: 40,
+            zIndex: 100,
             padding: '1rem 0',
             borderBottom: activeTab === 'orders' ? '1px solid #eaeaea' : 'none'
           }}>
@@ -358,7 +357,7 @@ function AccountContent() {
 
           {/* ORDERS TAB */}
           {activeTab === 'orders' && (
-            <div style={{ width: '100%', paddingTop: '80px' }}>
+            <div style={{ width: '100%' }}>
               
 
               {ordersLoading ? (
@@ -407,19 +406,19 @@ function AccountContent() {
                       
                       {/* Top Row */}
                       <div style={newOrderCardTopStyle}>
-                        <div style={{ flex: '0 0 auto', borderRight: '1px solid #f0f0f0', paddingRight: '0.5rem' }}>
+                        <div style={{ flex: '1.2 1 0', minWidth: 0, borderRight: '1px solid #f0f0f0', paddingRight: '0.4rem' }}>
                           <div style={newOrderCardId}>ORDER #HG{order.id}</div>
                           <div style={newOrderCardDate}>{new Date(order.created_at).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })}</div>
                         </div>
-                        <div style={{ flex: '0 0 auto', borderRight: '1px solid #f0f0f0', padding: '0 0.5rem' }}>
+                        <div style={{ flex: '1 1 0', minWidth: 0, borderRight: '1px solid #f0f0f0', padding: '0 0.4rem' }}>
                           <div style={newOrderCardLabel}>TOTAL</div>
                           <div style={newOrderCardValue}>₹{parseFloat(order.total).toLocaleString('en-IN')}</div>
                         </div>
-                        <div style={{ flex: '0 0 auto', padding: '0 0.5rem' }}>
+                        <div style={{ flex: '1 1 0', minWidth: 0, padding: '0 0.4rem' }}>
                           <div style={newOrderCardLabel}>STATUS</div>
                           <span style={newOrderCardStatus(order.status)}>{order.status}</span>
                         </div>
-                        <div style={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center', flex: '1 1 auto' }}>
+                        <div style={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center', flex: '0 0 auto' }}>
                           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#666" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                             <polyline points="9 18 15 12 9 6"></polyline>
                           </svg>
@@ -968,10 +967,10 @@ const newOrderCardStatus = (status) => {
 
 const newOrderCardBottomStyle = {
   display: 'flex',
-  alignItems: 'flex-start',
+  alignItems: 'center',
   justifyContent: 'space-between',
-  flexWrap: 'wrap',
-  gap: '1rem'
+  flexWrap: 'nowrap',
+  gap: '0.5rem'
 };
 
 const newOrderCardImages = {
