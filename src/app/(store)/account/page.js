@@ -427,8 +427,8 @@ function AccountContent() {
 
                       {/* Bottom Row */}
                       <div style={newOrderCardBottomStyle}>
-                        <div style={newOrderCardImages}>
-                          {order.items.slice(0, 2).map((item, idx) => (
+                        <div style={newOrderCardImages} className="hide-scrollbar">
+                          {order.items.map((item, idx) => (
                             <img 
                               key={idx} 
                               src={item.image || 'https://placehold.co/70x85/eeeeee/cccccc?text=No+Image'} 
@@ -436,11 +436,6 @@ function AccountContent() {
                               style={newOrderCardImg} 
                             />
                           ))}
-                          {order.items.length > 2 && (
-                            <div style={{ ...newOrderCardImg, display: 'flex', alignItems: 'center', justifyContent: 'center', backgroundColor: '#eee', color: '#666', fontSize: '0.8rem', fontWeight: 'bold' }}>
-                              +{order.items.length - 2}
-                            </div>
-                          )}
                         </div>
                         <div style={newOrderCardDetailsBtn}>
                           <span style={{ fontSize: '0.85rem', fontWeight: '700' }}>{order.items.length} Items</span>
@@ -983,8 +978,12 @@ const newOrderCardImages = {
   display: 'flex',
   flexDirection: 'row',
   flexWrap: 'nowrap',
-  overflow: 'hidden',
-  gap: '0.6rem'
+  overflowX: 'auto',
+  gap: '0.6rem',
+  flex: '1 1 auto',
+  WebkitOverflowScrolling: 'touch',
+  scrollbarWidth: 'none',
+  msOverflowStyle: 'none'
 };
 
 const newOrderCardImg = {
