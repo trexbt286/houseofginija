@@ -296,7 +296,7 @@ function AccountContent() {
             justifyContent: 'center', 
             marginBottom: '0.5rem', 
             position: activeTab === 'orders' ? 'sticky' : 'relative',
-            top: activeTab === 'orders' ? '70px' : 'auto',
+            top: activeTab === 'orders' ? '0' : 'auto',
             backgroundColor: '#FFF',
             zIndex: 40,
             padding: '1rem 0'
