@@ -356,7 +356,7 @@ function AccountContent() {
 
           {/* ORDERS TAB */}
           {activeTab === 'orders' && (
-            <div style={tabContentStyle}>
+            <div style={{ width: '100%' }}>
               
 
               {ordersLoading ? (
@@ -405,20 +405,20 @@ function AccountContent() {
                       
                       {/* Top Row */}
                       <div style={newOrderCardTopStyle}>
-                        <div style={{ flex: '1 1 auto', borderRight: '1px solid #f0f0f0', paddingRight: '1rem' }}>
+                        <div style={{ flex: '0 0 auto', borderRight: '1px solid #f0f0f0', paddingRight: '0.5rem' }}>
                           <div style={newOrderCardId}>ORDER #HG{order.id}</div>
                           <div style={newOrderCardDate}>{new Date(order.created_at).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })}</div>
                         </div>
-                        <div style={{ flex: '1 1 auto', borderRight: '1px solid #f0f0f0', padding: '0 1rem' }}>
+                        <div style={{ flex: '0 0 auto', borderRight: '1px solid #f0f0f0', padding: '0 0.5rem' }}>
                           <div style={newOrderCardLabel}>TOTAL</div>
                           <div style={newOrderCardValue}>₹{parseFloat(order.total).toLocaleString('en-IN')}</div>
                         </div>
-                        <div style={{ flex: '1 1 auto', padding: '0 1rem' }}>
+                        <div style={{ flex: '0 0 auto', padding: '0 0.5rem' }}>
                           <div style={newOrderCardLabel}>STATUS</div>
                           <span style={newOrderCardStatus(order.status)}>{order.status}</span>
                         </div>
-                        <div style={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center', paddingLeft: '0.5rem' }}>
-                          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#666" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <div style={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center', flex: '1 1 auto' }}>
+                          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#666" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                             <polyline points="9 18 15 12 9 6"></polyline>
                           </svg>
                         </div>
@@ -854,7 +854,7 @@ const ordersSummaryRowStyle = {
   alignItems: 'center',
   paddingBottom: '1.5rem',
   borderBottom: '1px solid #eaeaea',
-  flexWrap: 'wrap',
+  flexWrap: 'nowrap',
   gap: '1rem'
 };
 
@@ -915,34 +915,38 @@ const newOrderCardTopStyle = {
   alignItems: 'center',
   paddingBottom: '1.25rem',
   borderBottom: '1px solid #f0f0f0',
-  flexWrap: 'nowrap'
+  flexWrap: 'nowrap',
+  gap: '0.2rem'
 };
 
 const newOrderCardLabel = {
-  fontSize: '0.7rem',
+  fontSize: '0.65rem',
   color: '#666',
   textTransform: 'uppercase',
   fontWeight: '600',
   letterSpacing: '0.05em',
-  marginBottom: '0.4rem'
+  marginBottom: '0.4rem',
+  whiteSpace: 'nowrap'
 };
 
 const newOrderCardId = {
-  fontSize: '0.9rem',
+  fontSize: '0.85rem',
   fontWeight: '600',
   color: '#B97285',
-  marginBottom: '0.4rem'
+  marginBottom: '0.4rem',
+  whiteSpace: 'nowrap'
 };
 
 const newOrderCardDate = {
-  fontSize: '0.8rem',
-  color: '#333'
+  fontSize: '0.75rem',
+  color: '#666',
+  whiteSpace: 'nowrap'
 };
 
 const newOrderCardValue = {
-  fontSize: '0.95rem',
+  fontSize: '0.9rem',
   fontWeight: '700',
-  color: '#000'
+  whiteSpace: 'nowrap'
 };
 
 const newOrderCardStatus = (status) => {
