@@ -294,12 +294,14 @@ function AccountContent() {
             display: 'flex', 
             alignItems: 'center', 
             justifyContent: 'center', 
-            marginBottom: '0.5rem', 
-            position: activeTab === 'orders' ? 'sticky' : 'relative',
-            top: activeTab === 'orders' ? '0' : 'auto',
+            position: activeTab === 'orders' ? 'fixed' : 'relative',
+            top: activeTab === 'orders' ? '107px' : 'auto',
+            left: activeTab === 'orders' ? '0' : 'auto',
+            width: activeTab === 'orders' ? '100%' : 'auto',
             backgroundColor: '#FFF',
             zIndex: 40,
-            padding: '1rem 0'
+            padding: '1rem 0',
+            borderBottom: activeTab === 'orders' ? '1px solid #eaeaea' : 'none'
           }}>
             <button 
               onClick={() => handleSheetChange(null)} 
@@ -356,7 +358,7 @@ function AccountContent() {
 
           {/* ORDERS TAB */}
           {activeTab === 'orders' && (
-            <div style={{ width: '100%' }}>
+            <div style={{ width: '100%', paddingTop: '80px' }}>
               
 
               {ordersLoading ? (
@@ -974,13 +976,16 @@ const newOrderCardBottomStyle = {
 
 const newOrderCardImages = {
   display: 'flex',
-  gap: '0.6rem',
-  flexWrap: 'wrap'
+  flexDirection: 'row',
+  flexWrap: 'nowrap',
+  overflow: 'hidden',
+  gap: '0.6rem'
 };
 
 const newOrderCardImg = {
   width: '70px',
-  height: '85px',
+  height: '70px',
+  flexShrink: 0,
   objectFit: 'cover',
   borderRadius: '6px',
   backgroundColor: '#f5f5f5'
