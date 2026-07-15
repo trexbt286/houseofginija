@@ -406,11 +406,11 @@ function AccountContent() {
                       
                       {/* Top Row */}
                       <div style={newOrderCardTopStyle}>
-                        <div style={{ flex: '0 0 45%', minWidth: 0, borderRight: '1px solid #f0f0f0', paddingRight: '0.25rem' }}>
+                        <div style={{ flex: '0 0 38%', minWidth: 0, borderRight: '1px solid #f0f0f0', paddingRight: '0.25rem' }}>
                           <div style={newOrderCardId}>ORDER #HG{order.id}</div>
                           <div style={newOrderCardDate}>{new Date(order.created_at).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}</div>
                         </div>
-                        <div style={{ flex: '0 0 25%', minWidth: 0, borderRight: '1px solid #f0f0f0', padding: '0 0.25rem' }}>
+                        <div style={{ flex: '0 0 32%', minWidth: 0, borderRight: '1px solid #f0f0f0', padding: '0 0.25rem' }}>
                           <div style={newOrderCardLabel}>TOTAL</div>
                           <div style={newOrderCardValue}>₹{parseFloat(order.total).toLocaleString('en-IN')}</div>
                         </div>
@@ -949,7 +949,7 @@ const newOrderCardDate = {
 };
 
 const newOrderCardValue = {
-  fontSize: '0.8rem',
+  fontSize: '0.75rem',
   fontWeight: '700',
   whiteSpace: 'nowrap',
   overflow: 'hidden',
@@ -988,8 +988,8 @@ const newOrderCardImages = {
 };
 
 const newOrderCardImg = {
-  width: '70px',
-  height: '70px',
+  width: '55px',
+  height: '55px',
   flexShrink: 0,
   objectFit: 'cover',
   borderRadius: '6px',
