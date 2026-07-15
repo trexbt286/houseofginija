@@ -406,20 +406,20 @@ function AccountContent() {
                       
                       {/* Top Row */}
                       <div style={newOrderCardTopStyle}>
-                        <div style={{ flex: '1.2 1 0', minWidth: 0, borderRight: '1px solid #f0f0f0', paddingRight: '0.4rem' }}>
+                        <div style={{ flex: '0 0 45%', minWidth: 0, borderRight: '1px solid #f0f0f0', paddingRight: '0.25rem' }}>
                           <div style={newOrderCardId}>ORDER #HG{order.id}</div>
-                          <div style={newOrderCardDate}>{new Date(order.created_at).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })}</div>
+                          <div style={newOrderCardDate}>{new Date(order.created_at).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}</div>
                         </div>
-                        <div style={{ flex: '1 1 0', minWidth: 0, borderRight: '1px solid #f0f0f0', padding: '0 0.4rem' }}>
+                        <div style={{ flex: '0 0 25%', minWidth: 0, borderRight: '1px solid #f0f0f0', padding: '0 0.25rem' }}>
                           <div style={newOrderCardLabel}>TOTAL</div>
                           <div style={newOrderCardValue}>₹{parseFloat(order.total).toLocaleString('en-IN')}</div>
                         </div>
-                        <div style={{ flex: '1 1 0', minWidth: 0, padding: '0 0.4rem' }}>
-                          <div style={newOrderCardLabel}>STATUS</div>
-                          <span style={newOrderCardStatus(order.status)}>{order.status}</span>
-                        </div>
-                        <div style={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center', flex: '0 0 auto' }}>
-                          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#666" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <div style={{ flex: '0 0 30%', minWidth: 0, paddingLeft: '0.25rem', display: 'flex', justifyContent: 'flex-end', alignItems: 'center', gap: '0.2rem' }}>
+                          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end' }}>
+                            <div style={newOrderCardLabel}>STATUS</div>
+                            <span style={newOrderCardStatus(order.status)}>{order.status}</span>
+                          </div>
+                          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#666" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}>
                             <polyline points="9 18 15 12 9 6"></polyline>
                           </svg>
                         </div>
@@ -921,33 +921,39 @@ const newOrderCardTopStyle = {
 };
 
 const newOrderCardLabel = {
-  fontSize: '0.65rem',
+  fontSize: '0.6rem',
   color: '#666',
   textTransform: 'uppercase',
   fontWeight: '600',
-  letterSpacing: '0.05em',
-  marginBottom: '0.4rem',
-  whiteSpace: 'nowrap'
+  letterSpacing: '0.02em',
+  marginBottom: '0.2rem',
+  whiteSpace: 'nowrap',
+  overflow: 'hidden',
+  textOverflow: 'ellipsis'
 };
 
 const newOrderCardId = {
-  fontSize: '0.85rem',
+  fontSize: '0.75rem',
   fontWeight: '600',
   color: '#B97285',
-  marginBottom: '0.4rem',
-  whiteSpace: 'nowrap'
+  marginBottom: '0.2rem',
+  whiteSpace: 'nowrap',
+  overflow: 'hidden',
+  textOverflow: 'ellipsis'
 };
 
 const newOrderCardDate = {
-  fontSize: '0.75rem',
+  fontSize: '0.7rem',
   color: '#666',
   whiteSpace: 'nowrap'
 };
 
 const newOrderCardValue = {
-  fontSize: '0.9rem',
+  fontSize: '0.8rem',
   fontWeight: '700',
-  whiteSpace: 'nowrap'
+  whiteSpace: 'nowrap',
+  overflow: 'hidden',
+  textOverflow: 'ellipsis'
 };
 
 const newOrderCardStatus = (status) => {
@@ -993,9 +999,10 @@ const newOrderCardImg = {
 const newOrderCardDetailsBtn = {
   display: 'flex',
   flexDirection: 'column',
-  alignItems: 'flex-start',
-  gap: '0.4rem',
-  minWidth: '100px'
+  alignItems: 'flex-end',
+  flexShrink: 0,
+  gap: '0.2rem',
+  marginLeft: '0.5rem'
 };
 
 const itemTextExpandStyle = {
