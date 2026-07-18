@@ -27,7 +27,8 @@ export async function POST(request) {
     if (!process.env.CLOUDINARY_CLOUD_NAME || !process.env.CLOUDINARY_API_KEY || !process.env.CLOUDINARY_API_SECRET) {
       console.warn('WARNING: Cloudinary credentials missing in env. Falling back to local upload.');
       
-      const filename = `${Date.now()}-${file.name.replace(/[^a-zA-Z0-9.-]/g, '_')}`;
+      const originalName = file.name || 'uploaded_image.png';
+      const filename = `${Date.now()}-${originalName.replace(/[^a-zA-Z0-9.-]/g, '_')}`;
       const uploadDir = path.join(process.cwd(), 'public', 'uploads');
       
       // Ensure directory exists
