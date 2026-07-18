@@ -1,5 +1,7 @@
 import { NextResponse } from 'next/server';
 import { v2 as cloudinary } from 'cloudinary';
+import { writeFile, mkdir } from 'fs/promises';
+import path from 'path';
 
 // Configure Cloudinary SDK
 cloudinary.config({
@@ -17,18 +19,31 @@ export async function POST(request) {
       return NextResponse.json({ error: 'No file uploaded' }, { status: 400 });
     }
 
-    // Check Cloudinary configs
-    if (!process.env.CLOUDINARY_CLOUD_NAME || !process.env.CLOUDINARY_API_KEY || !process.env.CLOUDINARY_API_SECRET) {
-      console.warn('WARNING: Cloudinary credentials missing in env.');
-      return NextResponse.json(
-        { error: 'Server configuration error: Cloudinary keys missing' },
-        { status: 500 }
-      );
-    }
-
     // Read file as Buffer
     const arrayBuffer = await file.arrayBuffer();
     const buffer = Buffer.from(arrayBuffer);
+
+    // Check Cloudinary configs
+    if (!process.env.CLOUDINARY_CLOUD_NAME || !process.env.CLOUDINARY_API_KEY || !process.env.CLOUDINARY_API_SECRET) {
+      console.warn('WARNING: Cloudinary credentials missing in env. Falling back to local upload.');
+      
+      const filename = `${Date.now()}-${file.name.replace(/[^a-zA-Z0-9.-]/g, '_')}`;
+      const uploadDir = path.join(process.cwd(), 'public', 'uploads');
+      
+      // Ensure directory exists
+      try {
+        await mkdir(uploadDir, { recursive: true });
+      } catch (err) {
+        // Ignore if exists
+      }
+      
+      await writeFile(path.join(uploadDir, filename), buffer);
+      
+      return NextResponse.json({
+        success: true,
+        url: `/uploads/${filename}`,
+      });
+    }
 
     // Upload buffer stream to Cloudinary
     const uploadResult = await new Promise((resolve, reject) => {
@@ -53,7 +68,7 @@ export async function POST(request) {
       url: uploadResult.secure_url,
     });
   } catch (error) {
-    console.error('Cloudinary upload error:', error);
-    return NextResponse.json({ error: 'Failed to upload image to host provider' }, { status: 500 });
+    console.error('Upload error:', error);
+    return NextResponse.json({ error: 'Failed to upload image' }, { status: 500 });
   }
 }
