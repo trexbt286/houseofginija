@@ -1,7 +1,5 @@
 import { NextResponse } from 'next/server';
 import { v2 as cloudinary } from 'cloudinary';
-import { writeFile, mkdir } from 'fs/promises';
-import path from 'path';
 
 // Configure Cloudinary SDK
 cloudinary.config({
@@ -25,24 +23,14 @@ export async function POST(request) {
 
     // Check Cloudinary configs
     if (!process.env.CLOUDINARY_CLOUD_NAME || !process.env.CLOUDINARY_API_KEY || !process.env.CLOUDINARY_API_SECRET) {
-      console.warn('WARNING: Cloudinary credentials missing in env. Falling back to local upload.');
+      console.warn('WARNING: Cloudinary credentials missing in env. Falling back to Base64 data URI upload.');
       
-      const originalName = file.name || 'uploaded_image.png';
-      const filename = `${Date.now()}-${originalName.replace(/[^a-zA-Z0-9.-]/g, '_')}`;
-      const uploadDir = path.join(process.cwd(), 'public', 'uploads');
-      
-      // Ensure directory exists
-      try {
-        await mkdir(uploadDir, { recursive: true });
-      } catch (err) {
-        // Ignore if exists
-      }
-      
-      await writeFile(path.join(uploadDir, filename), buffer);
+      const mimeType = file.type || 'image/png';
+      const base64Str = \`data:\${mimeType};base64,\${buffer.toString('base64')}\`;
       
       return NextResponse.json({
         success: true,
-        url: `/uploads/${filename}`,
+        url: base64Str,
       });
     }
 
