@@ -26,7 +26,7 @@ export async function POST(request) {
       console.warn('WARNING: Cloudinary credentials missing in env. Falling back to Base64 data URI upload.');
       
       const mimeType = file.type || 'image/png';
-      const base64Str = \`data:\${mimeType};base64,\${buffer.toString('base64')}\`;
+      const base64Str = `data:${mimeType};base64,${buffer.toString('base64')}`;
       
       return NextResponse.json({
         success: true,
