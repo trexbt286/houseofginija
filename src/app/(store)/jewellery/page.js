@@ -205,6 +205,7 @@ function CollectionsContent() {
 
   // Viewport width state for mobile sibling switcher centering
   const [viewportWidth, setViewportWidth] = useState(390);
+  const [isDesktopFilterOpen, setIsDesktopFilterOpen] = useState(false);
 
   // Manage scroll-lock on document.body and documentElement when mobile filter drawer is open
   useEffect(() => {
@@ -1283,7 +1284,7 @@ function CollectionsContent() {
       {/* Catalog Grid container (desktop: hidden when activeProduct is set, mobile: always rendered and visible underneath modal) */}
       <div className="catalog-grid-container-box" style={{ display: activeProduct ? 'none' : 'block' }}>
           {/* Filters Sidebar (Desktop only, hidden on mobile) */}
-          <aside style={sidebarStyle} className="collections-sidebar-desktop">
+          <aside style={{ ...sidebarStyle, display: isDesktopFilterOpen ? 'flex' : 'none' }} className="collections-sidebar-desktop">
             {renderFilters(false)}
           </aside>
 
@@ -1353,6 +1354,16 @@ function CollectionsContent() {
             <section className="blinkit-feed-main-header" style={{ textAlign: 'center', marginBottom: '1.5rem', paddingTop: '1rem' }}>
               <h1 style={titleStyle}>{getCollectionTitle()}</h1>
               <div style={dividerStyle}></div>
+              <button 
+                onClick={() => setIsDesktopFilterOpen(!isDesktopFilterOpen)}
+                style={desktopFilterBtnStyle}
+                className="desktop-filter-toggle-btn"
+              >
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" style={{ marginRight: '8px' }}>
+                  <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3" />
+                </svg>
+                {isDesktopFilterOpen ? 'Hide Filters' : 'Show Filters'}
+              </button>
             </section>
 
             {loading && products.length === 0 ? (
@@ -1609,8 +1620,26 @@ const resetBtnStyle = {
   backgroundColor: '#D98E9B',
   color: '#000000',
   padding: '0.6rem 1.5rem',
+  border: 'none',
   borderRadius: '4px',
-  fontSize: '0.8rem',
+  cursor: 'pointer',
+  fontWeight: '600',
+};
+
+const desktopFilterBtnStyle = {
+  backgroundColor: '#D98E9B',
+  color: '#FFFFFF',
+  border: 'none',
+  padding: '0.6rem 1.2rem',
+  borderRadius: '4px',
+  cursor: 'pointer',
+  fontWeight: '600',
+  display: 'inline-flex',
+  alignItems: 'center',
+  margin: '1rem auto 0 auto',
+  transition: 'background-color 0.3s ease',
+  fontFamily: 'inherit',
+  fontSize: '0.85rem',
 };
 
 // Card Styles
