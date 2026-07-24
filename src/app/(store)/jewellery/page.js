@@ -192,7 +192,7 @@ function CollectionsContent() {
   const [searchQuery, setSearchQuery] = useState(searchParams.get('search') || '');
   const [selectedSize, setSelectedSize] = useState('');
   const [selectedColor, setSelectedColor] = useState('');
-  const [selectedSort, setSelectedSort] = useState('price_asc');
+  const [selectedSort, setSelectedSort] = useState('name_asc');
 
   // Detailed view states
   const [activeProduct, setActiveProduct] = useState(null);
@@ -518,7 +518,7 @@ function CollectionsContent() {
               const aFS = a.flash_sale ? 1 : 0;
               const bFS = b.flash_sale ? 1 : 0;
               if (aFS !== bFS) return bFS - aFS;
-              return Number(b.id) - Number(a.id);
+              return a.name.localeCompare(b.name, undefined, { numeric: true, sensitivity: 'base' });
             });
             setProducts(list);
           }
@@ -567,10 +567,8 @@ function CollectionsContent() {
             return parseFloat(a.price) - parseFloat(b.price);
           } else if (selectedSort === 'price_desc') {
             return parseFloat(b.price) - parseFloat(a.price);
-          } else if (selectedSort === 'name_asc') {
-            return a.name.localeCompare(b.name);
           } else {
-            return Number(b.id) - Number(a.id);
+            return a.name.localeCompare(b.name, undefined, { numeric: true, sensitivity: 'base' });
           }
         });
 
@@ -588,7 +586,7 @@ function CollectionsContent() {
     setSelectedCollection('');
     setSelectedSize('');
     setSelectedColor('');
-    setSelectedSort('price_asc');
+    setSelectedSort('name_asc');
   };
 
   const getCollectionTitle = () => {
@@ -631,10 +629,8 @@ function CollectionsContent() {
           return parseFloat(a.price) - parseFloat(b.price);
         } else if (selectedSort === 'price_desc') {
           return parseFloat(b.price) - parseFloat(a.price);
-        } else if (selectedSort === 'name_asc') {
-          return a.name.localeCompare(b.name);
         } else {
-          return Number(b.id) - Number(a.id);
+          return a.name.localeCompare(b.name, undefined, { numeric: true, sensitivity: 'base' });
         }
       });
     });

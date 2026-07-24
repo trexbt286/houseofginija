@@ -71,10 +71,10 @@ export async function GET(request) {
     } else if (sort === 'price_desc') {
       queryText += ' ORDER BY p.price DESC';
     } else if (sort === 'name_asc') {
-      queryText += ' ORDER BY p.name ASC';
+      queryText += " ORDER BY p.flash_sale DESC, SUBSTRING(p.name FROM '^[^0-9]+') ASC, COALESCE(NULLIF(SUBSTRING(p.name FROM '[0-9]+'), ''), '0')::integer ASC, p.name ASC";
     } else {
-      // Default: Flash sale products first, then alphabetical by name
-      queryText += ' ORDER BY p.flash_sale DESC, p.name ASC';
+      // Default: Flash sale products first, then alphabetical by name naturally
+      queryText += " ORDER BY p.flash_sale DESC, SUBSTRING(p.name FROM '^[^0-9]+') ASC, COALESCE(NULLIF(SUBSTRING(p.name FROM '[0-9]+'), ''), '0')::integer ASC, p.name ASC";
     }
 
     const result = await pool.query(queryText, queryParams);

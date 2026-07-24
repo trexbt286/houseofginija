@@ -15,7 +15,7 @@ export async function GET() {
       FROM products p 
       LEFT JOIN collections c ON p.collection_id = c.id 
       WHERE p.flash_sale = true
-      ORDER BY p.name ASC
+      ORDER BY SUBSTRING(p.name FROM '^[^0-9]+') ASC, COALESCE(NULLIF(SUBSTRING(p.name FROM '[0-9]+'), ''), '0')::integer ASC, p.name ASC
     `;
 
     // 3. Fetch settings
