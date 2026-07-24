@@ -15,7 +15,7 @@ export async function GET() {
       FROM products p 
       LEFT JOIN collections c ON p.collection_id = c.id 
       WHERE p.flash_sale = true
-      ORDER BY p.id DESC
+      ORDER BY p.name ASC
     `;
 
     // 3. Fetch settings

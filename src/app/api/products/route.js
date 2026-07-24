@@ -73,8 +73,8 @@ export async function GET(request) {
     } else if (sort === 'name_asc') {
       queryText += ' ORDER BY p.name ASC';
     } else {
-      // Default: Newest/ID desc
-      queryText += ' ORDER BY p.id DESC';
+      // Default: Flash sale products first, then alphabetical by name
+      queryText += ' ORDER BY p.flash_sale DESC, p.name ASC';
     }
 
     const result = await pool.query(queryText, queryParams);
