@@ -2920,19 +2920,21 @@ body.cart-drawer-open .storefront-header {
   /* Newsletter section spacing and divider */
   .footer-newsletter {
     padding-top: 24px !important;
-    padding-bottom: 24px !important;
+    padding-bottom: 16px !important;
     margin-top: 0 !important;
     margin-bottom: 0 !important;
     border-top: none !important;
-    border-bottom: 1px solid rgba(139, 119, 137, 0.12) !important;
+    border-bottom: none !important;
+    background-color: #F6DDE2 !important;
   }
 
   /* Footer spacing */
   footer {
-    padding-top: 24px !important;
+    padding-top: 0 !important;
     padding-bottom: 16px !important;
     margin-top: 0 !important;
     border-top: none !important;
+    background-color: #F6DDE2 !important;
   }
 
   /* Remove redundant divider div after collections section */

@@ -7,6 +7,16 @@ export default function Footer() {
   const [email, setEmail] = useState('');
   const [status, setStatus] = useState(''); // 'loading', 'success', 'error'
   const [message, setMessage] = useState('');
+  
+  // Accordion open/close state
+  const [openSections, setOpenSections] = useState({});
+
+  const toggleSection = (key) => {
+    setOpenSections(prev => ({
+      ...prev,
+      [key]: !prev[key]
+    }));
+  };
 
   const handleSubscribe = async (e) => {
     e.preventDefault();
@@ -38,9 +48,99 @@ export default function Footer() {
     }
   };
 
+  const accordionItems = [
+    {
+      id: 'get-in-touch',
+      title: 'GET IN TOUCH',
+      content: (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', fontSize: '0.85rem', color: '#2D2429' }}>
+          <p style={{ margin: 0, lineHeight: 1.5 }}>
+            <strong>Store Address:</strong><br />
+            M J Jewels, Kapoorthala Crossing, Sector F, Chandralok, Lucknow, India
+          </p>
+          <p style={{ margin: 0 }}>
+            <Link href="/contact" style={{ color: '#D98E9B', fontWeight: '600', textDecoration: 'underline' }}>
+              Contact Us & Visit Store →
+            </Link>
+          </p>
+        </div>
+      )
+    },
+    {
+      id: 'quick-links',
+      title: 'QUICK LINKS',
+      content: (
+        <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: '0.5rem', fontSize: '0.85rem' }}>
+          <li><Link href="/collections" style={{ color: '#000000', textDecoration: 'none' }}>All Collections</Link></li>
+          <li><Link href="/about" style={{ color: '#000000', textDecoration: 'none' }}>Our Story</Link></li>
+          <li><Link href="/wishlist" style={{ color: '#000000', textDecoration: 'none' }}>Wishlist</Link></li>
+          <li><Link href="/cart" style={{ color: '#000000', textDecoration: 'none' }}>Shopping Bag</Link></li>
+        </ul>
+      )
+    },
+    {
+      id: 'collections',
+      title: 'COLLECTIONS',
+      content: (
+        <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: '0.5rem', fontSize: '0.85rem' }}>
+          <li><Link href="/suits" style={{ color: '#000000', textDecoration: 'none' }}>Suits Collection</Link></li>
+          <li><Link href="/jewellery" style={{ color: '#000000', textDecoration: 'none' }}>Jewellery Collection</Link></li>
+          <li><Link href="/collections" style={{ color: '#000000', textDecoration: 'none' }}>All Creations</Link></li>
+        </ul>
+      )
+    },
+    {
+      id: 'client-services',
+      title: 'CLIENT SERVICES',
+      content: (
+        <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: '0.5rem', fontSize: '0.85rem' }}>
+          <li><Link href="/contact" style={{ color: '#000000', textDecoration: 'none' }}>Contact Us</Link></li>
+          <li><Link href="/shipping-returns" style={{ color: '#000000', textDecoration: 'none' }}>Shipping & Returns</Link></li>
+          <li><Link href="/privacy-policy" style={{ color: '#000000', textDecoration: 'none' }}>Privacy & Cookies</Link></li>
+          <li><Link href="/terms" style={{ color: '#000000', textDecoration: 'none' }}>Terms & Conditions</Link></li>
+        </ul>
+      )
+    },
+    {
+      id: 'follow-us',
+      title: 'FOLLOW US',
+      content: (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', fontSize: '0.85rem' }}>
+          <a 
+            href="https://www.instagram.com/houseof_ginija" 
+            target="_blank" 
+            rel="noopener noreferrer" 
+            style={{ color: '#000000', textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: '0.4rem' }}
+          >
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#D98E9B" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+              <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
+              <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
+              <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
+            </svg>
+            <span>Instagram</span>
+          </a>
+        </div>
+      )
+    },
+    {
+      id: 'our-story',
+      title: 'OUR STORY',
+      content: (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.6rem', fontSize: '0.85rem', color: '#2D2429' }}>
+          <p style={{ margin: 0, lineHeight: 1.6 }}>
+            Made to last. Crafting high-end archival couture, focusing on slow fashion, premium tailoring, and dedicated master craftsmanship.
+          </p>
+          <Link href="/about" style={{ color: '#D98E9B', fontWeight: '600', textDecoration: 'underline' }}>
+            Read Our Full Story →
+          </Link>
+        </div>
+      )
+    }
+  ];
+
   return (
     <>
-      {/* Top: Newsletter Sign up with white background */}
+      {/* Newsletter Container - matching continuous pink background */}
       <div style={newsletterContainerStyle} className="footer-newsletter">
         <div style={containerStyle}>
           <div style={newsletterSectionStyle}>
@@ -78,149 +178,112 @@ export default function Footer() {
         </div>
       </div>
 
-      {/* Main Footer with pink background */}
+      {/* Main Footer Container with matching pink background */}
       <footer style={footerStyle}>
         <div style={containerStyle}>
-          {/* Bottom: Footer Columns */}
-          <div style={footerGridStyle} className="footer-grid">
-            {/* Col 1: Brand Story */}
-            <div style={colStyle} className="footer-brand-col">
-              <img 
-                src="/brand_symbol_logo.png" 
-                alt="House of Ginija Logo" 
-                style={{ height: '65px', width: 'auto', objectFit: 'contain', alignSelf: 'flex-start', marginBottom: '0.4rem' }} 
-                className="footer-brand-logo"
-                loading="lazy"
-              />
-              <p style={aboutTextStyle} className="footer-brand-text">
-                Made to last. Crafting high-end archival couture, focusing on slow fashion, premium tailoring, and dedicated master craftsmanship.
-              </p>
-            </div>
+          
+          {/* Centered Gold HG Monogram + Tagline */}
+          <div style={monogramContainerStyle} className="footer-monogram-section">
+            <img 
+              src="/brand_symbol_logo.png" 
+              alt="House of Ginija Logo" 
+              style={{ height: '65px', width: 'auto', objectFit: 'contain', margin: '0 auto 0.8rem auto', display: 'block' }} 
+              className="footer-brand-logo"
+              loading="lazy"
+            />
+            <p style={taglineTextStyle} className="footer-tagline-text">
+              Made to last. Crafting high-end archival couture, focusing on slow fashion, premium tailoring, and dedicated master craftsmanship.
+            </p>
+          </div>
 
-            {/* Col 2: Navigation Links */}
-            <div style={colStyle} className="footer-exploration-col">
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem' }}>
-                <h5 style={colTitleStyle}>Exploration</h5>
-                <ul style={listStyle}>
-                  <li><Link href="/collections" style={linkStyle}>All Collections</Link></li>
-                  <li><Link href="/about" style={linkStyle}>Our Story</Link></li>
-                </ul>
-              </div>
-              
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem' }}>
-                <h5 style={colTitleStyle}>Follow Us</h5>
-                <ul style={listStyle}>
-                  <li>
-                    <a 
-                      href="https://www.instagram.com/houseof_ginija" 
-                      target="_blank" 
-                      rel="noopener noreferrer" 
-                      style={{ ...linkStyle, display: 'inline-flex', alignItems: 'center' }}
-                    >
-                      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#D98E9B" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" style={{ marginRight: '6px', color: '#D98E9B' }}>
-                        <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
-                        <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
-                        <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
-                      </svg>
-                      <span>Instagram</span>
-                    </a>
-                  </li>
-                </ul>
-              </div>
-            </div>
-
-            {/* Col 3: Customer Care & Policies */}
-            <div style={colStyle}>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem' }}>
-                <h5 style={colTitleStyle}>Client Services</h5>
-                <ul style={listStyle}>
-                  <li><Link href="/contact" style={linkStyle}>Contact Us</Link></li>
-                  <li><Link href="/shipping-returns" style={linkStyle}>Shipping & Returns</Link></li>
-                  <li><Link href="/privacy-policy" style={linkStyle}>Privacy & Cookies</Link></li>
-                  <li><Link href="/terms" style={linkStyle}>Terms & Conditions</Link></li>
-                </ul>
-              </div>
-            </div>
-
-            {/* Col 4: Location Map */}
-            <div style={colStyle}>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem' }}>
-                <h5 style={colTitleStyle}>location</h5>
-                <p style={{ ...aboutTextStyle, marginBottom: '0.2rem', fontSize: '0.8rem', lineHeight: '1.4', color: '#000000' }}>
-                  M J Jewels, Kapoorthala Crossing, Sector F, Chandralok, Lucknow, India
-                </p>
-                <a 
-                  href="https://maps.google.com/?q=House+Of+Ginija,+Kapoorthala+Crossing,+Lucknow" 
-                  target="_blank" 
-                  rel="noopener noreferrer" 
-                  style={{ textDecoration: 'none', color: 'inherit', display: 'block' }}
-                >
-                  <div 
-                    className="footer-map-container"
-                    style={{ 
-                      width: '100%', 
-                      height: '120px', 
-                      borderRadius: '4px', 
-                      overflow: 'hidden', 
-                      border: '1px solid rgba(217, 142, 155, 0.5)', 
-                      boxShadow: '0 4px 15px rgba(217, 142, 155, 0.15)',
-                      backgroundColor: '#FFFFFF',
-                      position: 'relative',
-                      cursor: 'pointer'
-                    }}
+          {/* Collapsible Accordion Footer Rows */}
+          <div style={accordionWrapperStyle} className="footer-accordion-wrapper">
+            {accordionItems.map((item) => {
+              const isOpen = !!openSections[item.id];
+              return (
+                <div key={item.id} style={accordionRowStyle} className="footer-accordion-row">
+                  <button
+                    type="button"
+                    onClick={() => toggleSection(item.id)}
+                    style={accordionHeaderBtnStyle}
+                    className="footer-accordion-header"
+                    aria-expanded={isOpen}
                   >
-                    {/* Invisible overlay to capture click events and bubble up redirects cleanly */}
-                    <div style={{
-                      position: 'absolute',
-                      top: 0,
-                      left: 0,
-                      width: '100%',
-                      height: '100%',
-                      zIndex: 2,
-                      backgroundColor: 'transparent'
-                    }} />
-                    <iframe
-                      src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3558.016335198083!2d80.94572517616113!3d26.882640576665796!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x399bfd1ffd757c3d%3A0xe660482a34a6765e!2sHouse%20Of%20Ginija!5e0!3m2!1sen!2sin!4v1718000000000!5m2!1sen!2sin"
-                      width="100%"
-                      height="100%"
-                      style={{ border: 0 }}
-                      allowFullScreen=""
-                      loading="lazy"
-                    referrerPolicy="no-referrer-when-downgrade"
-                  ></iframe>
+                    <span style={accordionTitleStyle}>{item.title}</span>
+                    <span style={accordionIconStyle}>{isOpen ? '−' : '+'}</span>
+                  </button>
+                  {isOpen && (
+                    <div style={accordionContentStyle} className="footer-accordion-content animate-fade-in">
+                      {item.content}
+                    </div>
+                  )}
                 </div>
-              </a>
-              </div>
-            </div>
+              );
+            })}
           </div>
 
-          {/* Copyright */}
-          <div style={copyrightSectionStyle}>
-            <p>© 2026 House Of Ginija. All Rights Reserved.</p>
+          {/* Location Map Section */}
+          <div style={mapSectionStyle} className="footer-map-section">
+            <a 
+              href="https://maps.google.com/?q=House+Of+Ginija,+Kapoorthala+Crossing,+Lucknow" 
+              target="_blank" 
+              rel="noopener noreferrer" 
+              style={{ textDecoration: 'none', color: 'inherit', display: 'block' }}
+            >
+              <div 
+                className="footer-map-container"
+                style={{ 
+                  width: '100%', 
+                  height: '110px', 
+                  borderRadius: '6px', 
+                  overflow: 'hidden', 
+                  border: '1px solid rgba(217, 142, 155, 0.4)', 
+                  boxShadow: '0 4px 15px rgba(217, 142, 155, 0.12)',
+                  backgroundColor: '#FFFFFF',
+                  position: 'relative',
+                  cursor: 'pointer'
+                }}
+              >
+                <div style={{
+                  position: 'absolute',
+                  top: 0,
+                  left: 0,
+                  width: '100%',
+                  height: '100%',
+                  zIndex: 2,
+                  backgroundColor: 'transparent'
+                }} />
+                <iframe
+                  src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3558.016335198083!2d80.94572517616113!3d26.882640576665796!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x399bfd1ffd757c3d%3A0xe660482a34a6765e!2sHouse%20Of%20Ginija!5e0!3m2!1sen!2sin!4v1718000000000!5m2!1sen!2sin"
+                  width="100%"
+                  height="100%"
+                  style={{ border: 0 }}
+                  allowFullScreen=""
+                  loading="lazy"
+                  referrerPolicy="no-referrer-when-downgrade"
+                ></iframe>
+              </div>
+            </a>
           </div>
+
+          {/* Copyright & Made with Heart */}
+          <div style={copyrightSectionStyle}>
+            <p style={{ margin: 0 }}>© 2026 House Of Ginija. All Rights Reserved.</p>
+            <p style={{ margin: '0.4rem 0 0 0', color: '#D98E9B', fontWeight: '500' }}>
+              Made with <span style={{ color: '#D98E9B' }}>♥</span> in India
+            </p>
+          </div>
+
         </div>
       </footer>
     </>
   );
 }
 
-// Inline styles for Footer
-const footerStyle = {
-  backgroundColor: '#F6DDE2', // Light Blush
-  color: '#000000', // Deep Plum-Brown
-  padding: '1.5rem 2rem 1rem 2rem',
-  marginTop: 'auto',
-  borderTop: '1px solid #D98E9B', // Pink border
-};
-
-const containerStyle = {
-  maxWidth: '1280px',
-  margin: '0 auto',
-};
-
+// Inline styles for Accordion Footer & Continuous Pink Background
 const newsletterContainerStyle = {
-  backgroundColor: '#FFFFFF',
-  padding: '3rem 2rem 3rem 2rem',
+  backgroundColor: '#F6DDE2', // Continuous pink background matching footer
+  padding: '2.5rem 1.5rem 1.5rem 1.5rem',
   borderTop: '1px solid rgba(139, 119, 137, 0.15)',
 };
 
@@ -232,7 +295,7 @@ const newsletterSectionStyle = {
 
 const newsletterTitleStyle = {
   fontFamily: 'var(--font-serif)',
-  fontSize: '2.5rem',
+  fontSize: '2.2rem',
   color: '#D98E9B',
   fontWeight: '400',
   marginBottom: '0.5rem',
@@ -263,14 +326,15 @@ const inputStyle = {
 };
 
 const buttonStyle = {
-  backgroundColor: '#FFFFFF', // Gold Accent
-  color: '#000000',
+  backgroundColor: '#D98E9B',
+  color: '#FFFFFF',
   padding: '0.75rem 1.75rem',
   borderRadius: '4px',
   fontWeight: '600',
   fontSize: '0.85rem',
   textTransform: 'uppercase',
   letterSpacing: '0.05em',
+  border: 'none',
 };
 
 const successMsgStyle = {
@@ -285,85 +349,84 @@ const errorMsgStyle = {
   marginTop: '0.8rem',
 };
 
-const footerGridStyle = {
-  display: 'grid',
-  gridTemplateColumns: '2fr 1fr 1fr 1.5fr',
-  gap: '2.5rem',
-  paddingBottom: '1rem',
-  '@media (maxWidth: 768px)': {
-    gridTemplateColumns: '1fr',
-    gap: '2.5rem',
-  },
+const footerStyle = {
+  backgroundColor: '#F6DDE2', // Continuous pink background matching newsletter
+  color: '#000000',
+  padding: '0.5rem 1.5rem 2rem 1.5rem',
+  marginTop: '0',
 };
 
-const colStyle = {
+const containerStyle = {
+  maxWidth: '650px', // Centered accordion width matching design screenshot
+  margin: '0 auto',
+};
+
+const monogramContainerStyle = {
+  textAlign: 'center',
+  padding: '1rem 0.5rem 1rem 0.5rem',
+};
+
+const taglineTextStyle = {
+  fontSize: '0.82rem',
+  lineHeight: '1.55',
+  color: '#4A3B43',
+  maxWidth: '460px',
+  margin: '0 auto',
+  textAlign: 'center',
+};
+
+const accordionWrapperStyle = {
+  margin: '1.5rem 0',
+  borderTop: '1px solid rgba(139, 119, 137, 0.18)',
+};
+
+const accordionRowStyle = {
+  borderBottom: '1px solid rgba(139, 119, 137, 0.18)',
+};
+
+const accordionHeaderBtnStyle = {
+  width: '100%',
   display: 'flex',
-  flexDirection: 'column',
-  gap: '1.2rem',
-};
-
-const logoStyle = {
-  fontFamily: 'var(--font-serif)',
-  fontSize: '1.4rem',
-  fontWeight: '600',
-  letterSpacing: '0.15em',
-  color: '#000000',
-};
-
-const aboutTextStyle = {
-  fontSize: '0.85rem',
-  lineHeight: 1.6,
-  color: '#000000',
-};
-
-const socialsStyle = {
-  display: 'flex',
-  gap: '1rem',
-};
-
-const socialLinkStyle = {
-  fontSize: '0.8rem',
-  textTransform: 'uppercase',
-  letterSpacing: '0.05em',
-  color: '#000000',
-  display: 'inline-flex',
+  justifyContent: 'space-between',
   alignItems: 'center',
-  textDecoration: 'none',
+  padding: '0.9rem 0.25rem',
+  backgroundColor: 'transparent',
+  border: 'none',
+  outline: 'none',
+  cursor: 'pointer',
+  textAlign: 'left',
 };
 
-const colTitleStyle = {
+const accordionTitleStyle = {
   fontFamily: 'var(--font-sans)',
-  fontSize: '0.8rem',
-  textTransform: 'uppercase',
-  letterSpacing: '0.12em',
-  color: '#000000',
+  fontSize: '0.82rem',
   fontWeight: '700',
-  borderBottom: '1px solid rgba(45, 36, 41, 0.1)',
-  paddingBottom: '0.5rem',
+  letterSpacing: '0.08em',
+  color: '#2D2429',
+  textTransform: 'uppercase',
 };
 
-const listStyle = {
-  listStyle: 'none',
-  display: 'flex',
-  flexDirection: 'column',
-  gap: '0.6rem',
+const accordionIconStyle = {
+  fontSize: '1.2rem',
+  fontWeight: '400',
+  color: '#2D2429',
+  lineHeight: '1',
 };
 
-const linkStyle = {
-  fontSize: '0.85rem',
-  color: '#000000',
+const accordionContentStyle = {
+  padding: '0.2rem 0.25rem 1rem 0.25rem',
 };
 
-const footerAccentLinkStyle = {
-  ...linkStyle,
-  color: '#000000',
+const mapSectionStyle = {
+  marginTop: '1.5rem',
+  marginBottom: '1.5rem',
 };
 
 const copyrightSectionStyle = {
-  borderTop: '1px solid rgba(45, 36, 41, 0.1)',
-  paddingTop: '0.8rem',
+  borderTop: '1px solid rgba(139, 119, 137, 0.15)',
+  paddingTop: '1.2rem',
   textAlign: 'center',
-  fontSize: '0.72rem',
-  color: 'rgba(0, 0, 0, 0.5)',
-  letterSpacing: '0.06em',
+  fontSize: '0.75rem',
+  color: 'rgba(0, 0, 0, 0.6)',
+  letterSpacing: '0.04em',
 };
