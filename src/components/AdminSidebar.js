@@ -33,6 +33,12 @@ export default function AdminSidebar({ active }) {
           Products
         </Link>
         <Link 
+          href="/admin/hero-reels" 
+          style={active === "hero-reels" ? activeNavLinkStyle : navLinkStyle}
+        >
+          Hero Reels
+        </Link>
+        <Link 
           href="/admin/flash-sale" 
           style={active === "flash-sale" ? activeNavLinkStyle : navLinkStyle}
         >

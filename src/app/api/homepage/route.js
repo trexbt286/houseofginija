@@ -21,10 +21,14 @@ export async function GET() {
     // 3. Fetch settings
     const settingsQuery = "SELECT value FROM settings WHERE key = 'flash_sale_enabled'";
 
-    const [collectionsResult, flashProductsResult, settingsResult] = await Promise.all([
+    // 4. Fetch hero reels
+    const heroReelsQuery = 'SELECT * FROM hero_reels ORDER BY sort_order ASC, id ASC';
+
+    const [collectionsResult, flashProductsResult, settingsResult, heroReelsResult] = await Promise.all([
       pool.query(collectionsQuery),
       pool.query(flashProductsQuery),
-      pool.query(settingsQuery)
+      pool.query(settingsQuery),
+      pool.query(heroReelsQuery)
     ]);
 
     const flash_sale_enabled = settingsResult.rows.length > 0 ? settingsResult.rows[0].value === 'true' : false;
@@ -32,7 +36,8 @@ export async function GET() {
     return NextResponse.json({ 
       collections: collectionsResult.rows,
       flashProducts: flashProductsResult.rows,
-      flash_sale_enabled 
+      flash_sale_enabled,
+      heroReels: heroReelsResult.rows || []
     });
   } catch (error) {
     console.error('Fetch homepage data error:', error);

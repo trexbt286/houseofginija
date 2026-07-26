@@ -6,6 +6,7 @@ import { useStore } from '@/context/StoreContext';
 import { useEffect, useState } from 'react';
 import ImageWithSkeleton from '@/components/ImageWithSkeleton';
 import SkeletonCard from '@/components/SkeletonCard';
+import HeroReelsSection from '@/components/HeroReelsSection';
 
 export default function Home() {
   const { 
@@ -23,6 +24,7 @@ export default function Home() {
   const [selectedReview, setSelectedReview] = useState(null);
   const [flashProducts, setFlashProducts] = useState([]);
   const [flashSaleEnabled, setFlashSaleEnabled] = useState(true);
+  const [heroReels, setHeroReels] = useState([]);
 
   // States for product detail bottom sheet modal
   const [activeProduct, setActiveProduct] = useState(null);
@@ -106,6 +108,7 @@ export default function Home() {
           setCollections(data.collections || []);
           setFlashProducts(data.flashProducts || []);
           setFlashSaleEnabled(!!data.flash_sale_enabled);
+          setHeroReels(data.heroReels || []);
         }
       } catch (err) {
         console.error(err);
@@ -203,51 +206,8 @@ export default function Home() {
 
   return (
     <div style={pageContainerStyle}>
-      {/* 1. HERO SECTION */}
-      <section style={heroSectionStyle} className="home-section home-hero-section">
-        <video
-          autoPlay
-          loop
-          muted
-          playsInline
-          preload="auto"
-          disablePictureInPicture
-          className="hero-video"
-          style={{
-            position: 'absolute',
-            top: 0,
-            left: 0,
-            width: '100%',
-            height: '100%',
-            objectFit: 'cover',
-            zIndex: 0,
-            pointerEvents: 'none',
-            transform: 'translateZ(0)',
-            willChange: 'transform',
-            WebkitTransform: 'translateZ(0)',
-          }}
-        >
-          <source src="/hero_video_mobile.mp4" type="video/mp4" />
-        </video>
-        <div style={heroOverlayStyle} className="hero-overlay">
-          <div style={heroContentStyle} className="animate-fade-in hero-content-wrapper">
-            <h1 style={heroTitleStyle}>
-              House Of <br className="mobile-only-br" />
-              Ginija
-            </h1>
-            <p className="brand-tagline" style={{ ...heroTaglineStyle, whiteSpace: 'nowrap' }}>
-              <span style={{ color: '#B8860B', marginRight: '0.6rem', fontWeight: '400' }}>—</span>
-              <span style={{ fontStyle: 'italic', color: '#D98E9B' }}>The Designer Label</span>
-              <span style={{ color: '#B8860B', marginLeft: '0.6rem', fontWeight: '400' }}>—</span>
-            </p>
-
-            <div style={heroActionsStyle}>
-              <Link href="/collections" style={heroBtnPinkStyle} className="hero-btn-pink">
-                Explore Creations &rarr;
-              </Link>
-            </div>
-          </div>
-        </div>
+      {/* 1. HERO REELS SECTION */}
+      <HeroReelsSection heroReels={heroReels} />
 
         {/* Hero Value Props Bar */}
         <div className="hero-value-props-bar">
@@ -311,7 +271,6 @@ export default function Home() {
             </div>
           </div>
         </div>
-      </section>
 
       {/* FLASH SALE SECTION */}
       <section 
