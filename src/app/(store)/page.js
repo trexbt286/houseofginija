@@ -209,70 +209,7 @@ export default function Home() {
       {/* 1. HERO REELS SECTION */}
       <HeroReelsSection heroReels={heroReels} />
 
-        {/* Hero Value Props Bar */}
-        <div className="hero-value-props-bar">
-          <div className="value-prop-item">
-            {/* Handloom Weaving Shuttle Icon */}
-            <svg className="value-prop-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M2 12l4-3h12l4 3-4 3H6l-4-3z" />
-              <path d="M9 10h6v4H9z" />
-              <line x1="12" y1="10" x2="12" y2="14" />
-              <path d="M4 12c2.5 0 2.5-3 5-3s2.5 3 5 3 2.5-3 5-3 2.5 3 5 3" opacity="0.25" />
-            </svg>
-            <div className="value-prop-text">
-              <span>Premium</span>
-              <span>Quality</span>
-            </div>
-          </div>
-          <div className="value-prop-divider"></div>
-          <div className="value-prop-item">
-            {/* Yarn Spool / Hand-spun Wool Icon */}
-            <svg className="value-prop-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-              <circle cx="12" cy="12" r="7" />
-              <path d="M7 10c2.5-1 7.5-1 10 0" />
-              <path d="M6 13c3 .5 9 .5 12 0" />
-              <path d="M8 16c2.5 1 5.5 1 8 0" />
-              <line x1="3" y1="21" x2="21" y2="3" />
-              <circle cx="21" cy="3" r="1.2" fill="currentColor" />
-            </svg>
-            <div className="value-prop-text">
-              <span>Slow</span>
-              <span>Fashion</span>
-            </div>
-          </div>
-          <div className="value-prop-divider"></div>
-          <div className="value-prop-item">
-            {/* Sewing Needle & Thread Loop Icon */}
-            <svg className="value-prop-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-              <line x1="4" y1="20" x2="18" y2="6" />
-              <ellipse cx="16.5" cy="7.5" rx="1.8" ry="0.9" transform="rotate(-45 16.5 7.5)" />
-              <path d="M18 6c3.5-3.5 5.5-1 2 2.5s-6 5-9.5 5-5.5-2-7.5 0" />
-            </svg>
-            <div className="value-prop-text">
-              <span>Expert</span>
-              <span>Tailoring</span>
-            </div>
-          </div>
-          <div className="value-prop-divider"></div>
-          <div className="value-prop-item">
-            {/* Tailor's Tape Measure Infinity Loop Icon */}
-            <svg className="value-prop-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M4 10c0-4 4-6 8-6s8 2 8 6-4 8-8 10-8-4-8-10z" />
-              <line x1="8" y1="4.2" x2="8" y2="6.2" />
-              <line x1="12" y1="4" x2="12" y2="7" />
-              <line x1="16" y1="4.2" x2="16" y2="6.2" />
-              <line x1="18.5" y1="7.2" x2="16.8" y2="8.2" />
-              <line x1="19.5" y1="11" x2="17.5" y2="11.5" />
-              <line x1="11.5" y1="16.5" x2="13.2" y2="17.8" />
-            </svg>
-            <div className="value-prop-text">
-              <span>Made To</span>
-              <span>Last</span>
-            </div>
-          </div>
-        </div>
-
-      {/* FLASH SALE SECTION */}
+      {/* 2. FLASH SALE SECTION */}
       <section 
         style={{ 
           ...flashSaleSectionStyle, 
@@ -372,7 +309,72 @@ export default function Home() {
         )}
       </section>
 
-      {/* 3. FEATURED COLLECTIONS SECTION */}
+      {/* 3. FEATURE STRIP SECTION */}
+      <section className="feature-strip-static-section">
+        <div className="hero-value-props-bar">
+          <div className="value-prop-item">
+            {/* Handloom Weaving Shuttle Icon */}
+            <svg className="value-prop-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M2 12l4-3h12l4 3-4 3H6l-4-3z" />
+              <path d="M9 10h6v4H9z" />
+              <line x1="12" y1="10" x2="12" y2="14" />
+              <path d="M4 12c2.5 0 2.5-3 5-3s2.5 3 5 3 2.5-3 5-3 2.5 3 5 3" opacity="0.25" />
+            </svg>
+            <div className="value-prop-text">
+              <span>Premium</span>
+              <span>Quality</span>
+            </div>
+          </div>
+          <div className="value-prop-divider"></div>
+          <div className="value-prop-item">
+            {/* Yarn Spool / Hand-spun Wool Icon */}
+            <svg className="value-prop-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+              <circle cx="12" cy="12" r="7" />
+              <path d="M7 10c2.5-1 7.5-1 10 0" />
+              <path d="M6 13c3 .5 9 .5 12 0" />
+              <path d="M8 16c2.5 1 5.5 1 8 0" />
+              <line x1="3" y1="21" x2="21" y2="3" />
+              <circle cx="21" cy="3" r="1.2" fill="currentColor" />
+            </svg>
+            <div className="value-prop-text">
+              <span>Slow</span>
+              <span>Fashion</span>
+            </div>
+          </div>
+          <div className="value-prop-divider"></div>
+          <div className="value-prop-item">
+            {/* Sewing Needle & Thread Loop Icon */}
+            <svg className="value-prop-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+              <line x1="4" y1="20" x2="18" y2="6" />
+              <ellipse cx="16.5" cy="7.5" rx="1.8" ry="0.9" transform="rotate(-45 16.5 7.5)" />
+              <path d="M18 6c3.5-3.5 5.5-1 2 2.5s-6 5-9.5 5-5.5-2-7.5 0" />
+            </svg>
+            <div className="value-prop-text">
+              <span>Expert</span>
+              <span>Tailoring</span>
+            </div>
+          </div>
+          <div className="value-prop-divider"></div>
+          <div className="value-prop-item">
+            {/* Tailor's Tape Measure Infinity Loop Icon */}
+            <svg className="value-prop-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M4 10c0-4 4-6 8-6s8 2 8 6-4 8-8 10-8-4-8-10z" />
+              <line x1="8" y1="4.2" x2="8" y2="6.2" />
+              <line x1="12" y1="4" x2="12" y2="7" />
+              <line x1="16" y1="4.2" x2="16" y2="6.2" />
+              <line x1="18.5" y1="7.2" x2="16.8" y2="8.2" />
+              <line x1="19.5" y1="11" x2="17.5" y2="11.5" />
+              <line x1="11.5" y1="16.5" x2="13.2" y2="17.8" />
+            </svg>
+            <div className="value-prop-text">
+              <span>Made To</span>
+              <span>Last</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* 4. FEATURED COLLECTIONS SECTION */}
       <section style={collectionsSectionStyle} className="home-section home-collections-section">
         <div className="container">
           <div style={sectionHeaderStyle}>
