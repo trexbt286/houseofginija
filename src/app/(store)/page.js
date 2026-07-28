@@ -207,7 +207,7 @@ export default function Home() {
   return (
     <div style={pageContainerStyle}>
       {/* 1. HERO REELS SECTION */}
-      <HeroReelsSection heroReels={heroReels} />
+      <HeroReelsSection heroReels={heroReels} loading={loading} />
 
       {/* 2. FLASH SALE SECTION */}
       <section 
