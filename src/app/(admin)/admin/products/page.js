@@ -156,49 +156,89 @@ function AdminProductsContent() {
     });
   };
 
-  // Cloudinary image upload handler
+  // Cloudinary image upload handler (supports multiple files selection)
   const handleImageUpload = async (e) => {
-    let file = e.target.files[0];
-    if (!file) return;
+    const files = Array.from(e.target.files);
+    if (files.length === 0) return;
 
     setUploadingImage(true);
     setImageError('');
 
-    try {
-      file = await compressImage(file);
-    } catch (err) {
-      console.error('Compression error:', err);
-      // Fallback to original file if compression fails
-    }
+    const uploadPromises = files.map(async (originalFile) => {
+      let file = originalFile;
+      try {
+        file = await compressImage(file);
+      } catch (err) {
+        console.error('Compression error:', err);
+      }
 
-    const formData = new FormData();
-    formData.append('file', file);
+      const formData = new FormData();
+      formData.append('file', file);
+
+      try {
+        const res = await fetch('/api/admin/upload', {
+          method: 'POST',
+          body: formData,
+        });
+
+        const data = await res.json();
+        if (res.ok && data.url) {
+          return data.url;
+        } else {
+          throw new Error(data.error || 'Failed to upload image.');
+        }
+      } catch (err) {
+        console.error('Image upload promise err:', err);
+        throw err;
+      }
+    });
 
     try {
-      const res = await fetch('/api/admin/upload', {
-        method: 'POST',
-        body: formData,
+      const results = await Promise.allSettled(uploadPromises);
+      const successfulUrls = [];
+      let hasFailures = false;
+
+      results.forEach((result) => {
+        if (result.status === 'fulfilled' && result.value) {
+          successfulUrls.push(result.value);
+        } else {
+          hasFailures = true;
+        }
       });
 
-      const data = await res.json();
-
-      if (res.ok && data.url) {
-        setImages((prev) => [...prev, data.url]);
-      } else {
-        setImageError(data.error || 'Failed to upload image.');
+      if (successfulUrls.length > 0) {
+        setImages((prev) => [...prev, ...successfulUrls]);
+      }
+      if (hasFailures) {
+        setImageError('Some images failed to upload. Succeeded files were added.');
       }
     } catch (err) {
       console.error(err);
       setImageError('Network upload failure.');
     } finally {
       setUploadingImage(false);
-      // Clear file input
       e.target.value = '';
     }
   };
 
   const removeImage = (indexToRemove) => {
     setImages((prev) => prev.filter((_, idx) => idx !== indexToRemove));
+  };
+
+  const moveImage = (index, direction) => {
+    setImages((prev) => {
+      const next = [...prev];
+      if (direction === 'left' && index > 0) {
+        const temp = next[index];
+        next[index] = next[index - 1];
+        next[index - 1] = temp;
+      } else if (direction === 'right' && index < next.length - 1) {
+        const temp = next[index];
+        next[index] = next[index + 1];
+        next[index + 1] = temp;
+      }
+      return next;
+    });
   };
 
   // Variant management
@@ -502,12 +542,13 @@ function AdminProductsContent() {
                   <input
                     type="file"
                     accept="image/*"
+                    multiple
                     onChange={handleImageUpload}
                     style={fileInputStyle}
                     id="img-upload-input"
                   />
                   <label htmlFor="img-upload-input" style={uploadBtnLabelStyle}>
-                    {uploadingImage ? 'Uploading to Cloudinary...' : 'Upload Image File'}
+                    {uploadingImage ? 'Uploading to Cloudinary...' : 'Upload Image File(s)'}
                   </label>
                   {imageError && <span style={imageErrorStyle}>{imageError}</span>}
                 </div>
@@ -515,15 +556,46 @@ function AdminProductsContent() {
                 {images.length > 0 && (
                   <div style={imageThumbGridStyle}>
                     {images.map((img, idx) => (
-                      <div key={idx} style={formThumbContainerStyle}>
-                        <img src={img} alt="Uploaded thumbnail" style={formThumbStyle} loading="lazy" />
-                        <button
-                          type="button"
-                          onClick={() => removeImage(idx)}
-                          style={removeThumbBtnStyle}
-                        >
-                          ✕
-                        </button>
+                      <div key={idx} style={formThumbWrapperStyle}>
+                        <div style={formThumbContainerStyle}>
+                          <img src={img} alt="Uploaded thumbnail" style={formThumbStyle} loading="lazy" />
+                          {idx === 0 && <span style={coverBadgeStyle}>Cover</span>}
+                          <button
+                            type="button"
+                            onClick={() => removeImage(idx)}
+                            style={removeThumbBtnStyle}
+                          >
+                            ✕
+                          </button>
+                        </div>
+                        {images.length > 1 && (
+                          <div style={reorderBtnContainerStyle}>
+                            <button
+                              type="button"
+                              onClick={() => moveImage(idx, 'left')}
+                              disabled={idx === 0}
+                              style={{
+                                ...reorderButtonStyle,
+                                opacity: idx === 0 ? 0.3 : 1,
+                                cursor: idx === 0 ? 'not-allowed' : 'pointer',
+                              }}
+                            >
+                              ←
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => moveImage(idx, 'right')}
+                              disabled={idx === images.length - 1}
+                              style={{
+                                ...reorderButtonStyle,
+                                opacity: idx === images.length - 1 ? 0.3 : 1,
+                                cursor: idx === images.length - 1 ? 'not-allowed' : 'pointer',
+                              }}
+                            >
+                              →
+                            </button>
+                          </div>
+                        )}
                       </div>
                     ))}
                   </div>
@@ -936,6 +1008,49 @@ const imageThumbGridStyle = {
   gap: '1rem',
   flexWrap: 'wrap',
   marginTop: '1rem',
+};
+
+const formThumbWrapperStyle = {
+  display: 'flex',
+  flexDirection: 'column',
+  alignItems: 'center',
+  width: '80px',
+};
+
+const coverBadgeStyle = {
+  position: 'absolute',
+  top: '4px',
+  left: '4px',
+  backgroundColor: '#8B7789',
+  color: '#FFFFFF',
+  fontSize: '0.6rem',
+  fontWeight: '700',
+  padding: '2px 6px',
+  borderRadius: '4px',
+  textTransform: 'uppercase',
+  zIndex: 2,
+};
+
+const reorderBtnContainerStyle = {
+  display: 'flex',
+  justifyContent: 'space-between',
+  width: '100%',
+  marginTop: '4px',
+  gap: '4px',
+};
+
+const reorderButtonStyle = {
+  flex: 1,
+  fontSize: '0.75rem',
+  fontWeight: '700',
+  backgroundColor: '#F5ECE9',
+  color: '#8B7789',
+  border: '1px solid rgba(139, 119, 137, 0.15)',
+  borderRadius: '4px',
+  padding: '2px 0',
+  cursor: 'pointer',
+  textAlign: 'center',
+  transition: 'background-color 0.2s',
 };
 
 const formThumbContainerStyle = {

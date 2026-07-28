@@ -7,6 +7,7 @@ import Image from 'next/image';
 import { useStore } from '@/context/StoreContext';
 import ImageWithSkeleton from '@/components/ImageWithSkeleton';
 import SkeletonCard from '@/components/SkeletonCard';
+import ProductImageGallery from '@/components/ProductImageGallery';
 
 function MobileSearchBar({ allProducts, initialQuery, onSearch, handleProductClick }) {
   const [localQuery, setLocalQuery] = useState(initialQuery || '');
@@ -1051,11 +1052,9 @@ function CollectionsContent() {
             <div style={{}} className="detail-preview-grid">
               {/* Top Half: Image */}
               <div style={{ ...detailMainImgWrapperStyle, position: 'relative' }} className="detail-main-img-wrapper">
-                <ImageWithSkeleton 
-                  src={activeProductImage} 
-                  alt={activeProduct.name} 
-                  style={detailMainImgStyle} 
-                  className="detail-main-img"
+                <ProductImageGallery 
+                  images={activeProduct.images || []} 
+                  name={activeProduct.name} 
                 />
                 {activeProduct.flash_sale && activeProduct.flash_sale_price && (
                   <div style={{

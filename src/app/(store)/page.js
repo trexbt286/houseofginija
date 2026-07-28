@@ -7,6 +7,7 @@ import { useEffect, useState } from 'react';
 import ImageWithSkeleton from '@/components/ImageWithSkeleton';
 import SkeletonCard from '@/components/SkeletonCard';
 import HeroReelsSection from '@/components/HeroReelsSection';
+import ProductImageGallery from '@/components/ProductImageGallery';
 
 export default function Home() {
   const { 
@@ -538,11 +539,9 @@ export default function Home() {
             <div style={{}} className="detail-preview-grid">
               {/* Top Half: Image */}
               <div style={{ ...detailMainImgWrapperStyle, position: 'relative' }} className="detail-main-img-wrapper">
-                <ImageWithSkeleton 
-                  src={activeProductImage} 
-                  alt={activeProduct.name} 
-                  style={detailMainImgStyle} 
-                  className="detail-main-img"
+                <ProductImageGallery 
+                  images={activeProduct.images || []} 
+                  name={activeProduct.name} 
                 />
                 {activeProduct.flash_sale && activeProduct.flash_sale_price && (
                   <div style={{
