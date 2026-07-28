@@ -2,6 +2,19 @@
 
 import { useState } from 'react';
 
+function optimizeCloudinaryUrl(url) {
+  if (!url || typeof url !== 'string') return url;
+  if (!url.includes('res.cloudinary.com')) return url;
+  if (url.includes('f_auto') || url.includes('q_auto')) return url;
+
+  const uploadIndex = url.indexOf('/upload/');
+  if (uploadIndex === -1) return url;
+
+  const prefix = url.substring(0, uploadIndex + 8);
+  const suffix = url.substring(uploadIndex + 8);
+  return `${prefix}f_auto,q_auto/${suffix}`;
+}
+
 export default function ImageWithSkeleton({ src, alt, style = {}, className = '', eager = false, ...props }) {
   const [loaded, setLoaded] = useState(false);
 
@@ -12,9 +25,11 @@ export default function ImageWithSkeleton({ src, alt, style = {}, className = ''
     ...style,
   };
 
+  const optimizedSrc = optimizeCloudinaryUrl(src);
+
   return (
     <img
-      src={src || '/icon.png'}
+      src={optimizedSrc || '/icon.png'}
       alt={alt || ''}
       loading={eager ? "eager" : "lazy"}
       onLoad={() => setLoaded(true)}

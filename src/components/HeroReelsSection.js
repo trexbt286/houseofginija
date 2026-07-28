@@ -5,6 +5,15 @@ import { useState, useRef, useEffect } from 'react';
 export default function HeroReelsSection({ heroReels = [], loading = false }) {
   const scrollRef = useRef(null);
   const [scrollProgress, setScrollProgress] = useState(0);
+  const [loadedVideos, setLoadedVideos] = useState(new Set());
+
+  const handleVideoLoad = (id) => {
+    setLoadedVideos((prev) => {
+      const next = new Set(prev);
+      next.add(id);
+      return next;
+    });
+  };
 
   // Handle scroll progress detection
   const handleScroll = () => {
@@ -49,7 +58,7 @@ export default function HeroReelsSection({ heroReels = [], loading = false }) {
             {Array.from({ length: 2 }).map((_, idx) => (
               <div key={idx} style={reelCardStyle} className="reel-card-item">
                 <div style={videoWrapperStyle}>
-                  <div style={{ ...placeholderStyle, backgroundColor: '#E3DBDE' }} className="skeleton-pulse" />
+                  <div style={{ ...placeholderStyle, backgroundColor: '#F6DDE2' }} className="skeleton-pulse" />
                 </div>
               </div>
             ))}
@@ -134,21 +143,37 @@ export default function HeroReelsSection({ heroReels = [], loading = false }) {
 
         {/* Scrollable 2-Card Horizontal Container */}
         <div ref={scrollRef} style={scrollTrackStyle} className="reels-scroll-track">
-          {heroReels.map((reel, idx) => (
-            <div key={reel.id || idx} style={reelCardStyle} className="reel-card-item">
-              <div style={videoWrapperStyle}>
-                <video
-                  src={reel.video_url}
-                  autoPlay
-                  muted
-                  loop
-                  playsInline
-                  preload="auto"
-                  style={videoElementStyle}
-                />
+          {heroReels.map((reel, idx) => {
+            const isVideoLoaded = loadedVideos.has(reel.id || idx);
+            return (
+              <div key={reel.id || idx} style={reelCardStyle} className="reel-card-item">
+                <div style={videoWrapperStyle}>
+                  {!isVideoLoaded && (
+                    <div 
+                      style={{ 
+                        position: 'absolute', 
+                        inset: 0, 
+                        backgroundColor: '#F6DDE2', 
+                        zIndex: 1 
+                      }} 
+                      className="skeleton-pulse" 
+                    />
+                  )}
+                  <video
+                    src={reel.video_url}
+                    autoPlay
+                    muted
+                    loop
+                    playsInline
+                    preload="auto"
+                    onPlay={() => handleVideoLoad(reel.id || idx)}
+                    onLoadedData={() => handleVideoLoad(reel.id || idx)}
+                    style={videoElementStyle}
+                  />
+                </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
 
         {/* Navigation Arrow Right */}
@@ -246,7 +271,7 @@ const reelCardStyle = {
   borderRadius: '24px',
   overflow: 'hidden',
   boxShadow: '0 8px 24px rgba(0, 0, 0, 0.08)',
-  backgroundColor: '#000000',
+  backgroundColor: '#F6DDE2',
   aspectRatio: '9 / 16',
 };
 
@@ -267,7 +292,7 @@ const videoElementStyle = {
 const placeholderStyle = {
   width: '100%',
   height: '100%',
-  backgroundColor: '#2A2426',
+  backgroundColor: '#F6DDE2',
 };
 
 const arrowButtonStyle = {
