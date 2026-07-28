@@ -718,7 +718,7 @@ function AdminProductsContent() {
                     <tr key={p.id} style={trStyle}>
                       <td style={tdStyle}>
                         <div style={productInfoCellStyle}>
-                          <img src={p.images[0]} alt={p.name} style={tableProdImgStyle} loading="lazy" />
+                          <img src={(p.images && p.images[0]) || '/placeholder.jpg'} alt={p.name} style={tableProdImgStyle} loading="lazy" />
                           <div>
                             <strong style={tableProdNameStyle}>
                               {p.name}
