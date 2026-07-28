@@ -49,88 +49,14 @@ export default function HeroReelsSection({ heroReels = [], loading = false }) {
     }
   };
 
-  if (loading || !heroReels || heroReels.length === 0) {
-    return (
-      <section className="hero-reels-container" style={sectionContainerStyle}>
-        <div style={carouselWrapperStyle}>
-          {/* Scrollable 2-Card Horizontal Container */}
-          <div style={scrollTrackStyle} className="reels-scroll-track">
-            {Array.from({ length: 2 }).map((_, idx) => (
-              <div key={idx} style={reelCardStyle} className="reel-card-item">
-                <div style={videoWrapperStyle}>
-                  <div style={{ ...placeholderStyle, backgroundColor: '#F6DDE2' }} className="skeleton-pulse" />
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* Progress Indicator Bar Matching Image 2 */}
-        <div style={progressTrackContainerStyle} className="reels-progress-container">
-          <div style={progressTrackBgStyle}>
-            <div
-              style={{
-                ...progressBarFillStyle,
-                left: '0%',
-              }}
-            />
-          </div>
-        </div>
-
-        {/* Scoped CSS for responsive 2-card layout */}
-        <style jsx>{`
-          .hero-reels-container {
-            width: 100%;
-            box-sizing: border-box;
-            padding: 1rem 0.8rem 1.5rem 0.8rem;
-            background-color: #FAF5F6;
-          }
-
-          .reels-scroll-track {
-            display: flex;
-            gap: 12px;
-            overflow-x: auto;
-            scroll-snap-type: x mandatory;
-            scroll-behavior: smooth;
-            -webkit-overflow-scrolling: touch;
-            scrollbar-width: none;
-            padding: 0 4px;
-          }
-
-          .reels-scroll-track::-webkit-scrollbar {
-            display: none;
-          }
-
-          .reel-card-item {
-            flex: 0 0 calc(50% - 6px);
-            max-width: calc(50% - 6px);
-            scroll-snap-align: start;
-            box-sizing: border-box;
-          }
-
-          @media (min-width: 768px) {
-            .hero-reels-container {
-              padding: 2rem 3rem;
-            }
-            .reels-scroll-track {
-              gap: 20px;
-              justify-content: center;
-            }
-            .reel-card-item {
-              flex: 0 0 calc(50% - 10px);
-              max-width: 380px;
-            }
-          }
-        `}</style>
-      </section>
-    );
-  }
+  const hasReels = heroReels && heroReels.length > 0;
+  const showSkeleton = loading || !hasReels;
 
   return (
     <section className="hero-reels-container" style={sectionContainerStyle}>
       <div style={carouselWrapperStyle}>
         {/* Navigation Arrow Left */}
-        {heroReels.length > 2 && (
+        {!showSkeleton && heroReels.length > 2 && (
           <button
             onClick={scrollLeft}
             style={{ ...arrowButtonStyle, left: '12px' }}
@@ -143,41 +69,51 @@ export default function HeroReelsSection({ heroReels = [], loading = false }) {
 
         {/* Scrollable 2-Card Horizontal Container */}
         <div ref={scrollRef} style={scrollTrackStyle} className="reels-scroll-track">
-          {heroReels.map((reel, idx) => {
-            const isVideoLoaded = loadedVideos.has(reel.id || idx);
-            return (
-              <div key={reel.id || idx} style={reelCardStyle} className="reel-card-item">
+          {showSkeleton ? (
+            Array.from({ length: 2 }).map((_, idx) => (
+              <div key={idx} style={reelCardStyle} className="reel-card-item skeleton-pulse">
                 <div style={videoWrapperStyle}>
-                  {!isVideoLoaded && (
-                    <div 
-                      style={{ 
-                        position: 'absolute', 
-                        inset: 0, 
-                        backgroundColor: '#F6DDE2', 
-                        zIndex: 1 
-                      }} 
-                      className="skeleton-pulse" 
-                    />
-                  )}
-                  <video
-                    src={reel.video_url}
-                    autoPlay
-                    muted
-                    loop
-                    playsInline
-                    preload="auto"
-                    onPlay={() => handleVideoLoad(reel.id || idx)}
-                    onLoadedData={() => handleVideoLoad(reel.id || idx)}
-                    style={videoElementStyle}
-                  />
+                  <div style={{ ...placeholderStyle, backgroundColor: '#F6DDE2' }} />
                 </div>
               </div>
-            );
-          })}
+            ))
+          ) : (
+            heroReels.map((reel, idx) => {
+              const isVideoLoaded = loadedVideos.has(reel.id || idx);
+              return (
+                <div key={reel.id || idx} style={reelCardStyle} className="reel-card-item">
+                  <div style={videoWrapperStyle}>
+                    {!isVideoLoaded && (
+                      <div 
+                        style={{ 
+                          position: 'absolute', 
+                          inset: 0, 
+                          backgroundColor: '#F6DDE2', 
+                          zIndex: 1 
+                        }} 
+                        className="skeleton-pulse" 
+                      />
+                    )}
+                    <video
+                      src={reel.video_url}
+                      autoPlay
+                      muted
+                      loop
+                      playsInline
+                      preload="auto"
+                      onPlay={() => handleVideoLoad(reel.id || idx)}
+                      onLoadedData={() => handleVideoLoad(reel.id || idx)}
+                      style={videoElementStyle}
+                    />
+                  </div>
+                </div>
+              );
+            })
+          )}
         </div>
 
         {/* Navigation Arrow Right */}
-        {heroReels.length > 2 && (
+        {!showSkeleton && heroReels.length > 2 && (
           <button
             onClick={scrollRight}
             style={{ ...arrowButtonStyle, right: '12px' }}
@@ -195,7 +131,7 @@ export default function HeroReelsSection({ heroReels = [], loading = false }) {
           <div
             style={{
               ...progressBarFillStyle,
-              left: `${(scrollProgress * (1 - 0.25)).toFixed(2)}%`,
+              left: showSkeleton ? '0%' : `${(scrollProgress * (1 - 0.25)).toFixed(2)}%`,
             }}
           />
         </div>
