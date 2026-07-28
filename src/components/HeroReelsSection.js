@@ -71,9 +71,17 @@ export default function HeroReelsSection({ heroReels = [], loading = false }) {
         <div ref={scrollRef} style={scrollTrackStyle} className="reels-scroll-track">
           {showSkeleton ? (
             Array.from({ length: 2 }).map((_, idx) => (
-              <div key={idx} style={reelCardStyle} className="reel-card-item skeleton-pulse">
+              <div key={idx} style={reelCardStyle} className="reel-card-item">
                 <div style={videoWrapperStyle}>
-                  <div style={{ ...placeholderStyle, backgroundColor: '#F6DDE2' }} />
+                  <div 
+                    style={{ 
+                      position: 'absolute', 
+                      inset: 0, 
+                      backgroundColor: '#F6DDE2',
+                      borderRadius: '24px'
+                    }} 
+                    className="skeleton-pulse" 
+                  />
                 </div>
               </div>
             ))
