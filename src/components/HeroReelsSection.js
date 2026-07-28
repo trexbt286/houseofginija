@@ -5,9 +5,8 @@ import { useState, useRef, useEffect } from 'react';
 export default function HeroReelsSection({ heroReels = [] }) {
   const scrollRef = useRef(null);
   const [scrollProgress, setScrollProgress] = useState(0);
-  const [visibleIndices, setVisibleIndices] = useState(new Set([0, 1]));
 
-  // Handle scroll progress & visible cards detection
+  // Handle scroll progress detection
   const handleScroll = () => {
     if (!scrollRef.current) return;
     const { scrollLeft, scrollWidth, clientWidth } = scrollRef.current;
@@ -15,16 +14,6 @@ export default function HeroReelsSection({ heroReels = [] }) {
     if (maxScroll > 0) {
       const progress = (scrollLeft / maxScroll) * 100;
       setScrollProgress(progress);
-    }
-
-    // Determine visible cards for lazy loading
-    if (heroReels.length > 0) {
-      const cardWidth = clientWidth / 2;
-      const firstIndex = Math.max(0, Math.floor(scrollLeft / cardWidth));
-      const secondIndex = Math.min(heroReels.length - 1, firstIndex + 1);
-      const thirdIndex = Math.min(heroReels.length - 1, firstIndex + 2);
-      
-      setVisibleIndices(new Set([firstIndex, secondIndex, thirdIndex]));
     }
   };
 
@@ -70,29 +59,21 @@ export default function HeroReelsSection({ heroReels = [] }) {
 
         {/* Scrollable 2-Card Horizontal Container */}
         <div ref={scrollRef} style={scrollTrackStyle} className="reels-scroll-track">
-          {heroReels.map((reel, idx) => {
-            const isVisible = visibleIndices.has(idx);
-
-            return (
-              <div key={reel.id || idx} style={reelCardStyle} className="reel-card-item">
-                <div style={videoWrapperStyle}>
-                  {isVisible ? (
-                    <video
-                      src={reel.video_url}
-                      autoPlay
-                      muted
-                      loop
-                      playsInline
-                      preload="metadata"
-                      style={videoElementStyle}
-                    />
-                  ) : (
-                    <div style={placeholderStyle} />
-                  )}
-                </div>
+          {heroReels.map((reel, idx) => (
+            <div key={reel.id || idx} style={reelCardStyle} className="reel-card-item">
+              <div style={videoWrapperStyle}>
+                <video
+                  src={reel.video_url}
+                  autoPlay
+                  muted
+                  loop
+                  playsInline
+                  preload="auto"
+                  style={videoElementStyle}
+                />
               </div>
-            );
-          })}
+            </div>
+          ))}
         </div>
 
         {/* Navigation Arrow Right */}
