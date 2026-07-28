@@ -33,9 +33,25 @@ export async function GET() {
 
     const flash_sale_enabled = settingsResult.rows.length > 0 ? settingsResult.rows[0].value === 'true' : false;
 
+    const flashProducts = flashProductsResult.rows.map(p => {
+      let images = p.images;
+      if (typeof images === 'string') {
+        try { images = JSON.parse(images); } catch (e) {}
+      }
+      let variants = p.variants;
+      if (typeof variants === 'string') {
+        try { variants = JSON.parse(variants); } catch (e) {}
+      }
+      return {
+        ...p,
+        images: Array.isArray(images) ? images : [],
+        variants: Array.isArray(variants) ? variants : [],
+      };
+    });
+
     return NextResponse.json({ 
       collections: collectionsResult.rows,
-      flashProducts: flashProductsResult.rows,
+      flashProducts,
       flash_sale_enabled,
       heroReels: heroReelsResult.rows || []
     });

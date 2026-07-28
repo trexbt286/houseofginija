@@ -15,8 +15,24 @@ export async function GET() {
 
     const collectionsResult = await pool.query('SELECT * FROM collections ORDER BY id ASC');
 
+    const products = productsResult.rows.map(p => {
+      let images = p.images;
+      if (typeof images === 'string') {
+        try { images = JSON.parse(images); } catch (e) {}
+      }
+      let variants = p.variants;
+      if (typeof variants === 'string') {
+        try { variants = JSON.parse(variants); } catch (e) {}
+      }
+      return {
+        ...p,
+        images: Array.isArray(images) ? images : [],
+        variants: Array.isArray(variants) ? variants : [],
+      };
+    });
+
     return NextResponse.json({
-      products: productsResult.rows,
+      products,
       collections: collectionsResult.rows,
     });
   } catch (error) {

@@ -83,8 +83,24 @@ export async function GET(request) {
     const settingsResult = await pool.query("SELECT value FROM settings WHERE key = 'flash_sale_enabled'");
     const flash_sale_enabled = settingsResult.rows.length > 0 ? settingsResult.rows[0].value === 'true' : false;
 
+    const products = result.rows.map(p => {
+      let images = p.images;
+      if (typeof images === 'string') {
+        try { images = JSON.parse(images); } catch (e) {}
+      }
+      let variants = p.variants;
+      if (typeof variants === 'string') {
+        try { variants = JSON.parse(variants); } catch (e) {}
+      }
+      return {
+        ...p,
+        images: Array.isArray(images) ? images : [],
+        variants: Array.isArray(variants) ? variants : [],
+      };
+    });
+
     return NextResponse.json({ 
-      products: result.rows,
+      products,
       flash_sale_enabled 
     });
   } catch (error) {
