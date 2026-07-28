@@ -309,7 +309,7 @@ function AdminProductsContent() {
     setIsFormOpen(true);
   };
 
-  const openEditForm = (product) => {
+  function openEditForm(product) {
     setEditingId(product.id);
     setFormFields({
       name: product.name,
