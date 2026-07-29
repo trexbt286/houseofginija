@@ -417,7 +417,7 @@ export default function Home() {
           {/* Separator Line */}
           <div style={{ height: '1px', backgroundColor: 'rgba(139, 119, 137, 0.15)', width: '100%' }}></div>
 
-          <section style={newArrivalsSectionStyle} className="home-section home-new-arrivals-section">
+          <section style={{ padding: '3rem 0', backgroundColor: '#FFFFFF' }} className="home-section home-new-arrivals-section">
             <div className="container animate-fade-in">
               <div style={sectionHeaderStyle}>
                 <h2 style={{ ...sectionTitleStyle, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.6rem' }}>
@@ -434,7 +434,7 @@ export default function Home() {
                 </p>
               </div>
 
-              <div style={newArrivalsGridStyle} className="new-arrivals-grid">
+              <div className="new-arrivals-grid">
                 {loading ? (
                   Array.from({ length: 4 }).map((_, i) => (
                     <SkeletonCard key={i} type="home-new-arrival" />
@@ -444,22 +444,21 @@ export default function Home() {
                     const isWishlisted = wishlist.includes(product.id);
 
                     return (
-                      <div key={product.id} style={newArrivalCardStyle} className="new-arrival-card">
+                      <div key={product.id} className="new-arrival-card">
                         {/* Image Container */}
-                        <div style={newArrivalImgContainerStyle} className="new-arrival-img-container">
+                        <div className="new-arrival-img-container">
                           <div onClick={(e) => handleProductClick(e, product)} style={{ cursor: 'pointer' }}>
                             <ImageWithSkeleton 
                               src={product.images?.[0] || '/icon.png'} 
                               alt={product.name} 
                               eager={index < 2}
-                              style={newArrivalImgStyle} 
+                              className="new-arrival-img-style" 
                             />
                           </div>
 
                           {/* Wishlist Heart */}
                           <button 
                             onClick={() => toggleWishlist(product.id)}
-                            style={newArrivalWishlistBtnStyle}
                             className="new-arrival-wishlist-btn"
                           >
                             <svg 
@@ -479,9 +478,9 @@ export default function Home() {
 
                         {/* Product Info */}
                         <div onClick={(e) => handleProductClick(e, product)} style={{ cursor: 'pointer', color: 'inherit' }}>
-                          <h3 style={newArrivalProductNameStyle} className="new-arrival-product-name">{product.name}</h3>
+                          <h3 className="new-arrival-product-name">{product.name}</h3>
                         </div>
-                        <div style={newArrivalPriceStyle} className="new-arrival-price">
+                        <div className="new-arrival-price">
                           ₹{parseFloat(product.price).toLocaleString('en-IN')}
                         </div>
                       </div>
@@ -1455,76 +1454,7 @@ const flashSaleShopAllStyle = {
   borderBottom: '1.5px solid #B65C73',
   paddingBottom: '2px',
 };
-
-// New Arrivals Section Styles
-const newArrivalsSectionStyle = {
-  padding: '3rem 0',
-  backgroundColor: '#FFFFFF',
-};
-
-const newArrivalsGridStyle = {
-  display: 'grid',
-  gridTemplateColumns: 'repeat(2, 1fr)',
-  gap: '1rem',
-  maxWidth: '1200px',
-  margin: '0 auto',
-};
-
-const newArrivalCardStyle = {
-  position: 'relative',
-  display: 'flex',
-  flexDirection: 'column',
-  backgroundColor: '#FFFFFF',
-};
-
-const newArrivalImgContainerStyle = {
-  position: 'relative',
-  width: '100%',
-  aspectRatio: '1',
-  borderRadius: '12px',
-  overflow: 'hidden',
-  backgroundColor: '#F6DDE2',
-  marginBottom: '0.8rem',
-};
-
-const newArrivalImgStyle = {
-  width: '100%',
-  height: '100%',
-  objectFit: 'cover',
-};
-
-const newArrivalWishlistBtnStyle = {
-  position: 'absolute',
-  top: '8px',
-  right: '8px',
-  backgroundColor: 'rgba(255, 255, 255, 0.9)',
-  border: 'none',
-  width: '32px',
-  height: '32px',
-  borderRadius: '50%',
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'center',
-  cursor: 'pointer',
-  boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)',
-  zIndex: 10,
-};
-
-const newArrivalProductNameStyle = {
-  fontSize: '0.9rem',
-  fontWeight: '500',
-  color: '#B97285',
-  marginBottom: '0.2rem',
-  whiteSpace: 'nowrap',
-  overflow: 'hidden',
-  textOverflow: 'ellipsis',
-};
-
-const newArrivalPriceStyle = {
-  fontSize: '0.95rem',
-  fontWeight: '700',
-  color: '#000000',
-};
+// Bottom Sheet Product Detail card styles
 
 const seeMoreBtnContainerStyle = {
   textAlign: 'center',

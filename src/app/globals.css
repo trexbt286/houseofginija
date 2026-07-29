@@ -3148,3 +3148,106 @@ body.cart-drawer-open .storefront-header {
   animation: skeleton-pulse 1.5s infinite ease-in-out;
   border-radius: 4px;
 }
+
+/* ── New Arrivals Section & Card Styling ── */
+.new-arrivals-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1.5rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.new-arrival-card {
+  display: flex;
+  flex-direction: column;
+  background-color: #FFFFFF;
+}
+
+.new-arrival-card .new-arrival-img-container {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1;
+  border-radius: 12px;
+  overflow: hidden;
+  background-color: #F6DDE2;
+  margin-bottom: 0.8rem;
+}
+
+.new-arrival-card .new-arrival-img-style {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.new-arrival-card button.new-arrival-wishlist-btn {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  background-color: rgba(255, 255, 255, 0.9);
+  border: none;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  z-index: 10;
+}
+
+.new-arrival-card button.new-arrival-wishlist-btn svg {
+  width: 18px;
+  height: 18px;
+}
+
+.new-arrival-card h3.new-arrival-product-name {
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: #B97285;
+  margin-bottom: 0.2rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.new-arrival-card .new-arrival-price {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #000000;
+}
+
+@media (max-width: 767px) {
+  .new-arrivals-grid {
+    gap: 0.6rem !important;
+  }
+
+  .new-arrival-card .new-arrival-img-container {
+    aspect-ratio: 1 !important;
+    border-radius: 8px !important;
+    margin-bottom: 0.4rem !important;
+  }
+
+  .new-arrival-card h3.new-arrival-product-name {
+    font-size: 0.68rem !important;
+    margin-bottom: 0.15rem !important;
+  }
+
+  .new-arrival-card .new-arrival-price {
+    font-size: 0.72rem !important;
+    font-weight: 700 !important;
+  }
+
+  .new-arrival-card button.new-arrival-wishlist-btn {
+    width: 22px !important;
+    height: 22px !important;
+    top: 6px !important;
+    right: 6px !important;
+  }
+
+  .new-arrival-card button.new-arrival-wishlist-btn svg {
+    width: 12px !important;
+    height: 12px !important;
+  }
+}
