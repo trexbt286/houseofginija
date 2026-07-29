@@ -1480,8 +1480,8 @@ const newArrivalCardStyle = {
 const newArrivalImgContainerStyle = {
   position: 'relative',
   width: '100%',
-  aspectRatio: '0.8',
-  borderRadius: '8px',
+  aspectRatio: '1',
+  borderRadius: '12px',
   overflow: 'hidden',
   backgroundColor: '#F6DDE2',
   marginBottom: '0.8rem',
@@ -1495,12 +1495,12 @@ const newArrivalImgStyle = {
 
 const newArrivalWishlistBtnStyle = {
   position: 'absolute',
-  top: '10px',
-  right: '10px',
-  backgroundColor: '#FFFFFF',
+  top: '8px',
+  right: '8px',
+  backgroundColor: 'rgba(255, 255, 255, 0.9)',
   border: 'none',
-  width: '36px',
-  height: '36px',
+  width: '32px',
+  height: '32px',
   borderRadius: '50%',
   display: 'flex',
   alignItems: 'center',

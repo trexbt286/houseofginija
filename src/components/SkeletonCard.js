@@ -45,8 +45,8 @@ export default function SkeletonCard({ type = 'collection' }) {
           style={{
             position: 'relative',
             width: '100%',
-            aspectRatio: '0.8',
-            borderRadius: '8px',
+            aspectRatio: '1',
+            borderRadius: '12px',
             overflow: 'hidden',
             marginBottom: '0.8rem',
           }}
