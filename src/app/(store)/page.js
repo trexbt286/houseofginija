@@ -27,6 +27,10 @@ export default function Home() {
   const [flashSaleEnabled, setFlashSaleEnabled] = useState(true);
   const [heroReels, setHeroReels] = useState([]);
 
+  const whatsAppNumber = '917080806053';
+  const whatsAppUrl = `https://wa.me/${whatsAppNumber}`;
+  const whatsAppDisplayNumber = '+91 70808 06053';
+
   // States for product detail bottom sheet modal
   const [activeProduct, setActiveProduct] = useState(null);
   const [activeProductImage, setActiveProductImage] = useState('');
@@ -301,7 +305,7 @@ export default function Home() {
             )}
             </div>
 
-            <div style={{ textAlign: 'center', marginTop: '2.5rem', marginBottom: '1.5rem' }}>
+            <div style={{ textAlign: 'center', marginTop: '1rem', marginBottom: '1rem' }}>
               <Link href="/collections" style={flashSaleShopAllStyle}>
                 SHOP ALL FLASH SALE &rarr;
               </Link>
@@ -310,68 +314,38 @@ export default function Home() {
         )}
       </section>
 
-      {/* 3. FEATURE STRIP SECTION */}
-      <section className="feature-strip-static-section">
-        <div className="hero-value-props-bar">
-          <div className="value-prop-item">
-            {/* Handloom Weaving Shuttle Icon */}
-            <svg className="value-prop-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M2 12l4-3h12l4 3-4 3H6l-4-3z" />
-              <path d="M9 10h6v4H9z" />
-              <line x1="12" y1="10" x2="12" y2="14" />
-              <path d="M4 12c2.5 0 2.5-3 5-3s2.5 3 5 3 2.5-3 5-3 2.5 3 5 3" opacity="0.25" />
-            </svg>
-            <div className="value-prop-text">
-              <span>Premium</span>
-              <span>Quality</span>
+      {/* 2.5. ORDER STATUS WHATSAPP BANNER */}
+      <section className="whatsapp-order-status-section">
+        <div className="container">
+          <a
+            href={whatsAppUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="whatsapp-order-status-banner"
+          >
+            <div className="whatsapp-order-status-top">
+              <div className="whatsapp-order-status-icon">
+                <svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946C.06 5.348 5.397.01 12.008.01c3.202.001 6.212 1.246 8.477 3.513 2.262 2.268 3.507 5.28 3.505 8.484-.004 6.657-5.34 11.997-11.953 11.997-2.005-.001-3.973-.502-5.724-1.457L0 24zm6.59-4.846c1.6.95 3.188 1.449 4.625 1.45 5.407 0 9.811-4.38 9.813-9.75.002-2.602-1.01-5.05-2.85-6.895-1.84-1.847-4.292-2.865-6.894-2.866-5.417 0-9.821 4.382-9.825 9.75-.002 2.115.556 4.177 1.621 5.995L1.898 21.6l4.75-1.246zm11.23-5.385c-.298-.148-1.758-.865-2.03-.966-.273-.101-.471-.148-.67.149-.197.297-.768.966-.94 1.164-.173.199-.347.223-.646.074-.299-.148-1.261-.464-2.399-1.48-1.272-1.134-1.83-2.15-2.079-2.547-.248-.396-.026-.61.173-.808.18-.178.397-.462.596-.693.199-.23.265-.396.398-.66.133-.264.066-.495-.033-.693-.1-.198-.865-2.08-1.186-2.85-.314-.755-.632-.653-.865-.653H7.49c-.23 0-.604.088-.92.43-.318.344-1.211 1.187-1.211 2.895 0 1.708 1.244 3.359 1.417 3.59.172.23 2.45 3.738 5.93 5.24 2.443 1.054 3.528 1.157 4.79.97 1.137-.168 2.76-.84 3.153-1.652.393-.813.393-1.509.276-1.656-.118-.149-.438-.236-.736-.384z" />
+                </svg>
+              </div>
+
+              <div className="whatsapp-order-status-copy">
+                <div className="whatsapp-order-status-heading">
+                  For Order Status<br />WhatsApp Us On
+                </div>
+                <div className="whatsapp-order-status-divider">
+                  <span></span>
+                  <span className="whatsapp-order-status-diamond"></span>
+                  <span></span>
+                </div>
+              </div>
             </div>
-          </div>
-          <div className="value-prop-divider"></div>
-          <div className="value-prop-item">
-            {/* Yarn Spool / Hand-spun Wool Icon */}
-            <svg className="value-prop-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-              <circle cx="12" cy="12" r="7" />
-              <path d="M7 10c2.5-1 7.5-1 10 0" />
-              <path d="M6 13c3 .5 9 .5 12 0" />
-              <path d="M8 16c2.5 1 5.5 1 8 0" />
-              <line x1="3" y1="21" x2="21" y2="3" />
-              <circle cx="21" cy="3" r="1.2" fill="currentColor" />
-            </svg>
-            <div className="value-prop-text">
-              <span>Slow</span>
-              <span>Fashion</span>
+
+            <div className="whatsapp-order-status-pill">
+              <span>{whatsAppDisplayNumber}</span>
             </div>
-          </div>
-          <div className="value-prop-divider"></div>
-          <div className="value-prop-item">
-            {/* Sewing Needle & Thread Loop Icon */}
-            <svg className="value-prop-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-              <line x1="4" y1="20" x2="18" y2="6" />
-              <ellipse cx="16.5" cy="7.5" rx="1.8" ry="0.9" transform="rotate(-45 16.5 7.5)" />
-              <path d="M18 6c3.5-3.5 5.5-1 2 2.5s-6 5-9.5 5-5.5-2-7.5 0" />
-            </svg>
-            <div className="value-prop-text">
-              <span>Expert</span>
-              <span>Tailoring</span>
-            </div>
-          </div>
-          <div className="value-prop-divider"></div>
-          <div className="value-prop-item">
-            {/* Tailor's Tape Measure Infinity Loop Icon */}
-            <svg className="value-prop-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M4 10c0-4 4-6 8-6s8 2 8 6-4 8-8 10-8-4-8-10z" />
-              <line x1="8" y1="4.2" x2="8" y2="6.2" />
-              <line x1="12" y1="4" x2="12" y2="7" />
-              <line x1="16" y1="4.2" x2="16" y2="6.2" />
-              <line x1="18.5" y1="7.2" x2="16.8" y2="8.2" />
-              <line x1="19.5" y1="11" x2="17.5" y2="11.5" />
-              <line x1="11.5" y1="16.5" x2="13.2" y2="17.8" />
-            </svg>
-            <div className="value-prop-text">
-              <span>Made To</span>
-              <span>Last</span>
-            </div>
-          </div>
+          </a>
         </div>
       </section>
 
@@ -789,7 +763,7 @@ export default function Home() {
 
       {/* Floating WhatsApp Chat Button */}
       <a 
-        href="https://wa.me/917080806053" 
+        href={whatsAppUrl} 
         target="_blank" 
         rel="noopener noreferrer"
         className="whatsapp-floating-btn"

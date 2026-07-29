@@ -1159,6 +1159,178 @@ body.scroll-locked {
   gap: 1.5rem;
 }
 
+.whatsapp-order-status-section {
+  padding: 0.85rem 0.85rem 0.85rem;
+}
+
+.whatsapp-order-status-banner {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 0.75rem;
+  width: 100%;
+  max-width: 740px;
+  padding: 0.95rem 1rem;
+  border-radius: 30px;
+  background-color: rgba(245, 217, 226, 0.98);
+  border: 1px solid rgba(185, 114, 133, 0.42);
+  box-shadow: 0 10px 20px rgba(217, 142, 155, 0.12);
+  position: relative;
+  overflow: hidden;
+  text-decoration: none;
+  color: #B97285;
+  margin: 0 auto;
+  box-sizing: border-box;
+}
+
+.whatsapp-order-status-banner::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' font-family='Cormorant Garamond, serif' font-size='30' fill='%23B97285' fill-opacity='0.06'%3EHG%3C/text%3E%3C/svg%3E");
+  background-repeat: repeat;
+  background-position: center;
+  background-size: 140px 140px;
+  pointer-events: none;
+}
+
+.whatsapp-order-status-banner > * {
+  position: relative;
+  z-index: 1;
+}
+
+.whatsapp-order-status-top {
+  display: flex;
+  gap: 0.7rem;
+  align-items: center;
+  justify-content: flex-start;
+  width: 100%;
+  flex-wrap: wrap;
+}
+
+.whatsapp-order-status-icon {
+  min-width: 64px;
+  min-height: 64px;
+  width: 64px;
+  height: 64px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 22px;
+  background-color: rgba(217, 142, 155, 0.18);
+}
+
+.whatsapp-order-status-icon svg {
+  width: 30px;
+  height: 30px;
+  color: #B97285;
+}
+
+.whatsapp-order-status-copy {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+  flex: 1;
+  min-width: 0;
+}
+
+.whatsapp-order-status-heading {
+  font-family: var(--font-serif);
+  font-size: clamp(1.35rem, 2vw, 1.75rem);
+  line-height: 1.04;
+  font-weight: 700;
+  color: #B97285;
+}
+
+.whatsapp-order-status-divider {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+}
+
+.whatsapp-order-status-divider::before,
+.whatsapp-order-status-divider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background-color: rgba(185, 114, 133, 0.34);
+}
+
+.whatsapp-order-status-diamond {
+  width: 10px;
+  height: 10px;
+  background-color: rgba(185, 114, 133, 0.48);
+  transform: rotate(45deg);
+  border-radius: 2px;
+}
+
+.whatsapp-order-status-pill {
+  width: auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.45rem;
+  padding: 0.35rem 0.65rem;
+  border-radius: 9999px;
+  background-color: #FFFFFF;
+  border: 1px solid rgba(185, 114, 133, 0.45);
+  box-shadow: 0 8px 16px rgba(217, 142, 155, 0.1);
+  color: #B97285;
+  font-weight: 700;
+  margin: 0.85rem auto 0;
+  min-width: 0;
+  max-width: min(100%, 220px);
+  box-sizing: border-box;
+}
+
+.whatsapp-order-status-pill svg {
+  width: 13px;
+  height: 13px;
+  color: #B97285;
+}
+
+.whatsapp-order-status-pill span {
+  font-size: 0.86rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+@media (max-width: 820px) {
+  .whatsapp-order-status-section {
+    padding: 0.85rem 0.75rem 0.85rem;
+  }
+
+  .whatsapp-order-status-banner {
+    padding: 1rem 0.85rem;
+    max-width: calc(100% - 1.5rem);
+  }
+
+  .whatsapp-order-status-top {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .whatsapp-order-status-icon {
+    margin: 0 auto;
+  }
+
+  .whatsapp-order-status-copy {
+    gap: 0.45rem;
+  }
+
+  .whatsapp-order-status-heading {
+    text-align: center;
+    font-size: 1.5rem;
+  }
+
+  .whatsapp-order-status-pill {
+    padding: 0.35rem 0.6rem;
+    font-size: 0.86rem;
+    max-width: min(100%, 200px);
+  }
+}
+
 .cart-drawer-empty-state {
   display: flex;
   flex-direction: column;
@@ -1423,15 +1595,6 @@ body.scroll-locked {
 }
 
 /* --- HERO VALUE PROPS BAR / FEATURE STRIP --- */
-.feature-strip-static-section {
-  width: 100%;
-  position: relative;
-  z-index: 1;
-  background-color: #FBF0EC;
-  border-top: 1px solid rgba(139, 119, 137, 0.12);
-  border-bottom: 1px solid rgba(139, 119, 137, 0.12);
-}
-
 .hero-value-props-bar {
   position: relative;
   top: auto;
