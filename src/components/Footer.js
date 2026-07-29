@@ -140,6 +140,39 @@ export default function Footer() {
 
   return (
     <>
+      {/* ── Location / Visit Us Banner ── */}
+      <div style={visitUsSectionStyle}>
+        <a
+          href="https://maps.google.com/?q=House+Of+Ginija,+Kapoorthala+Crossing,+Lucknow"
+          target="_blank"
+          rel="noopener noreferrer"
+          style={{ textDecoration: 'none', display: 'block' }}
+        >
+          <div style={visitUsCardStyle}>
+            {/* Dark overlay */}
+            <div style={visitUsOverlayStyle} />
+
+            {/* Content */}
+            <div style={visitUsContentStyle}>
+              <h3 style={visitUsTitleStyle}>House of Ginija | Lucknow</h3>
+
+              {/* Decorative divider */}
+              <div style={visitUsDividerStyle}>
+                <div style={visitUsDividerLineStyle} />
+                <span style={visitUsDividerIconStyle}>✦</span>
+                <div style={visitUsDividerLineStyle} />
+              </div>
+
+              <p style={visitUsAddressStyle}>Kapoorthala chauraha near mj jewels</p>
+
+              <button style={visitUsButtonStyle} onClick={(e) => e.preventDefault()}>
+                Visit Us
+              </button>
+            </div>
+          </div>
+        </a>
+      </div>
+
       {/* Newsletter Container - matching continuous pink background */}
       <div style={newsletterContainerStyle} className="footer-newsletter">
         <div style={containerStyle}>
@@ -429,4 +462,95 @@ const copyrightSectionStyle = {
   fontSize: '0.75rem',
   color: 'rgba(0, 0, 0, 0.6)',
   letterSpacing: '0.04em',
+};
+
+// ── Visit Us / Location Banner ──
+const visitUsSectionStyle = {
+  padding: '2rem 1rem 0 1rem',
+  backgroundColor: '#FFFFFF',
+};
+
+const visitUsCardStyle = {
+  position: 'relative',
+  width: '100%',
+  maxWidth: '650px',
+  margin: '0 auto',
+  borderRadius: '20px',
+  overflow: 'hidden',
+  backgroundImage: 'url(/images/store_photo.jpg)',
+  backgroundSize: 'cover',
+  backgroundPosition: 'center',
+  minHeight: '220px',
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  cursor: 'pointer',
+};
+
+const visitUsOverlayStyle = {
+  position: 'absolute',
+  inset: 0,
+  backgroundColor: 'rgba(0, 0, 0, 0.42)',
+  borderRadius: '20px',
+};
+
+const visitUsContentStyle = {
+  position: 'relative',
+  zIndex: 1,
+  textAlign: 'center',
+  padding: '2rem 1.5rem',
+  display: 'flex',
+  flexDirection: 'column',
+  alignItems: 'center',
+  gap: '0.6rem',
+};
+
+const visitUsTitleStyle = {
+  fontFamily: 'var(--font-serif)',
+  fontSize: '1.75rem',
+  fontWeight: '400',
+  color: '#FFFFFF',
+  margin: 0,
+  letterSpacing: '0.01em',
+  lineHeight: 1.2,
+};
+
+const visitUsDividerStyle = {
+  display: 'flex',
+  alignItems: 'center',
+  gap: '0.5rem',
+  width: '100%',
+  maxWidth: '220px',
+};
+
+const visitUsDividerLineStyle = {
+  flex: 1,
+  height: '1px',
+  backgroundColor: 'rgba(255, 255, 255, 0.6)',
+};
+
+const visitUsDividerIconStyle = {
+  color: 'rgba(255, 255, 255, 0.8)',
+  fontSize: '0.6rem',
+};
+
+const visitUsAddressStyle = {
+  color: 'rgba(255, 255, 255, 0.92)',
+  fontSize: '0.9rem',
+  margin: 0,
+  fontWeight: '400',
+  letterSpacing: '0.01em',
+};
+
+const visitUsButtonStyle = {
+  marginTop: '0.5rem',
+  backgroundColor: '#FFFFFF',
+  color: '#1a1a1a',
+  border: 'none',
+  borderRadius: '50px',
+  padding: '0.75rem 2.5rem',
+  fontSize: '0.95rem',
+  fontWeight: '500',
+  cursor: 'pointer',
+  letterSpacing: '0.02em',
 };
