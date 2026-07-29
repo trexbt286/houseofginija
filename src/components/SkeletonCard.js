@@ -37,6 +37,26 @@ export default function SkeletonCard({ type = 'collection' }) {
     );
   }
 
+  if (type === 'home-new-arrival') {
+    return (
+      <div className="new-arrival-card" style={{ position: 'relative', display: 'flex', flexDirection: 'column' }}>
+        <div 
+          className="skeleton-pulse new-arrival-img-container"
+          style={{
+            position: 'relative',
+            width: '100%',
+            aspectRatio: '0.8',
+            borderRadius: '8px',
+            overflow: 'hidden',
+            marginBottom: '0.8rem',
+          }}
+        />
+        <div className="skeleton-pulse" style={{ width: '70%', height: '1.1rem', marginBottom: '0.3rem', borderRadius: '4px' }} />
+        <div className="skeleton-pulse" style={{ width: '40%', height: '1rem', borderRadius: '4px' }} />
+      </div>
+    );
+  }
+
   if (type === 'home-signature') {
     return (
       <div className="collections-grid-card" style={{

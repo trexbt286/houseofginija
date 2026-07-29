@@ -25,6 +25,9 @@ export default function Home() {
   const [selectedReview, setSelectedReview] = useState(null);
   const [flashProducts, setFlashProducts] = useState([]);
   const [flashSaleEnabled, setFlashSaleEnabled] = useState(true);
+  const [newArrivalProducts, setNewArrivalProducts] = useState([]);
+  const [newArrivalsEnabled, setNewArrivalsEnabled] = useState(false);
+  const [showAllNewArrivals, setShowAllNewArrivals] = useState(false);
   const [heroReels, setHeroReels] = useState([]);
 
   const whatsAppNumber = '917080806053';
@@ -113,6 +116,8 @@ export default function Home() {
           setCollections(data.collections || []);
           setFlashProducts(data.flashProducts || []);
           setFlashSaleEnabled(!!data.flash_sale_enabled);
+          setNewArrivalProducts(data.newArrivalProducts || []);
+          setNewArrivalsEnabled(!!data.new_arrivals_enabled);
           setHeroReels(data.heroReels || []);
         }
       } catch (err) {
@@ -204,7 +209,7 @@ export default function Home() {
   const switcherProducts = activeProduct
     ? (activeProduct.flash_sale
         ? flashProducts
-        : [])
+        : (activeProduct.new_arrival ? newArrivalProducts : []))
     : [];
 
   const cartSubtotal = cart.reduce((total, item) => total + item.price * item.quantity, 0);
@@ -405,6 +410,101 @@ export default function Home() {
           )}
         </div>
       </section>
+
+      {/* 4.5. NEW ARRIVALS SECTION */}
+      {(loading || (newArrivalsEnabled && newArrivalProducts.length > 0)) && (
+        <>
+          {/* Separator Line */}
+          <div style={{ height: '1px', backgroundColor: 'rgba(139, 119, 137, 0.15)', width: '100%' }}></div>
+
+          <section style={newArrivalsSectionStyle} className="home-section home-new-arrivals-section">
+            <div className="container animate-fade-in">
+              <div style={sectionHeaderStyle}>
+                <h2 style={{ ...sectionTitleStyle, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.6rem' }}>
+                  New Arrivals
+                </h2>
+                <div style={sectionDividerLineStyle}></div>
+                <p style={{
+                  fontSize: '0.85rem',
+                  color: 'rgba(0, 0, 0, 0.5)',
+                  fontWeight: '500',
+                  marginTop: '0.8rem',
+                }}>
+                  New season, new vibes, new arrivals – because you deserve the freshest picks.
+                </p>
+              </div>
+
+              <div style={newArrivalsGridStyle} className="new-arrivals-grid">
+                {loading ? (
+                  Array.from({ length: 4 }).map((_, i) => (
+                    <SkeletonCard key={i} type="home-new-arrival" />
+                  ))
+                ) : (
+                  (showAllNewArrivals ? newArrivalProducts : newArrivalProducts.slice(0, 4)).map((product, index) => {
+                    const isWishlisted = wishlist.includes(product.id);
+
+                    return (
+                      <div key={product.id} style={newArrivalCardStyle} className="new-arrival-card">
+                        {/* Image Container */}
+                        <div style={newArrivalImgContainerStyle} className="new-arrival-img-container">
+                          <div onClick={(e) => handleProductClick(e, product)} style={{ cursor: 'pointer' }}>
+                            <ImageWithSkeleton 
+                              src={product.images?.[0] || '/icon.png'} 
+                              alt={product.name} 
+                              eager={index < 2}
+                              style={newArrivalImgStyle} 
+                            />
+                          </div>
+
+                          {/* Wishlist Heart */}
+                          <button 
+                            onClick={() => toggleWishlist(product.id)}
+                            style={newArrivalWishlistBtnStyle}
+                            className="new-arrival-wishlist-btn"
+                          >
+                            <svg 
+                              width="18" 
+                              height="18" 
+                              viewBox="0 0 24 24" 
+                              fill={isWishlisted ? '#D98E9B' : 'none'} 
+                              stroke={isWishlisted ? '#D98E9B' : '#000000'} 
+                              strokeWidth="2.0" 
+                              strokeLinecap="round" 
+                              strokeLinejoin="round"
+                            >
+                              <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+                            </svg>
+                          </button>
+                        </div>
+
+                        {/* Product Info */}
+                        <div onClick={(e) => handleProductClick(e, product)} style={{ cursor: 'pointer', color: 'inherit' }}>
+                          <h3 style={newArrivalProductNameStyle} className="new-arrival-product-name">{product.name}</h3>
+                        </div>
+                        <div style={newArrivalPriceStyle} className="new-arrival-price">
+                          ₹{parseFloat(product.price).toLocaleString('en-IN')}
+                        </div>
+                      </div>
+                    );
+                  })
+                )}
+              </div>
+
+              {!loading && newArrivalProducts.length > 4 && (
+                <div style={seeMoreBtnContainerStyle}>
+                  <button 
+                    onClick={() => setShowAllNewArrivals(!showAllNewArrivals)} 
+                    style={seeMoreButtonStyle}
+                    className="see-more-btn"
+                  >
+                    {showAllNewArrivals ? 'SHOW LESS' : 'SEE MORE →'}
+                  </button>
+                </div>
+              )}
+            </div>
+          </section>
+        </>
+      )}
 
       {/* Separator Line */}
       <div style={{ height: '1px', backgroundColor: 'rgba(139, 119, 137, 0.15)', width: '100%' }}></div>
@@ -1354,6 +1454,98 @@ const flashSaleShopAllStyle = {
   color: '#B65C73',
   borderBottom: '1.5px solid #B65C73',
   paddingBottom: '2px',
+};
+
+// New Arrivals Section Styles
+const newArrivalsSectionStyle = {
+  padding: '3rem 0',
+  backgroundColor: '#FFFFFF',
+};
+
+const newArrivalsGridStyle = {
+  display: 'grid',
+  gridTemplateColumns: 'repeat(2, 1fr)',
+  gap: '1rem',
+  maxWidth: '1200px',
+  margin: '0 auto',
+};
+
+const newArrivalCardStyle = {
+  position: 'relative',
+  display: 'flex',
+  flexDirection: 'column',
+  backgroundColor: '#FFFFFF',
+};
+
+const newArrivalImgContainerStyle = {
+  position: 'relative',
+  width: '100%',
+  aspectRatio: '0.8',
+  borderRadius: '8px',
+  overflow: 'hidden',
+  backgroundColor: '#F6DDE2',
+  marginBottom: '0.8rem',
+};
+
+const newArrivalImgStyle = {
+  width: '100%',
+  height: '100%',
+  objectFit: 'cover',
+};
+
+const newArrivalWishlistBtnStyle = {
+  position: 'absolute',
+  top: '10px',
+  right: '10px',
+  backgroundColor: '#FFFFFF',
+  border: 'none',
+  width: '36px',
+  height: '36px',
+  borderRadius: '50%',
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  cursor: 'pointer',
+  boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)',
+  zIndex: 10,
+};
+
+const newArrivalProductNameStyle = {
+  fontSize: '0.9rem',
+  fontWeight: '500',
+  color: '#B97285',
+  marginBottom: '0.2rem',
+  whiteSpace: 'nowrap',
+  overflow: 'hidden',
+  textOverflow: 'ellipsis',
+};
+
+const newArrivalPriceStyle = {
+  fontSize: '0.95rem',
+  fontWeight: '700',
+  color: '#000000',
+};
+
+const seeMoreBtnContainerStyle = {
+  textAlign: 'center',
+  marginTop: '2.5rem',
+};
+
+const seeMoreButtonStyle = {
+  display: 'inline-block',
+  width: '100%',
+  maxWidth: '650px',
+  backgroundColor: 'transparent',
+  color: '#B97285',
+  border: '1.5px solid #B97285',
+  padding: '0.75rem 2rem',
+  borderRadius: '8px',
+  fontSize: '0.85rem',
+  fontWeight: '700',
+  textTransform: 'uppercase',
+  letterSpacing: '0.08em',
+  cursor: 'pointer',
+  transition: 'all 0.2s ease',
 };
 
 // Bottom Sheet Product Detail card styles

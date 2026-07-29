@@ -55,6 +55,7 @@ export async function POST(request) {
       variants,
       flash_sale,
       flash_sale_price,
+      new_arrival,
     } = await request.json();
 
     if (!name || !slug || !price || !images || !variants) {
@@ -65,6 +66,7 @@ export async function POST(request) {
     const collectionIdNum = collection_id ? parseInt(collection_id, 10) : null;
     const isOutOfStock = !!is_out_of_stock;
     const flashSale = !!flash_sale;
+    const newArrival = !!new_arrival;
     let flashSalePriceNum = null;
 
     if (flashSale) {
@@ -82,8 +84,8 @@ export async function POST(request) {
 
     const result = await pool.query(
       `INSERT INTO products 
-       (name, slug, description, price, collection_id, is_out_of_stock, images, variants, flash_sale, flash_sale_price)
-       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
+       (name, slug, description, price, collection_id, is_out_of_stock, images, variants, flash_sale, flash_sale_price, new_arrival)
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)
        RETURNING *`,
       [
         name.trim(),
@@ -96,6 +98,7 @@ export async function POST(request) {
         JSON.stringify(variants),
         flashSale,
         flashSalePriceNum,
+        newArrival,
       ]
     );
 
@@ -124,6 +127,7 @@ export async function PUT(request) {
       variants,
       flash_sale,
       flash_sale_price,
+      new_arrival,
     } = await request.json();
 
     if (!id || !name || !slug || !price || !images || !variants) {
@@ -134,6 +138,7 @@ export async function PUT(request) {
     const collectionIdNum = collection_id ? parseInt(collection_id, 10) : null;
     const isOutOfStock = !!is_out_of_stock;
     const flashSale = !!flash_sale;
+    const newArrival = !!new_arrival;
     let flashSalePriceNum = null;
 
     if (flashSale) {
@@ -152,8 +157,9 @@ export async function PUT(request) {
     const result = await pool.query(
       `UPDATE products 
        SET name = $1, slug = $2, description = $3, price = $4, collection_id = $5, 
-           is_out_of_stock = $6, images = $7, variants = $8, flash_sale = $9, flash_sale_price = $10
-       WHERE id = $11
+           is_out_of_stock = $6, images = $7, variants = $8, flash_sale = $9, flash_sale_price = $10,
+           new_arrival = $11
+       WHERE id = $12
        RETURNING *`,
       [
         name.trim(),
@@ -166,6 +172,7 @@ export async function PUT(request) {
         JSON.stringify(variants),
         flashSale,
         flashSalePriceNum,
+        newArrival,
         id,
       ]
     );

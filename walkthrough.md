@@ -212,3 +212,29 @@ We have successfully refined the layouts and styling to achieve perfect alignmen
 - **Absolute Flex-Grow Anchoring**: Refactored the `cardContentStyle` wrapper across `/collections`, `/suits`, and `/jewellery` to utilize `flexGrow: 1` and `justifyContent: 'space-between'`. This locks the action button row perfectly to the bottom of the card and guarantees 0px vertical reflow (jumping) regardless of the button state.
 - **Badge Bleeding Fix**: Unified the flash sale badge inset position to `top: 8px, left: 8px` across both the global stylesheet (`.flash-sale-badge`) and all collection component files. This perfectly anchors the badge inside the image without its sharp corners bleeding outside the bounds of the image's rounded corners.
 - **Homepage Background Scroll Fix**: Reverted to the strict `touchmove` interception method to fully disable background scrolling on mobile iOS devices when the flash sale detailed view is open. Added an exception boundary so internal scrolling inside the bottom sheet remains functional.
+
+---
+
+## 🆕 New Arrivals Section & Homepage Spacing Overhaul
+
+Added a brand new "New Arrivals" section to the homepage and built matching admin tools to control its products and visibility.
+
+### 1. Database Schema Updates
+- **Added Column**: Added `new_arrival BOOLEAN DEFAULT FALSE NOT NULL` to the `products` table.
+- **Added Setting**: Seeded the `new_arrivals_enabled` key into the `settings` table, initialized to `false` by default.
+
+### 2. Backend & Admin APIs
+- **Homepage API (`/api/homepage`)**: Updated to retrieve and return `newArrivalProducts` and `new_arrivals_enabled`.
+- **Products API (`/api/admin/products`)**: Updated POST and PUT endpoints to parse and save the `new_arrival` boolean field in database insert and update queries.
+
+### 3. Admin New Arrivals Manager (`/admin/new-arrivals`)
+- **Global Control Toggle**: Enabled admin to globally turn on/off the New Arrivals storefront section (saving state into settings table).
+- **Product Catalog Management**: Created a paginated product checklist page where admins can easily mark products as "New Arrival" status and save individual items with click validation, inline progress spinners, and status alert labels.
+- **Sidebar Integration**: Added a "New Arrivals" navigation link to `AdminSidebar` component.
+
+### 4. Homepage Section & Spacing Tuning
+- **2-Column Product Grid**: Implemented the "New Arrivals" showcase area with 2 columns of products per row.
+- **Slick Image Overlay**: Placed a circular wishlist heart selector in the top-right corner of each card.
+- **See More Functionality**: Limits display to the first 4 products on the home page by default. Tapping the responsive "SEE MORE →" pill button expands the section inline to show all configured products, and changes to "SHOW LESS" to collapse them back.
+- **Visual Skeletons**: Integrated custom tall pulse shimmer loading cards of aspect ratio `0.8` to match placeholder states during data fetching.
+- **Equal Spacing rhythm**: Normalised vertical padding across all main homepage sections (Flash Sale, Signature Collections, New Arrivals, Reviews) to a consistent `3rem 0`, removing bloated or uneven paddings (previously up to 6rem on Flash Sale and asymmetrical margins on Collections/Reviews). Removed double-stacked header margins to secure perfectly equal spacing between sections.
