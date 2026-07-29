@@ -165,7 +165,7 @@ export default function Footer() {
 
               <p style={visitUsAddressStyle}>Kapoorthala chauraha near mj jewels</p>
 
-              <button style={visitUsButtonStyle} onClick={(e) => e.preventDefault()}>
+              <button style={visitUsButtonStyle}>
                 Visit Us
               </button>
             </div>
