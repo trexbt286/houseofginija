@@ -477,7 +477,7 @@ const visitUsCardStyle = {
   margin: '0 auto',
   borderRadius: '20px',
   overflow: 'hidden',
-  backgroundImage: 'url(/images/store_photo.jpg)',
+  backgroundImage: 'url(/images/store_photo.png)',
   backgroundSize: 'cover',
   backgroundPosition: 'center',
   minHeight: '220px',
