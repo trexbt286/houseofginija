@@ -2,14 +2,7 @@
 
 import { useState, useRef, useEffect } from 'react';
 
-const DEFAULT_REELS = [
-  { id: 'reel_1', video_url: '/videos/hero_reels/reel_1.mp4', title: 'Hero Reel 1' },
-  { id: 'reel_2', video_url: '/videos/hero_reels/reel_2.mp4', title: 'Hero Reel 2' },
-  { id: 'reel_3', video_url: '/videos/hero_reels/reel_3.mp4', title: 'Hero Reel 3' },
-  { id: 'reel_4', video_url: '/videos/hero_reels/reel_4.mp4', title: 'Hero Reel 4' },
-];
-
-export default function HeroReelsSection({ heroReels = [] }) {
+export default function HeroReelsSection({ heroReels = [], loading = false }) {
   const scrollRef = useRef(null);
   const [scrollProgress, setScrollProgress] = useState(0);
   const [loadedVideos, setLoadedVideos] = useState(new Set());
@@ -21,8 +14,6 @@ export default function HeroReelsSection({ heroReels = [] }) {
       return next;
     });
   };
-
-  const displayReels = heroReels && heroReels.length > 0 ? heroReels : DEFAULT_REELS;
 
   // Handle scroll progress detection
   const handleScroll = () => {
@@ -42,7 +33,7 @@ export default function HeroReelsSection({ heroReels = [] }) {
       handleScroll();
       return () => el.removeEventListener('scroll', handleScroll);
     }
-  }, [displayReels]);
+  }, [heroReels]);
 
   const scrollLeft = () => {
     if (scrollRef.current) {
@@ -58,11 +49,14 @@ export default function HeroReelsSection({ heroReels = [] }) {
     }
   };
 
+  const hasReels = heroReels && heroReels.length > 0;
+  const showSkeleton = loading || !hasReels;
+
   return (
     <section className="hero-reels-container" style={sectionContainerStyle}>
       <div style={carouselWrapperStyle}>
         {/* Navigation Arrow Left */}
-        {displayReels.length > 2 && (
+        {!showSkeleton && heroReels.length > 2 && (
           <button
             onClick={scrollLeft}
             style={{ ...arrowButtonStyle, left: '12px' }}
@@ -75,42 +69,59 @@ export default function HeroReelsSection({ heroReels = [] }) {
 
         {/* Scrollable 2-Card Horizontal Container */}
         <div ref={scrollRef} style={scrollTrackStyle} className="reels-scroll-track">
-          {displayReels.map((reel, idx) => {
-            const isVideoLoaded = loadedVideos.has(reel.video_url || idx);
-            return (
-              <div key={reel.video_url || idx} style={reelCardStyle} className="reel-card-item">
+          {showSkeleton ? (
+            Array.from({ length: 2 }).map((_, idx) => (
+              <div key={idx} style={reelCardStyle} className="reel-card-item">
                 <div style={videoWrapperStyle}>
-                  {!isVideoLoaded && (
-                    <div 
-                      style={{ 
-                        position: 'absolute', 
-                        inset: 0, 
-                        backgroundColor: '#F6DDE2', 
-                        zIndex: 1,
-                        borderRadius: '24px'
-                      }} 
-                      className="skeleton-pulse" 
-                    />
-                  )}
-                  <video
-                    src={reel.video_url}
-                    autoPlay
-                    muted
-                    loop
-                    playsInline
-                    preload="auto"
-                    onPlay={() => handleVideoLoad(reel.video_url || idx)}
-                    onLoadedData={() => handleVideoLoad(reel.video_url || idx)}
-                    style={videoElementStyle}
+                  <div 
+                    style={{ 
+                      position: 'absolute', 
+                      inset: 0, 
+                      backgroundColor: '#F6DDE2',
+                      borderRadius: '24px'
+                    }} 
+                    className="skeleton-pulse" 
                   />
                 </div>
               </div>
-            );
-          })}
+            ))
+          ) : (
+            heroReels.map((reel, idx) => {
+              const isVideoLoaded = loadedVideos.has(reel.id || idx);
+              return (
+                <div key={reel.id || idx} style={reelCardStyle} className="reel-card-item">
+                  <div style={videoWrapperStyle}>
+                    {!isVideoLoaded && (
+                      <div 
+                        style={{ 
+                          position: 'absolute', 
+                          inset: 0, 
+                          backgroundColor: '#F6DDE2', 
+                          zIndex: 1 
+                        }} 
+                        className="skeleton-pulse" 
+                      />
+                    )}
+                    <video
+                      src={reel.video_url}
+                      autoPlay
+                      muted
+                      loop
+                      playsInline
+                      preload="auto"
+                      onPlay={() => handleVideoLoad(reel.id || idx)}
+                      onLoadedData={() => handleVideoLoad(reel.id || idx)}
+                      style={videoElementStyle}
+                    />
+                  </div>
+                </div>
+              );
+            })
+          )}
         </div>
 
         {/* Navigation Arrow Right */}
-        {displayReels.length > 2 && (
+        {!showSkeleton && heroReels.length > 2 && (
           <button
             onClick={scrollRight}
             style={{ ...arrowButtonStyle, right: '12px' }}
@@ -128,7 +139,7 @@ export default function HeroReelsSection({ heroReels = [] }) {
           <div
             style={{
               ...progressBarFillStyle,
-              left: `${(scrollProgress * (1 - 0.25)).toFixed(2)}%`,
+              left: showSkeleton ? '0%' : `${(scrollProgress * (1 - 0.25)).toFixed(2)}%`,
             }}
           />
         </div>
@@ -150,6 +161,7 @@ export default function HeroReelsSection({ heroReels = [] }) {
           scroll-snap-type: x mandatory;
           scroll-behavior: smooth;
           -webkit-overflow-scrolling: touch;
+          scrollbar-width: none;
           padding: 0 4px;
         }
 
@@ -219,6 +231,12 @@ const videoElementStyle = {
   height: '100%',
   objectFit: 'cover',
   display: 'block',
+};
+
+const placeholderStyle = {
+  width: '100%',
+  height: '100%',
+  backgroundColor: '#F6DDE2',
 };
 
 const arrowButtonStyle = {
