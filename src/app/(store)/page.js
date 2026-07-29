@@ -896,7 +896,7 @@ const heroBtnOutlineStyle = {
 const sectionHeaderStyle = {
   textAlign: 'center',
   marginBottom: '2rem',
-  marginTop: '1.5rem',
+  marginTop: '0',
 };
 
 const sectionSubStyle = {
@@ -994,8 +994,8 @@ const timelineNodeDescStyle = {
 
 // Featured Collections Styles
 const collectionsSectionStyle = {
-  padding: '1rem 0 3rem 0',
-  backgroundColor: '#FFFFFF', // White background
+  padding: '3rem 0',
+  backgroundColor: '#FFFFFF',
 };
 
 const loadingWrapperStyle = {
@@ -1179,7 +1179,7 @@ const atelierBtnStyle = {
 
 const reviewsSectionStyle = {
   backgroundColor: '#FFFFFF',
-  padding: '2rem 0 3.5rem 0',
+  padding: '3rem 0',
 };
 
 const reviewsGridStyle = {
@@ -1240,7 +1240,7 @@ const lightboxImgStyle = {
 };
 
 const flashSaleSectionStyle = {
-  padding: '6rem 0',
+  padding: '3rem 0',
   backgroundColor: '#FFFFFF',
 };
 
