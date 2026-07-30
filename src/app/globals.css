@@ -3160,10 +3160,10 @@ body.cart-drawer-open .storefront-header {
 
 .new-arrival-card {
   background-color: #FFFFFF;
-  border-radius: 6px;
+  border-radius: 8px;
   overflow: hidden;
   box-shadow: var(--shadow-sm);
-  border: 1px solid rgba(139, 119, 137, 0.05);
+  border: 1px solid rgba(139, 119, 137, 0.12);
   position: relative;
   display: flex;
   flex-direction: column;
@@ -3176,6 +3176,8 @@ body.cart-drawer-open .storefront-header {
   height: 320px;
   overflow: hidden;
   background-color: #FFFFFF;
+  border-top-left-radius: inherit;
+  border-top-right-radius: inherit;
 }
 
 .new-arrival-card .new-arrival-img-style {
@@ -3191,6 +3193,8 @@ body.cart-drawer-open .storefront-header {
   justify-content: space-between;
   flex-grow: 1;
   gap: 0.3rem;
+  border-bottom-left-radius: inherit;
+  border-bottom-right-radius: inherit;
 }
 
 .new-arrival-card h3.new-arrival-product-name {
@@ -3247,7 +3251,7 @@ body.cart-drawer-open .storefront-header {
   }
 
   .new-arrival-card {
-    border-radius: 4px !important;
+    border-radius: 8px !important;
   }
 
   .new-arrival-card .new-arrival-img-container {
