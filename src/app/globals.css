@@ -3344,7 +3344,7 @@ body.mobile-nav-locked .whatsapp-floating-btn {
   height: calc(100vh - 107px) !important;
   height: calc(100dvh - 107px) !important;
   background-color: rgba(0, 0, 0, 0.5) !important;
-  z-index: 2000 !important;
+  z-index: 999999 !important;
   opacity: 0;
   pointer-events: none;
   transition: opacity 0.3s ease;
@@ -3378,6 +3378,11 @@ body.mobile-nav-locked .whatsapp-floating-btn {
   margin-right: 0 !important;
   padding: 0 !important;
   overflow: hidden !important;
+  z-index: 1000000 !important;
+}
+
+body.mobile-nav-locked .storefront-header {
+  z-index: 1000000 !important;
 }
 
 .mobile-nav-backdrop.open .mobile-nav-drawer {
