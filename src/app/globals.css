@@ -601,7 +601,13 @@ body.scroll-locked {
   }
 }
 
-/* Mobile Detailed preview grid */
+/* Product Option Pills sizes */
+.detail-sizes-row button,
+.detail-colors-row button {
+  font-size: 0.85rem !important;
+  font-weight: 700 !important;
+}
+
 .detail-preview-grid {
   display: grid;
   grid-template-columns: 1.1fr 1fr;
@@ -2427,9 +2433,10 @@ body.cart-drawer-open .storefront-header {
   .detail-sizes-row button,
   .detail-colors-row button {
     padding: 0.2rem 0.65rem !important; /* clean size pills */
-    font-size: 0.72rem !important;
-    min-width: 32px !important;
-    height: 26px !important;
+    font-size: 0.85rem !important;
+    font-weight: 700 !important;
+    min-width: 36px !important;
+    height: 30px !important;
     border-radius: 999px !important;
     display: inline-flex !important;
     align-items: center !important;
