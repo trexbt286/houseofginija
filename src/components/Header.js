@@ -9,6 +9,7 @@ import ImageWithSkeleton from '@/components/ImageWithSkeleton';
 export default function Header() {
   const { cart, cartCount, updateCartQuantity, removeFromCart, wishlist, toggleWishlist, addToCart, user, logout, setIsLoginOpen } = useStore();
   const [menuOpen, setMenuOpen] = useState(false);
+  const [heavyDressesOpen, setHeavyDressesOpen] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -16,9 +17,9 @@ export default function Header() {
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const pathname = usePathname();
 
-  // Manage scroll-lock on document.body when cart is open
+  // Manage scroll-lock on document.body when cart or menu is open
   useEffect(() => {
-    if (isCartOpen) {
+    if (isCartOpen || menuOpen) {
       document.body.style.overflow = 'hidden';
     } else {
       document.body.style.overflow = '';
@@ -27,13 +28,14 @@ export default function Header() {
     return () => {
       document.body.style.overflow = '';
     };
-  }, [isCartOpen]);
+  }, [isCartOpen, menuOpen]);
 
-  // Trap Escape key to close cart
+  // Trap Escape key to close cart or menu
   useEffect(() => {
     const handleEsc = (e) => {
       if (e.key === 'Escape') {
         setIsCartOpen(false);
+        setMenuOpen(false);
       }
     };
     window.addEventListener('keydown', handleEsc);
@@ -357,43 +359,243 @@ export default function Header() {
         </div>
       </div>
 
-      {/* 4. Mobile Navigation Drawer (Absolute positioned) */}
-      {menuOpen && (
-        <nav style={mobileNavStyle}>
-          <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '1.2rem' }}>
-            <li>
-              <Link href="/" style={isCurrent('/') ? activeLinkStyle : navLinkStyle} onClick={() => setMenuOpen(false)}>
-                Home
-              </Link>
-            </li>
-            <li style={{ display: 'flex', flexDirection: 'column', gap: '0.6rem' }}>
-              <span style={{ ...navLinkStyle, fontWeight: '700' }}>Collections</span>
-              <ul style={{ listStyle: 'none', paddingLeft: '1.2rem', display: 'flex', flexDirection: 'column', gap: '0.6rem' }}>
-                <li>
-                  <Link href="/collections?collection=suits" style={{ ...navLinkStyle, fontSize: '0.8rem' }} onClick={() => setMenuOpen(false)}>
-                    — Suits
-                  </Link>
-                </li>
-                <li>
-                  <Link href="/collections?collection=jewellery" style={{ ...navLinkStyle, fontSize: '0.8rem' }} onClick={() => setMenuOpen(false)}>
-                    — Jewellery
-                  </Link>
-                </li>
-              </ul>
-            </li>
-            <li>
-              <Link href="/about" style={isCurrent('/about') ? activeLinkStyle : navLinkStyle} onClick={() => setMenuOpen(false)}>
-                Our Story
-              </Link>
-            </li>
-            <li>
-              <Link href="/contact" style={isCurrent('/contact') ? activeLinkStyle : navLinkStyle} onClick={() => setMenuOpen(false)}>
-                Contact
-              </Link>
-            </li>
-          </ul>
-        </nav>
-      )}
+      {/* 4. Slide-Out Mobile Navigation Drawer (Right Side, 85% Width) */}
+      <div className={`mobile-nav-backdrop ${menuOpen ? 'open' : ''}`} onClick={() => setMenuOpen(false)}>
+        <div className="mobile-nav-drawer" onClick={(e) => e.stopPropagation()}>
+          {/* Header Bar */}
+          <div className="mobile-nav-header">
+            <div className="mobile-nav-logo-group">
+              <img 
+                src="/brand_symbol_logo.png" 
+                alt="House Of Ginija Monogram" 
+                className="mobile-nav-logo-img"
+              />
+              <div className="mobile-nav-logo-divider" />
+              <span className="mobile-nav-brand-text">HOUSE OF GINIJA</span>
+            </div>
+            <button 
+              className="mobile-nav-close-btn" 
+              onClick={() => setMenuOpen(false)}
+              aria-label="Close Menu"
+            >
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#000000" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                <line x1="18" y1="6" x2="6" y2="18"></line>
+                <line x1="6" y1="6" x2="18" y2="18"></line>
+              </svg>
+            </button>
+          </div>
+
+          {/* Menu Items List Feed */}
+          <div className="mobile-nav-feed hide-scrollbar">
+            {/* 1. HOME */}
+            <Link 
+              href="/" 
+              className={`mobile-nav-item-row ${isCurrent('/') ? 'active' : ''}`}
+              onClick={() => setMenuOpen(false)}
+            >
+              <div className="mobile-nav-item-left">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#D98E9B" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+                  <polyline points="9 22 9 12 15 12 15 22" />
+                </svg>
+                <span className="mobile-nav-item-title">HOME</span>
+              </div>
+              {!isCurrent('/') && (
+                <div className="mobile-nav-item-chevron">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                    <polyline points="9 18 15 12 9 6"></polyline>
+                  </svg>
+                </div>
+              )}
+            </Link>
+
+            {/* 2. NEW COLLECTION */}
+            <Link 
+              href="/collections" 
+              className={`mobile-nav-item-row ${isCurrent('/collections') ? 'active' : ''}`}
+              onClick={() => setMenuOpen(false)}
+            >
+              <div className="mobile-nav-item-left">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#D98E9B" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                  <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
+                </svg>
+                <span className="mobile-nav-item-title">NEW COLLECTION</span>
+              </div>
+              {!isCurrent('/collections') && (
+                <div className="mobile-nav-item-chevron">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                    <polyline points="9 18 15 12 9 6"></polyline>
+                  </svg>
+                </div>
+              )}
+            </Link>
+
+            {/* 3. HEAVY DRESSES (Dropdown Toggle) */}
+            <div 
+              className="mobile-nav-item-row"
+              onClick={() => setHeavyDressesOpen(!heavyDressesOpen)}
+            >
+              <div className="mobile-nav-item-left">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#D98E9B" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M8 2h8l2 5-3 2v4l5 9H4l5-9V9L6 7l2-5z" />
+                </svg>
+                <span className="mobile-nav-item-title">HEAVY DRESSES</span>
+              </div>
+              <div className="mobile-nav-item-chevron">
+                <svg 
+                  width="16" 
+                  height="16" 
+                  viewBox="0 0 24 24" 
+                  fill="none" 
+                  stroke="currentColor" 
+                  strokeWidth="2.5" 
+                  strokeLinecap="round" 
+                  strokeLinejoin="round"
+                  style={{ transform: heavyDressesOpen ? 'rotate(180deg)' : 'rotate(0deg)', transition: 'transform 0.25s ease' }}
+                >
+                  <polyline points="6 9 12 15 18 9"></polyline>
+                </svg>
+              </div>
+            </div>
+
+            {/* HEAVY DRESSES Submenu Box */}
+            {heavyDressesOpen && (
+              <div className="mobile-nav-submenu-card animate-fade-in">
+                <Link 
+                  href="/collections?collection=suits&category=indo-western" 
+                  className="mobile-nav-submenu-item"
+                  onClick={() => setMenuOpen(false)}
+                >
+                  <span className="mobile-nav-submenu-dot" />
+                  <span>INDO WESTERN</span>
+                </Link>
+                <Link 
+                  href="/collections?collection=suits&category=heavy-gown" 
+                  className="mobile-nav-submenu-item"
+                  onClick={() => setMenuOpen(false)}
+                >
+                  <span className="mobile-nav-submenu-dot" />
+                  <span>HEAVY GOWN</span>
+                </Link>
+                <Link 
+                  href="/collections?collection=suits&category=shararas" 
+                  className="mobile-nav-submenu-item"
+                  onClick={() => setMenuOpen(false)}
+                >
+                  <span className="mobile-nav-submenu-dot" />
+                  <span>SHARARAS</span>
+                </Link>
+              </div>
+            )}
+
+            {/* 4. UNSTITCHED SUITS */}
+            <Link 
+              href="/suits" 
+              className={`mobile-nav-item-row ${isCurrent('/suits') ? 'active' : ''}`}
+              onClick={() => setMenuOpen(false)}
+            >
+              <div className="mobile-nav-item-left">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#D98E9B" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                  <rect x="5" y="3" width="14" height="18" rx="2" />
+                  <line x1="9" y1="3" x2="9" y2="21" />
+                </svg>
+                <span className="mobile-nav-item-title">UNSTITCHED SUITES</span>
+              </div>
+              {!isCurrent('/suits') && (
+                <div className="mobile-nav-item-chevron">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                    <polyline points="9 18 15 12 9 6"></polyline>
+                  </svg>
+                </div>
+              )}
+            </Link>
+
+            {/* 5. CO-ORDS */}
+            <Link 
+              href="/collections?category=co-ords" 
+              className="mobile-nav-item-row"
+              onClick={() => setMenuOpen(false)}
+            >
+              <div className="mobile-nav-item-left">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#D98E9B" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M12 2v20M2 12h20M5 5l14 14M5 19L19 5" />
+                </svg>
+                <span className="mobile-nav-item-title">CO-ORDS</span>
+              </div>
+              <div className="mobile-nav-item-chevron">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                  <polyline points="9 18 15 12 9 6"></polyline>
+                </svg>
+              </div>
+            </Link>
+
+            {/* 6. JEWELLERY */}
+            <Link 
+              href="/jewellery" 
+              className={`mobile-nav-item-row ${isCurrent('/jewellery') ? 'active' : ''}`}
+              onClick={() => setMenuOpen(false)}
+            >
+              <div className="mobile-nav-item-left">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#D98E9B" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M6 3c0 6 2.7 11 6 11s6-5 6-11" />
+                  <circle cx="12" cy="17" r="2" />
+                </svg>
+                <span className="mobile-nav-item-title">JEWELLERY</span>
+              </div>
+              {!isCurrent('/jewellery') && (
+                <div className="mobile-nav-item-chevron">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                    <polyline points="9 18 15 12 9 6"></polyline>
+                  </svg>
+                </div>
+              )}
+            </Link>
+
+            {/* 7. OUR STORY */}
+            <Link 
+              href="/about" 
+              className={`mobile-nav-item-row ${isCurrent('/about') ? 'active' : ''}`}
+              onClick={() => setMenuOpen(false)}
+            >
+              <div className="mobile-nav-item-left">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#D98E9B" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z" />
+                  <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z" />
+                </svg>
+                <span className="mobile-nav-item-title">OUR STORY</span>
+              </div>
+              {!isCurrent('/about') && (
+                <div className="mobile-nav-item-chevron">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                    <polyline points="9 18 15 12 9 6"></polyline>
+                  </svg>
+                </div>
+              )}
+            </Link>
+
+            {/* 8. CONTACT */}
+            <Link 
+              href="/contact" 
+              className={`mobile-nav-item-row ${isCurrent('/contact') ? 'active' : ''}`}
+              onClick={() => setMenuOpen(false)}
+            >
+              <div className="mobile-nav-item-left">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#D98E9B" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" />
+                </svg>
+                <span className="mobile-nav-item-title">CONTACT</span>
+              </div>
+              {!isCurrent('/contact') && (
+                <div className="mobile-nav-item-chevron">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                    <polyline points="9 18 15 12 9 6"></polyline>
+                  </svg>
+                </div>
+              )}
+            </Link>
+          </div>
+        </div>
+      </div>
 
       {/* Slide-Out Cart Drawer */}
       <div className={`cart-drawer-backdrop ${isCartOpen ? 'open' : ''}`} onClick={() => setIsCartOpen(false)}>
