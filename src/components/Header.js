@@ -17,16 +17,47 @@ export default function Header() {
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const pathname = usePathname();
 
-  // Manage scroll-lock on document.body when cart or menu is open
+  const scrollYRef = useRef(0);
+
+  // Manage scroll-lock on document.body when cart or menu is open (iOS Safari position: fixed method)
   useEffect(() => {
-    if (isCartOpen || menuOpen) {
+    const isLocked = isCartOpen || menuOpen;
+    
+    if (isLocked) {
+      const scrollY = window.scrollY || window.pageYOffset || document.documentElement.scrollTop || 0;
+      scrollYRef.current = scrollY;
+      
+      document.body.style.position = 'fixed';
+      document.body.style.top = `-${scrollY}px`;
+      document.body.style.left = '0';
+      document.body.style.right = '0';
+      document.body.style.width = '100%';
       document.body.style.overflow = 'hidden';
     } else {
-      document.body.style.overflow = '';
+      const savedScrollY = scrollYRef.current;
+      
+      if (document.body.style.position === 'fixed') {
+        document.body.style.position = '';
+        document.body.style.top = '';
+        document.body.style.left = '';
+        document.body.style.right = '';
+        document.body.style.width = '';
+        document.body.style.overflow = '';
+        window.scrollTo(0, savedScrollY);
+      }
     }
-    
+
     return () => {
-      document.body.style.overflow = '';
+      if (document.body.style.position === 'fixed') {
+        const savedScrollY = scrollYRef.current;
+        document.body.style.position = '';
+        document.body.style.top = '';
+        document.body.style.left = '';
+        document.body.style.right = '';
+        document.body.style.width = '';
+        document.body.style.overflow = '';
+        window.scrollTo(0, savedScrollY);
+      }
     };
   }, [isCartOpen, menuOpen]);
 
