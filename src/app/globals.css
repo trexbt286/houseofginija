@@ -3259,11 +3259,13 @@ body.cart-drawer-open .storefront-header {
 
   .new-arrival-card .new-arrival-card-content {
     padding: 0.3rem !important;
+    gap: 0.1rem !important;
   }
 
   .new-arrival-card h3.new-arrival-product-name {
     font-size: 0.8rem !important;
-    margin-bottom: 0.15rem !important;
+    margin-bottom: 0.1rem !important;
+    min-height: auto !important;
   }
 
   .new-arrival-card .new-arrival-price {
