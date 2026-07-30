@@ -39,20 +39,12 @@ export default function SkeletonCard({ type = 'collection' }) {
 
   if (type === 'home-new-arrival') {
     return (
-      <div className="new-arrival-card" style={{ position: 'relative', display: 'flex', flexDirection: 'column' }}>
-        <div 
-          className="skeleton-pulse new-arrival-img-container"
-          style={{
-            position: 'relative',
-            width: '100%',
-            aspectRatio: '1',
-            borderRadius: '12px',
-            overflow: 'hidden',
-            marginBottom: '0.8rem',
-          }}
-        />
-        <div className="skeleton-pulse" style={{ width: '70%', height: '1.1rem', marginBottom: '0.3rem', borderRadius: '4px' }} />
-        <div className="skeleton-pulse" style={{ width: '40%', height: '1rem', borderRadius: '4px' }} />
+      <div className="new-arrival-card">
+        <div className="skeleton-pulse new-arrival-img-container" style={{ marginBottom: 0 }} />
+        <div className="new-arrival-card-content">
+          <div className="skeleton-pulse" style={{ width: '70%', height: '1.1rem', marginBottom: '0.3rem', borderRadius: '4px' }} />
+          <div className="skeleton-pulse" style={{ width: '40%', height: '1rem', borderRadius: '4px' }} />
+        </div>
       </div>
     );
   }

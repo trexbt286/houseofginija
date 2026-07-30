@@ -3159,19 +3159,23 @@ body.cart-drawer-open .storefront-header {
 }
 
 .new-arrival-card {
+  background-color: #FFFFFF;
+  border-radius: 6px;
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+  border: 1px solid rgba(139, 119, 137, 0.05);
+  position: relative;
   display: flex;
   flex-direction: column;
-  background-color: #FFFFFF;
+  height: 100%;
 }
 
 .new-arrival-card .new-arrival-img-container {
   position: relative;
   width: 100%;
-  aspect-ratio: 1;
-  border-radius: 12px;
+  height: 320px;
   overflow: hidden;
-  background-color: #F6DDE2;
-  margin-bottom: 0.8rem;
+  background-color: #FFFFFF;
 }
 
 .new-arrival-card .new-arrival-img-style {
@@ -3180,74 +3184,100 @@ body.cart-drawer-open .storefront-header {
   object-fit: cover;
 }
 
+.new-arrival-card .new-arrival-card-content {
+  padding: 1.2rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  flex-grow: 1;
+  gap: 0.3rem;
+}
+
+.new-arrival-card h3.new-arrival-product-name {
+  font-size: 1.1rem;
+  font-family: var(--font-serif);
+  color: #B97285;
+  font-weight: 600;
+  margin-bottom: 0.25rem;
+  line-height: 1.3 !important;
+  min-height: 2.6em !important;
+  display: -webkit-box !important;
+  -webkit-line-clamp: 2 !important;
+  -webkit-box-orient: vertical !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+}
+
+.new-arrival-card .new-arrival-price {
+  font-size: 0.9rem;
+  color: #000000;
+  font-weight: 600;
+  min-height: 24px;
+  display: flex;
+  align-items: center;
+}
+
 .new-arrival-card button.new-arrival-wishlist-btn {
   position: absolute;
   top: 8px;
   right: 8px;
   background-color: rgba(255, 255, 255, 0.9);
   border: none;
-  width: 32px;
-  height: 32px;
+  width: 28px;
+  height: 28px;
   border-radius: 50%;
   display: flex;
   align-items: center;
-  justify-content: center;
+  justifyContent: center;
   cursor: pointer;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   z-index: 10;
 }
 
 .new-arrival-card button.new-arrival-wishlist-btn svg {
-  width: 18px;
-  height: 18px;
-}
-
-.new-arrival-card h3.new-arrival-product-name {
-  font-size: 0.9rem;
-  font-weight: 500;
-  color: #B97285;
-  margin-bottom: 0.2rem;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.new-arrival-card .new-arrival-price {
-  font-size: 0.95rem;
-  font-weight: 700;
-  color: #000000;
+  width: 16px;
+  height: 16px;
 }
 
 @media (max-width: 767px) {
   .new-arrivals-grid {
-    gap: 0.6rem !important;
+    gap: 0.5rem !important;
+    padding-left: 0.8rem !important;
+    padding-right: 0.8rem !important;
+  }
+
+  .new-arrival-card {
+    border-radius: 4px !important;
   }
 
   .new-arrival-card .new-arrival-img-container {
-    aspect-ratio: 1 !important;
-    border-radius: 8px !important;
-    margin-bottom: 0.4rem !important;
+    height: 155px !important;
+    margin-bottom: 0 !important;
+  }
+
+  .new-arrival-card .new-arrival-card-content {
+    padding: 0.5rem !important;
   }
 
   .new-arrival-card h3.new-arrival-product-name {
-    font-size: 0.68rem !important;
-    margin-bottom: 0.15rem !important;
+    font-size: 1rem !important;
+    margin-bottom: 0.25rem !important;
   }
 
   .new-arrival-card .new-arrival-price {
-    font-size: 0.72rem !important;
-    font-weight: 700 !important;
+    font-size: 0.9rem !important;
+    font-weight: 600 !important;
   }
 
   .new-arrival-card button.new-arrival-wishlist-btn {
-    width: 22px !important;
-    height: 22px !important;
-    top: 6px !important;
-    right: 6px !important;
+    width: 28px !important;
+    height: 28px !important;
+    top: 2px !important;
+    right: 4px !important;
   }
 
   .new-arrival-card button.new-arrival-wishlist-btn svg {
-    width: 12px !important;
-    height: 12px !important;
+    width: 16px !important;
+    height: 16px !important;
   }
 }

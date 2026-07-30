@@ -477,11 +477,13 @@ export default function Home() {
                         </div>
 
                         {/* Product Info */}
-                        <div onClick={(e) => handleProductClick(e, product)} style={{ cursor: 'pointer', color: 'inherit' }}>
-                          <h3 className="new-arrival-product-name">{product.name}</h3>
-                        </div>
-                        <div className="new-arrival-price">
-                          ₹{parseFloat(product.price).toLocaleString('en-IN')}
+                        <div className="new-arrival-card-content">
+                          <div onClick={(e) => handleProductClick(e, product)} style={{ cursor: 'pointer', color: 'inherit' }}>
+                            <h3 className="new-arrival-product-name">{product.name}</h3>
+                          </div>
+                          <div className="new-arrival-price">
+                            ₹{parseFloat(product.price).toLocaleString('en-IN')}
+                          </div>
                         </div>
                       </div>
                     );
