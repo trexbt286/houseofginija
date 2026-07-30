@@ -33,22 +33,24 @@ export default function Header() {
       document.body.style.right = '0';
       document.body.style.width = '100%';
       document.body.style.overflow = 'hidden';
+      document.body.classList.add('mobile-nav-locked');
     } else {
       const savedScrollY = scrollYRef.current;
       
-      if (document.body.style.position === 'fixed') {
+      if (document.body.style.position === 'fixed' || document.body.classList.contains('mobile-nav-locked')) {
         document.body.style.position = '';
         document.body.style.top = '';
         document.body.style.left = '';
         document.body.style.right = '';
         document.body.style.width = '';
         document.body.style.overflow = '';
+        document.body.classList.remove('mobile-nav-locked');
         window.scrollTo(0, savedScrollY);
       }
     }
 
     return () => {
-      if (document.body.style.position === 'fixed') {
+      if (document.body.style.position === 'fixed' || document.body.classList.contains('mobile-nav-locked')) {
         const savedScrollY = scrollYRef.current;
         document.body.style.position = '';
         document.body.style.top = '';
@@ -56,6 +58,7 @@ export default function Header() {
         document.body.style.right = '';
         document.body.style.width = '';
         document.body.style.overflow = '';
+        document.body.classList.remove('mobile-nav-locked');
         window.scrollTo(0, savedScrollY);
       }
     };

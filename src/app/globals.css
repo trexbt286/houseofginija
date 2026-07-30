@@ -2093,6 +2093,12 @@ body.cart-drawer-open .storefront-header {
   }
 }
 
+body.mobile-nav-locked .whatsapp-floating-btn {
+  display: none !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+}
+
 /* --- RESPONSIVE CHECKOUT LAYOUT --- */
 .checkout-layout-grid {
   display: grid !important;
