@@ -8,6 +8,7 @@ import ImageWithSkeleton from '@/components/ImageWithSkeleton';
 import SkeletonCard from '@/components/SkeletonCard';
 import HeroReelsSection from '@/components/HeroReelsSection';
 import ProductImageGallery from '@/components/ProductImageGallery';
+import FounderReelsRow from '@/components/FounderReelsRow';
 
 export default function Home() {
   const { 
@@ -29,6 +30,7 @@ export default function Home() {
   const [newArrivalsEnabled, setNewArrivalsEnabled] = useState(false);
   const [showAllNewArrivals, setShowAllNewArrivals] = useState(false);
   const [heroReels, setHeroReels] = useState([]);
+  const [founderReels, setFounderReels] = useState([]);
 
   const whatsAppNumber = '917080806053';
   const whatsAppUrl = `https://wa.me/${whatsAppNumber}`;
@@ -119,6 +121,7 @@ export default function Home() {
           setNewArrivalProducts(data.newArrivalProducts || []);
           setNewArrivalsEnabled(!!data.new_arrivals_enabled);
           setHeroReels(data.heroReels || []);
+          setFounderReels(data.founderReels || []);
         }
       } catch (err) {
         console.error(err);
@@ -563,6 +566,9 @@ export default function Home() {
           >
             READ MORE &rarr;
           </Link>
+
+          {/* 3-Reel Row in About Founder Section */}
+          <FounderReelsRow founderReels={founderReels} loading={loading} />
 
         </div>
       </section>

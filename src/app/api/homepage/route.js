@@ -33,12 +33,39 @@ export async function GET() {
     // 4. Fetch hero reels
     const heroReelsQuery = 'SELECT * FROM hero_reels ORDER BY sort_order ASC, id ASC';
 
-    const [collectionsResult, flashProductsResult, newArrivalsResult, settingsResult, heroReelsResult] = await Promise.all([
+    // 5. Fetch founder reels (ensuring table exists)
+    try {
+      await pool.query(`
+        CREATE TABLE IF NOT EXISTS founder_reels (
+          id SERIAL PRIMARY KEY,
+          video_url TEXT NOT NULL,
+          title VARCHAR(255) DEFAULT 'Founder Reel',
+          sort_order INT DEFAULT 0,
+          created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        );
+      `);
+      const countRes = await pool.query('SELECT COUNT(*) as count FROM founder_reels;');
+      if (parseInt(countRes.rows[0].count, 10) === 0) {
+        await pool.query(`
+          INSERT INTO founder_reels (video_url, title, sort_order) VALUES
+          ('/videos/hero_reels/reel_1.mp4', 'Founder Reel 1', 1),
+          ('/videos/hero_reels/reel_2.mp4', 'Founder Reel 2', 2),
+          ('/videos/hero_reels/reel_3.mp4', 'Founder Reel 3', 3);
+        `);
+      }
+    } catch (tblErr) {
+      console.error('Founder reels table check error:', tblErr);
+    }
+
+    const founderReelsQuery = 'SELECT * FROM founder_reels ORDER BY sort_order ASC, id ASC LIMIT 3';
+
+    const [collectionsResult, flashProductsResult, newArrivalsResult, settingsResult, heroReelsResult, founderReelsResult] = await Promise.all([
       pool.query(collectionsQuery),
       pool.query(flashProductsQuery),
       pool.query(newArrivalsQuery),
       pool.query(settingsQuery),
-      pool.query(heroReelsQuery)
+      pool.query(heroReelsQuery),
+      pool.query(founderReelsQuery)
     ]);
 
     const flash_sale_enabled = settingsResult.rows.find(r => r.key === 'flash_sale_enabled')?.value === 'true';
@@ -69,7 +96,8 @@ export async function GET() {
       flash_sale_enabled,
       newArrivalProducts,
       new_arrivals_enabled,
-      heroReels: heroReelsResult.rows || []
+      heroReels: heroReelsResult.rows || [],
+      founderReels: founderReelsResult?.rows || []
     });
   } catch (error) {
     console.error('Fetch homepage data error:', error);

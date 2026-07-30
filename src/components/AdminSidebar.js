@@ -39,6 +39,12 @@ export default function AdminSidebar({ active }) {
           Hero Reels
         </Link>
         <Link 
+          href="/admin/founder-reels" 
+          style={active === "founder-reels" ? activeNavLinkStyle : navLinkStyle}
+        >
+          Founder Reels
+        </Link>
+        <Link 
           href="/admin/flash-sale" 
           style={active === "flash-sale" ? activeNavLinkStyle : navLinkStyle}
         >
