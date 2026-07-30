@@ -359,32 +359,13 @@ export default function Header() {
         </div>
       </div>
 
-      {/* 4. Slide-Out Mobile Navigation Drawer (Right Side, 85% Width) */}
-      <div className={`mobile-nav-backdrop ${menuOpen ? 'open' : ''}`} onClick={() => setMenuOpen(false)}>
+      {/* 4. Slide-Out Mobile Navigation Drawer (Right Side, 85% Width, Below Site Header) */}
+      <div 
+        className={`mobile-nav-backdrop ${menuOpen ? 'open' : ''}`} 
+        onClick={() => setMenuOpen(false)}
+        style={{ touchAction: 'none' }}
+      >
         <div className="mobile-nav-drawer" onClick={(e) => e.stopPropagation()}>
-          {/* Header Bar */}
-          <div className="mobile-nav-header">
-            <div className="mobile-nav-logo-group">
-              <img 
-                src="/brand_symbol_logo.png" 
-                alt="House Of Ginija Monogram" 
-                className="mobile-nav-logo-img"
-              />
-              <div className="mobile-nav-logo-divider" />
-              <span className="mobile-nav-brand-text">HOUSE OF GINIJA</span>
-            </div>
-            <button 
-              className="mobile-nav-close-btn" 
-              onClick={() => setMenuOpen(false)}
-              aria-label="Close Menu"
-            >
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#000000" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-                <line x1="18" y1="6" x2="6" y2="18"></line>
-                <line x1="6" y1="6" x2="18" y2="18"></line>
-              </svg>
-            </button>
-          </div>
-
           {/* Menu Items List Feed */}
           <div className="mobile-nav-feed hide-scrollbar">
             {/* 1. HOME */}
