@@ -3292,3 +3292,38 @@ body.cart-drawer-open .storefront-header {
     height: 12px !important;
   }
 }
+
+/* ── About the Founder section ── */
+.founder-read-more-btn:hover {
+  background-color: #B97285 !important;
+  color: #FFFFFF !important;
+  box-shadow: 0 4px 12px rgba(185, 114, 133, 0.2) !important;
+}
+
+@media (max-width: 767px) {
+  .home-founder-section {
+    padding: 3rem 1rem !important;
+  }
+  
+  .home-founder-section h2 {
+    font-size: 1.8rem !important;
+    margin-bottom: 1.5rem !important;
+  }
+  
+  .founder-photo-container {
+    width: 220px !important;
+    height: 220px !important;
+    margin-bottom: 1.5rem !important;
+  }
+  
+  .founder-bio-text {
+    font-size: 0.9rem !important;
+    line-height: 1.6 !important;
+    margin-bottom: 1.8rem !important;
+  }
+  
+  .founder-read-more-btn {
+    padding: 0.6rem 1.8rem !important;
+    font-size: 0.72rem !important;
+  }
+}

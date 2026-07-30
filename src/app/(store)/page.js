@@ -510,6 +510,66 @@ export default function Home() {
       {/* Separator Line */}
       <div style={{ height: '1px', backgroundColor: 'rgba(139, 119, 137, 0.15)', width: '100%' }}></div>
 
+      {/* ABOUT THE FOUNDER SECTION */}
+      <section className="home-founder-section" style={{ backgroundColor: '#FFFFFF', padding: '4rem 1.2rem', textAlign: 'center' }}>
+        <div className="container animate-fade-in" style={{ maxWidth: '800px', margin: '0 auto', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+          
+          {/* Decorative label */}
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '1rem', color: '#B97285', fontSize: '0.85rem', fontWeight: '600', letterSpacing: '0.08em', textTransform: 'uppercase', marginBottom: '0.6rem' }}>
+            <span style={{ width: '30px', height: '1px', backgroundColor: 'rgba(185, 114, 133, 0.4)' }}></span>
+            <span>About the Founder</span>
+            <span style={{ width: '30px', height: '1px', backgroundColor: 'rgba(185, 114, 133, 0.4)' }}></span>
+          </div>
+
+          {/* Heading */}
+          <h2 style={{ fontFamily: 'var(--font-serif)', fontSize: '2.4rem', color: '#B97285', fontWeight: '500', marginBottom: '2rem' }}>
+            Nikita Agarwal
+          </h2>
+
+          {/* Centered circular photo */}
+          <div style={{ width: '280px', height: '280px', borderRadius: '50%', overflow: 'hidden', boxShadow: '0 8px 24px rgba(0,0,0,0.08)', marginBottom: '2.5rem' }} className="founder-photo-container">
+            <img 
+              src="/images/story.jpeg" 
+              alt="Nikita Agarwal" 
+              style={{ width: '100%', height: '100%', objectFit: 'cover' }} 
+              loading="lazy"
+            />
+          </div>
+
+          {/* Bio paragraph */}
+          <p style={{ fontSize: '1rem', lineHeight: '1.7', color: '#2D2429', maxWidth: '650px', margin: '0 auto 2.5rem auto', fontWeight: '400', textAlign: 'center' }} className="founder-bio-text">
+            At House of Ginija, fashion is more than clothing. Founded by Nikita Agarwal, the label was born from a passion for creating luxurious ethnic wear that blends traditional artistry with modern sophistication.
+          </p>
+
+          {/* CTA outlined pill button */}
+          <Link 
+            href="/our-story" 
+            style={{
+              display: 'inline-block',
+              backgroundColor: 'transparent',
+              color: '#B97285',
+              border: '1.5px solid #B97285',
+              padding: '0.75rem 2.2rem',
+              borderRadius: '999px',
+              fontSize: '0.78rem',
+              fontWeight: '700',
+              letterSpacing: '0.12em',
+              textTransform: 'uppercase',
+              textDecoration: 'none',
+              transition: 'all 0.3s ease',
+              cursor: 'pointer'
+            }}
+            className="founder-read-more-btn"
+          >
+            READ MORE &rarr;
+          </Link>
+
+        </div>
+      </section>
+
+      {/* Separator Line */}
+      <div style={{ height: '1px', backgroundColor: 'rgba(139, 119, 137, 0.15)', width: '100%' }}></div>
+
       {/* 4. CLIENT REVIEWS SECTION */}
       <section style={reviewsSectionStyle} className="home-section home-reviews-section">
         <div className="container">
