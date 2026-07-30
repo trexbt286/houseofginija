@@ -118,6 +118,7 @@ const containerStyle = {
   position: 'relative',
   borderRadius: '8px',
   overflow: 'hidden',
+  backgroundColor: '#FBF0EC',
 };
 
 const scrollTrackStyle = {
@@ -136,7 +137,7 @@ const imageStyle = {
   width: '100%',
   height: '100%',
   maxHeight: '430px',
-  objectFit: 'cover',
+  objectFit: 'contain',
   display: 'block',
 };
 
