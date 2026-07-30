@@ -299,12 +299,9 @@ export default function Footer() {
             </a>
           </div>
 
-          {/* Copyright & Made with Heart */}
+          {/* Copyright Section */}
           <div style={copyrightSectionStyle}>
             <p style={{ margin: 0 }}>© 2026 House Of Ginija. All Rights Reserved.</p>
-            <p style={{ margin: '0.4rem 0 0 0', color: '#D98E9B', fontWeight: '500' }}>
-              Made with <span style={{ color: '#D98E9B' }}>♥</span> in India
-            </p>
           </div>
 
         </div>
