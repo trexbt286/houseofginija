@@ -1,13 +1,11 @@
 import { NextResponse } from 'next/server';
 import pool from '@/lib/db';
-import { ensureCatalogCollections } from '@/lib/catalogCollections';
 
 export const dynamic = 'force-dynamic';
 
 // GET all products and collections lists (for dropdown populating)
 export async function GET() {
   try {
-    await ensureCatalogCollections(pool);
     const productsResult = await pool.query(`
       SELECT p.*, c.name as collection_name, c.slug as collection_slug 
       FROM products p 

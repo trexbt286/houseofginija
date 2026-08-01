@@ -5,14 +5,11 @@ import Link from 'next/link';
 import { useRef } from 'react';
 
 const categories = [
-  { name: 'Indo Western', image: '/images/categories/indo-western.png', href: '/collections?collection=indo-western' },
+  { name: 'Indo Western', image: '/images/categories/indo-western.png', href: '/collections?collection=suits&category=indo-western' },
   { name: 'Unstitched', image: '/images/categories/unstitched.png', href: '/suits' },
-  { name: 'Heavy Dresses', image: '/images/categories/heavy-dresses.png', href: '/collections?collection=heavy-dresses' },
-  { name: 'Co-ords', image: '/images/categories/co-ords.png', href: '/collections?collection=co-ords' },
+  { name: 'Heavy Dresses', image: '/images/categories/heavy-dresses.png', href: '/collections?collection=suits&category=heavy-gown' },
+  { name: 'Co-ords', image: '/images/categories/co-ords.png', href: '/collections?category=co-ords' },
   { name: 'Jewellery', image: '/images/categories/jewellery.png', href: '/jewellery' },
-  { name: 'New Collection', image: '/images/categories/indo-western.png', href: '/collections?collection=new-collection' },
-  { name: 'Heavy Gowns', image: '/images/categories/heavy-dresses.png', href: '/collections?collection=heavy-gowns' },
-  { name: 'Shararas', image: '/images/categories/unstitched.png', href: '/collections?collection=shararas' },
 ];
 
 export default function ShopByCategories() {
