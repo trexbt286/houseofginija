@@ -9,6 +9,13 @@ import SkeletonCard from '@/components/SkeletonCard';
 import HeroReelsSection from '@/components/HeroReelsSection';
 import ProductImageGallery from '@/components/ProductImageGallery';
 import FounderReelsRow from '@/components/FounderReelsRow';
+import ShopByCategories from '@/components/ShopByCategories';
+
+const LOCAL_HERO_REELS = Array.from({ length: 8 }, (_, index) => ({
+  id: `local-hero-reel-${index + 1}`,
+  video_url: `/videos/hero_reels/reel_${index + 1}.mp4`,
+  title: `Hero Reel ${index + 1}`,
+}));
 
 export default function Home() {
   const { 
@@ -21,7 +28,6 @@ export default function Home() {
     user 
   } = useStore();
   
-  const [collections, setCollections] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedReview, setSelectedReview] = useState(null);
   const [flashProducts, setFlashProducts] = useState([]);
@@ -29,7 +35,6 @@ export default function Home() {
   const [newArrivalProducts, setNewArrivalProducts] = useState([]);
   const [newArrivalsEnabled, setNewArrivalsEnabled] = useState(false);
   const [showAllNewArrivals, setShowAllNewArrivals] = useState(false);
-  const [heroReels, setHeroReels] = useState([]);
   const [founderReels, setFounderReels] = useState([]);
 
   const whatsAppNumber = '917080806053';
@@ -115,12 +120,10 @@ export default function Home() {
         const res = await fetch('/api/homepage');
         if (res.ok) {
           const data = await res.json();
-          setCollections(data.collections || []);
           setFlashProducts(data.flashProducts || []);
           setFlashSaleEnabled(!!data.flash_sale_enabled);
           setNewArrivalProducts(data.newArrivalProducts || []);
           setNewArrivalsEnabled(!!data.new_arrivals_enabled);
-          setHeroReels(data.heroReels || []);
           setFounderReels(data.founderReels || []);
         }
       } catch (err) {
@@ -220,7 +223,7 @@ export default function Home() {
   return (
     <div style={pageContainerStyle}>
       {/* 1. HERO REELS SECTION */}
-      <HeroReelsSection heroReels={heroReels} loading={loading} />
+      <HeroReelsSection heroReels={LOCAL_HERO_REELS} />
 
       {/* 2. FLASH SALE SECTION */}
       <section 
@@ -231,7 +234,7 @@ export default function Home() {
         className="home-section home-flash-sale-section"
       >
         {(loading || (flashSaleEnabled && flashProducts.length > 0)) && (
-          <div className="container animate-fade-in">
+          <div className={loading ? 'container' : 'container animate-fade-in'}>
             <div style={{ textAlign: 'center', marginBottom: '2.5rem' }} className="flash-sale-header-container">
               <h2 style={{ ...sectionTitleStyle, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.6rem' }}>
                 <svg width="28" height="28" viewBox="0 0 24 24" fill="#D98E9B" stroke="none" style={{ display: 'inline-block', verticalAlign: 'middle' }}>
@@ -357,62 +360,8 @@ export default function Home() {
         </div>
       </section>
 
-      {/* 4. FEATURED COLLECTIONS SECTION */}
-      <section style={collectionsSectionStyle} className="home-section home-collections-section">
-        <div className="container">
-          <div style={sectionHeaderStyle}>
-            <h2 style={sectionTitleStyle}>Signature Collections</h2>
-            <div style={sectionDividerLineStyle}></div>
-          </div>
-
-          {loading ? (
-            <div style={collectionsGridStyle} className="collections-grid">
-              <SkeletonCard type="home-signature" />
-              <SkeletonCard type="home-signature" />
-            </div>
-          ) : (
-            <div style={collectionsGridStyle} className="collections-grid">
-              {collections.map((col) => {
-                const linkHref = col.slug === 'jewellery' 
-                  ? '/jewellery' 
-                  : '/suits';
-
-                return (
-                  <Link 
-                    href={linkHref} 
-                    key={col.id} 
-                    style={collectionCardStyle}
-                    className="collections-grid-card"
-                  >
-                    <div style={cardImageWrapperStyle}>
-                      <Image 
-                        src={col.image_url} 
-                        alt={col.name} 
-                        fill
-                        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                        style={{ objectFit: 'cover', transition: 'transform 0.5s ease' }} 
-                        loading="lazy" 
-                      />
-                    </div>
-                    <div style={cardContentStyle} className="collections-grid-card-content">
-                      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: '100%' }}>
-                        <div style={cardDividerStyle}></div>
-                        <h3 style={cardTitleStyle}>
-                          {col.name}
-                        </h3>
-                        <p style={cardDescStyle}>{col.description}</p>
-                      </div>
-                    </div>
-                    <span style={cardLinkStyle} className="collections-grid-card-btn">
-                      VIEW {col.name.toUpperCase()} &rarr;
-                    </span>
-                  </Link>
-                );
-              })}
-            </div>
-          )}
-        </div>
-      </section>
+      {/* 4. SHOP BY CATEGORIES */}
+      <ShopByCategories />
 
       {/* 4.5. NEW ARRIVALS SECTION */}
       {(loading || (newArrivalsEnabled && newArrivalProducts.length > 0)) && (
@@ -421,7 +370,7 @@ export default function Home() {
           <div style={{ height: '1px', backgroundColor: 'rgba(139, 119, 137, 0.15)', width: '100%' }}></div>
 
           <section style={{ padding: '3rem 0', backgroundColor: '#FFFFFF' }} className="home-section home-new-arrivals-section">
-            <div className="container animate-fade-in">
+            <div className={loading ? 'container' : 'container animate-fade-in'}>
               <div style={sectionHeaderStyle}>
                 <h2 style={{ ...sectionTitleStyle, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.6rem' }}>
                   New Arrivals
@@ -1165,11 +1114,6 @@ const collectionsSectionStyle = {
   backgroundColor: '#FFFFFF',
 };
 
-const loadingWrapperStyle = {
-  textAlign: 'center',
-  padding: '4rem',
-  color: '#000000',
-};
 
 const collectionsGridStyle = {
   display: 'grid',

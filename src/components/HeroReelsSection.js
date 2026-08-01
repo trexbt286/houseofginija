@@ -1,11 +1,15 @@
 'use client';
 
 import { useState, useRef, useEffect } from 'react';
+import ReelPlayerModal from './ReelPlayerModal';
 
 export default function HeroReelsSection({ heroReels = [], loading = false }) {
   const scrollRef = useRef(null);
+  const reelCardRefs = useRef([]);
   const [scrollProgress, setScrollProgress] = useState(0);
   const [loadedVideos, setLoadedVideos] = useState(new Set());
+  const [activeVideoIndexes, setActiveVideoIndexes] = useState(() => new Set([0, 1]));
+  const [selectedReel, setSelectedReel] = useState(null);
 
   const handleVideoLoad = (id) => {
     setLoadedVideos((prev) => {
@@ -35,6 +39,34 @@ export default function HeroReelsSection({ heroReels = [], loading = false }) {
     }
   }, [heroReels]);
 
+  useEffect(() => {
+    const root = scrollRef.current;
+    if (!root || typeof IntersectionObserver === 'undefined') return;
+
+    const observer = new IntersectionObserver((entries) => {
+      const indexesToActivate = entries
+        .filter((entry) => entry.isIntersecting)
+        .map((entry) => Number(entry.target.dataset.reelIndex));
+
+      if (indexesToActivate.length === 0) return;
+
+      setActiveVideoIndexes((previous) => {
+        const next = new Set(previous);
+        indexesToActivate.forEach((index) => next.add(index));
+        return next.size === previous.size ? previous : next;
+      });
+    }, {
+      root,
+      rootMargin: '0px 100% 0px 100%',
+      threshold: 0.01,
+    });
+
+    reelCardRefs.current.slice(0, heroReels.length).forEach((card) => {
+      if (card) observer.observe(card);
+    });
+
+    return () => observer.disconnect();
+  }, [heroReels.length]);
   const scrollLeft = () => {
     if (scrollRef.current) {
       const cardWidth = scrollRef.current.clientWidth;
@@ -73,14 +105,14 @@ export default function HeroReelsSection({ heroReels = [], loading = false }) {
             Array.from({ length: 2 }).map((_, idx) => (
               <div key={idx} style={reelCardStyle} className="reel-card-item">
                 <div style={videoWrapperStyle}>
-                  <div 
-                    style={{ 
-                      position: 'absolute', 
-                      inset: 0, 
+                  <div
+                    style={{
+                      position: 'absolute',
+                      inset: 0,
                       backgroundColor: '#F6DDE2',
                       borderRadius: '24px'
-                    }} 
-                    className="skeleton-pulse" 
+                    }}
+                    className="hero-reel-skeleton"
                   />
                 </div>
               </div>
@@ -88,33 +120,46 @@ export default function HeroReelsSection({ heroReels = [], loading = false }) {
           ) : (
             heroReels.map((reel, idx) => {
               const isVideoLoaded = loadedVideos.has(reel.id || idx);
+              const shouldLoadVideo = activeVideoIndexes.has(idx);
               return (
-                <div key={reel.id || idx} style={reelCardStyle} className="reel-card-item">
+                <button
+                  ref={(element) => { reelCardRefs.current[idx] = element; }}
+                  data-reel-index={idx}
+                  type="button"
+                  key={reel.id || idx}
+                  style={reelCardStyle}
+                  className="reel-card-item reel-card-button"
+                  onClick={() => setSelectedReel(reel)}
+                  aria-label={`Open ${reel.title || `reel ${idx + 1}`}`}
+                >
                   <div style={videoWrapperStyle}>
                     {!isVideoLoaded && (
-                      <div 
-                        style={{ 
-                          position: 'absolute', 
-                          inset: 0, 
-                          backgroundColor: '#F6DDE2', 
-                          zIndex: 1 
-                        }} 
-                        className="skeleton-pulse" 
+                      <div
+                        style={{
+                          position: 'absolute',
+                          inset: 0,
+                          backgroundColor: '#F6DDE2',
+                          zIndex: 1
+                        }}
+                        className="hero-reel-skeleton"
                       />
                     )}
                     <video
-                      src={reel.video_url}
-                      autoPlay
+                      src={shouldLoadVideo ? reel.video_url : undefined}
+                      autoPlay={shouldLoadVideo}
                       muted
                       loop
                       playsInline
-                      preload="auto"
-                      onPlay={() => handleVideoLoad(reel.id || idx)}
-                      onLoadedData={() => handleVideoLoad(reel.id || idx)}
-                      style={videoElementStyle}
+                      preload={shouldLoadVideo ? 'auto' : 'none'}
+                      fetchPriority={idx < 2 ? 'high' : 'auto'}
+                      onCanPlay={() => handleVideoLoad(reel.id || idx)}
+                      style={{
+                        ...videoElementStyle,
+                        visibility: isVideoLoaded ? 'visible' : 'hidden',
+                      }}
                     />
                   </div>
-                </div>
+                </button>
               );
             })
           )}
@@ -145,6 +190,8 @@ export default function HeroReelsSection({ heroReels = [], loading = false }) {
         </div>
       </div>
 
+      <ReelPlayerModal reel={selectedReel} reels={heroReels} onClose={() => setSelectedReel(null)} />
+
       {/* Scoped CSS for responsive 2-card layout */}
       <style jsx>{`
         .hero-reels-container {
@@ -174,6 +221,29 @@ export default function HeroReelsSection({ heroReels = [], loading = false }) {
           max-width: calc(50% - 6px);
           scroll-snap-align: start;
           box-sizing: border-box;
+        }
+
+        .reel-card-button {
+          padding: 0;
+          border: 0;
+          color: inherit;
+          font: inherit;
+          cursor: pointer;
+        }
+
+        .hero-reel-skeleton {
+          background: linear-gradient(100deg, #f6dde2 25%, #fbecef 50%, #f6dde2 75%);
+          background-size: 200% 100%;
+          animation: hero-reel-shimmer 1.4s ease-in-out infinite;
+        }
+
+        @keyframes hero-reel-shimmer {
+          from {
+            background-position: 100% 0;
+          }
+          to {
+            background-position: -100% 0;
+          }
         }
 
         @media (min-width: 768px) {
