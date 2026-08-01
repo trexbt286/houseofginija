@@ -64,13 +64,40 @@ export async function GET() {
 
     const founderReelsQuery = 'SELECT * FROM founder_reels ORDER BY sort_order ASC, id ASC LIMIT 3';
 
-    const [collectionsResult, flashProductsResult, newArrivalsResult, settingsResult, heroReelsResult, founderReelsResult] = await Promise.all([
+    // 6. Ensure heavyDresses collections and products exist in DB
+    try {
+      const existingColsRes = await pool.query("SELECT slug FROM collections WHERE slug IN ('indo-western', 'heavy-gown', 'shararas');");
+      const existingSlugs = new Set(existingColsRes.rows.map(r => r.slug));
+
+      if (!existingSlugs.has('indo-western')) {
+        await pool.query("INSERT INTO collections (name, slug, description) VALUES ('Indo Western', 'indo-western', 'Modern fusion wear combining traditional artistry with contemporary silhouettes.');");
+      }
+      if (!existingSlugs.has('heavy-gown')) {
+        await pool.query("INSERT INTO collections (name, slug, description) VALUES ('Heavy Gown', 'heavy-gown', 'Opulent floor-length gowns featuring hand-embroidered details and grand flared drapes.');");
+      }
+      if (!existingSlugs.has('shararas')) {
+        await pool.query("INSERT INTO collections (name, slug, description) VALUES ('Shararas', 'shararas', 'Royally embellished sharara sets with intricate zari and sequin craftsmanship.');");
+      }
+    } catch (colErr) {
+      console.error('Heavy dresses collections seed check error:', colErr);
+    }
+
+    const heavyDressesRawQuery = `
+      SELECT p.*, c.name as collection_name, c.slug as collection_slug 
+      FROM products p 
+      LEFT JOIN collections c ON p.collection_id = c.id 
+      WHERE c.slug IN ('indo-western', 'heavy-gown', 'shararas')
+      ORDER BY p.id ASC
+    `;
+
+    const [collectionsResult, flashProductsResult, newArrivalsResult, settingsResult, heroReelsResult, founderReelsResult, heavyDressesRawResult] = await Promise.all([
       pool.query(collectionsQuery),
       pool.query(flashProductsQuery),
       pool.query(newArrivalsQuery),
       pool.query(settingsQuery),
       pool.query(heroReelsQuery),
-      pool.query(founderReelsQuery)
+      pool.query(founderReelsQuery),
+      pool.query(heavyDressesRawQuery)
     ]);
 
     const flash_sale_enabled = settingsResult.rows.find(r => r.key === 'flash_sale_enabled')?.value === 'true';
@@ -94,6 +121,31 @@ export async function GET() {
 
     const flashProducts = flashProductsResult.rows.map(mapProductData);
     const newArrivalProducts = newArrivalsResult.rows.map(mapProductData);
+    const heavyDressesRawMapped = heavyDressesRawResult.rows.map(mapProductData);
+
+    const fallbackData = getLocalHomepageFallback();
+    const fallbackHeavyDresses = fallbackData?.heavyDresses || {};
+
+    const getCategoryProducts = (slug, fallbackItems = []) => {
+      const matched = heavyDressesRawMapped.filter(p => p.collection_slug === slug);
+      if (matched.length >= 4) return matched.slice(0, 4);
+
+      const existingIds = new Set(matched.map(p => p.id));
+      const filled = [...matched];
+      for (const fb of fallbackItems) {
+        if (filled.length >= 4) break;
+        if (!existingIds.has(fb.id)) {
+          filled.push(fb);
+        }
+      }
+      return filled.slice(0, 4);
+    };
+
+    const heavyDresses = {
+      indoWestern: getCategoryProducts('indo-western', fallbackHeavyDresses.indoWestern || []),
+      heavyGown: getCategoryProducts('heavy-gown', fallbackHeavyDresses.heavyGown || []),
+      shararas: getCategoryProducts('shararas', fallbackHeavyDresses.shararas || [])
+    };
 
     return NextResponse.json({ 
       collections: collectionsResult.rows,
@@ -102,7 +154,8 @@ export async function GET() {
       newArrivalProducts,
       new_arrivals_enabled,
       heroReels: heroReelsResult.rows || [],
-      founderReels: founderReelsResult?.rows || []
+      founderReels: founderReelsResult?.rows || [],
+      heavyDresses
     });
   } catch (error) {
     console.error('Fetch homepage data error:', error);

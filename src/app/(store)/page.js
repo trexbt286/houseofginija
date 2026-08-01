@@ -108,6 +108,21 @@ export default function Home() {
     },
   ];
 
+  // Handle anchor deep link scroll on page load/mount
+  useEffect(() => {
+    if (typeof window !== 'undefined' && window.location.hash) {
+      const hashId = window.location.hash.replace('#', '');
+      if (hashId) {
+        setTimeout(() => {
+          const el = document.getElementById(hashId);
+          if (el) {
+            el.scrollIntoView({ behavior: 'smooth' });
+          }
+        }, 400);
+      }
+    }
+  }, []);
+
   useEffect(() => {
 
     // Fetch unified homepage data
@@ -121,6 +136,7 @@ export default function Home() {
           setNewArrivalProducts(data.newArrivalProducts || []);
           setNewArrivalsEnabled(!!data.new_arrivals_enabled);
           setFounderReels(data.founderReels || []);
+          setHeavyDresses(data.heavyDresses || { indoWestern: [], heavyGown: [], shararas: [] });
         }
       } catch (err) {
         console.error(err);
@@ -515,6 +531,253 @@ export default function Home() {
           {/* 3-Reel Row in About Founder Section */}
           <FounderReelsRow founderReels={founderReels} loading={loading} />
 
+        </div>
+      </section>
+
+      {/* Separator Line */}
+      <div style={{ height: '1px', backgroundColor: 'rgba(139, 119, 137, 0.15)', width: '100%' }}></div>
+
+      {/* HEAVY DRESSES SECTION */}
+      <section id="heavy-dresses" style={{ backgroundColor: '#FFFFFF', padding: '4rem 1.2rem 3rem 1.2rem' }} className="home-section home-heavy-dresses-section">
+        <div className="container">
+          {/* Main Section Header */}
+          <div style={sectionHeaderStyle} className="animate-fade-in">
+            <h2 style={sectionTitleStyle}>Heavy Dresses</h2>
+            <div style={sectionDividerLineStyle}></div>
+          </div>
+
+          {/* Sub-sections Container */}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '3.5rem', marginTop: '2.5rem' }}>
+            
+            {/* 1. INDO WESTERN SUB-SECTION */}
+            <div id="indo-western" className="heavy-dresses-subsection">
+              <div style={{ textAlign: 'center', marginBottom: '1.8rem' }}>
+                <h3 style={{
+                  fontFamily: 'var(--font-serif)',
+                  fontSize: '1.75rem',
+                  color: '#2D2429',
+                  fontWeight: '500',
+                  letterSpacing: '0.02em',
+                  marginBottom: '0.4rem'
+                }}>
+                  Indo Western
+                </h3>
+                <div style={{ width: '40px', height: '1.5px', backgroundColor: '#B97285', margin: '0 auto' }}></div>
+              </div>
+
+              <div className="new-arrivals-grid">
+                {loading ? (
+                  Array.from({ length: 4 }).map((_, i) => (
+                    <SkeletonCard key={i} type="home-new-arrival" />
+                  ))
+                ) : (
+                  (heavyDresses.indoWestern || []).slice(0, 4).map((product, index) => {
+                    const isWishlisted = wishlist.includes(product.id);
+                    return (
+                      <div key={product.id || index} className="new-arrival-card">
+                        <div className="new-arrival-img-container">
+                          <div onClick={(e) => handleProductClick(e, product)} style={{ cursor: 'pointer' }}>
+                            <ImageWithSkeleton 
+                              src={product.images?.[0] || '/icon.png'} 
+                              alt={product.name} 
+                              eager={index < 2}
+                              className="new-arrival-img-style" 
+                            />
+                          </div>
+
+                          <button 
+                            onClick={() => toggleWishlist(product.id)}
+                            className="new-arrival-wishlist-btn"
+                          >
+                            <svg 
+                              width="18" 
+                              height="18" 
+                              viewBox="0 0 24 24" 
+                              fill={isWishlisted ? '#D98E9B' : 'none'} 
+                              stroke={isWishlisted ? '#D98E9B' : '#000000'} 
+                              strokeWidth="2.0" 
+                              strokeLinecap="round" 
+                              strokeLinejoin="round"
+                            >
+                              <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+                            </svg>
+                          </button>
+                        </div>
+
+                        <div className="new-arrival-card-content">
+                          <div onClick={(e) => handleProductClick(e, product)} style={{ cursor: 'pointer', color: 'inherit' }}>
+                            <h3 className="new-arrival-product-name">{product.name}</h3>
+                          </div>
+                          <div className="new-arrival-price">
+                            ₹{parseFloat(product.price).toLocaleString('en-IN')}
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  })
+                )}
+              </div>
+
+              <div style={seeMoreBtnContainerStyle}>
+                <Link href="/indo-western" style={seeMoreButtonStyle} className="see-more-btn">
+                  SEE MORE &rarr;
+                </Link>
+              </div>
+            </div>
+
+            {/* 2. HEAVY GOWN SUB-SECTION */}
+            <div id="heavy-gown" className="heavy-dresses-subsection">
+              <div style={{ textAlign: 'center', marginBottom: '1.8rem' }}>
+                <h3 style={{
+                  fontFamily: 'var(--font-serif)',
+                  fontSize: '1.75rem',
+                  color: '#2D2429',
+                  fontWeight: '500',
+                  letterSpacing: '0.02em',
+                  marginBottom: '0.4rem'
+                }}>
+                  Heavy Gown
+                </h3>
+                <div style={{ width: '40px', height: '1.5px', backgroundColor: '#B97285', margin: '0 auto' }}></div>
+              </div>
+
+              <div className="new-arrivals-grid">
+                {loading ? (
+                  Array.from({ length: 4 }).map((_, i) => (
+                    <SkeletonCard key={i} type="home-new-arrival" />
+                  ))
+                ) : (
+                  (heavyDresses.heavyGown || []).slice(0, 4).map((product, index) => {
+                    const isWishlisted = wishlist.includes(product.id);
+                    return (
+                      <div key={product.id || index} className="new-arrival-card">
+                        <div className="new-arrival-img-container">
+                          <div onClick={(e) => handleProductClick(e, product)} style={{ cursor: 'pointer' }}>
+                            <ImageWithSkeleton 
+                              src={product.images?.[0] || '/icon.png'} 
+                              alt={product.name} 
+                              eager={index < 2}
+                              className="new-arrival-img-style" 
+                            />
+                          </div>
+
+                          <button 
+                            onClick={() => toggleWishlist(product.id)}
+                            className="new-arrival-wishlist-btn"
+                          >
+                            <svg 
+                              width="18" 
+                              height="18" 
+                              viewBox="0 0 24 24" 
+                              fill={isWishlisted ? '#D98E9B' : 'none'} 
+                              stroke={isWishlisted ? '#D98E9B' : '#000000'} 
+                              strokeWidth="2.0" 
+                              strokeLinecap="round" 
+                              strokeLinejoin="round"
+                            >
+                              <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+                            </svg>
+                          </button>
+                        </div>
+
+                        <div className="new-arrival-card-content">
+                          <div onClick={(e) => handleProductClick(e, product)} style={{ cursor: 'pointer', color: 'inherit' }}>
+                            <h3 className="new-arrival-product-name">{product.name}</h3>
+                          </div>
+                          <div className="new-arrival-price">
+                            ₹{parseFloat(product.price).toLocaleString('en-IN')}
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  })
+                )}
+              </div>
+
+              <div style={seeMoreBtnContainerStyle}>
+                <Link href="/heavy-gown" style={seeMoreButtonStyle} className="see-more-btn">
+                  SEE MORE &rarr;
+                </Link>
+              </div>
+            </div>
+
+            {/* 3. SHARARAS SUB-SECTION */}
+            <div id="shararas" className="heavy-dresses-subsection">
+              <div style={{ textAlign: 'center', marginBottom: '1.8rem' }}>
+                <h3 style={{
+                  fontFamily: 'var(--font-serif)',
+                  fontSize: '1.75rem',
+                  color: '#2D2429',
+                  fontWeight: '500',
+                  letterSpacing: '0.02em',
+                  marginBottom: '0.4rem'
+                }}>
+                  Shararas
+                </h3>
+                <div style={{ width: '40px', height: '1.5px', backgroundColor: '#B97285', margin: '0 auto' }}></div>
+              </div>
+
+              <div className="new-arrivals-grid">
+                {loading ? (
+                  Array.from({ length: 4 }).map((_, i) => (
+                    <SkeletonCard key={i} type="home-new-arrival" />
+                  ))
+                ) : (
+                  (heavyDresses.shararas || []).slice(0, 4).map((product, index) => {
+                    const isWishlisted = wishlist.includes(product.id);
+                    return (
+                      <div key={product.id || index} className="new-arrival-card">
+                        <div className="new-arrival-img-container">
+                          <div onClick={(e) => handleProductClick(e, product)} style={{ cursor: 'pointer' }}>
+                            <ImageWithSkeleton 
+                              src={product.images?.[0] || '/icon.png'} 
+                              alt={product.name} 
+                              eager={index < 2}
+                              className="new-arrival-img-style" 
+                            />
+                          </div>
+
+                          <button 
+                            onClick={() => toggleWishlist(product.id)}
+                            className="new-arrival-wishlist-btn"
+                          >
+                            <svg 
+                              width="18" 
+                              height="18" 
+                              viewBox="0 0 24 24" 
+                              fill={isWishlisted ? '#D98E9B' : 'none'} 
+                              stroke={isWishlisted ? '#D98E9B' : '#000000'} 
+                              strokeWidth="2.0" 
+                              strokeLinecap="round" 
+                              strokeLinejoin="round"
+                            >
+                              <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+                            </svg>
+                          </button>
+                        </div>
+
+                        <div className="new-arrival-card-content">
+                          <div onClick={(e) => handleProductClick(e, product)} style={{ cursor: 'pointer', color: 'inherit' }}>
+                            <h3 className="new-arrival-product-name">{product.name}</h3>
+                          </div>
+                          <div className="new-arrival-price">
+                            ₹{parseFloat(product.price).toLocaleString('en-IN')}
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  })
+                )}
+              </div>
+
+              <div style={seeMoreBtnContainerStyle}>
+                <Link href="/shararas" style={seeMoreButtonStyle} className="see-more-btn">
+                  SEE MORE &rarr;
+                </Link>
+              </div>
+            </div>
+
+          </div>
         </div>
       </section>
 

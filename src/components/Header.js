@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { useStore } from '@/context/StoreContext';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import ImageWithSkeleton from '@/components/ImageWithSkeleton';
 
 export default function Header() {
@@ -16,6 +16,23 @@ export default function Header() {
   const [searchQuery, setSearchQuery] = useState('');
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const pathname = usePathname();
+  const router = useRouter();
+
+  const handleAnchorClick = (e, targetId) => {
+    if (e && e.preventDefault) e.preventDefault();
+    setMenuOpen(false);
+
+    if (pathname === '/') {
+      setTimeout(() => {
+        const el = document.getElementById(targetId);
+        if (el) {
+          el.scrollIntoView({ behavior: 'smooth' });
+        }
+      }, 150);
+    } else {
+      router.push(`/#${targetId}`);
+    }
+  };
 
   const scrollYRef = useRef(0);
 
@@ -445,10 +462,10 @@ export default function Header() {
               )}
             </Link>
 
-            {/* 3. HEAVY DRESSES (Dropdown Toggle) */}
+            {/* 3. HEAVY DRESSES (Dropdown Toggle + Anchor Scroll) */}
             <div 
               className="mobile-nav-item-row"
-              onClick={() => setHeavyDressesOpen(!heavyDressesOpen)}
+              onClick={(e) => handleAnchorClick(e, 'heavy-dresses')}
             >
               <div className="mobile-nav-item-left">
                 <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#D98E9B" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
@@ -456,7 +473,13 @@ export default function Header() {
                 </svg>
                 <span className="mobile-nav-item-title">HEAVY DRESSES</span>
               </div>
-              <div className="mobile-nav-item-chevron">
+              <div 
+                className="mobile-nav-item-chevron"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setHeavyDressesOpen(!heavyDressesOpen);
+                }}
+              >
                 <svg 
                   width="16" 
                   height="16" 
@@ -476,30 +499,30 @@ export default function Header() {
             {/* HEAVY DRESSES Submenu Box */}
             {heavyDressesOpen && (
               <div className="mobile-nav-submenu-card animate-fade-in">
-                <Link 
-                  href="/collections?collection=suits&category=indo-western" 
+                <a 
+                  href="#indo-western" 
                   className="mobile-nav-submenu-item"
-                  onClick={() => setMenuOpen(false)}
+                  onClick={(e) => handleAnchorClick(e, 'indo-western')}
                 >
                   <span className="mobile-nav-submenu-dot" />
                   <span>INDO WESTERN</span>
-                </Link>
-                <Link 
-                  href="/collections?collection=suits&category=heavy-gown" 
+                </a>
+                <a 
+                  href="#heavy-gown" 
                   className="mobile-nav-submenu-item"
-                  onClick={() => setMenuOpen(false)}
+                  onClick={(e) => handleAnchorClick(e, 'heavy-gown')}
                 >
                   <span className="mobile-nav-submenu-dot" />
                   <span>HEAVY GOWN</span>
-                </Link>
-                <Link 
-                  href="/collections?collection=suits&category=shararas" 
+                </a>
+                <a 
+                  href="#shararas" 
                   className="mobile-nav-submenu-item"
-                  onClick={() => setMenuOpen(false)}
+                  onClick={(e) => handleAnchorClick(e, 'shararas')}
                 >
                   <span className="mobile-nav-submenu-dot" />
                   <span>SHARARAS</span>
-                </Link>
+                </a>
               </div>
             )}
 
