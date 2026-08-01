@@ -36,6 +36,7 @@ export default function Home() {
   const [newArrivalsEnabled, setNewArrivalsEnabled] = useState(false);
   const [showAllNewArrivals, setShowAllNewArrivals] = useState(false);
   const [founderReels, setFounderReels] = useState([]);
+  const [heavyDresses, setHeavyDresses] = useState({ indoWestern: [], heavyGown: [], shararas: [] });
 
   const whatsAppNumber = '917080806053';
   const whatsAppUrl = `https://wa.me/${whatsAppNumber}`;
