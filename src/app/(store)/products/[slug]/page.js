@@ -115,23 +115,54 @@ export default function ProductPage({ params }) {
     }
   };
 
+  const handleShare = async () => {
+    const shareData = {
+      title: product.name,
+      text: product.description || product.name,
+      url: window.location.href,
+    };
+
+    try {
+      if (navigator.share) {
+        await navigator.share(shareData);
+      } else {
+        await navigator.clipboard.writeText(window.location.href);
+      }
+    } catch (shareError) {
+      if (shareError?.name !== 'AbortError') console.error('Share failed:', shareError);
+    }
+  };
+
   return (
-    <div style={pageStyle} className="container animate-fade-in">
-      <div style={breadcrumbsStyle}>
+    <div style={pageStyle} className={'product-detail-page container animate-fade-in ' + (user && user.role === 'admin' ? 'is-admin-product' : '')}>
+      <div style={breadcrumbsStyle} className="product-breadcrumbs">
         <Link href="/">Home</Link> &gt;{' '}
         <Link href="/collections">Creations</Link> &gt;{' '}
         <Link href={`/collections?collection=${product.collection_slug}`}>{product.collection_name}</Link> &gt;{' '}
         <span>{product.name}</span>
       </div>
 
-      <div style={productGridStyle}>
+      <div style={productGridStyle} className="product-detail-grid">
         {/* Left Column: Image Gallery */}
-        <div style={galleryColumnStyle}>
-          <div style={mainImageContainerStyle}>
-            <img src={activeImage} alt={product.name} style={mainImageStyle} loading="lazy" />
+        <div style={galleryColumnStyle} className="product-gallery-column">
+          <div style={mainImageContainerStyle} className="product-main-image">
+            <div className="product-floating-actions">
+              <button type="button" onClick={() => router.back()} className="product-floating-button product-floating-back" aria-label="Go back">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19 12H5M12 19l-7-7 7-7" /></svg>
+              </button>
+              <div className="product-floating-actions-right">
+                <button type="button" onClick={() => toggleWishlist(product.id)} className="product-floating-button" aria-label={isStarred ? 'Remove from wishlist' : 'Add to wishlist'}>
+                  <svg viewBox="0 0 24 24" fill={isStarred ? '#D98E9B' : 'none'} aria-hidden="true"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" /></svg>
+                </button>
+                <button type="button" onClick={handleShare} className="product-floating-button" aria-label="Share product">
+                  <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 16V3M7 8l5-5 5 5M5 12v8h14v-8" /></svg>
+                </button>
+              </div>
+            </div>
+            <img src={activeImage} alt={product.name} style={mainImageStyle} className="product-main-photo" loading="eager" />
           </div>
           {product.images && product.images.length > 1 && (
-            <div style={thumbnailRowStyle}>
+            <div style={thumbnailRowStyle} className="product-thumbnails">
               {product.images.map((img, idx) => (
                 <button
                   key={idx}
@@ -146,14 +177,14 @@ export default function ProductPage({ params }) {
         </div>
 
         {/* Right Column: Details & Configuration */}
-        <div style={detailsColumnStyle}>
-          <span style={collectionNameStyle}>{product.collection_name}</span>
-          <h1 style={productNameStyle}>{product.name}</h1>
-          <p style={priceStyle}>₹{parseFloat(product.price).toLocaleString('en-IN')}</p>
+        <div style={detailsColumnStyle} className="product-detail-panel">
+          <span style={collectionNameStyle} className="product-collection-name">{product.collection_name}</span>
+          <h1 style={productNameStyle} className="product-detail-name">{product.name}</h1>
+          <p style={priceStyle} className="product-detail-price">₹{parseFloat(product.price).toLocaleString('en-IN')}</p>
 
           <div style={dividerLineStyle}></div>
 
-          <p style={descriptionStyle}>{product.description}</p>
+          <p style={descriptionStyle} className="product-detail-description">{product.description}</p>
 
           <div style={{ marginTop: '0.5rem', marginBottom: '1rem', fontSize: '0.85rem', color: '#B8860B', fontWeight: '600' }}>
             {stockCount <= 3 ? (
@@ -166,11 +197,11 @@ export default function ProductPage({ params }) {
           <div style={dividerLineStyle}></div>
 
           {/* Variant selections */}
-          <div style={selectionContainerStyle}>
+          <div style={selectionContainerStyle} className="product-selections">
             {sizes.length > 0 && (
               <div style={selectionGroupStyle}>
                 <span style={selectionLabelStyle}>Select Size:</span>
-                <div style={sizeSelectorStyle}>
+                <div style={sizeSelectorStyle} className="product-size-selector">
                   {sizes.map(size => {
                     // Check if size has any stock overall
                     const variantForSize = product.variants.find(v => (v.size || '').toUpperCase() === size.toUpperCase());
@@ -255,7 +286,7 @@ export default function ProductPage({ params }) {
 
             {/* Action Buttons */}
             {user && user.role === 'admin' ? (
-              <div style={actionsContainerStyle}>
+              <div style={actionsContainerStyle} className="product-actions">
                 <Link
                   href={`/admin/products?edit=${product.slug}`}
                   style={adminPreviewBtnLinkStyle}
@@ -264,7 +295,7 @@ export default function ProductPage({ params }) {
                 </Link>
               </div>
             ) : (
-              <div style={actionsContainerStyle}>
+              <div style={actionsContainerStyle} className="product-actions">
                 {cartQty > 0 ? (
                   <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', flex: 1 }}>
                     <div className="blinkit-count-controller" style={{ ...buyBtnStyle, backgroundColor: '#FFFFFF', border: '1px solid #D98E9B', display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 1.5rem', cursor: 'default', height: '48px', boxSizing: 'border-box', flex: 1 }}>
@@ -294,6 +325,7 @@ export default function ProductPage({ params }) {
                   <button
                     onClick={handleButtonClick}
                     style={isOutOfStock ? disabledBuyBtnStyle : cartSuccess ? addedBuyBtnStyle : buyBtnStyle}
+                    className="product-add-to-bag"
                     disabled={isOutOfStock}
                   >
                     {isOutOfStock ? 'Sold Out' : cartSuccess ? '✓ Added to Bag' : 'Add to Bag'}
@@ -303,6 +335,7 @@ export default function ProductPage({ params }) {
                 <button
                   onClick={() => toggleWishlist(product.id)}
                   style={isStarred ? activeWishlistBtnStyle : wishlistBtnStyle}
+                  className="product-inline-wishlist"
                   title={isStarred ? 'Remove from Wishlist' : 'Add to Wishlist'}
                 >
                   <svg width="22" height="22" viewBox="0 0 24 24" fill={isStarred ? '#D98E9B' : 'none'} stroke={isStarred ? '#D98E9B' : 'currentColor'} strokeWidth="1.5">
