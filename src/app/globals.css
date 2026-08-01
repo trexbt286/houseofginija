@@ -3261,13 +3261,13 @@ body.mobile-nav-locked .whatsapp-floating-btn {
   }
 
   .new-arrival-card {
-    border-radius: 4px !important;
+    border-radius: 8px !important;
   }
 
   .new-arrival-card .new-arrival-img-container {
-    height: 125px !important;
+    height: 165px !important;
     margin-bottom: 0 !important;
-    border-radius: 8px !important;
+    border-radius: 8px 8px 0 0 !important;
   }
 
   .new-arrival-card .new-arrival-card-content {
