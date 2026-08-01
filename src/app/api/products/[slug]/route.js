@@ -1,7 +1,17 @@
 import { NextResponse } from 'next/server';
 import pool from '@/lib/db';
+import { shouldUseLocalCatalogFallbackFirst, canUseLocalCatalogFallback, getLocalProductBySlugFallback } from '@/lib/localCatalogFallback';
 
 export async function GET(request, { params }) {
+  if (shouldUseLocalCatalogFallbackFirst()) {
+    const { slug } = await params;
+    const product = getLocalProductBySlugFallback(slug);
+    if (product) {
+      return NextResponse.json({ product });
+    }
+    return NextResponse.json({ error: 'Product not found' }, { status: 404 });
+  }
+
   try {
     const { slug } = await params;
 
@@ -20,6 +30,14 @@ export async function GET(request, { params }) {
     return NextResponse.json({ product: result.rows[0] });
   } catch (error) {
     console.error('Fetch product by slug error:', error);
+    if (canUseLocalCatalogFallback()) {
+      const { slug } = await params;
+      const product = getLocalProductBySlugFallback(slug);
+      if (product) {
+        return NextResponse.json({ product });
+      }
+      return NextResponse.json({ error: 'Product not found' }, { status: 404 });
+    }
     return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
   }
 }

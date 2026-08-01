@@ -1,9 +1,14 @@
 import { NextResponse } from 'next/server';
 import pool from '@/lib/db';
+import { shouldUseLocalCatalogFallbackFirst, canUseLocalCatalogFallback, getLocalHomepageFallback } from '@/lib/localCatalogFallback';
 
 export const revalidate = 300;
 
 export async function GET() {
+  if (shouldUseLocalCatalogFallbackFirst()) {
+    return NextResponse.json(getLocalHomepageFallback());
+  }
+
   try {
     // 1. Fetch collections
     const collectionsQuery = 'SELECT * FROM collections ORDER BY id ASC';
@@ -101,6 +106,9 @@ export async function GET() {
     });
   } catch (error) {
     console.error('Fetch homepage data error:', error);
+    if (canUseLocalCatalogFallback()) {
+      return NextResponse.json(getLocalHomepageFallback());
+    }
     return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
   }
 }

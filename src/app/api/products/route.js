@@ -1,9 +1,14 @@
 import { NextResponse } from 'next/server';
 import pool from '@/lib/db';
+import { shouldUseLocalCatalogFallbackFirst, canUseLocalCatalogFallback, getLocalProductsResponseFallback } from '@/lib/localCatalogFallback';
 
 export const dynamic = 'force-dynamic';
 
 export async function GET(request) {
+  if (shouldUseLocalCatalogFallbackFirst()) {
+    return NextResponse.json(getLocalProductsResponseFallback());
+  }
+
   try {
     const { searchParams } = new URL(request.url);
     const collection = searchParams.get('collection');
@@ -105,6 +110,9 @@ export async function GET(request) {
     });
   } catch (error) {
     console.error('Fetch products error:', error);
+    if (canUseLocalCatalogFallback()) {
+      return NextResponse.json(getLocalProductsResponseFallback());
+    }
     return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
   }
 }

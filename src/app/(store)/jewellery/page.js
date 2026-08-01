@@ -8,6 +8,7 @@ import { useStore } from '@/context/StoreContext';
 import ImageWithSkeleton from '@/components/ImageWithSkeleton';
 import SkeletonCard from '@/components/SkeletonCard';
 import ProductImageGallery from '@/components/ProductImageGallery';
+import { AddToBagLabel, ProductFeatureStrip, ProductShareButton } from '@/components/ProductQuickViewExtras';
 
 function MobileSearchBar({ allProducts, initialQuery, onSearch, handleProductClick }) {
   const [localQuery, setLocalQuery] = useState(initialQuery || '');
@@ -1027,7 +1028,7 @@ function CollectionsContent() {
               {/* Mobile Down Chevron dismiss button */}
               <button onClick={() => setActiveProduct(null)} className="mobile-sheet-dismiss-btn">
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#000000" strokeWidth="2.0" strokeLinecap="round" strokeLinejoin="round">
-                  <polyline points="6 9 12 15 18 9"></polyline>
+                  <polyline points="15 18 9 12 15 6"></polyline>
                 </svg>
               </button>
               
@@ -1046,6 +1047,7 @@ function CollectionsContent() {
                   <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
                 </svg>
               </button>
+              <ProductShareButton product={activeProduct} />
             </div>
 
             {/* Grid container */}
@@ -1077,6 +1079,7 @@ function CollectionsContent() {
 
               {/* Bottom Half: Details */}
               <div style={detailInfoStyle}>
+                <div className="detail-static-content">
                 <span style={detailCollectionLabelStyle} className="detail-collection-label">{activeProduct.collection_name}</span>
                 <h1 style={detailTitleStyle} className="detail-product-name">{activeProduct.name}</h1>
                 {activeProduct.flash_sale && activeProduct.flash_sale_price ? (
@@ -1137,6 +1140,10 @@ function CollectionsContent() {
                   );
                 })()}
 
+
+                <ProductFeatureStrip />
+
+                </div>
 
                 {/* Sticky Actions Footer (inside card) */}
                 <div className="card-sticky-footer">
@@ -1215,7 +1222,7 @@ function CollectionsContent() {
                         setActiveProductQty(1); // Reset counter selector to 1 after adding to cart
                       }}
                     >
-                      {activeProduct.is_out_of_stock ? 'Sold Out' : 'ADD'}
+                      {activeProduct.is_out_of_stock ? 'Sold Out' : <AddToBagLabel />}
                     </button>
                   </>
                 )}
@@ -1445,7 +1452,7 @@ function CollectionsContent() {
           <div className="mobile-filter-drawer-header">
             <button className="mobile-filter-drawer-close-btn" onClick={() => setIsMobileFilterOpen(false)}>
               <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#000000" strokeWidth="2.0" strokeLinecap="round" strokeLinejoin="round">
-                <polyline points="6 9 12 15 18 9"></polyline>
+                <polyline points="15 18 9 12 15 6"></polyline>
               </svg>
             </button>
             <h3 className="mobile-filter-drawer-title">Filters & Sort</h3>

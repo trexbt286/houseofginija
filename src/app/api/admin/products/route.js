@@ -1,10 +1,18 @@
 import { NextResponse } from 'next/server';
 import pool from '@/lib/db';
+import { shouldUseLocalCatalogFallbackFirst, canUseLocalCatalogFallback, getLocalCollectionsFallback, getLocalProductsFallback } from '@/lib/localCatalogFallback';
 
 export const dynamic = 'force-dynamic';
 
 // GET all products and collections lists (for dropdown populating)
 export async function GET() {
+  if (shouldUseLocalCatalogFallbackFirst()) {
+    return NextResponse.json({
+      products: getLocalProductsFallback(),
+      collections: getLocalCollectionsFallback(),
+    });
+  }
+
   try {
     const productsResult = await pool.query(`
       SELECT p.*, c.name as collection_name, c.slug as collection_slug 
@@ -37,6 +45,12 @@ export async function GET() {
     });
   } catch (error) {
     console.error('Admin GET products error:', error);
+    if (canUseLocalCatalogFallback()) {
+      return NextResponse.json({
+        products: getLocalProductsFallback(),
+        collections: getLocalCollectionsFallback(),
+      });
+    }
     return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
   }
 }

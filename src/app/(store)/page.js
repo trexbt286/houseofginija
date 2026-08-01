@@ -8,6 +8,7 @@ import ImageWithSkeleton from '@/components/ImageWithSkeleton';
 import SkeletonCard from '@/components/SkeletonCard';
 import HeroReelsSection from '@/components/HeroReelsSection';
 import ProductImageGallery from '@/components/ProductImageGallery';
+import { AddToBagLabel, ProductFeatureStrip, ProductShareButton } from '@/components/ProductQuickViewExtras';
 import FounderReelsRow from '@/components/FounderReelsRow';
 import ShopByCategories from '@/components/ShopByCategories';
 
@@ -598,7 +599,7 @@ export default function Home() {
               {/* Mobile Down Chevron dismiss button */}
               <button onClick={() => setActiveProduct(null)} className="mobile-sheet-dismiss-btn">
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#000000" strokeWidth="2.0" strokeLinecap="round" strokeLinejoin="round">
-                  <polyline points="6 9 12 15 18 9"></polyline>
+                  <polyline points="15 18 9 12 15 6"></polyline>
                 </svg>
               </button>
               
@@ -618,6 +619,7 @@ export default function Home() {
                   <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
                 </svg>
               </button>
+              <ProductShareButton product={activeProduct} />
             </div>
 
             {/* Grid container */}
@@ -649,6 +651,7 @@ export default function Home() {
 
               {/* Bottom Half: Details */}
               <div style={detailInfoStyle}>
+                <div className="detail-static-content">
                 <span style={detailCollectionLabelStyle} className="detail-collection-label">{activeProduct.collection_name}</span>
                 <h1 style={detailTitleStyle} className="detail-product-name">{activeProduct.name}</h1>
                 {activeProduct.flash_sale && activeProduct.flash_sale_price ? (
@@ -708,6 +711,10 @@ export default function Home() {
                     </div>
                   );
                 })()}
+
+                <ProductFeatureStrip />
+
+                </div>
 
                 {/* Sticky Actions Footer (inside card) */}
                 <div className="card-sticky-footer">
@@ -786,7 +793,7 @@ export default function Home() {
                             setActiveProductQty(1);
                           }}
                         >
-                          {activeProduct.is_out_of_stock ? 'Sold Out' : 'ADD'}
+                          {activeProduct.is_out_of_stock ? 'Sold Out' : <AddToBagLabel />}
                         </button>
                       </>
                     )}
