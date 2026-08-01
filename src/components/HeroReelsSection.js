@@ -161,7 +161,7 @@ export default function HeroReelsSection({ heroReels = [], loading = false }) {
                       backgroundColor: '#F6DDE2',
                       borderRadius: '24px'
                     }}
-                    className="skeleton-pulse"
+                    className="hero-reel-placeholder"
                   />
                 </div>
               </div>
@@ -190,7 +190,7 @@ export default function HeroReelsSection({ heroReels = [], loading = false }) {
                           backgroundColor: '#F6DDE2',
                           zIndex: 1
                         }}
-                        className="skeleton-pulse"
+                        className="hero-reel-placeholder"
                       />
                     )}
                     <video
@@ -202,7 +202,10 @@ export default function HeroReelsSection({ heroReels = [], loading = false }) {
                       playsInline
                       preload={shouldLoadVideo ? 'auto' : 'none'}
                       onCanPlay={() => handleVideoLoad(reel.id || idx)}
-                      style={videoElementStyle}
+                      style={{
+                        ...videoElementStyle,
+                        visibility: isVideoLoaded ? 'visible' : 'hidden',
+                      }}
                     />
                   </div>
                 </button>
@@ -276,6 +279,10 @@ export default function HeroReelsSection({ heroReels = [], loading = false }) {
           cursor: pointer;
         }
 
+
+        .hero-reel-placeholder {
+          background: #f6dde2;
+        }
 
         @media (min-width: 768px) {
           .hero-reels-container {

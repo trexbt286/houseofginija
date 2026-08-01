@@ -19,7 +19,6 @@ const LOCAL_HERO_REELS = Array.from({ length: 8 }, (_, index) => ({
 
 export default function Home() {
   const { 
-    triggerSparkleConfetti, 
     wishlist = [], 
     toggleWishlist, 
     cart = [], 
@@ -109,10 +108,6 @@ export default function Home() {
   ];
 
   useEffect(() => {
-    // Sparkle confetti effect on page load for delightful experience
-    setTimeout(() => {
-      triggerSparkleConfetti();
-    }, 1200);
 
     // Fetch unified homepage data
     const fetchHomepageData = async () => {
