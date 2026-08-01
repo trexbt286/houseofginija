@@ -4,13 +4,21 @@ import { useState, useRef, useEffect } from 'react';
 import ReelPlayerModal from './ReelPlayerModal';
 
 export default function HeroReelsSection({ heroReels = [], loading = false }) {
+  const sectionRef = useRef(null);
   const scrollRef = useRef(null);
-  const [scrollProgress, setScrollProgress] = useState(0);
+  const reelCardRefs = useRef([]);
+  const videoRefs = useRef([]);
+  const progressFillRef = useRef(null);
+  const scrollFrameRef = useRef(null);
+  const nearIndexesRef = useRef(new Set([0, 1]));
+  const sectionVisibleRef = useRef(true);
   const [loadedVideos, setLoadedVideos] = useState(new Set());
+  const [requestedVideoIndexes, setRequestedVideoIndexes] = useState(() => new Set([0, 1]));
   const [selectedReel, setSelectedReel] = useState(null);
 
   const handleVideoLoad = (id) => {
     setLoadedVideos((prev) => {
+      if (prev.has(id)) return prev;
       const next = new Set(prev);
       next.add(id);
       return next;
@@ -19,13 +27,16 @@ export default function HeroReelsSection({ heroReels = [], loading = false }) {
 
   // Handle scroll progress detection
   const handleScroll = () => {
-    if (!scrollRef.current) return;
-    const { scrollLeft, scrollWidth, clientWidth } = scrollRef.current;
-    const maxScroll = scrollWidth - clientWidth;
-    if (maxScroll > 0) {
-      const progress = (scrollLeft / maxScroll) * 100;
-      setScrollProgress(progress);
-    }
+    if (scrollFrameRef.current !== null) return;
+    scrollFrameRef.current = requestAnimationFrame(() => {
+      scrollFrameRef.current = null;
+      const track = scrollRef.current;
+      const fill = progressFillRef.current;
+      if (!track || !fill) return;
+      const maxScroll = track.scrollWidth - track.clientWidth;
+      const progress = maxScroll > 0 ? track.scrollLeft / maxScroll : 0;
+      fill.style.transform = `translate3d(${progress * 300}%, 0, 0)`;
+    });
   };
 
   useEffect(() => {
@@ -33,10 +44,77 @@ export default function HeroReelsSection({ heroReels = [], loading = false }) {
     if (el) {
       el.addEventListener('scroll', handleScroll, { passive: true });
       handleScroll();
-      return () => el.removeEventListener('scroll', handleScroll);
+      return () => {
+        el.removeEventListener('scroll', handleScroll);
+        if (scrollFrameRef.current !== null) cancelAnimationFrame(scrollFrameRef.current);
+      };
     }
   }, [heroReels]);
 
+  useEffect(() => {
+    const root = scrollRef.current;
+    if (!root || typeof IntersectionObserver === 'undefined') return undefined;
+
+    const observer = new IntersectionObserver((entries) => {
+      const indexesToRequest = [];
+      entries.forEach((entry) => {
+        const index = Number(entry.target.dataset.reelIndex);
+        const video = videoRefs.current[index];
+        if (entry.isIntersecting) {
+          nearIndexesRef.current.add(index);
+          indexesToRequest.push(index);
+          if (sectionVisibleRef.current && !selectedReel) video?.play().catch(() => {});
+        } else {
+          nearIndexesRef.current.delete(index);
+          video?.pause();
+        }
+      });
+
+      if (indexesToRequest.length > 0) {
+        setRequestedVideoIndexes((previous) => {
+          const next = new Set(previous);
+          indexesToRequest.forEach((index) => next.add(index));
+          return next.size === previous.size ? previous : next;
+        });
+      }
+    }, { root, rootMargin: '0px 100% 0px 100%', threshold: 0.01 });
+
+    reelCardRefs.current.slice(0, heroReels.length).forEach((card) => {
+      if (card) observer.observe(card);
+    });
+    return () => observer.disconnect();
+  }, [heroReels.length, selectedReel]);
+
+  useEffect(() => {
+    const section = sectionRef.current;
+    if (!section || typeof IntersectionObserver === 'undefined') return undefined;
+
+    const observer = new IntersectionObserver(([entry]) => {
+      sectionVisibleRef.current = entry.isIntersecting;
+      videoRefs.current.forEach((video, index) => {
+        if (!video) return;
+        if (entry.isIntersecting && !selectedReel && nearIndexesRef.current.has(index)) {
+          video.play().catch(() => {});
+        } else {
+          video.pause();
+        }
+      });
+    }, { threshold: 0.01 });
+
+    observer.observe(section);
+    return () => observer.disconnect();
+  }, [selectedReel]);
+
+  useEffect(() => {
+    videoRefs.current.forEach((video, index) => {
+      if (!video) return;
+      if (!selectedReel && sectionVisibleRef.current && nearIndexesRef.current.has(index)) {
+        video.play().catch(() => {});
+      } else {
+        video.pause();
+      }
+    });
+  }, [requestedVideoIndexes, selectedReel]);
 
   const scrollLeft = () => {
     if (scrollRef.current) {
@@ -56,7 +134,7 @@ export default function HeroReelsSection({ heroReels = [], loading = false }) {
   const showSkeleton = loading || !hasReels;
 
   return (
-    <section className="hero-reels-container" style={sectionContainerStyle}>
+    <section ref={sectionRef} className="hero-reels-container" style={sectionContainerStyle}>
       <div style={carouselWrapperStyle}>
         {/* Navigation Arrow Left */}
         {!showSkeleton && heroReels.length > 2 && (
@@ -91,8 +169,11 @@ export default function HeroReelsSection({ heroReels = [], loading = false }) {
           ) : (
             heroReels.map((reel, idx) => {
               const isVideoLoaded = loadedVideos.has(reel.id || idx);
+              const shouldLoadVideo = requestedVideoIndexes.has(idx);
               return (
                 <button
+                  ref={(element) => { reelCardRefs.current[idx] = element; }}
+                  data-reel-index={idx}
                   type="button"
                   key={reel.id || idx}
                   style={reelCardStyle}
@@ -113,14 +194,14 @@ export default function HeroReelsSection({ heroReels = [], loading = false }) {
                       />
                     )}
                     <video
-                      src={reel.video_url}
-                      autoPlay
+                      ref={(element) => { videoRefs.current[idx] = element; }}
+                      src={shouldLoadVideo ? reel.video_url : undefined}
+                      autoPlay={shouldLoadVideo && !selectedReel}
                       muted
                       loop
                       playsInline
-                      preload="auto"
-                      onPlay={() => handleVideoLoad(reel.id || idx)}
-                      onLoadedData={() => handleVideoLoad(reel.id || idx)}
+                      preload={shouldLoadVideo ? 'auto' : 'none'}
+                      onCanPlay={() => handleVideoLoad(reel.id || idx)}
                       style={videoElementStyle}
                     />
                   </div>
@@ -146,12 +227,8 @@ export default function HeroReelsSection({ heroReels = [], loading = false }) {
       {/* Progress Indicator Bar Matching Image 2 */}
       <div style={progressTrackContainerStyle} className="reels-progress-container">
         <div style={progressTrackBgStyle}>
-          <div
-            style={{
-              ...progressBarFillStyle,
-              left: showSkeleton ? '0%' : `${(scrollProgress * (1 - 0.25)).toFixed(2)}%`,
-            }}
-          />
+          <div ref={progressFillRef} style={progressBarFillStyle} />
+
         </div>
       </div>
 
@@ -304,5 +381,6 @@ const progressBarFillStyle = {
   height: '100%',
   backgroundColor: '#000000',
   borderRadius: '2px',
-  transition: 'left 0.1s linear',
+  transform: 'translate3d(0, 0, 0)',
+  willChange: 'transform',
 };

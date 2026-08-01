@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 
 export default function ReelPlayerModal({ reel, reels = [], onClose }) {
@@ -10,9 +10,18 @@ export default function ReelPlayerModal({ reel, reels = [], onClose }) {
   const [isPlaying, setIsPlaying] = useState(true);
   const [isMuted, setIsMuted] = useState(false);
   const [activeIndex, setActiveIndex] = useState(0);
+  const [canPreloadAdjacent, setCanPreloadAdjacent] = useState(false);
 
-  const reelList = reels.length > 0 ? reels : (reel ? [reel] : []);
+  const reelList = useMemo(() => (reels.length > 0 ? reels : (reel ? [reel] : [])), [reels, reel]);
   const activeReel = reelList[activeIndex] || reel;
+  const adjacentReels = useMemo(() => {
+    if (reelList.length < 2) return [];
+    const indexes = new Set([
+      (activeIndex + 1) % reelList.length,
+      (activeIndex - 1 + reelList.length) % reelList.length,
+    ]);
+    return [...indexes].map((index) => reelList[index]).filter(Boolean);
+  }, [activeIndex, reelList]);
 
   const changeReel = (direction) => {
     if (reelList.length < 2) return;
@@ -43,6 +52,10 @@ export default function ReelPlayerModal({ reel, reels = [], onClose }) {
     const nextIndex = reelList.findIndex((item) => (item.id || item.video_url) === (reel.id || reel.video_url));
     setActiveIndex(nextIndex >= 0 ? nextIndex : 0);
   }, [reel, reels]);
+
+  useEffect(() => {
+    setCanPreloadAdjacent(false);
+  }, [activeIndex, reel]);
 
   useEffect(() => {
     if (!reel) return undefined;
@@ -129,6 +142,8 @@ export default function ReelPlayerModal({ reel, reels = [], onClose }) {
           loop
           playsInline
           muted={isMuted}
+          preload="auto"
+          onCanPlay={() => setCanPreloadAdjacent(true)}
           onClick={() => {
             if (didSwipeRef.current) {
               didSwipeRef.current = false;
@@ -139,6 +154,18 @@ export default function ReelPlayerModal({ reel, reels = [], onClose }) {
           onPlay={() => setIsPlaying(true)}
           onPause={() => setIsPlaying(false)}
         />
+
+        {canPreloadAdjacent && adjacentReels.map((item) => (
+          <video
+            key={`preload-${item.id || item.video_url}`}
+            className="reel-player__preload"
+            src={item.video_url}
+            preload="auto"
+            muted
+            playsInline
+            aria-hidden="true"
+          />
+        ))}
 
         {reelList.length > 1 && (
           <div className="reel-player__dots" aria-label="Choose reel">
@@ -180,7 +207,6 @@ export default function ReelPlayerModal({ reel, reels = [], onClose }) {
           justify-content: center;
           padding: 0;
           background: rgba(10, 8, 9, 0.42);
-          backdrop-filter: blur(4px);
           overscroll-behavior: none;
         }
         .reel-player__back {
@@ -232,6 +258,7 @@ export default function ReelPlayerModal({ reel, reels = [], onClose }) {
           object-fit: cover;
           cursor: pointer;
         }
+        .reel-player__preload { display: none !important; }
         .reel-player__dots {
           position: absolute;
           right: 1rem;
