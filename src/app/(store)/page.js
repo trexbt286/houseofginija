@@ -577,7 +577,7 @@ export default function Home() {
                     return (
                       <div key={product.id || index} className="new-arrival-card">
                         <div className="new-arrival-img-container">
-                          <div onClick={(e) => handleProductClick(e, product)} style={{ cursor: 'pointer' }}>
+                          <div onClick={(e) => handleProductClick(e, product)} style={{ cursor: 'pointer', width: '100%', height: '100%' }}>
                             <ImageWithSkeleton 
                               src={product.images?.[0] || '/icon.png'} 
                               alt={product.name} 
@@ -653,7 +653,7 @@ export default function Home() {
                     return (
                       <div key={product.id || index} className="new-arrival-card">
                         <div className="new-arrival-img-container">
-                          <div onClick={(e) => handleProductClick(e, product)} style={{ cursor: 'pointer' }}>
+                          <div onClick={(e) => handleProductClick(e, product)} style={{ cursor: 'pointer', width: '100%', height: '100%' }}>
                             <ImageWithSkeleton 
                               src={product.images?.[0] || '/icon.png'} 
                               alt={product.name} 
@@ -729,7 +729,7 @@ export default function Home() {
                     return (
                       <div key={product.id || index} className="new-arrival-card">
                         <div className="new-arrival-img-container">
-                          <div onClick={(e) => handleProductClick(e, product)} style={{ cursor: 'pointer' }}>
+                          <div onClick={(e) => handleProductClick(e, product)} style={{ cursor: 'pointer', width: '100%', height: '100%' }}>
                             <ImageWithSkeleton 
                               src={product.images?.[0] || '/icon.png'} 
                               alt={product.name} 
