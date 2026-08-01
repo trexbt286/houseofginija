@@ -13,7 +13,6 @@ export default function ProductPage({ params }) {
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
-  
   const [activeImage, setActiveImage] = useState('');
   const [selectedSize, setSelectedSize] = useState('');
   const [selectedColor, setSelectedColor] = useState('');
@@ -25,24 +24,19 @@ export default function ProductPage({ params }) {
     const fetchProductDetails = async () => {
       try {
         const res = await fetch(`/api/products/${slug}`);
-        if (!res.ok) {
-          throw new Error('Product not found in our vaults.');
-        }
+        if (!res.ok) throw new Error('Product not found in our vaults.');
+
         const data = await res.json();
-        setProduct(data.product);
-        if (data.product.images && data.product.images.length > 0) {
-          setActiveImage(data.product.images[0]);
-        }
-        
-        // Auto select first available size/color combinations if they have stock
-        const vars = data.product.variants || [];
+        const nextProduct = data.product;
+        setProduct(nextProduct);
+        setActiveImage(nextProduct.images?.[0] || '');
+
+        const vars = nextProduct.variants || [];
         const inStockVar = vars.find(v => v.stock > 0);
-        if (inStockVar) {
-          setSelectedSize(inStockVar.size || '');
-          setSelectedColor(inStockVar.color || '');
-        } else if (vars.length > 0) {
-          setSelectedSize(vars[0].size || '');
-          setSelectedColor(vars[0].color || '');
+        const firstVariant = inStockVar || vars[0];
+        if (firstVariant) {
+          setSelectedSize(firstVariant.size || '');
+          setSelectedColor(firstVariant.color || '');
         }
       } catch (err) {
         setError(err.message || 'Failed to load product.');
@@ -54,788 +48,298 @@ export default function ProductPage({ params }) {
     fetchProductDetails();
   }, [slug]);
 
-  if (loading) {
-    return <div style={loadingContainerStyle}>Unveiling creation...</div>;
-  }
+  if (loading) return <div style={loadingContainerStyle}>Unveiling creation...</div>;
 
   if (error || !product) {
     return (
       <div style={errorContainerStyle}>
         <h2>Creations Vault Error</h2>
         <p>{error || 'This creation does not exist.'}</p>
-        <Link href="/collections" style={backBtnStyle}>
-          Back to Collections
-        </Link>
+        <Link href="/collections" style={backBtnStyle}>Back to Collections</Link>
       </div>
     );
   }
 
-  // Get available sizes & colors
-  const hasClothingSizes = product.variants && product.variants.some(v => ['S', 'M', 'L', 'XL', 'XXL'].includes(v.size?.toUpperCase()));
-  const sizes = hasClothingSizes 
-    ? ['S', 'M', 'L', 'XL', 'XXL'] 
-    : [...new Set(product.variants.map(v => v.size))].filter(Boolean);
-  const colors = [...new Set(product.variants.map(v => v.color))].filter(Boolean);
-
-  // Find stock of selected size/color combination
-  const getSelectedVariant = () => {
-    return product.variants.find(
-      v => v.size === selectedSize && v.color === selectedColor
-    );
-  };
-
-  const selectedVariant = getSelectedVariant();
+  const variants = product.variants || [];
+  const hasClothingSizes = variants.some(v => ['S', 'M', 'L', 'XL', 'XXL'].includes(v.size?.toUpperCase()));
+  const sizes = hasClothingSizes ? ['S', 'M', 'L', 'XL', 'XXL'] : [...new Set(variants.map(v => v.size))].filter(Boolean);
+  const selectedVariant = variants.find(v => v.size === selectedSize && v.color === selectedColor);
   const stockCount = selectedVariant ? selectedVariant.stock : 0;
   const isOutOfStock = product.is_out_of_stock || stockCount <= 0;
   const isLowStock = stockCount > 0 && stockCount <= 3;
+  const isStarred = wishlist.includes(product.id);
+  const cartItem = cart && cart.find(item => item.id === product.id && item.size === selectedSize && item.color === selectedColor);
+  const cartQty = cartItem ? cartItem.quantity : 0;
+  const formattedPrice = parseFloat(product.price).toLocaleString('en-IN');
 
   const handleAddToCart = () => {
     if (isOutOfStock) return;
     addToCart(product, selectedSize, selectedColor, quantity);
-    
-    // Show success feedback
     setCartSuccess(true);
-    setTimeout(() => {
-      setCartSuccess(false);
-    }, 3000);
+    setTimeout(() => setCartSuccess(false), 3000);
   };
-
-  const isStarred = wishlist.includes(product.id);
-  const cartItem = cart && cart.find(
-    item => item.id === product.id && item.size === selectedSize && item.color === selectedColor
-  );
-  const cartQty = cartItem ? cartItem.quantity : 0;
 
   const handleButtonClick = () => {
     if (isOutOfStock) return;
-    if (cartQty > 0) {
-      router.push('/cart');
-    } else {
-      handleAddToCart();
+    if (cartQty > 0) router.push('/cart');
+    else handleAddToCart();
+  };
+
+  const handleShare = async () => {
+    const shareData = {
+      title: product.name,
+      text: `Explore ${product.name} at House of Ginija`,
+      url: window.location.href,
+    };
+
+    try {
+      if (navigator.share) {
+        await navigator.share(shareData);
+        return;
+      }
+      await navigator.clipboard?.writeText(window.location.href);
+    } catch {
+      // Sharing can be cancelled by the user; no visible fallback is needed.
     }
   };
 
-  return (
-    <div style={pageStyle} className="container animate-fade-in">
-      <div style={breadcrumbsStyle}>
-        <Link href="/">Home</Link> &gt;{' '}
-        <Link href="/collections">Creations</Link> &gt;{' '}
-        <Link href={`/collections?collection=${product.collection_slug}`}>{product.collection_name}</Link> &gt;{' '}
-        <span>{product.name}</span>
-      </div>
+  const primaryActionLabel = isOutOfStock
+    ? 'Sold Out'
+    : cartQty > 0
+    ? `${cartQty} in Bag`
+    : cartSuccess
+    ? 'Added to Bag'
+    : 'Add to Bag';
 
-      <div style={productGridStyle}>
-        {/* Left Column: Image Gallery */}
-        <div style={galleryColumnStyle}>
-          <div style={mainImageContainerStyle}>
-            <img src={activeImage} alt={product.name} style={mainImageStyle} loading="lazy" />
+  return (
+    <main style={pageStyle} className="product-luxury-page animate-fade-in">
+      <section style={heroSectionStyle} className="product-luxury-hero">
+        <div style={imageStageStyle} className="product-luxury-image-stage">
+          <img
+            src={activeImage}
+            alt={product.name}
+            style={mainImageStyle}
+            className="product-luxury-image"
+            loading="eager"
+            fetchPriority="high"
+          />
+
+          <button type="button" onClick={() => router.back()} style={floatingButtonStyle} className="product-floating-button product-floating-back" aria-label="Go back">
+            <svg width="25" height="25" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M19 12H5" /><path d="M12 19l-7-7 7-7" /></svg>
+          </button>
+
+          <div style={floatingActionsStyle} className="product-floating-actions">
+            <button type="button" onClick={() => toggleWishlist(product.id)} style={floatingButtonStyle} className="product-floating-button" aria-label={isStarred ? 'Remove from wishlist' : 'Add to wishlist'}>
+              <svg width="25" height="25" viewBox="0 0 24 24" fill={isStarred ? '#000000' : 'none'} stroke="currentColor" strokeWidth="1.8"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" /></svg>
+            </button>
+            <button type="button" onClick={handleShare} style={floatingButtonStyle} className="product-floating-button" aria-label="Share product">
+              <svg width="25" height="25" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.9"><path d="M4 12v7a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-7" /><path d="M16 6l-4-4-4 4" /><path d="M12 2v14" /></svg>
+            </button>
           </div>
+
           {product.images && product.images.length > 1 && (
-            <div style={thumbnailRowStyle}>
+            <div style={imageDotsStyle} className="product-image-dots" aria-label="Product images">
               {product.images.map((img, idx) => (
-                <button
-                  key={idx}
-                  onClick={() => setActiveImage(img)}
-                  style={activeImage === img ? activeThumbStyle : thumbnailStyle}
-                >
-                  <img src={img} alt={`${product.name} thumbnail ${idx}`} style={thumbImgStyle} loading="lazy" />
-                </button>
+                <button key={idx} type="button" onClick={() => setActiveImage(img)} style={activeImage === img ? activeDotStyle : dotButtonStyle} aria-label={`Show product image ${idx + 1}`} />
               ))}
             </div>
           )}
         </div>
 
-        {/* Right Column: Details & Configuration */}
-        <div style={detailsColumnStyle}>
-          <span style={collectionNameStyle}>{product.collection_name}</span>
+        <div style={detailsPanelStyle} className="product-luxury-details">
+          <Link href={`/collections?collection=${product.collection_slug}`} style={collectionNameStyle}>{product.collection_name}</Link>
           <h1 style={productNameStyle}>{product.name}</h1>
-          <p style={priceStyle}>₹{parseFloat(product.price).toLocaleString('en-IN')}</p>
-
-          <div style={dividerLineStyle}></div>
-
+          <p style={priceStyle}>&#8377;{formattedPrice}</p>
           <p style={descriptionStyle}>{product.description}</p>
 
-          <div style={{ marginTop: '0.5rem', marginBottom: '1rem', fontSize: '0.85rem', color: '#B8860B', fontWeight: '600' }}>
-            {stockCount <= 3 ? (
-              <span style={{ color: '#D9534F' }}>⚠️ Only {stockCount} left in our vaults!</span>
-            ) : (
-              <span>Remaining stock: {stockCount} available</span>
-            )}
+          <div style={stockNoteStyle}>
+            {isOutOfStock ? <span>Selection out of stock</span> : isLowStock ? <span>Only {stockCount} left</span> : <span>Remaining stock: {stockCount} available</span>}
           </div>
 
-          <div style={dividerLineStyle}></div>
-
-          {/* Variant selections */}
-          <div style={selectionContainerStyle}>
-            {sizes.length > 0 && (
-              <div style={selectionGroupStyle}>
-                <span style={selectionLabelStyle}>Select Size:</span>
-                <div style={sizeSelectorStyle}>
-                  {sizes.map(size => {
-                    // Check if size has any stock overall
-                    const variantForSize = product.variants.find(v => (v.size || '').toUpperCase() === size.toUpperCase());
-                    const hasStockInSize = variantForSize && variantForSize.stock > 0;
-                    const isSelected = selectedSize === size;
-
-                    return (
-                      <button
-                        key={size}
-                        disabled={!hasStockInSize}
-                        onClick={() => setSelectedSize(size)}
-                        style={{
-                          ...(isSelected
-                            ? activeSizeBtnStyle
-                            : !hasStockInSize
-                            ? disabledSizeBtnStyle
-                            : sizeBtnStyle),
-                          ...(!hasStockInSize ? { opacity: 0.35, cursor: 'not-allowed', textDecoration: 'line-through' } : {})
-                        }}
-                      >
-                        {size}
-                      </button>
-                    );
-                  })}
-                </div>
+          {sizes.length > 0 && (
+            <div style={selectionGroupStyle}>
+              <span style={selectionLabelStyle}>Select Size</span>
+              <div style={sizeSelectorStyle}>
+                {sizes.map(size => {
+                  const variantForSize = variants.find(v => (v.size || '').toUpperCase() === size.toUpperCase());
+                  const hasStockInSize = variantForSize && variantForSize.stock > 0;
+                  const isSelected = selectedSize === size;
+                  return (
+                    <button key={size} type="button" disabled={!hasStockInSize} onClick={() => setSelectedSize(size)} style={isSelected ? activeSizeBtnStyle : !hasStockInSize ? disabledSizeBtnStyle : sizeBtnStyle}>{size}</button>
+                  );
+                })}
               </div>
-            )}
+            </div>
+          )}
 
-            {/* Quantity */}
-            {!(user && user.role === 'admin') && cartQty === 0 && (
-              <div style={selectionGroupStyle}>
-                <span style={selectionLabelStyle}>Quantity:</span>
-                <div style={quantityWrapperStyle}>
-                  <button
-                    onClick={() => {
-                      if (cartQty > 0) {
-                        updateCartQuantity(product.id, selectedSize, selectedColor, cartQty - 1);
-                      } else {
-                        setQuantity(q => Math.max(1, q - 1));
-                      }
-                    }}
-                    style={qtyBtnStyle}
-                    disabled={isOutOfStock}
-                  >
-                    -
-                  </button>
-                  <span style={qtyValueStyle}>{cartQty > 0 ? cartQty : quantity}</span>
-                  <button
-                    onClick={() => {
-                      if (cartQty > 0) {
-                        if (cartQty >= stockCount) return;
-                        updateCartQuantity(product.id, selectedSize, selectedColor, cartQty + 1);
-                      } else {
-                        setQuantity(q => Math.min(stockCount, q + 1));
-                      }
-                    }}
-                    style={qtyBtnStyle}
-                    disabled={isOutOfStock || (cartQty > 0 ? cartQty >= stockCount : quantity >= stockCount)}
-                  >
-                    +
-                  </button>
-                </div>
+          {!(user && user.role === 'admin') && cartQty === 0 && (
+            <div style={selectionGroupStyle}>
+              <span style={selectionLabelStyle}>Quantity</span>
+              <div style={quantityWrapperStyle}>
+                <button type="button" onClick={() => setQuantity(q => Math.max(1, q - 1))} style={qtyBtnStyle} disabled={isOutOfStock} aria-label="Decrease quantity">-</button>
+                <span style={qtyValueStyle}>{quantity}</span>
+                <button type="button" onClick={() => setQuantity(q => Math.min(stockCount, q + 1))} style={qtyBtnStyle} disabled={isOutOfStock || quantity >= stockCount} aria-label="Increase quantity">+</button>
               </div>
-            )}
+            </div>
+          )}
 
-            {/* Stock status indicator */}
-            <div style={stockStatusContainerStyle}>
-              {isOutOfStock ? (
-                <span style={outOfStockLabelStyle}>
-                  <span style={dotStyle}>●</span> Selection Out of Stock
-                </span>
-              ) : isLowStock ? (
-                <span style={lowStockLabelStyle}>
-                  <span style={dotStyle}>●</span> Low Stock: Only {stockCount} left!
-                </span>
+          <div style={assuranceStripStyle} className="product-assurance-strip">
+            <div style={assuranceItemStyle}><QualityIcon /><span>Premium Quality</span></div>
+            <div style={assuranceItemStyle}><MeasureIcon /><span>Tailored Fit</span></div>
+            <div style={assuranceItemStyle}><ReturnsIcon /><span>Easy Returns</span></div>
+            <div style={assuranceItemStyle}><SecureIcon /><span>Secure Payment</span></div>
+          </div>
+
+          {user && user.role === 'admin' ? (
+            <Link href={`/admin/products?edit=${product.slug}`} style={adminPreviewBtnLinkStyle}>Admin Preview: Edit Product</Link>
+          ) : (
+            <div style={desktopActionsStyle} className="product-desktop-actions">
+              {cartQty > 0 ? (
+                <div className="blinkit-count-controller" style={cartCounterStyle}>
+                  <button type="button" style={cartCounterButtonStyle} onClick={() => updateCartQuantity(product.id, selectedSize, selectedColor, cartQty - 1)}>-</button>
+                  <span style={cartCounterTextStyle}>{cartQty} in Bag</span>
+                  <button type="button" style={{ ...cartCounterButtonStyle, opacity: cartQty >= stockCount ? 0.35 : 1 }} disabled={cartQty >= stockCount} onClick={() => updateCartQuantity(product.id, selectedSize, selectedColor, cartQty + 1)}>+</button>
+                </div>
               ) : (
-                <span style={inStockLabelStyle}>
-                  <span style={dotStyle}>●</span> In Stock
-                </span>
+                <button type="button" onClick={handleButtonClick} style={isOutOfStock ? disabledBuyBtnStyle : cartSuccess ? addedBuyBtnStyle : buyBtnStyle} disabled={isOutOfStock}>{primaryActionLabel}</button>
               )}
             </div>
+          )}
 
-            {/* Action Buttons */}
-            {user && user.role === 'admin' ? (
-              <div style={actionsContainerStyle}>
-                <Link
-                  href={`/admin/products?edit=${product.slug}`}
-                  style={adminPreviewBtnLinkStyle}
-                >
-                  Admin Preview: Edit Product
-                </Link>
-              </div>
-            ) : (
-              <div style={actionsContainerStyle}>
-                {cartQty > 0 ? (
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', flex: 1 }}>
-                    <div className="blinkit-count-controller" style={{ ...buyBtnStyle, backgroundColor: '#FFFFFF', border: '1px solid #D98E9B', display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 1.5rem', cursor: 'default', height: '48px', boxSizing: 'border-box', flex: 1 }}>
-                      <button 
-                        style={{ border: 'none', backgroundColor: 'transparent', fontSize: '1.4rem', color: '#D98E9B', cursor: 'pointer', fontWeight: 'bold', padding: '0 0.8rem' }}
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          updateCartQuantity(product.id, selectedSize, selectedColor, cartQty - 1);
-                        }}
-                      >
-                        -
-                      </button>
-                      <span style={{ fontWeight: '700', color: '#000000', fontSize: '1rem' }}>{cartQty} in bag</span>
-                      <button 
-                        style={{ border: 'none', backgroundColor: 'transparent', fontSize: '1.4rem', color: '#D98E9B', cursor: 'pointer', fontWeight: 'bold', padding: '0 0.8rem', opacity: cartQty >= stockCount ? 0.35 : 1 }}
-                        disabled={cartQty >= stockCount}
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          updateCartQuantity(product.id, selectedSize, selectedColor, cartQty + 1);
-                        }}
-                      >
-                        +
-                      </button>
-                    </div>
-                  </div>
-                ) : (
-                  <button
-                    onClick={handleButtonClick}
-                    style={isOutOfStock ? disabledBuyBtnStyle : cartSuccess ? addedBuyBtnStyle : buyBtnStyle}
-                    disabled={isOutOfStock}
-                  >
-                    {isOutOfStock ? 'Sold Out' : cartSuccess ? '✓ Added to Bag' : 'Add to Bag'}
-                  </button>
-                )}
-
-                <button
-                  onClick={() => toggleWishlist(product.id)}
-                  style={isStarred ? activeWishlistBtnStyle : wishlistBtnStyle}
-                  title={isStarred ? 'Remove from Wishlist' : 'Add to Wishlist'}
-                >
-                  <svg width="22" height="22" viewBox="0 0 24 24" fill={isStarred ? '#D98E9B' : 'none'} stroke={isStarred ? '#D98E9B' : 'currentColor'} strokeWidth="1.5">
-                    <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
-                  </svg>
-                </button>
-              </div>
-            )}
-
-            {cartSuccess && (
-              <div style={successNotificationStyle} className="animate-fade-in">
-                ✨ Timeless creation added to your shopping bag!
-              </div>
-            )}
-          </div>
-
-          <div style={assurancePanelStyle}>
-            <div style={assuranceItemStyle}>
-              <span style={assuranceIconStyle}>✦</span>
-              <div>
-                <strong style={assuranceTitleStyle}>Bespoke Tailoring</strong>
-                <p style={assuranceDescStyle}>Complimentary pattern adjustments to fit your exact measurements. Contact customer care after checkout.</p>
-              </div>
-            </div>
-            <div style={assuranceItemStyle}>
-              <span style={assuranceIconStyle}>✦</span>
-              <div>
-                <strong style={assuranceTitleStyle}>Free Shipping</strong>
-                <p style={assuranceDescStyle}>Complimentary insured door-to-door delivery across India on orders above ₹10,000.</p>
-              </div>
-            </div>
-          </div>
+          {cartSuccess && <div style={successNotificationStyle} className="animate-fade-in">Timeless creation added to your shopping bag.</div>}
         </div>
-      </div>
+      </section>
 
-      {/* Collapsible Reviews Accordion */}
-      {(() => {
-        const getProductReviews = () => {
-          if (!product) return [];
-          if (product.collection_slug === 'suits' || product.name.toLowerCase().includes('suit')) {
-            return [
-              {
-                author: 'Aria S. (Mumbai)',
-                date: 'May 2026',
-                stars: 5,
-                content: 'The custom fit is absolutely exquisite. The fabric weights and silk linings feel incredibly premium against the skin. Will definitely order custom measurements again.'
-              },
-              {
-                author: 'Meera K. (New Delhi)',
-                date: 'June 2026',
-                stars: 5,
-                content: 'Flawless tailoring. Every seam is finished to perfection. It is rare to find this level of slow-fashion artisan craftsmanship today.'
-              }
-            ];
-          } else {
-            return [
-              {
-                author: 'Priya R. (Bengaluru)',
-                date: 'April 2026',
-                stars: 5,
-                content: 'A stunning heirloom piece. The gold luster and weight feel substantial and luxury. The design strikes a perfect balance between modern and traditional.'
-              },
-              {
-                author: 'Kiran D. (Hyderabad)',
-                date: 'June 2026',
-                stars: 5,
-                content: 'Beautifully packaged and absolute master craftsmanship. The detail under a magnifying loop shows how precise the artisan setting is.'
-              }
-            ];
-          }
-        };
+      <section style={reviewsWrapStyle} className="product-reviews-wrap">
+        <ReviewsAccordion product={product} reviewsOpen={reviewsOpen} setReviewsOpen={setReviewsOpen} />
+      </section>
 
-        const reviewsList = getProductReviews();
-
-        return (
-          <div style={{ marginTop: '4rem', borderTop: '1px solid #ECECEC', borderBottom: '1px solid #ECECEC' }}>
-            <button
-              onClick={() => setReviewsOpen(!reviewsOpen)}
-              style={{
-                width: '100%',
-                display: 'flex',
-                justifyContent: 'space-between',
-                alignItems: 'center',
-                padding: '1.5rem 0.5rem',
-                backgroundColor: 'transparent',
-                border: 'none',
-                outline: 'none',
-                cursor: 'pointer',
-                textAlign: 'left'
-              }}
-            >
-              <span style={{ fontFamily: 'var(--font-serif)', fontSize: '1.1rem', color: '#000000', textTransform: 'uppercase', letterSpacing: '0.08em' }}>
-                Client Reviews ({reviewsList.length})
-              </span>
-              <span style={{ fontSize: '1.2rem', color: '#000000' }}>
-                {reviewsOpen ? '−' : '+'}
-              </span>
+      {!(user && user.role === 'admin') && (
+        <div style={stickyBarStyle} className="product-sticky-bar">
+          {cartQty > 0 ? (
+            <div className="blinkit-count-controller" style={stickyCounterStyle}>
+              <button type="button" style={stickyCounterButtonStyle} onClick={() => updateCartQuantity(product.id, selectedSize, selectedColor, cartQty - 1)}>-</button>
+              <span>{cartQty} in Bag</span>
+              <button type="button" style={{ ...stickyCounterButtonStyle, opacity: cartQty >= stockCount ? 0.35 : 1 }} disabled={cartQty >= stockCount} onClick={() => updateCartQuantity(product.id, selectedSize, selectedColor, cartQty + 1)}>+</button>
+            </div>
+          ) : (
+            <button type="button" onClick={handleButtonClick} style={isOutOfStock ? stickyDisabledButtonStyle : stickyBuyButtonStyle} disabled={isOutOfStock}>
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><path d="M6 8h12l-1 12H7L6 8z" /><path d="M9 8a3 3 0 0 1 6 0" /></svg>
+              {primaryActionLabel}
             </button>
-            
-            {reviewsOpen && (
-              <div style={{ padding: '0.5rem 0.5rem 2rem 0.5rem', display: 'flex', flexDirection: 'column', gap: '1.5rem' }} className="animate-fade-in">
-                {reviewsList.map((rev, idx) => (
-                  <div key={idx} style={{ borderBottom: idx < reviewsList.length - 1 ? '1px dashed #F3F3F3' : 'none', paddingBottom: '1.2rem' }}>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.4rem' }}>
-                      <strong style={{ fontSize: '0.88rem', color: '#000000' }}>{rev.author}</strong>
-                      <span style={{ fontSize: '0.75rem', color: 'rgba(0,0,0,0.4)' }}>{rev.date}</span>
-                    </div>
-                    <div style={{ display: 'flex', gap: '0.2rem', marginBottom: '0.5rem', color: '#B8860B', fontSize: '0.85rem' }}>
-                      {'★'.repeat(rev.stars)}{'☆'.repeat(5 - rev.stars)}
-                    </div>
-                    <p style={{ fontSize: '0.82rem', color: 'rgba(0,0,0,0.7)', lineHeight: '1.5', fontStyle: 'italic', margin: 0 }}>
-                      "{rev.content}"
-                    </p>
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
-        );
-      })()}
+          )}
+        </div>
+      )}
+    </main>
+  );
+}
+
+
+function QualityIcon() {
+  return <svg style={assuranceIconStyle} width="25" height="25" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7"><path d="M12 3l2.3 4.7 5.2.8-3.8 3.7.9 5.2L12 15l-4.6 2.4.9-5.2-3.8-3.7 5.2-.8L12 3z" /></svg>;
+}
+
+function MeasureIcon() {
+  return <svg style={assuranceIconStyle} width="25" height="25" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7"><path d="M4 15l5-5 11 11H4v-6z" /><path d="M8 16h1" /><path d="M11 16h1" /><path d="M14 16h1" /></svg>;
+}
+
+function ReturnsIcon() {
+  return <svg style={assuranceIconStyle} width="25" height="25" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7"><path d="M4 12a8 8 0 0 1 13.7-5.7" /><path d="M18 3v5h-5" /><path d="M20 12a8 8 0 0 1-13.7 5.7" /><path d="M6 21v-5h5" /></svg>;
+}
+
+function SecureIcon() {
+  return <svg style={assuranceIconStyle} width="25" height="25" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7"><path d="M12 3l7 3v5c0 4.5-2.8 8.5-7 10-4.2-1.5-7-5.5-7-10V6l7-3z" /><path d="M9 12l2 2 4-4" /></svg>;
+}
+function ReviewsAccordion({ product, reviewsOpen, setReviewsOpen }) {
+  const reviewsList = getProductReviews(product);
+  return (
+    <div style={reviewsContainerStyle}>
+      <button type="button" onClick={() => setReviewsOpen(!reviewsOpen)} style={reviewsButtonStyle}>
+        <span style={reviewsTitleStyle}>Client Reviews ({reviewsList.length})</span>
+        <span style={reviewsToggleStyle}>{reviewsOpen ? '-' : '+'}</span>
+      </button>
+      {reviewsOpen && (
+        <div style={reviewsListStyle} className="animate-fade-in">
+          {reviewsList.map((rev, idx) => (
+            <div key={idx} style={idx < reviewsList.length - 1 ? reviewItemBorderStyle : reviewItemStyle}>
+              <div style={reviewHeaderStyle}><strong style={reviewAuthorStyle}>{rev.author}</strong><span style={reviewDateStyle}>{rev.date}</span></div>
+              <div style={reviewStarsStyle}>{'*'.repeat(rev.stars)}{'*'.repeat(5 - rev.stars)}</div>
+              <p style={reviewTextStyle}>"{rev.content}"</p>
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 }
 
-// Inline styles for Product Details Page
-const pageStyle = {
-  paddingTop: '2.5rem',
-  paddingBottom: '6rem',
-  backgroundColor: '#FFFFFF',
-};
+function getProductReviews(product) {
+  if (product.collection_slug === 'suits' || product.name.toLowerCase().includes('suit')) {
+    return [
+      { author: 'Aria S. (Mumbai)', date: 'May 2026', stars: 5, content: 'The custom fit is absolutely exquisite. The fabric weights and silk linings feel incredibly premium against the skin. Will definitely order custom measurements again.' },
+      { author: 'Meera K. (New Delhi)', date: 'June 2026', stars: 5, content: 'Flawless tailoring. Every seam is finished to perfection. It is rare to find this level of slow-fashion artisan craftsmanship today.' }
+    ];
+  }
+  return [
+    { author: 'Priya R. (Bengaluru)', date: 'April 2026', stars: 5, content: 'A stunning heirloom piece. The gold luster and weight feel substantial and luxury. The design strikes a perfect balance between modern and traditional.' },
+    { author: 'Kiran D. (Hyderabad)', date: 'June 2026', stars: 5, content: 'Beautifully packaged and absolute master craftsmanship. The detail under a magnifying loop shows how precise the artisan setting is.' }
+  ];
+}
 
-const loadingContainerStyle = {
-  textAlign: 'center',
-  padding: '10rem 0',
-  color: '#000000',
-  fontSize: '1.2rem',
-  fontFamily: 'var(--font-serif)',
-};
-
-const errorContainerStyle = {
-  textAlign: 'center',
-  padding: '8rem 2rem',
-  color: '#000000',
-};
-
-const backBtnStyle = {
-  display: 'inline-block',
-  marginTop: '1.5rem',
-  backgroundColor: '#D98E9B',
-  color: '#000000',
-  padding: '0.75rem 2rem',
-  borderRadius: '4px',
-};
-
-const breadcrumbsStyle = {
-  fontSize: '0.8rem',
-  color: '#000000',
-  marginBottom: '2rem',
-  display: 'flex',
-  flexWrap: 'wrap',
-  gap: '0.4rem',
-};
-
-const productGridStyle = {
-  display: 'grid',
-  gridTemplateColumns: '1.1fr 1fr',
-  gap: '4rem',
-  alignItems: 'start',
-  '@media (max-width: 991px)': {
-    gridTemplateColumns: '1fr',
-    gap: '2.5rem',
-  },
-};
-
-const galleryColumnStyle = {
-  display: 'flex',
-  flexDirection: 'column',
-  gap: '1rem',
-};
-
-const mainImageContainerStyle = {
-  position: 'relative',
-  width: '100%',
-  height: '550px',
-  borderRadius: '8px',
-  overflow: 'hidden',
-  boxShadow: 'var(--shadow-md)',
-  backgroundColor: '#FFFFFF',
-};
-
-const mainImageStyle = {
-  width: '100%',
-  height: '100%',
-  objectFit: 'cover',
-};
-
-const heroPinkBadgeStyle = {
-  position: 'absolute',
-  top: '1.5rem',
-  right: '1.5rem',
-  backgroundColor: '#D98E9B',
-  color: '#000000',
-  padding: '0.35rem 1rem',
-  borderRadius: '999px',
-  fontSize: '0.7rem',
-  fontWeight: '700',
-  textTransform: 'uppercase',
-  letterSpacing: '0.1em',
-  border: '1px solid #D98E9B',
-  boxShadow: '0 4px 12px rgba(0,0,0,0.2)',
-};
-
-const thumbnailRowStyle = {
-  display: 'flex',
-  gap: '0.8rem',
-  overflowX: 'auto',
-  paddingBottom: '0.5rem',
-};
-
-const thumbnailStyle = {
-  width: '80px',
-  height: '80px',
-  borderRadius: '4px',
-  overflow: 'hidden',
-  border: '2px solid transparent',
-  backgroundColor: '#FFFFFF',
-  flexShrink: 0,
-};
-
-const activeThumbStyle = {
-  ...thumbnailStyle,
-  bordercolor: '#000000',
-};
-
-const thumbImgStyle = {
-  width: '100%',
-  height: '100%',
-  objectFit: 'cover',
-};
-
-const detailsColumnStyle = {
-  display: 'flex',
-  flexDirection: 'column',
-};
-
-const collectionNameStyle = {
-  fontSize: '0.8rem',
-  textTransform: 'uppercase',
-  letterSpacing: '0.15em',
-  color: '#000000',
-  fontWeight: '600',
-  marginBottom: '0.5rem',
-};
-
-const productNameStyle = {
-  fontSize: '2.8rem',
-  color: '#000000',
-  marginBottom: '0.8rem',
-  fontFamily: 'var(--font-serif)',
-  fontWeight: '400',
-  lineHeight: 1.2,
-};
-
-const priceStyle = {
-  fontSize: '1.6rem',
-  fontWeight: '700',
-  color: '#000000',
-  marginBottom: '1.5rem',
-};
-
-const dividerLineStyle = {
-  height: '1px',
-  backgroundColor: 'rgba(139, 119, 137, 0.12)',
-  margin: '1.5rem 0',
-};
-
-const descriptionStyle = {
-  fontSize: '0.95rem',
-  lineHeight: 1.7,
-  color: '#000000',
-};
-
-const selectionContainerStyle = {
-  display: 'flex',
-  flexDirection: 'column',
-  gap: '1.5rem',
-};
-
-const selectionGroupStyle = {
-  display: 'flex',
-  flexDirection: 'column',
-  gap: '0.6rem',
-};
-
-const selectionLabelStyle = {
-  fontSize: '0.75rem',
-  textTransform: 'uppercase',
-  letterSpacing: '0.08em',
-  color: '#000000',
-  fontWeight: '700',
-};
-
-const sizeSelectorStyle = {
-  display: 'flex',
-  gap: '0.6rem',
-  flexWrap: 'wrap',
-};
-
-const sizeBtnStyle = {
-  border: '1px solid rgba(139, 119, 137, 0.3)',
-  backgroundColor: '#FFFFFF',
-  padding: '0.5rem 1.2rem',
-  fontSize: '0.8rem',
-  borderRadius: '2px',
-  color: '#000000',
-  cursor: 'pointer',
-  transition: 'all 0.2s ease',
-};
-
-const activeSizeBtnStyle = {
-  ...sizeBtnStyle,
-  backgroundColor: '#000000',
-  color: '#FFFFFF',
-  borderColor: '#000000',
-};
-
-const disabledSizeBtnStyle = {
-  ...sizeBtnStyle,
-  opacity: 0.3,
-  textDecoration: 'line-through',
-  cursor: 'not-allowed',
-  backgroundColor: '#F9F9F9',
-  color: '#999999',
-};
-
-const colorSelectorStyle = {
-  display: 'flex',
-  gap: '0.6rem',
-  flexWrap: 'wrap',
-};
-
-const colorBtnStyle = {
-  border: '1px solid rgba(139, 119, 137, 0.3)',
-  backgroundColor: '#FFFFFF',
-  padding: '0.5rem 1.2rem',
-  fontSize: '0.8rem',
-  borderRadius: '2px',
-  color: '#000000',
-  cursor: 'pointer',
-  transition: 'all 0.2s ease',
-};
-
-const activeColorBtnStyle = {
-  ...colorBtnStyle,
-  backgroundColor: '#000000',
-  color: '#FFFFFF',
-  borderColor: '#000000',
-};
-
-const disabledColorBtnStyle = {
-  ...colorBtnStyle,
-  opacity: 0.3,
-  textDecoration: 'line-through',
-  cursor: 'not-allowed',
-  backgroundColor: '#F9F9F9',
-  color: '#999999',
-};
-
-const quantityWrapperStyle = {
-  display: 'flex',
-  alignItems: 'center',
-  border: '1px solid rgba(139, 119, 137, 0.3)',
-  width: '120px',
-  borderRadius: '4px',
-  overflow: 'hidden',
-  backgroundColor: '#FFFFFF',
-};
-
-const qtyBtnStyle = {
-  width: '35px',
-  height: '35px',
-  fontSize: '1.2rem',
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'center',
-  backgroundColor: 'transparent',
-  color: '#000000',
-};
-
-const qtyValueStyle = {
-  flex: 1,
-  textAlign: 'center',
-  fontSize: '0.9rem',
-  fontWeight: '600',
-};
-
-const stockStatusContainerStyle = {
-  fontSize: '0.8rem',
-  fontWeight: '600',
-};
-
-const dotStyle = {
-  marginRight: '0.3rem',
-};
-
-const inStockLabelStyle = {
-  color: '#000000', // Green
-};
-
-const lowStockLabelStyle = {
-  color: '#000000', // Red
-};
-
-const outOfStockLabelStyle = {
-  color: '#000000', // Gray
-};
-
-const actionsContainerStyle = {
-  display: 'flex',
-  gap: '1rem',
-  marginTop: '1rem',
-};
-
-const buyBtnStyle = {
-  flex: 1,
-  backgroundColor: '#F6DDE2', // Deep Plum
-  color: '#000000',
-  padding: '1rem 2rem',
-  fontSize: '0.85rem',
-  fontWeight: '600',
-  textTransform: 'uppercase',
-  letterSpacing: '0.1em',
-  borderRadius: '4px',
-  boxShadow: 'var(--shadow-sm)',
-  transition: 'all 0.3s cubic-bezier(0.25, 1, 0.5, 1)',
-};
-
-const addedBuyBtnStyle = {
-  ...buyBtnStyle,
-  backgroundColor: '#D98E9B',
-  color: '#FFFFFF',
-  transform: 'scale(1.02)',
-};
-
-const disabledBuyBtnStyle = {
-  ...buyBtnStyle,
-  backgroundColor: 'rgba(60, 48, 58, 0.15)',
-  color: '#000000',
-  cursor: 'not-allowed',
-  boxShadow: 'none',
-};
-
-const adminPreviewBtnStyle = {
-  ...buyBtnStyle,
-  backgroundColor: 'transparent',
-  border: '1px solid #000000',
-  color: '#000000',
-  cursor: 'default',
-  textAlign: 'center',
-  boxShadow: 'none',
-};
-
-const adminPreviewBtnLinkStyle = {
-  ...adminPreviewBtnStyle,
-  display: 'block',
-  textDecoration: 'none',
-  cursor: 'pointer',
-  transition: 'all 0.3s ease',
-};
-
-const wishlistBtnStyle = {
-  width: '52px',
-  height: '52px',
-  border: '1px solid rgba(139, 119, 137, 0.3)',
-  borderRadius: '4px',
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'center',
-  color: '#000000',
-  backgroundColor: '#D98E9B',
-};
-
-const activeWishlistBtnStyle = {
-  ...wishlistBtnStyle,
-  bordercolor: '#000000',
-  color: '#000000',
-};
-
-const successNotificationStyle = {
-  backgroundColor: '#FFFFFF',
-  color: '#000000',
-  border: '1px solid #D98E9B',
-  padding: '0.8rem 1rem',
-  borderRadius: '4px',
-  fontSize: '0.85rem',
-  fontWeight: '600',
-  textAlign: 'center',
-};
-
-const assurancePanelStyle = {
-  marginTop: '3.5rem',
-  backgroundColor: '#F6DDE2', // Blush Cream background
-  padding: '1.8rem',
-  borderRadius: '6px',
-  display: 'flex',
-  flexDirection: 'column',
-  gap: '1.2rem',
-  border: '1px solid rgba(139, 119, 137, 0.12)',
-};
-
-const assuranceItemStyle = {
-  display: 'flex',
-  gap: '1rem',
-  alignItems: 'start',
-};
-
-const assuranceIconStyle = {
-  color: '#000000',
-  fontSize: '1.2rem',
-  lineHeight: 1,
-};
-
-const assuranceTitleStyle = {
-  fontSize: '0.85rem',
-  textTransform: 'uppercase',
-  letterSpacing: '0.05em',
-  color: '#D98E9B',
-  display: 'block',
-  marginBottom: '0.2rem',
-};
-
-const assuranceDescStyle = {
-  fontSize: '0.78rem',
-  lineHeight: 1.5,
-  color: '#000000',
-};
+const pageStyle = { backgroundColor: '#FFFFFF', minHeight: '100vh', paddingBottom: '8rem' };
+const loadingContainerStyle = { textAlign: 'center', padding: '10rem 0', color: '#000000', fontSize: '1.2rem', fontFamily: 'var(--font-serif)' };
+const errorContainerStyle = { textAlign: 'center', padding: '8rem 2rem', color: '#000000' };
+const backBtnStyle = { display: 'inline-block', marginTop: '1.5rem', backgroundColor: '#D98E9B', color: '#000000', padding: '0.75rem 2rem', borderRadius: '4px' };
+const heroSectionStyle = { display: 'grid', gridTemplateColumns: 'minmax(0, 1.05fr) minmax(390px, 0.72fr)', alignItems: 'stretch', width: '100%', minHeight: 'calc(100vh - 108px)', backgroundColor: '#FFFFFF' };
+const imageStageStyle = { position: 'relative', minHeight: 'calc(100vh - 108px)', backgroundColor: '#F7F1EF', overflow: 'hidden' };
+const mainImageStyle = { width: '100%', height: '100%', display: 'block', objectFit: 'contain', objectPosition: 'center' };
+const floatingButtonStyle = { width: '58px', height: '58px', borderRadius: '50%', backgroundColor: 'rgba(255, 255, 255, 0.94)', color: '#000000', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 10px 30px rgba(0, 0, 0, 0.18)', backdropFilter: 'blur(10px)' };
+const floatingActionsStyle = { position: 'absolute', top: 'clamp(1rem, 4vw, 2.5rem)', right: 'clamp(1rem, 4vw, 2.5rem)', display: 'flex', gap: '1rem', zIndex: 2 };
+const imageDotsStyle = { position: 'absolute', left: '50%', bottom: 'clamp(1.25rem, 4vw, 2.5rem)', transform: 'translateX(-50%)', display: 'flex', gap: '0.55rem', zIndex: 2 };
+const dotButtonStyle = { width: '11px', height: '11px', borderRadius: '50%', backgroundColor: 'rgba(255, 255, 255, 0.7)', border: '1px solid rgba(0, 0, 0, 0.12)' };
+const activeDotStyle = { ...dotButtonStyle, backgroundColor: '#FFFFFF', transform: 'scale(1.18)' };
+const detailsPanelStyle = { alignSelf: 'end', backgroundColor: '#FFFFFF', padding: 'clamp(2rem, 4vw, 4rem)', borderTopLeftRadius: '34px', boxShadow: '-22px 0 45px rgba(0, 0, 0, 0.06)', display: 'flex', flexDirection: 'column', gap: '1.25rem' };
+const collectionNameStyle = { fontSize: '0.82rem', textTransform: 'uppercase', letterSpacing: '0.15em', color: '#D98E9B', fontWeight: '800' };
+const productNameStyle = { fontFamily: 'var(--font-serif)', fontSize: 'clamp(2.8rem, 5vw, 4.6rem)', fontWeight: '400', lineHeight: 1, color: '#000000' };
+const priceStyle = { fontSize: 'clamp(1.8rem, 3vw, 2.55rem)', fontWeight: '800', color: '#000000', lineHeight: 1.1 };
+const descriptionStyle = { fontSize: '1rem', lineHeight: 1.7, color: 'rgba(0, 0, 0, 0.68)' };
+const stockNoteStyle = { color: '#B8860B', fontSize: '0.95rem', fontWeight: '600' };
+const selectionGroupStyle = { display: 'flex', flexDirection: 'column', gap: '0.8rem', marginTop: '0.35rem' };
+const selectionLabelStyle = { fontSize: '0.78rem', textTransform: 'uppercase', letterSpacing: '0.12em', color: '#D98E9B', fontWeight: '800' };
+const sizeSelectorStyle = { display: 'flex', gap: '0.75rem', flexWrap: 'wrap' };
+const sizeBtnStyle = { minWidth: '62px', height: '48px', border: '1px solid rgba(0, 0, 0, 0.14)', backgroundColor: '#FFFFFF', fontSize: '1rem', borderRadius: '999px', color: '#000000', fontWeight: '800', boxShadow: '0 5px 16px rgba(0, 0, 0, 0.04)' };
+const activeSizeBtnStyle = { ...sizeBtnStyle, backgroundColor: '#000000', color: '#FFFFFF', borderColor: '#000000' };
+const disabledSizeBtnStyle = { ...sizeBtnStyle, opacity: 0.35, textDecoration: 'line-through', cursor: 'not-allowed', backgroundColor: '#F8F8F8', color: '#777777' };
+const quantityWrapperStyle = { display: 'flex', alignItems: 'center', border: '1px solid rgba(0, 0, 0, 0.12)', width: '138px', height: '46px', borderRadius: '999px', overflow: 'hidden', backgroundColor: '#FFFFFF' };
+const qtyBtnStyle = { width: '42px', height: '44px', fontSize: '1.25rem', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#000000' };
+const qtyValueStyle = { flex: 1, textAlign: 'center', fontSize: '0.95rem', fontWeight: '700' };
+const assuranceStripStyle = { display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '0.5rem', borderTop: '1px solid rgba(0, 0, 0, 0.08)', borderBottom: '1px solid rgba(0, 0, 0, 0.08)', padding: '1.25rem 0', marginTop: '0.35rem' };
+const assuranceItemStyle = { display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '0.45rem', textAlign: 'center', color: '#000000', fontSize: '0.78rem' };
+const assuranceIconStyle = { color: '#D98E9B', fontSize: '1.35rem', lineHeight: 1 };
+const desktopActionsStyle = { display: 'flex', marginTop: '0.6rem' };
+const buyBtnStyle = { width: '100%', minHeight: '58px', backgroundColor: '#D98E9B', color: '#FFFFFF', padding: '1rem 2rem', fontSize: '0.95rem', fontWeight: '800', textTransform: 'uppercase', letterSpacing: '0.12em', borderRadius: '999px', boxShadow: '0 16px 28px rgba(217, 142, 155, 0.32)' };
+const addedBuyBtnStyle = { ...buyBtnStyle, backgroundColor: '#000000' };
+const disabledBuyBtnStyle = { ...buyBtnStyle, backgroundColor: 'rgba(60, 48, 58, 0.18)', color: '#000000', cursor: 'not-allowed', boxShadow: 'none' };
+const adminPreviewBtnLinkStyle = { ...buyBtnStyle, display: 'block', textAlign: 'center', textDecoration: 'none', backgroundColor: '#FFFFFF', color: '#000000', border: '1px solid #000000', boxShadow: 'none' };
+const cartCounterStyle = { ...buyBtnStyle, backgroundColor: '#FFFFFF', border: '1px solid #D98E9B', color: '#000000', display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 1.25rem', boxShadow: 'none' };
+const cartCounterButtonStyle = { color: '#D98E9B', fontSize: '1.45rem', fontWeight: '800', padding: '0 0.8rem' };
+const cartCounterTextStyle = { color: '#000000', fontSize: '0.95rem', fontWeight: '800' };
+const successNotificationStyle = { backgroundColor: '#FFFFFF', color: '#000000', border: '1px solid #D98E9B', padding: '0.85rem 1rem', borderRadius: '999px', fontSize: '0.86rem', fontWeight: '700', textAlign: 'center' };
+const reviewsWrapStyle = { maxWidth: '920px', margin: '3rem auto 0', padding: '0 2rem' };
+const reviewsContainerStyle = { borderTop: '1px solid #ECECEC', borderBottom: '1px solid #ECECEC' };
+const reviewsButtonStyle = { width: '100%', display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '1.5rem 0.5rem', backgroundColor: 'transparent', border: 'none', outline: 'none', cursor: 'pointer', textAlign: 'left' };
+const reviewsTitleStyle = { fontFamily: 'var(--font-serif)', fontSize: '1.1rem', color: '#000000', textTransform: 'uppercase', letterSpacing: '0.08em' };
+const reviewsToggleStyle = { fontSize: '1.2rem', color: '#000000' };
+const reviewsListStyle = { padding: '0.5rem 0.5rem 2rem', display: 'flex', flexDirection: 'column', gap: '1.5rem' };
+const reviewItemStyle = { paddingBottom: '1.2rem' };
+const reviewItemBorderStyle = { ...reviewItemStyle, borderBottom: '1px dashed #F3F3F3' };
+const reviewHeaderStyle = { display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.4rem' };
+const reviewAuthorStyle = { fontSize: '0.88rem', color: '#000000' };
+const reviewDateStyle = { fontSize: '0.75rem', color: 'rgba(0,0,0,0.4)' };
+const reviewStarsStyle = { display: 'flex', gap: '0.2rem', marginBottom: '0.5rem', color: '#B8860B', fontSize: '0.85rem' };
+const reviewTextStyle = { fontSize: '0.82rem', color: 'rgba(0,0,0,0.7)', lineHeight: 1.5, fontStyle: 'italic', margin: 0 };
+const stickyBarStyle = { position: 'fixed', left: 0, right: 0, bottom: 0, zIndex: 80, backgroundColor: 'rgba(255, 255, 255, 0.96)', borderTop: '1px solid rgba(0, 0, 0, 0.08)', padding: '0.9rem 1rem calc(0.9rem + env(safe-area-inset-bottom))', backdropFilter: 'blur(16px)', display: 'flex' };
+const stickyBuyButtonStyle = { ...buyBtnStyle, minHeight: '56px', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: '0.8rem' };
+const stickyDisabledButtonStyle = { ...stickyBuyButtonStyle, backgroundColor: 'rgba(60, 48, 58, 0.18)', color: '#000000', cursor: 'not-allowed', boxShadow: 'none' };
+const stickyCounterStyle = { ...cartCounterStyle, minHeight: '56px' };
+const stickyCounterButtonStyle = { color: '#D98E9B', fontSize: '1.5rem', fontWeight: '800', padding: '0 1rem' };
