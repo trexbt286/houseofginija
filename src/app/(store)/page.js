@@ -8,7 +8,7 @@ import ImageWithSkeleton from '@/components/ImageWithSkeleton';
 import SkeletonCard from '@/components/SkeletonCard';
 import HeroReelsSection from '@/components/HeroReelsSection';
 import ProductImageGallery from '@/components/ProductImageGallery';
-import HeavyDressesShowcase from '@/components/HeavyDressesShowcase';
+import FounderReelsRow from '@/components/FounderReelsRow';
 import ShopByCategories from '@/components/ShopByCategories';
 
 const LOCAL_HERO_REELS = Array.from({ length: 8 }, (_, index) => ({
@@ -35,7 +35,6 @@ export default function Home() {
   const [newArrivalsEnabled, setNewArrivalsEnabled] = useState(false);
   const [showAllNewArrivals, setShowAllNewArrivals] = useState(false);
   const [founderReels, setFounderReels] = useState([]);
-  const [heavyDressProducts, setHeavyDressProducts] = useState([]);
 
   const whatsAppNumber = '917080806053';
   const whatsAppUrl = `https://wa.me/${whatsAppNumber}`;
@@ -121,7 +120,6 @@ export default function Home() {
           setNewArrivalProducts(data.newArrivalProducts || []);
           setNewArrivalsEnabled(!!data.new_arrivals_enabled);
           setFounderReels(data.founderReels || []);
-          setHeavyDressProducts(data.heavyDressProducts || []);
         }
       } catch (err) {
         console.error(err);
@@ -513,10 +511,11 @@ export default function Home() {
             READ MORE &rarr;
           </Link>
 
+          {/* 3-Reel Row in About Founder Section */}
+          <FounderReelsRow founderReels={founderReels} loading={loading} />
+
         </div>
       </section>
-
-      <HeavyDressesShowcase reels={founderReels} products={heavyDressProducts} loading={loading} />
 
       {/* Separator Line */}
       <div style={{ height: '1px', backgroundColor: 'rgba(139, 119, 137, 0.15)', width: '100%' }}></div>
