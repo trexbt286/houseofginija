@@ -5,10 +5,8 @@ import ReelPlayerModal from './ReelPlayerModal';
 
 export default function HeroReelsSection({ heroReels = [], loading = false }) {
   const scrollRef = useRef(null);
-  const reelCardRefs = useRef([]);
   const [scrollProgress, setScrollProgress] = useState(0);
   const [loadedVideos, setLoadedVideos] = useState(new Set());
-  const [activeVideoIndexes, setActiveVideoIndexes] = useState(() => new Set([0, 1]));
   const [selectedReel, setSelectedReel] = useState(null);
 
   const handleVideoLoad = (id) => {
@@ -39,34 +37,7 @@ export default function HeroReelsSection({ heroReels = [], loading = false }) {
     }
   }, [heroReels]);
 
-  useEffect(() => {
-    const root = scrollRef.current;
-    if (!root || typeof IntersectionObserver === 'undefined') return;
 
-    const observer = new IntersectionObserver((entries) => {
-      const indexesToActivate = entries
-        .filter((entry) => entry.isIntersecting)
-        .map((entry) => Number(entry.target.dataset.reelIndex));
-
-      if (indexesToActivate.length === 0) return;
-
-      setActiveVideoIndexes((previous) => {
-        const next = new Set(previous);
-        indexesToActivate.forEach((index) => next.add(index));
-        return next.size === previous.size ? previous : next;
-      });
-    }, {
-      root,
-      rootMargin: '0px 100% 0px 100%',
-      threshold: 0.01,
-    });
-
-    reelCardRefs.current.slice(0, heroReels.length).forEach((card) => {
-      if (card) observer.observe(card);
-    });
-
-    return () => observer.disconnect();
-  }, [heroReels.length]);
   const scrollLeft = () => {
     if (scrollRef.current) {
       const cardWidth = scrollRef.current.clientWidth;
@@ -112,7 +83,7 @@ export default function HeroReelsSection({ heroReels = [], loading = false }) {
                       backgroundColor: '#F6DDE2',
                       borderRadius: '24px'
                     }}
-                    className="hero-reel-skeleton"
+                    className="skeleton-pulse"
                   />
                 </div>
               </div>
@@ -120,11 +91,8 @@ export default function HeroReelsSection({ heroReels = [], loading = false }) {
           ) : (
             heroReels.map((reel, idx) => {
               const isVideoLoaded = loadedVideos.has(reel.id || idx);
-              const shouldLoadVideo = activeVideoIndexes.has(idx);
               return (
                 <button
-                  ref={(element) => { reelCardRefs.current[idx] = element; }}
-                  data-reel-index={idx}
                   type="button"
                   key={reel.id || idx}
                   style={reelCardStyle}
@@ -141,22 +109,19 @@ export default function HeroReelsSection({ heroReels = [], loading = false }) {
                           backgroundColor: '#F6DDE2',
                           zIndex: 1
                         }}
-                        className="hero-reel-skeleton"
+                        className="skeleton-pulse"
                       />
                     )}
                     <video
-                      src={shouldLoadVideo ? reel.video_url : undefined}
-                      autoPlay={shouldLoadVideo}
+                      src={reel.video_url}
+                      autoPlay
                       muted
                       loop
                       playsInline
-                      preload={shouldLoadVideo ? 'auto' : 'none'}
-                      fetchPriority={idx < 2 ? 'high' : 'auto'}
-                      onCanPlay={() => handleVideoLoad(reel.id || idx)}
-                      style={{
-                        ...videoElementStyle,
-                        visibility: isVideoLoaded ? 'visible' : 'hidden',
-                      }}
+                      preload="auto"
+                      onPlay={() => handleVideoLoad(reel.id || idx)}
+                      onLoadedData={() => handleVideoLoad(reel.id || idx)}
+                      style={videoElementStyle}
                     />
                   </div>
                 </button>
@@ -231,20 +196,6 @@ export default function HeroReelsSection({ heroReels = [], loading = false }) {
           cursor: pointer;
         }
 
-        .hero-reel-skeleton {
-          background: linear-gradient(100deg, #f6dde2 25%, #fbecef 50%, #f6dde2 75%);
-          background-size: 200% 100%;
-          animation: hero-reel-shimmer 1.4s ease-in-out infinite;
-        }
-
-        @keyframes hero-reel-shimmer {
-          from {
-            background-position: 100% 0;
-          }
-          to {
-            background-position: -100% 0;
-          }
-        }
 
         @media (min-width: 768px) {
           .hero-reels-container {
