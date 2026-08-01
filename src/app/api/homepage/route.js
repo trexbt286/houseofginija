@@ -59,13 +59,23 @@ export async function GET() {
 
     const founderReelsQuery = 'SELECT * FROM founder_reels ORDER BY sort_order ASC, id ASC LIMIT 3';
 
-    const [collectionsResult, flashProductsResult, newArrivalsResult, settingsResult, heroReelsResult, founderReelsResult] = await Promise.all([
+    const heavyDressProductIds = ['1197284660957085697', '1197284433367531521', '1197284438722019329', '1197283535333523457'];
+    const heavyDressProductsQuery = `
+      SELECT p.*, c.name as collection_name, c.slug as collection_slug
+      FROM products p
+      LEFT JOIN collections c ON p.collection_id = c.id
+      WHERE p.id::text = ANY($1::text[])
+      ORDER BY array_position($1::text[], p.id::text)
+    `;
+
+    const [collectionsResult, flashProductsResult, newArrivalsResult, settingsResult, heroReelsResult, founderReelsResult, heavyDressProductsResult] = await Promise.all([
       pool.query(collectionsQuery),
       pool.query(flashProductsQuery),
       pool.query(newArrivalsQuery),
       pool.query(settingsQuery),
       pool.query(heroReelsQuery),
-      pool.query(founderReelsQuery)
+      pool.query(founderReelsQuery),
+      pool.query(heavyDressProductsQuery, [heavyDressProductIds])
     ]);
 
     const flash_sale_enabled = settingsResult.rows.find(r => r.key === 'flash_sale_enabled')?.value === 'true';
@@ -89,6 +99,7 @@ export async function GET() {
 
     const flashProducts = flashProductsResult.rows.map(mapProductData);
     const newArrivalProducts = newArrivalsResult.rows.map(mapProductData);
+    const heavyDressProducts = heavyDressProductsResult.rows.map(mapProductData);
 
     return NextResponse.json({ 
       collections: collectionsResult.rows,
@@ -97,7 +108,8 @@ export async function GET() {
       newArrivalProducts,
       new_arrivals_enabled,
       heroReels: heroReelsResult.rows || [],
-      founderReels: founderReelsResult?.rows || []
+      founderReels: founderReelsResult?.rows || [],
+      heavyDressProducts
     });
   } catch (error) {
     console.error('Fetch homepage data error:', error);
