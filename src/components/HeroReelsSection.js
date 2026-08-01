@@ -245,6 +245,7 @@ export default function HeroReelsSection({ heroReels = [], loading = false }) {
 
         .reels-scroll-track {
           display: flex;
+          align-items: flex-start;
           gap: 12px;
           overflow-x: auto;
           scroll-snap-type: x mandatory;
@@ -261,6 +262,8 @@ export default function HeroReelsSection({ heroReels = [], loading = false }) {
         .reel-card-item {
           flex: 0 0 calc(50% - 6px);
           max-width: calc(50% - 6px);
+          height: calc(88.8889vw - 40.53px);
+          min-height: calc(88.8889vw - 40.53px);
           scroll-snap-align: start;
           box-sizing: border-box;
         }
@@ -285,6 +288,8 @@ export default function HeroReelsSection({ heroReels = [], loading = false }) {
           .reel-card-item {
             flex: 0 0 calc(50% - 10px);
             max-width: 380px;
+            height: auto;
+            min-height: 0;
           }
         }
       `}</style>
