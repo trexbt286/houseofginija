@@ -19,7 +19,7 @@ export default function ImageWithSkeleton({ src, alt, style = {}, className = ''
   const [loaded, setLoaded] = useState(false);
 
   const finalStyle = {
-    backgroundColor: loaded ? 'transparent' : '#F6DDE2',
+    backgroundColor: loaded ? '#FBF0EC' : '#F6DDE2',
     transition: 'background-color 0.4s ease, opacity 0.4s ease',
     opacity: loaded ? 1 : 0.85,
     ...style,

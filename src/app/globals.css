@@ -3173,10 +3173,10 @@ body.mobile-nav-locked .whatsapp-floating-btn {
 
 .new-arrival-card {
   background-color: #FFFFFF;
-  border-radius: 6px;
+  border-radius: 8px;
   overflow: hidden;
   box-shadow: var(--shadow-sm);
-  border: 1px solid rgba(139, 119, 137, 0.05);
+  border: 1px solid rgba(139, 119, 137, 0.08);
   position: relative;
   display: flex;
   flex-direction: column;
@@ -3188,14 +3188,14 @@ body.mobile-nav-locked .whatsapp-floating-btn {
   width: 100%;
   height: 320px;
   overflow: hidden;
-  background-color: #FFFFFF;
-  border-radius: 12px;
+  background-color: #FBF0EC !important;
+  border-radius: 8px 8px 0 0;
 }
 
 .new-arrival-card .new-arrival-img-style {
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  object-fit: cover !important;
 }
 
 .new-arrival-card .new-arrival-card-content {
@@ -3224,7 +3224,7 @@ body.mobile-nav-locked .whatsapp-floating-btn {
 
 .new-arrival-card .new-arrival-price {
   font-size: 0.9rem;
-  color: #000000;
+  color: #2D2429 !important;
   font-weight: 600;
   min-height: 24px;
   display: flex;
