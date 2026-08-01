@@ -1136,9 +1136,6 @@ function CollectionsContent() {
                   );
                 })()}
 
-
-                <ProductFeatureStrip />
-
                 </div>
 
                 {/* Sticky Actions Footer (inside card) */}

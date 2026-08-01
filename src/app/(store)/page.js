@@ -712,8 +712,6 @@ export default function Home() {
                   );
                 })()}
 
-                <ProductFeatureStrip />
-
                 </div>
 
                 {/* Sticky Actions Footer (inside card) */}

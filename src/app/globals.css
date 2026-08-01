@@ -4167,32 +4167,39 @@ body.mobile-nav-locked .storefront-header {
     overflow: hidden !important;
     display: flex !important;
     flex-direction: column !important;
-    gap: 0.18rem !important;
+    justify-content: space-between !important;
+    gap: 0 !important;
+    padding-bottom: 0.25rem !important;
   }
 
   .detail-static-content > * {
     flex-shrink: 0 !important;
   }
 
+  .detail-divider {
+    display: none !important;
+  }
+
   .detail-collection-label {
-    font-size: 0.55rem !important;
+    font-size: 0.6rem !important;
     line-height: 1 !important;
     letter-spacing: 0.11em !important;
+    margin: 0 !important;
   }
 
   .detail-product-name {
     margin: 0 !important;
-    font-size: clamp(1.18rem, 5.8vw, 1.4rem) !important;
-    line-height: 1.04 !important;
-    max-height: 1.08em !important;
+    font-size: clamp(1.15rem, 5.5vw, 1.35rem) !important;
+    line-height: 1.06 !important;
+    max-height: 1.12em !important;
     white-space: nowrap !important;
     overflow: hidden !important;
     text-overflow: ellipsis !important;
   }
 
   .detail-product-price {
-    margin: 0.02rem 0 !important;
-    font-size: clamp(1.02rem, 4.8vw, 1.2rem) !important;
+    margin: 0 !important;
+    font-size: clamp(1.05rem, 4.8vw, 1.25rem) !important;
     line-height: 1.04 !important;
   }
 
@@ -4202,9 +4209,9 @@ body.mobile-nav-locked .storefront-header {
 
   .detail-product-desc {
     margin: 0 !important;
-    font-size: 0.64rem !important;
-    line-height: 1.18 !important;
-    max-height: 2.36em !important;
+    font-size: 0.68rem !important;
+    line-height: 1.25 !important;
+    max-height: 2.5em !important;
     overflow: hidden !important;
     text-overflow: ellipsis !important;
     display: -webkit-box !important;
@@ -4213,20 +4220,23 @@ body.mobile-nav-locked .storefront-header {
   }
 
   .detail-stock-warning {
-    margin: 0.02rem 0 0.08rem !important;
-    font-size: 0.61rem !important;
+    margin: 0 !important;
+    font-size: 0.65rem !important;
     line-height: 1.05 !important;
   }
 
   .detail-option-group {
-    gap: 0.2rem !important;
+    gap: 0.22rem !important;
     margin: 0 !important;
+    display: flex !important;
+    flex-direction: column !important;
   }
 
   .detail-option-title {
-    font-size: 0.55rem !important;
+    font-size: 0.58rem !important;
     line-height: 1 !important;
     letter-spacing: 0.1em !important;
+    margin: 0 !important;
   }
 
   .detail-sizes-row,
@@ -4238,29 +4248,11 @@ body.mobile-nav-locked .storefront-header {
 
   .detail-sizes-row button,
   .detail-colors-row button {
-    min-width: 31px !important;
-    height: 24px !important;
-    padding: 0 0.46rem !important;
-    font-size: 0.63rem !important;
+    min-width: 32px !important;
+    height: 26px !important;
+    padding: 0 0.5rem !important;
+    font-size: 0.66rem !important;
     line-height: 1 !important;
-  }
-
-  .detail-feature-strip {
-    flex-shrink: 0 !important;
-    margin: auto 0 0 !important;
-    padding: 0.3rem 0 0.28rem !important;
-  }
-
-  .detail-feature-item {
-    gap: 0.1rem !important;
-    padding: 0 0.08rem !important;
-    font-size: 0.45rem !important;
-    line-height: 1.05 !important;
-  }
-
-  .detail-feature-icon {
-    width: 15px !important;
-    height: 15px !important;
   }
 
   .card-sticky-footer {
