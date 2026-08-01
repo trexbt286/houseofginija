@@ -68,7 +68,8 @@ async function main() {
         name VARCHAR(100) NOT NULL,
         slug VARCHAR(100) UNIQUE NOT NULL,
         description TEXT,
-        image_url TEXT
+        image_url TEXT,
+        parent_slug VARCHAR(100)
       )
     `);
 
@@ -176,16 +177,55 @@ async function main() {
         slug: 'jewellery',
         description: 'Exquisite artisan-crafted jewelry, featuring heirloom-quality necklaces, rings, earrings, and bracelets.',
         image_url: '/images/jewellery/necklace/WhatsApp Image 2026-06-19 at 2.48.31 PM.jpeg'
+      },
+      {
+        name: 'New Collection',
+        slug: 'new-collection',
+        description: 'The latest House of Ginija arrivals and seasonal edits.',
+        image_url: null
+      },
+      {
+        name: 'Co-ords',
+        slug: 'co-ords',
+        description: 'Contemporary coordinated sets designed for effortless dressing.',
+        image_url: null
+      },
+      {
+        name: 'Heavy Dresses',
+        slug: 'heavy-dresses',
+        description: 'Statement occasion wear featuring intricate craftsmanship and rich detailing.',
+        image_url: null
+      },
+      {
+        name: 'Indo Western',
+        slug: 'indo-western',
+        description: 'Modern silhouettes blending Indian craftsmanship with western styling.',
+        image_url: null,
+        parent_slug: 'heavy-dresses'
+      },
+      {
+        name: 'Heavy Gowns',
+        slug: 'heavy-gowns',
+        description: 'Elaborate gowns created for weddings, celebrations, and evening occasions.',
+        image_url: null,
+        parent_slug: 'heavy-dresses'
+      },
+      {
+        name: 'Shararas',
+        slug: 'shararas',
+        description: 'Elegant sharara ensembles with refined traditional detailing.',
+        image_url: null,
+        parent_slug: 'heavy-dresses'
       }
     ];
 
     const collMap = {};
     for (const c of collectionsData) {
       const res = await client.query(`
-        INSERT INTO collections (name, slug, description, image_url)
-        VALUES ($1, $2, $3, $4)
+        INSERT INTO collections (name, slug, description, image_url, parent_slug)
+        VALUES ($1, $2, $3, $4, $5)
         RETURNING id
-      `, [c.name, c.slug, c.description, c.image_url]);
+      `, [c.name, c.slug, c.description, c.image_url, c.parent_slug || null]);
       collMap[c.slug] = res.rows[0].id;
     }
 

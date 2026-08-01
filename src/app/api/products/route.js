@@ -1,10 +1,12 @@
 import { NextResponse } from 'next/server';
 import pool from '@/lib/db';
+import { ensureCatalogCollections } from '@/lib/catalogCollections';
 
 export const dynamic = 'force-dynamic';
 
 export async function GET(request) {
   try {
+    await ensureCatalogCollections(pool);
     const { searchParams } = new URL(request.url);
     const collection = searchParams.get('collection');
     const search = searchParams.get('search');
@@ -33,8 +35,13 @@ export async function GET(request) {
 
     // Filter by collection slug
     if (collection) {
-      queryText += ` AND c.slug = $${paramIndex}`;
-      queryParams.push(collection);
+      if (collection === 'heavy-dresses') {
+        queryText += ` AND c.slug = ANY(${paramIndex})`;
+        queryParams.push(['heavy-dresses', 'indo-western', 'heavy-gowns', 'shararas']);
+      } else {
+        queryText += ` AND c.slug = ${paramIndex}`;
+        queryParams.push(collection);
+      }
       paramIndex++;
     }
 

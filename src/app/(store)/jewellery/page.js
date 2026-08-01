@@ -421,10 +421,17 @@ function CollectionsContent() {
           style={selectFieldStyle}
         >
           <option value="">All Collections</option>
-          <option value="suits">Suits</option>
-          <option value="rings">Rings</option>
-          <option value="necklaces">Necklaces</option>
-          <option value="bracelets">Bracelets</option>
+          <option value="new-collection">New Collection</option>
+          <option value="co-ords">Co-ords</option>
+          <option value="heavy-dresses">Heavy Dresses</option>
+          <option value="indo-western">- Indo Western</option>
+          <option value="heavy-gowns">- Heavy Gowns</option>
+          <option value="shararas">- Shararas</option>
+          <option value="suits">Unstitched Suits</option>
+          <option value="jewellery">Jewellery</option>
+          <option value="rings">- Rings</option>
+          <option value="necklaces">- Necklaces</option>
+          <option value="bracelets">- Bracelets</option>
         </select>
       </div>
 
@@ -536,6 +543,9 @@ function CollectionsContent() {
         if (selectedCollection) {
           if (selectedCollection === 'suits') {
             filtered = filtered.filter(p => p.collection_slug === 'suits');
+          } else if (selectedCollection === 'heavy-dresses') {
+            const heavyDressCollections = ['heavy-dresses', 'indo-western', 'heavy-gowns', 'shararas'];
+            filtered = filtered.filter(p => heavyDressCollections.includes(p.collection_slug));
           } else if (selectedCollection === 'rings') {
             filtered = filtered.filter(p => p.slug.toLowerCase().includes('ring'));
           } else if (selectedCollection === 'necklaces') {
@@ -740,22 +750,25 @@ function CollectionsContent() {
   };
 
   const getSidebarCategories = () => {
-    const list = [];
-    
-    collections.forEach(col => {
-      if (col.slug === 'suits') {
-        list.push({ id: 'suits', name: col.name, emoji: '👔', targetId: 'suits' });
-      } else if (col.slug === 'jewellery') {
-        list.push({ id: 'rings', name: 'Rings', emoji: '💍', targetId: 'rings' });
-        list.push({ id: 'necklaces', name: 'Necklaces', emoji: '📿', targetId: 'necklaces' });
-        list.push({ id: 'bracelets', name: 'Bracelets', emoji: '📿', targetId: 'bracelets' });
-      }
-    });
-    
-    // Sort to Rings -> Necklaces -> Bracelets -> Suits
-    const order = ['rings', 'necklaces', 'bracelets', 'suits'];
-    list.sort((a, b) => order.indexOf(a.id) - order.indexOf(b.id));
-    
+    const available = new Set(collections.map((collection) => collection.slug));
+    const list = [
+      { id: 'new-collection', name: 'New Collection', targetId: 'new-collection' },
+      { id: 'co-ords', name: 'Co-ords', targetId: 'co-ords' },
+      { id: 'heavy-dresses', name: 'Heavy Dresses', targetId: 'heavy-dresses' },
+      { id: 'indo-western', name: 'Indo Western', targetId: 'indo-western' },
+      { id: 'heavy-gowns', name: 'Heavy Gowns', targetId: 'heavy-gowns' },
+      { id: 'shararas', name: 'Shararas', targetId: 'shararas' },
+      { id: 'suits', name: 'Suits', targetId: 'suits' },
+    ].filter((category) => available.has(category.id));
+
+    if (available.has('jewellery')) {
+      list.push(
+        { id: 'rings', name: 'Rings', targetId: 'rings' },
+        { id: 'necklaces', name: 'Necklaces', targetId: 'necklaces' },
+        { id: 'bracelets', name: 'Bracelets', targetId: 'bracelets' },
+      );
+    }
+
     return list;
   };
 

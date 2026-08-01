@@ -493,11 +493,20 @@ function AdminProductsContent() {
                     required
                   >
                     <option value="">-- Select Collection --</option>
-                    {collections.map((c) => (
+                    {collections.filter((c) => !c.parent_slug).map((c) => (
                       <option key={c.id} value={c.id.toString()}>
                         {c.name}
                       </option>
                     ))}
+                    {collections.some((c) => c.parent_slug === 'heavy-dresses') && (
+                      <optgroup label="Heavy Dresses subcategories">
+                        {collections.filter((c) => c.parent_slug === 'heavy-dresses').map((c) => (
+                          <option key={c.id} value={c.id.toString()}>
+                            {c.name}
+                          </option>
+                        ))}
+                      </optgroup>
+                    )}
                   </select>
                 </div>
               </div>

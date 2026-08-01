@@ -200,6 +200,30 @@ export default function Header() {
                       Suits
                     </Link>
                   </li>
+                  {[
+                    ['New Collection', 'new-collection', false],
+                    ['Co-ords', 'co-ords', false],
+                    ['Heavy Dresses', 'heavy-dresses', false],
+                    ['Indo Western', 'indo-western', true],
+                    ['Heavy Gowns', 'heavy-gowns', true],
+                    ['Shararas', 'shararas', true],
+                  ].map(([label, slug, child]) => (
+                    <li key={slug} style={{ position: 'relative' }}>
+                      <Link
+                        href={'/collections?collection=' + slug}
+                        style={{
+                          ...dropdownLinkItemStyle,
+                          paddingLeft: child ? '2.8rem' : '2.0rem',
+                          fontSize: child ? '0.8rem' : '0.85rem',
+                          fontWeight: child ? '500' : '700',
+                          color: child ? '#565959' : undefined,
+                        }}
+                        onClick={() => { setDropdownOpen(false); setMenuOpen(false); }}
+                      >
+                        {label}
+                      </Link>
+                    </li>
+                  ))}
                   <li style={{ position: 'relative' }}>
                     {/* Main Trunk ends at middle of Jewellery */}
                     <div style={{
@@ -426,7 +450,7 @@ export default function Header() {
 
             {/* 2. NEW COLLECTION */}
             <Link 
-              href="/collections" 
+              href="/collections?collection=new-collection"
               className={`mobile-nav-item-row ${isCurrent('/collections') ? 'active' : ''}`}
               onClick={() => setMenuOpen(false)}
             >
@@ -476,27 +500,35 @@ export default function Header() {
             {/* HEAVY DRESSES Submenu Box */}
             {heavyDressesOpen && (
               <div className="mobile-nav-submenu-card animate-fade-in">
+              <Link
+                href="/collections?collection=heavy-dresses"
+                className="mobile-nav-submenu-item"
+                onClick={() => setMenuOpen(false)}
+              >
+                <span className="mobile-nav-submenu-dot" />
+                <span>ALL HEAVY DRESSES</span>
+              </Link>
                 <Link 
-                  href="/collections?collection=suits&category=indo-western" 
+                  href="/collections?collection=indo-western"
                   className="mobile-nav-submenu-item"
                   onClick={() => setMenuOpen(false)}
-                >
+                  >
                   <span className="mobile-nav-submenu-dot" />
                   <span>INDO WESTERN</span>
                 </Link>
                 <Link 
-                  href="/collections?collection=suits&category=heavy-gown" 
+                  href="/collections?collection=heavy-gowns"
                   className="mobile-nav-submenu-item"
                   onClick={() => setMenuOpen(false)}
-                >
+                  >
                   <span className="mobile-nav-submenu-dot" />
-                  <span>HEAVY GOWN</span>
+                  <span>HEAVY GOWNS</span>
                 </Link>
                 <Link 
-                  href="/collections?collection=suits&category=shararas" 
+                  href="/collections?collection=shararas"
                   className="mobile-nav-submenu-item"
                   onClick={() => setMenuOpen(false)}
-                >
+                  >
                   <span className="mobile-nav-submenu-dot" />
                   <span>SHARARAS</span>
                 </Link>
@@ -514,7 +546,7 @@ export default function Header() {
                   <rect x="5" y="3" width="14" height="18" rx="2" />
                   <line x1="9" y1="3" x2="9" y2="21" />
                 </svg>
-                <span className="mobile-nav-item-title">UNSTITCHED SUITES</span>
+                <span className="mobile-nav-item-title">UNSTITCHED SUITS</span>
               </div>
               {!isCurrent('/suits') && (
                 <div className="mobile-nav-item-chevron">
@@ -527,7 +559,7 @@ export default function Header() {
 
             {/* 5. CO-ORDS */}
             <Link 
-              href="/collections?category=co-ords" 
+              href="/collections?collection=co-ords"
               className="mobile-nav-item-row"
               onClick={() => setMenuOpen(false)}
             >
