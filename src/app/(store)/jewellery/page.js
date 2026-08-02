@@ -9,6 +9,7 @@ import ImageWithSkeleton from '@/components/ImageWithSkeleton';
 import SkeletonCard from '@/components/SkeletonCard';
 import ProductImageGallery from '@/components/ProductImageGallery';
 import { AddToBagLabel, ProductFeatureStrip, ProductShareButton } from '@/components/ProductQuickViewExtras';
+import { compareCatalogProducts, getCategoryTitle, productMatchesCategory } from '@/lib/catalogClient';
 
 function MobileSearchBar({ allProducts, initialQuery, onSearch, handleProductClick }) {
   const [localQuery, setLocalQuery] = useState(initialQuery || '');
@@ -189,7 +190,7 @@ function CollectionsContent() {
   const [loading, setLoading] = useState(true);
 
   // Read initial params
-  const initialCollection = searchParams.get('collection') || '';
+  const initialCollection = searchParams.get('category') || searchParams.get('collection') || '';
   const [selectedCollection, setSelectedCollection] = useState(initialCollection);
   const [searchQuery, setSearchQuery] = useState(searchParams.get('search') || '');
   const [selectedSize, setSelectedSize] = useState('');
@@ -269,7 +270,7 @@ function CollectionsContent() {
   }, []);
 
   // Synchronize state when URL query parameters change (e.g., from Header dropdown links)
-  const colParam = searchParams.get('collection') || '';
+  const colParam = searchParams.get('category') || searchParams.get('collection') || '';
   const searchParam = searchParams.get('search') || '';
   const categoryParam = searchParams.get('category') || '';
 
@@ -421,8 +422,13 @@ function CollectionsContent() {
           onChange={(e) => setSelectedCollection(e.target.value)}
           style={selectFieldStyle}
         >
-          <option value="">All Collections</option>
-          <option value="suits">Suits</option>
+          <option value="">All Categories</option>
+          {collections.map((category) => (
+            <option key={category.id} value={category.slug}>
+              {category.parent_id ? `-- ${category.name}` : category.name}
+            </option>
+          ))}
+          <option disabled>-- Jewellery Types --</option>
           <option value="rings">Rings</option>
           <option value="necklaces">Necklaces</option>
           <option value="bracelets">Bracelets</option>
@@ -516,13 +522,7 @@ function CollectionsContent() {
           if (res.ok) {
             const data = await res.json();
             const list = data.products || [];
-            // Sort prioritizing flash sale items first
-            list.sort((a, b) => {
-              const aFS = a.flash_sale ? 1 : 0;
-              const bFS = b.flash_sale ? 1 : 0;
-              if (aFS !== bFS) return bFS - aFS;
-              return a.name.localeCompare(b.name, undefined, { numeric: true, sensitivity: 'base' });
-            });
+            list.sort((a, b) => compareCatalogProducts(a, b, 'name_asc'));
             setProducts(list);
           }
         } catch (err) {
@@ -535,17 +535,9 @@ function CollectionsContent() {
 
         // Filter mode: apply collection, size, and color filters
         if (selectedCollection) {
-          if (selectedCollection === 'suits') {
-            filtered = filtered.filter(p => p.collection_slug === 'suits');
-          } else if (selectedCollection === 'rings') {
-            filtered = filtered.filter(p => p.slug.toLowerCase().includes('ring'));
-          } else if (selectedCollection === 'necklaces') {
-            filtered = filtered.filter(p => p.slug.toLowerCase().includes('necklace'));
-          } else if (selectedCollection === 'bracelets') {
-            filtered = filtered.filter(p => p.slug.toLowerCase().includes('bracelet'));
-          } else {
-            filtered = filtered.filter(p => p.collection_slug === selectedCollection);
-          }
+          filtered = filtered.filter((product) =>
+            productMatchesCategory(product, selectedCollection)
+          );
         }
 
         if (selectedSize) {
@@ -560,20 +552,7 @@ function CollectionsContent() {
           );
         }
 
-        // Sort: prioritize flash sale first, then selected sort
-        filtered.sort((a, b) => {
-          const aFS = a.flash_sale ? 1 : 0;
-          const bFS = b.flash_sale ? 1 : 0;
-          if (aFS !== bFS) return bFS - aFS;
-
-          if (selectedSort === 'price_asc') {
-            return parseFloat(a.price) - parseFloat(b.price);
-          } else if (selectedSort === 'price_desc') {
-            return parseFloat(b.price) - parseFloat(a.price);
-          } else {
-            return a.name.localeCompare(b.name, undefined, { numeric: true, sensitivity: 'base' });
-          }
-        });
+        filtered.sort((a, b) => compareCatalogProducts(a, b, selectedSort));
 
         setProducts(filtered);
       }
@@ -592,15 +571,8 @@ function CollectionsContent() {
     setSelectedSort('name_asc');
   };
 
-  const getCollectionTitle = () => {
-    if (!selectedCollection) return 'All collections';
-    if (selectedCollection === 'suits') return 'Suits';
-    if (selectedCollection === 'rings') return 'Rings';
-    if (selectedCollection === 'necklaces') return 'Necklaces';
-    if (selectedCollection === 'bracelets') return 'Bracelets';
-    const found = collections.find((c) => c.slug === selectedCollection);
-    return found ? `${found.name} Collection` : 'Collection';
-  };
+  const getCollectionTitle = () =>
+    getCategoryTitle(collections, selectedCollection);
 
   // Group products for "All Collections" and "Jewellery" views
   const groupedProducts = {};
@@ -621,21 +593,10 @@ function CollectionsContent() {
       groupedProducts[groupName].push(p);
     });
 
-    // Sort each group prioritizing flash sale items first
-    Object.keys(groupedProducts).forEach(key => {
-      groupedProducts[key].sort((a, b) => {
-        const aFS = a.flash_sale ? 1 : 0;
-        const bFS = b.flash_sale ? 1 : 0;
-        if (aFS !== bFS) return bFS - aFS;
-
-        if (selectedSort === 'price_asc') {
-          return parseFloat(a.price) - parseFloat(b.price);
-        } else if (selectedSort === 'price_desc') {
-          return parseFloat(b.price) - parseFloat(a.price);
-        } else {
-          return a.name.localeCompare(b.name, undefined, { numeric: true, sensitivity: 'base' });
-        }
-      });
+    Object.keys(groupedProducts).forEach((key) => {
+      groupedProducts[key].sort((a, b) =>
+        compareCatalogProducts(a, b, selectedSort)
+      );
     });
   }
 
@@ -741,22 +702,23 @@ function CollectionsContent() {
   };
 
   const getSidebarCategories = () => {
-    const list = [];
-    
-    collections.forEach(col => {
-      if (col.slug === 'suits') {
-        list.push({ id: 'suits', name: col.name, emoji: '👔', targetId: 'suits' });
-      } else if (col.slug === 'jewellery') {
-        list.push({ id: 'rings', name: 'Rings', emoji: '💍', targetId: 'rings' });
-        list.push({ id: 'necklaces', name: 'Necklaces', emoji: '📿', targetId: 'necklaces' });
-        list.push({ id: 'bracelets', name: 'Bracelets', emoji: '📿', targetId: 'bracelets' });
-      }
-    });
-    
-    // Sort to Rings -> Necklaces -> Bracelets -> Suits
-    const order = ['rings', 'necklaces', 'bracelets', 'suits'];
-    list.sort((a, b) => order.indexOf(a.id) - order.indexOf(b.id));
-    
+    const list = collections
+      .filter((category) =>
+        category.slug !== 'jewellery' &&
+        allProducts.some((product) => product.collection_slug === category.slug)
+      )
+      .map((category) => ({
+        id: category.slug,
+        name: category.name,
+        targetId: category.slug,
+      }));
+
+    if (allProducts.some((product) => product.collection_slug === 'jewellery')) {
+      list.push({ id: 'rings', name: 'Rings', targetId: 'rings' });
+      list.push({ id: 'necklaces', name: 'Necklaces', targetId: 'necklaces' });
+      list.push({ id: 'bracelets', name: 'Bracelets', targetId: 'bracelets' });
+    }
+
     return list;
   };
 

@@ -10,6 +10,7 @@ export default function Header() {
   const { cart, cartCount, updateCartQuantity, removeFromCart, wishlist, toggleWishlist, addToCart, user, logout, setIsLoginOpen } = useStore();
   const [menuOpen, setMenuOpen] = useState(false);
   const [heavyDressesOpen, setHeavyDressesOpen] = useState(false);
+  const [newCollectionOpen, setNewCollectionOpen] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -17,22 +18,6 @@ export default function Header() {
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const pathname = usePathname();
   const router = useRouter();
-
-  const handleAnchorClick = (e, targetId) => {
-    if (e && e.preventDefault) e.preventDefault();
-    setMenuOpen(false);
-
-    if (pathname === '/') {
-      setTimeout(() => {
-        const el = document.getElementById(targetId);
-        if (el) {
-          el.scrollIntoView({ behavior: 'smooth' });
-        }
-      }, 150);
-    } else {
-      router.push(`/#${targetId}`);
-    }
-  };
 
   const scrollYRef = useRef(0);
 
@@ -442,10 +427,21 @@ export default function Header() {
             </Link>
 
             {/* 2. NEW COLLECTION */}
-            <Link 
-              href="/collections" 
-              className={`mobile-nav-item-row ${isCurrent('/collections') ? 'active' : ''}`}
-              onClick={() => setMenuOpen(false)}
+            <div
+              className="mobile-nav-item-row"
+              role="link"
+              tabIndex={0}
+              onClick={() => {
+                setMenuOpen(false);
+                router.push('/collections?collection=new-collection');
+              }}
+              onKeyDown={(event) => {
+                if (event.key === 'Enter' || event.key === ' ') {
+                  event.preventDefault();
+                  setMenuOpen(false);
+                  router.push('/collections?collection=new-collection');
+                }
+              }}
             >
               <div className="mobile-nav-item-left">
                 <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#D98E9B" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
@@ -453,19 +449,66 @@ export default function Header() {
                 </svg>
                 <span className="mobile-nav-item-title">NEW COLLECTION</span>
               </div>
-              {!isCurrent('/collections') && (
-                <div className="mobile-nav-item-chevron">
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                    <polyline points="9 18 15 12 9 6"></polyline>
-                  </svg>
-                </div>
-              )}
-            </Link>
+              <button
+                type="button"
+                className="mobile-nav-item-chevron"
+                aria-label={newCollectionOpen ? 'Collapse New Collection menu' : 'Expand New Collection menu'}
+                aria-expanded={newCollectionOpen}
+                onClick={(event) => {
+                  event.preventDefault();
+                  event.stopPropagation();
+                  setNewCollectionOpen((open) => !open);
+                }}
+              >
+                <svg
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2.5"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  style={{ transform: newCollectionOpen ? 'rotate(180deg)' : 'rotate(0deg)', transition: 'transform 0.25s ease' }}
+                >
+                  <polyline points="6 9 12 15 18 9"></polyline>
+                </svg>
+              </button>
+            </div>
 
-            {/* 3. HEAVY DRESSES (Dropdown Toggle + Anchor Scroll) */}
-            <div 
+            {newCollectionOpen && (
+              <div className="mobile-nav-submenu-card animate-fade-in">
+                <Link href="/collections?collection=muslin" className="mobile-nav-submenu-item" onClick={() => setMenuOpen(false)}>
+                  <span className="mobile-nav-submenu-dot" />
+                  <span>MUSLIN</span>
+                </Link>
+                <Link href="/collections?collection=cotton" className="mobile-nav-submenu-item" onClick={() => setMenuOpen(false)}>
+                  <span className="mobile-nav-submenu-dot" />
+                  <span>COTTON</span>
+                </Link>
+                <Link href="/collections?collection=cotton-linen" className="mobile-nav-submenu-item" onClick={() => setMenuOpen(false)}>
+                  <span className="mobile-nav-submenu-dot" />
+                  <span>COTTON LINEN</span>
+                </Link>
+              </div>
+            )}
+
+            {/* 3. HEAVY DRESSES */}
+            <div
               className="mobile-nav-item-row"
-              onClick={(e) => handleAnchorClick(e, 'heavy-dresses')}
+              role="link"
+              tabIndex={0}
+              onClick={() => {
+                setMenuOpen(false);
+                router.push('/collections?collection=heavy-dresses');
+              }}
+              onKeyDown={(event) => {
+                if (event.key === 'Enter' || event.key === ' ') {
+                  event.preventDefault();
+                  setMenuOpen(false);
+                  router.push('/collections?collection=heavy-dresses');
+                }
+              }}
             >
               <div className="mobile-nav-item-left">
                 <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#D98E9B" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
@@ -473,56 +516,47 @@ export default function Header() {
                 </svg>
                 <span className="mobile-nav-item-title">HEAVY DRESSES</span>
               </div>
-              <div 
+              <button
+                type="button"
                 className="mobile-nav-item-chevron"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  setHeavyDressesOpen(!heavyDressesOpen);
+                aria-label={heavyDressesOpen ? 'Collapse Heavy Dresses menu' : 'Expand Heavy Dresses menu'}
+                aria-expanded={heavyDressesOpen}
+                onClick={(event) => {
+                  event.preventDefault();
+                  event.stopPropagation();
+                  setHeavyDressesOpen((open) => !open);
                 }}
               >
-                <svg 
-                  width="16" 
-                  height="16" 
-                  viewBox="0 0 24 24" 
-                  fill="none" 
-                  stroke="currentColor" 
-                  strokeWidth="2.5" 
-                  strokeLinecap="round" 
+                <svg
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2.5"
+                  strokeLinecap="round"
                   strokeLinejoin="round"
                   style={{ transform: heavyDressesOpen ? 'rotate(180deg)' : 'rotate(0deg)', transition: 'transform 0.25s ease' }}
                 >
                   <polyline points="6 9 12 15 18 9"></polyline>
                 </svg>
-              </div>
+              </button>
             </div>
 
-            {/* HEAVY DRESSES Submenu Box */}
             {heavyDressesOpen && (
               <div className="mobile-nav-submenu-card animate-fade-in">
-                <a 
-                  href="#indo-western" 
-                  className="mobile-nav-submenu-item"
-                  onClick={(e) => handleAnchorClick(e, 'indo-western')}
-                >
+                <Link href="/collections?collection=indo-western" className="mobile-nav-submenu-item" onClick={() => setMenuOpen(false)}>
                   <span className="mobile-nav-submenu-dot" />
-                  <span>INDO WESTERN</span>
-                </a>
-                <a 
-                  href="#heavy-gown" 
-                  className="mobile-nav-submenu-item"
-                  onClick={(e) => handleAnchorClick(e, 'heavy-gown')}
-                >
-                  <span className="mobile-nav-submenu-dot" />
-                  <span>HEAVY GOWN</span>
-                </a>
-                <a 
-                  href="#shararas" 
-                  className="mobile-nav-submenu-item"
-                  onClick={(e) => handleAnchorClick(e, 'shararas')}
-                >
+                  <span>INDO-WESTERN</span>
+                </Link>
+                <Link href="/collections?collection=shararas" className="mobile-nav-submenu-item" onClick={() => setMenuOpen(false)}>
                   <span className="mobile-nav-submenu-dot" />
                   <span>SHARARAS</span>
-                </a>
+                </Link>
+                <Link href="/collections?collection=gowns" className="mobile-nav-submenu-item" onClick={() => setMenuOpen(false)}>
+                  <span className="mobile-nav-submenu-dot" />
+                  <span>GOWNS</span>
+                </Link>
               </div>
             )}
 
@@ -537,7 +571,7 @@ export default function Header() {
                   <rect x="5" y="3" width="14" height="18" rx="2" />
                   <line x1="9" y1="3" x2="9" y2="21" />
                 </svg>
-                <span className="mobile-nav-item-title">UNSTITCHED SUITES</span>
+                <span className="mobile-nav-item-title">UNSTITCHED SUITS</span>
               </div>
               {!isCurrent('/suits') && (
                 <div className="mobile-nav-item-chevron">
@@ -550,7 +584,7 @@ export default function Header() {
 
             {/* 5. CO-ORDS */}
             <Link 
-              href="/collections?category=co-ords" 
+              href="/collections?collection=co-ords"
               className="mobile-nav-item-row"
               onClick={() => setMenuOpen(false)}
             >
@@ -589,7 +623,26 @@ export default function Header() {
               )}
             </Link>
 
-            {/* 7. OUR STORY */}
+            {/* 7. FLASH SALE */}
+            <Link
+              href="/collections?collection=flash-sale"
+              className="mobile-nav-item-row"
+              onClick={() => setMenuOpen(false)}
+            >
+              <div className="mobile-nav-item-left">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#D98E9B" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M12 2c1.5 4-1 5.5-1 8 0 1.7 1.3 3 3 3 2.2 0 4-1.8 4-4 2 2.2 3 4.6 3 7a9 9 0 0 1-18 0c0-4.1 2.4-7.4 6-10-.2 2.5.8 4 2 5" />
+                </svg>
+                <span className="mobile-nav-item-title">FLASH SALE</span>
+              </div>
+              <div className="mobile-nav-item-chevron">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                  <polyline points="9 18 15 12 9 6"></polyline>
+                </svg>
+              </div>
+            </Link>
+
+            {/* 8. OUR STORY */}
             <Link 
               href="/about" 
               className={`mobile-nav-item-row ${isCurrent('/about') ? 'active' : ''}`}
@@ -611,7 +664,7 @@ export default function Header() {
               )}
             </Link>
 
-            {/* 8. CONTACT */}
+            {/* 9. CONTACT */}
             <Link 
               href="/contact" 
               className={`mobile-nav-item-row ${isCurrent('/contact') ? 'active' : ''}`}

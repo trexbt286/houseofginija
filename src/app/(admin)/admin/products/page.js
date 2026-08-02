@@ -5,11 +5,13 @@ import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import { useStore } from '@/context/StoreContext';
 import AdminSidebar from '@/components/AdminSidebar';
+import { AdminProductMetadataBadges, AdminProductMetadataFields } from '@/components/AdminProductMetadataFields';
 
 function AdminProductsContent() {
   const { logout } = useStore();
   const [products, setProducts] = useState([]);
   const [collections, setCollections] = useState([]);
+  const [tags, setTags] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
@@ -24,8 +26,10 @@ function AdminProductsContent() {
     price: '',
     collection_id: '',
     is_out_of_stock: false,
+    on_sale: false,
   });
 
+  const [selectedTagIds, setSelectedTagIds] = useState([]);
   const [images, setImages] = useState([]);
   const [variants, setVariants] = useState([]);
 
@@ -64,6 +68,7 @@ function AdminProductsContent() {
       const data = await res.json();
       setProducts(data.products || []);
       setCollections(data.collections || []);
+      setTags(data.tags || []);
     } catch (err) {
       console.error(err);
       setError(err.message || 'Error fetching catalog details.');
@@ -303,7 +308,9 @@ function AdminProductsContent() {
       price: '',
       collection_id: '',
       is_out_of_stock: false,
+      on_sale: false,
     });
+    setSelectedTagIds([]);
     setImages([]);
     setVariants([]);
     setIsFormOpen(true);
@@ -318,7 +325,9 @@ function AdminProductsContent() {
       price: product.price.toString(),
       collection_id: product.collection_id ? product.collection_id.toString() : '',
       is_out_of_stock: !!product.is_out_of_stock,
+      on_sale: !!product.on_sale,
     });
+    setSelectedTagIds((product.tags || []).map((tag) => Number(tag.id)));
     setImages(product.images || []);
     setVariants(product.variants || []);
     setIsFormOpen(true);
@@ -343,6 +352,7 @@ function AdminProductsContent() {
       ...formFields,
       images,
       variants,
+      tag_ids: selectedTagIds,
     };
 
     if (editingId) {
@@ -484,7 +494,7 @@ function AdminProductsContent() {
                   />
                 </div>
                 <div style={{ ...formGroupStyle, flex: 1 }}>
-                  <label style={labelStyle}>Collection Folder</label>
+                  <label style={labelStyle}>Category / Subcategory</label>
                   <select
                     name="collection_id"
                     value={formFields.collection_id}
@@ -492,10 +502,10 @@ function AdminProductsContent() {
                     style={selectStyle}
                     required
                   >
-                    <option value="">-- Select Collection --</option>
-                    {collections.map((c) => (
-                      <option key={c.id} value={c.id.toString()}>
-                        {c.name}
+                    <option value="">-- Select Category --</option>
+                    {collections.map((category) => (
+                      <option key={category.id} value={category.id.toString()}>
+                        {category.parent_id ? `-- ${category.name}` : category.name}
                       </option>
                     ))}
                   </select>
@@ -514,6 +524,14 @@ function AdminProductsContent() {
                   placeholder="Detailed description, textile origin, fit, tailoring instructions..."
                 ></textarea>
               </div>
+
+              <AdminProductMetadataFields
+                tags={tags}
+                selectedTagIds={selectedTagIds}
+                onSelectedTagIdsChange={setSelectedTagIds}
+                onSale={formFields.on_sale}
+                onSaleChange={(onSale) => setFormFields((current) => ({ ...current, on_sale: onSale }))}
+              />
 
               {/* Row 4: Toggles */}
               <div style={formRowStyle}>
@@ -723,6 +741,7 @@ function AdminProductsContent() {
                             <strong style={tableProdNameStyle}>
                               {p.name}
                             </strong>
+                            <AdminProductMetadataBadges product={p} />
                           </div>
                         </div>
                       </td>

@@ -1,26 +1,78 @@
 import { NextResponse } from 'next/server';
 import pool from '@/lib/db';
-import { shouldUseLocalCatalogFallbackFirst, canUseLocalCatalogFallback, getLocalProductsResponseFallback } from '@/lib/localCatalogFallback';
+import {
+  PRODUCT_COLLECTION_JOINS,
+  PRODUCT_SELECT_FIELDS,
+  mapProductData,
+} from '@/lib/catalogMetadata';
+import {
+  shouldUseLocalCatalogFallbackFirst,
+  canUseLocalCatalogFallback,
+  getLocalProductsResponseFallback,
+} from '@/lib/localCatalogFallback';
 
 export const dynamic = 'force-dynamic';
 
 export async function GET(request) {
   if (shouldUseLocalCatalogFallbackFirst()) {
-    return NextResponse.json(getLocalProductsResponseFallback());
+    const response = getLocalProductsResponseFallback();
+    const { searchParams } = new URL(request.url);
+    const collection = searchParams.get('collection') || searchParams.get('category');
+    const tag = searchParams.get('tag');
+    const search = searchParams.get('search');
+    const ids = searchParams.get('ids');
+    const sort = searchParams.get('sort');
+
+    let products = [...response.products];
+
+    if (ids) {
+      const selectedIds = new Set(ids.split(',').map(String));
+      products = products.filter((product) => selectedIds.has(String(product.id)));
+    }
+    if (collection) {
+      products = products.filter((product) =>
+        product.collection_slug === collection ||
+        product.parent_collection_slug === collection ||
+        (collection === 'new-collection' && product.new_arrival) ||
+        (collection === 'flash-sale' && (product.on_sale || product.flash_sale))
+      );
+    }
+    if (tag) {
+      products = products.filter((product) =>
+        (product.tags || []).some((productTag) => productTag.slug === tag)
+      );
+    }
+    if (search) {
+      const term = search.toLowerCase();
+      products = products.filter((product) => product.name.toLowerCase().includes(term));
+    }
+
+    products.sort((a, b) => {
+      const saleDelta = Number(Boolean(b.on_sale)) - Number(Boolean(a.on_sale));
+      if (saleDelta) return saleDelta;
+      const flashDelta = Number(Boolean(b.flash_sale)) - Number(Boolean(a.flash_sale));
+      if (flashDelta) return flashDelta;
+      if (sort === 'price_asc') return Number(a.price) - Number(b.price);
+      if (sort === 'price_desc') return Number(b.price) - Number(a.price);
+      return a.name.localeCompare(b.name, undefined, { numeric: true, sensitivity: 'base' });
+    });
+
+    return NextResponse.json({ ...response, products });
   }
 
   try {
     const { searchParams } = new URL(request.url);
-    const collection = searchParams.get('collection');
+    const collection = searchParams.get('collection') || searchParams.get('category');
     const search = searchParams.get('search');
     const size = searchParams.get('size');
     const color = searchParams.get('color');
+    const tag = searchParams.get('tag');
     const sort = searchParams.get('sort');
 
     let queryText = `
-      SELECT p.*, c.name as collection_name, c.slug as collection_slug 
-      FROM products p 
-      LEFT JOIN collections c ON p.collection_id = c.id 
+      SELECT ${PRODUCT_SELECT_FIELDS}
+      FROM products p
+      ${PRODUCT_COLLECTION_JOINS}
       WHERE 1=1
     `;
     const queryParams = [];
@@ -28,85 +80,83 @@ export async function GET(request) {
 
     const ids = searchParams.get('ids');
     if (ids) {
-      const idArray = ids.split(',').map(id => parseInt(id, 10)).filter(id => !isNaN(id));
+      const idArray = ids.split(',').map((id) => Number.parseInt(id, 10)).filter(Number.isInteger);
       if (idArray.length > 0) {
-        queryText += ` AND p.id = ANY($${paramIndex})`;
+        queryText += ` AND p.id = ANY($${paramIndex}::int[])`;
         queryParams.push(idArray);
-        paramIndex++;
+        paramIndex += 1;
       }
     }
 
-    // Filter by collection slug
     if (collection) {
-      queryText += ` AND c.slug = $${paramIndex}`;
+      queryText += ` AND (
+        c.slug = ${paramIndex}
+        OR parent_c.slug = ${paramIndex}
+        OR (${paramIndex} = 'gowns' AND c.slug = 'heavy-gown')
+        OR (${paramIndex} = 'new-collection' AND p.new_arrival = TRUE)
+        OR (${paramIndex} = 'flash-sale' AND (p.on_sale = TRUE OR p.flash_sale = TRUE))
+      )`;
       queryParams.push(collection);
-      paramIndex++;
+      paramIndex += 1;
     }
 
-    // Filter by text search
+    if (tag) {
+      queryText += ` AND EXISTS (
+        SELECT 1
+        FROM product_tags filter_pt
+        INNER JOIN tags filter_tag ON filter_tag.id = filter_pt.tag_id
+        WHERE filter_pt.product_id = p.id AND filter_tag.slug = $${paramIndex}
+      )`;
+      queryParams.push(tag);
+      paramIndex += 1;
+    }
+
     if (search) {
       queryText += ` AND p.name ILIKE $${paramIndex}`;
       queryParams.push(`%${search}%`);
-      paramIndex++;
+      paramIndex += 1;
     }
 
-    // Filter by variant size availability using Postgres jsonb query
     if (size) {
       queryText += ` AND EXISTS (
-        SELECT 1 FROM jsonb_to_recordset(p.variants) AS v(size TEXT, stock INT) 
+        SELECT 1 FROM jsonb_to_recordset(p.variants) AS v(size TEXT, stock INT)
         WHERE v.size = $${paramIndex} AND v.stock > 0
       )`;
       queryParams.push(size);
-      paramIndex++;
+      paramIndex += 1;
     }
 
-    // Filter by variant color availability using Postgres jsonb query
     if (color) {
       queryText += ` AND EXISTS (
-        SELECT 1 FROM jsonb_to_recordset(p.variants) AS v(color TEXT, stock INT) 
+        SELECT 1 FROM jsonb_to_recordset(p.variants) AS v(color TEXT, stock INT)
         WHERE v.color = $${paramIndex} AND v.stock > 0
       )`;
       queryParams.push(color);
-      paramIndex++;
+      paramIndex += 1;
     }
 
-    // Sorting options
+    const naturalNameSort = `SUBSTRING(p.name FROM '^[^0-9]+') ASC,
+      COALESCE(NULLIF(SUBSTRING(p.name FROM '[0-9]+'), ''), '0')::integer ASC,
+      p.name ASC`;
+
     if (sort === 'price_asc') {
-      queryText += ' ORDER BY p.price ASC';
+      queryText += ' ORDER BY p.on_sale DESC, p.price ASC, p.flash_sale DESC, p.id ASC';
     } else if (sort === 'price_desc') {
-      queryText += ' ORDER BY p.price DESC';
-    } else if (sort === 'name_asc') {
-      queryText += " ORDER BY p.flash_sale DESC, SUBSTRING(p.name FROM '^[^0-9]+') ASC, COALESCE(NULLIF(SUBSTRING(p.name FROM '[0-9]+'), ''), '0')::integer ASC, p.name ASC";
+      queryText += ' ORDER BY p.on_sale DESC, p.price DESC, p.flash_sale DESC, p.id ASC';
     } else {
-      // Default: Flash sale products first, then alphabetical by name naturally
-      queryText += " ORDER BY p.flash_sale DESC, SUBSTRING(p.name FROM '^[^0-9]+') ASC, COALESCE(NULLIF(SUBSTRING(p.name FROM '[0-9]+'), ''), '0')::integer ASC, p.name ASC";
+      queryText += ` ORDER BY p.on_sale DESC, p.flash_sale DESC, ${naturalNameSort}`;
     }
 
     const result = await pool.query(queryText, queryParams);
+    const settingsResult = await pool.query(
+      "SELECT value FROM settings WHERE key = 'flash_sale_enabled'"
+    );
+    const flash_sale_enabled =
+      settingsResult.rows.length > 0 && settingsResult.rows[0].value === 'true';
 
-    // Fetch global settings
-    const settingsResult = await pool.query("SELECT value FROM settings WHERE key = 'flash_sale_enabled'");
-    const flash_sale_enabled = settingsResult.rows.length > 0 ? settingsResult.rows[0].value === 'true' : false;
-
-    const products = result.rows.map(p => {
-      let images = p.images;
-      if (typeof images === 'string') {
-        try { images = JSON.parse(images); } catch (e) {}
-      }
-      let variants = p.variants;
-      if (typeof variants === 'string') {
-        try { variants = JSON.parse(variants); } catch (e) {}
-      }
-      return {
-        ...p,
-        images: Array.isArray(images) ? images : [],
-        variants: Array.isArray(variants) ? variants : [],
-      };
-    });
-
-    return NextResponse.json({ 
-      products,
-      flash_sale_enabled 
+    return NextResponse.json({
+      products: result.rows.map(mapProductData),
+      flash_sale_enabled,
     });
   } catch (error) {
     console.error('Fetch products error:', error);

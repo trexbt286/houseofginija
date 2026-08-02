@@ -5,11 +5,12 @@ import Link from 'next/link';
 import { useRef } from 'react';
 
 const categories = [
-  { name: 'Indo Western', image: '/images/categories/indo-western.png', href: '/collections?collection=suits&category=indo-western' },
-  { name: 'Unstitched', image: '/images/categories/unstitched.png', href: '/suits' },
-  { name: 'Heavy Dresses', image: '/images/categories/heavy-dresses.png', href: '/collections?collection=suits&category=heavy-gown' },
-  { name: 'Co-ords', image: '/images/categories/co-ords.png', href: '/collections?category=co-ords' },
-  { name: 'Jewellery', image: '/images/categories/jewellery.png', href: '/jewellery' },
+  { name: 'New Collection', image: '/local-products/033-blush-pink-drape-1.jpg', href: '/collections?collection=new-collection' },
+  { name: 'Heavy Dresses', image: '/images/categories/heavy-dresses.png', href: '/collections?collection=heavy-dresses' },
+  { name: 'Co-ords', image: '/images/categories/co-ords.png', href: '/collections?collection=co-ords' },
+  { name: 'Unstitched Suits', image: '/images/categories/unstitched.png', href: '/collections?collection=suits' },
+  { name: 'Jewellery', image: '/images/categories/jewellery.png', href: '/collections?collection=jewellery' },
+  { name: 'Flash Sale', image: '/local-products/001-bespoke-necklace-4-1.jpg', href: '/collections?collection=flash-sale' },
 ];
 
 export default function ShopByCategories() {

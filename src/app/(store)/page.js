@@ -620,14 +620,14 @@ export default function Home() {
               </div>
 
               <div style={seeMoreBtnContainerStyle}>
-                <Link href="/indo-western" style={seeMoreButtonStyle} className="see-more-btn">
+                <Link href="/collections?collection=indo-western" style={seeMoreButtonStyle} className="see-more-btn">
                   SEE MORE &rarr;
                 </Link>
               </div>
             </div>
 
-            {/* 2. HEAVY GOWN SUB-SECTION */}
-            <div id="heavy-gown" className="heavy-dresses-subsection">
+            {/* 2. GOWNS SUB-SECTION */}
+            <div id="gowns" className="heavy-dresses-subsection">
               <div style={{ textAlign: 'center', marginBottom: '1.8rem' }}>
                 <h3 style={{
                   fontFamily: 'var(--font-serif)',
@@ -637,7 +637,7 @@ export default function Home() {
                   letterSpacing: '0.02em',
                   marginBottom: '0.4rem'
                 }}>
-                  Heavy Gown
+                  Gowns
                 </h3>
                 <div style={{ width: '40px', height: '1.5px', backgroundColor: '#B97285', margin: '0 auto' }}></div>
               </div>
@@ -696,7 +696,7 @@ export default function Home() {
               </div>
 
               <div style={seeMoreBtnContainerStyle}>
-                <Link href="/heavy-gown" style={seeMoreButtonStyle} className="see-more-btn">
+                <Link href="/collections?collection=gowns" style={seeMoreButtonStyle} className="see-more-btn">
                   SEE MORE &rarr;
                 </Link>
               </div>
@@ -772,7 +772,7 @@ export default function Home() {
               </div>
 
               <div style={seeMoreBtnContainerStyle}>
-                <Link href="/shararas" style={seeMoreButtonStyle} className="see-more-btn">
+                <Link href="/collections?collection=shararas" style={seeMoreButtonStyle} className="see-more-btn">
                   SEE MORE &rarr;
                 </Link>
               </div>

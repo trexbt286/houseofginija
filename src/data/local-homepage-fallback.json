@@ -1,20 +1,148 @@
 {
   "collections": [
     {
+      "id": "3",
+      "name": "New Collection",
+      "slug": "new-collection",
+      "description": "The latest House of Ginija seasonal creations.",
+      "image_url": "/local-products/033-blush-pink-drape-1.jpg",
+      "parent_id": null,
+      "parent_name": null,
+      "parent_slug": null,
+      "sort_order": 10,
+      "is_active": true
+    },
+    {
+      "id": "4",
+      "name": "Muslin",
+      "slug": "muslin",
+      "description": "Lightweight muslin creations.",
+      "image_url": null,
+      "parent_id": "3",
+      "parent_name": "New Collection",
+      "parent_slug": "new-collection",
+      "sort_order": 10,
+      "is_active": true
+    },
+    {
+      "id": "5",
+      "name": "Cotton",
+      "slug": "cotton",
+      "description": "Breathable cotton creations.",
+      "image_url": null,
+      "parent_id": "3",
+      "parent_name": "New Collection",
+      "parent_slug": "new-collection",
+      "sort_order": 20,
+      "is_active": true
+    },
+    {
+      "id": "6",
+      "name": "Cotton Linen",
+      "slug": "cotton-linen",
+      "description": "Cotton-linen blend creations.",
+      "image_url": null,
+      "parent_id": "3",
+      "parent_name": "New Collection",
+      "parent_slug": "new-collection",
+      "sort_order": 30,
+      "is_active": true
+    },
+    {
+      "id": "7",
+      "name": "Heavy Dresses",
+      "slug": "heavy-dresses",
+      "description": "Statement occasion wear and elevated festive silhouettes.",
+      "image_url": "/images/categories/heavy-dresses.png",
+      "parent_id": null,
+      "parent_name": null,
+      "parent_slug": null,
+      "sort_order": 20,
+      "is_active": true
+    },
+    {
+      "id": "8",
+      "name": "Indo-Western",
+      "slug": "indo-western",
+      "description": "Traditional artistry with contemporary silhouettes.",
+      "image_url": "/images/categories/indo-western.png",
+      "parent_id": "7",
+      "parent_name": "Heavy Dresses",
+      "parent_slug": "heavy-dresses",
+      "sort_order": 10,
+      "is_active": true
+    },
+    {
+      "id": "9",
+      "name": "Shararas",
+      "slug": "shararas",
+      "description": "Embellished sharara sets.",
+      "image_url": null,
+      "parent_id": "7",
+      "parent_name": "Heavy Dresses",
+      "parent_slug": "heavy-dresses",
+      "sort_order": 20,
+      "is_active": true
+    },
+    {
+      "id": "10",
+      "name": "Gowns",
+      "slug": "gowns",
+      "description": "Opulent floor-length gowns.",
+      "image_url": null,
+      "parent_id": "7",
+      "parent_name": "Heavy Dresses",
+      "parent_slug": "heavy-dresses",
+      "sort_order": 30,
+      "is_active": true
+    },
+    {
+      "id": "11",
+      "name": "Co-ords",
+      "slug": "co-ords",
+      "description": "Contemporary coordinated sets.",
+      "image_url": "/images/categories/co-ords.png",
+      "parent_id": null,
+      "parent_name": null,
+      "parent_slug": null,
+      "sort_order": 30,
+      "is_active": true
+    },
+    {
       "id": "1",
-      "name": "Suits",
+      "name": "Unstitched Suits",
       "slug": "suits",
       "description": "Premium handcrafted suits, featuring custom-tailored silhouettes and fine archival fabrics.",
-      "image_url": "/images/suits/WhatsApp Image 2026-06-18 at 4.41.45 PM.jpeg",
-      "parent_slug": null
+      "image_url": "/images/categories/unstitched.png",
+      "parent_id": null,
+      "parent_name": null,
+      "parent_slug": null,
+      "sort_order": 40,
+      "is_active": true
     },
     {
       "id": "2",
       "name": "Jewellery",
       "slug": "jewellery",
       "description": "Exquisite artisan-crafted jewelry, featuring heirloom-quality necklaces, rings, earrings, and bracelets.",
-      "image_url": "/images/jewellery/necklace/WhatsApp Image 2026-06-19 at 2.48.31 PM.jpeg",
-      "parent_slug": null
+      "image_url": "/images/categories/jewellery.png",
+      "parent_id": null,
+      "parent_name": null,
+      "parent_slug": null,
+      "sort_order": 50,
+      "is_active": true
+    },
+    {
+      "id": "12",
+      "name": "Flash Sale",
+      "slug": "flash-sale",
+      "description": "Limited-time House of Ginija offers.",
+      "image_url": "/local-products/001-bespoke-necklace-4-1.jpg",
+      "parent_id": null,
+      "parent_name": null,
+      "parent_slug": null,
+      "sort_order": 60,
+      "is_active": true
     }
   ],
   "flashProducts": [
@@ -26,13 +154,25 @@
       "price": "48000.00",
       "collection_id": "2",
       "is_out_of_stock": false,
-      "images": ["/local-products/001-bespoke-necklace-4-1.jpg"],
-      "variants": [{"color": "Gold", "size": "One Size", "stock": 10}],
+      "images": [
+        "/local-products/001-bespoke-necklace-4-1.jpg"
+      ],
+      "variants": [
+        {
+          "color": "Gold",
+          "size": "One Size",
+          "stock": 10
+        }
+      ],
       "flash_sale": true,
       "flash_sale_price": "30000.00",
       "new_arrival": false,
       "collection_name": "Jewellery",
-      "collection_slug": "jewellery"
+      "collection_slug": "jewellery",
+      "parent_collection_name": null,
+      "parent_collection_slug": null,
+      "on_sale": false,
+      "tags": []
     }
   ],
   "flash_sale_enabled": true,
@@ -45,13 +185,25 @@
       "price": "21000.00",
       "collection_id": "2",
       "is_out_of_stock": false,
-      "images": ["/local-products/027-bespoke-rings-4-1.jpg"],
-      "variants": [{"color": "Gold", "size": "One Size", "stock": 10}],
+      "images": [
+        "/local-products/027-bespoke-rings-4-1.jpg"
+      ],
+      "variants": [
+        {
+          "color": "Gold",
+          "size": "One Size",
+          "stock": 10
+        }
+      ],
       "flash_sale": false,
       "flash_sale_price": null,
       "new_arrival": true,
       "collection_name": "Jewellery",
-      "collection_slug": "jewellery"
+      "collection_slug": "jewellery",
+      "parent_collection_name": null,
+      "parent_collection_slug": null,
+      "on_sale": false,
+      "tags": []
     },
     {
       "id": "58",
@@ -61,13 +213,25 @@
       "price": "20000.00",
       "collection_id": "2",
       "is_out_of_stock": false,
-      "images": ["/local-products/028-bespoke-rings-5-1.jpg"],
-      "variants": [{"color": "Gold", "size": "One Size", "stock": 10}],
+      "images": [
+        "/local-products/028-bespoke-rings-5-1.jpg"
+      ],
+      "variants": [
+        {
+          "color": "Gold",
+          "size": "One Size",
+          "stock": 10
+        }
+      ],
       "flash_sale": false,
       "flash_sale_price": null,
       "new_arrival": true,
       "collection_name": "Jewellery",
-      "collection_slug": "jewellery"
+      "collection_slug": "jewellery",
+      "parent_collection_name": null,
+      "parent_collection_slug": null,
+      "on_sale": false,
+      "tags": []
     },
     {
       "id": "59",
@@ -77,13 +241,25 @@
       "price": "19000.00",
       "collection_id": "2",
       "is_out_of_stock": false,
-      "images": ["/local-products/029-bespoke-rings-6-1.jpg"],
-      "variants": [{"color": "Gold", "size": "One Size", "stock": 10}],
+      "images": [
+        "/local-products/029-bespoke-rings-6-1.jpg"
+      ],
+      "variants": [
+        {
+          "color": "Gold",
+          "size": "One Size",
+          "stock": 10
+        }
+      ],
       "flash_sale": false,
       "flash_sale_price": null,
       "new_arrival": true,
       "collection_name": "Jewellery",
-      "collection_slug": "jewellery"
+      "collection_slug": "jewellery",
+      "parent_collection_name": null,
+      "parent_collection_slug": null,
+      "on_sale": false,
+      "tags": []
     },
     {
       "id": "60",
@@ -93,30 +269,109 @@
       "price": "18000",
       "collection_id": "2",
       "is_out_of_stock": false,
-      "images": ["/local-products/030-bespoke-rings-7-1.jpg", "/local-products/031-bespoke-rings-7-2.jpg"],
-      "variants": [{"color": "Gold", "size": "One Size", "stock": 10}],
+      "images": [
+        "/local-products/030-bespoke-rings-7-1.jpg",
+        "/local-products/031-bespoke-rings-7-2.jpg"
+      ],
+      "variants": [
+        {
+          "color": "Gold",
+          "size": "One Size",
+          "stock": 10
+        }
+      ],
       "flash_sale": false,
       "flash_sale_price": null,
       "new_arrival": true,
       "collection_name": "Jewellery",
-      "collection_slug": "jewellery"
+      "collection_slug": "jewellery",
+      "parent_collection_name": null,
+      "parent_collection_slug": null,
+      "on_sale": false,
+      "tags": []
     }
   ],
   "new_arrivals_enabled": true,
   "heroReels": [
-    {"id": "1196127444911751169", "video_url": "/videos/hero_reels/reel_1.mp4", "title": "Hero Reel 1", "sort_order": "1", "created_at": "2026-07-26T20:58:47.474Z"},
-    {"id": "1196127445008154625", "video_url": "/videos/hero_reels/reel_2.mp4", "title": "Hero Reel 2", "sort_order": "2", "created_at": "2026-07-26T20:58:47.504Z"},
-    {"id": "1196127445098004481", "video_url": "/videos/hero_reels/reel_3.mp4", "title": "Hero Reel 3", "sort_order": "3", "created_at": "2026-07-26T20:58:47.531Z"},
-    {"id": "1196127445187526657", "video_url": "/videos/hero_reels/reel_4.mp4", "title": "Hero Reel 4", "sort_order": "4", "created_at": "2026-07-26T20:58:47.559Z"},
-    {"id": "1196127445276524545", "video_url": "/videos/hero_reels/reel_5.mp4", "title": "Hero Reel 5", "sort_order": "5", "created_at": "2026-07-26T20:58:47.586Z"},
-    {"id": "1196127445357035521", "video_url": "/videos/hero_reels/reel_6.mp4", "title": "Hero Reel 6", "sort_order": "6", "created_at": "2026-07-26T20:58:47.610Z"},
-    {"id": "1196127445451407361", "video_url": "/videos/hero_reels/reel_7.mp4", "title": "Hero Reel 7", "sort_order": "7", "created_at": "2026-07-26T20:58:47.639Z"},
-    {"id": "1196127445562261505", "video_url": "/videos/hero_reels/reel_8.mp4", "title": "Hero Reel 8", "sort_order": "8", "created_at": "2026-07-26T20:58:47.673Z"}
+    {
+      "id": "1196127444911751169",
+      "video_url": "/videos/hero_reels/reel_1.mp4",
+      "title": "Hero Reel 1",
+      "sort_order": "1",
+      "created_at": "2026-07-26T20:58:47.474Z"
+    },
+    {
+      "id": "1196127445008154625",
+      "video_url": "/videos/hero_reels/reel_2.mp4",
+      "title": "Hero Reel 2",
+      "sort_order": "2",
+      "created_at": "2026-07-26T20:58:47.504Z"
+    },
+    {
+      "id": "1196127445098004481",
+      "video_url": "/videos/hero_reels/reel_3.mp4",
+      "title": "Hero Reel 3",
+      "sort_order": "3",
+      "created_at": "2026-07-26T20:58:47.531Z"
+    },
+    {
+      "id": "1196127445187526657",
+      "video_url": "/videos/hero_reels/reel_4.mp4",
+      "title": "Hero Reel 4",
+      "sort_order": "4",
+      "created_at": "2026-07-26T20:58:47.559Z"
+    },
+    {
+      "id": "1196127445276524545",
+      "video_url": "/videos/hero_reels/reel_5.mp4",
+      "title": "Hero Reel 5",
+      "sort_order": "5",
+      "created_at": "2026-07-26T20:58:47.586Z"
+    },
+    {
+      "id": "1196127445357035521",
+      "video_url": "/videos/hero_reels/reel_6.mp4",
+      "title": "Hero Reel 6",
+      "sort_order": "6",
+      "created_at": "2026-07-26T20:58:47.610Z"
+    },
+    {
+      "id": "1196127445451407361",
+      "video_url": "/videos/hero_reels/reel_7.mp4",
+      "title": "Hero Reel 7",
+      "sort_order": "7",
+      "created_at": "2026-07-26T20:58:47.639Z"
+    },
+    {
+      "id": "1196127445562261505",
+      "video_url": "/videos/hero_reels/reel_8.mp4",
+      "title": "Hero Reel 8",
+      "sort_order": "8",
+      "created_at": "2026-07-26T20:58:47.673Z"
+    }
   ],
   "founderReels": [
-    {"id": "1197282524312272897", "video_url": "/videos/hero_reels/reel_1.mp4", "title": "Founder Reel 1", "sort_order": "1", "created_at": "2026-07-30T22:53:49.733Z"},
-    {"id": "1197282524312403969", "video_url": "/videos/hero_reels/reel_2.mp4", "title": "Founder Reel 2", "sort_order": "2", "created_at": "2026-07-30T22:53:49.733Z"},
-    {"id": "1197282524312436737", "video_url": "/videos/hero_reels/reel_3.mp4", "title": "Founder Reel 3", "sort_order": "3", "created_at": "2026-07-30T22:53:49.733Z"}
+    {
+      "id": "1197282524312272897",
+      "video_url": "/videos/hero_reels/reel_1.mp4",
+      "title": "Founder Reel 1",
+      "sort_order": "1",
+      "created_at": "2026-07-30T22:53:49.733Z"
+    },
+    {
+      "id": "1197282524312403969",
+      "video_url": "/videos/hero_reels/reel_2.mp4",
+      "title": "Founder Reel 2",
+      "sort_order": "2",
+      "created_at": "2026-07-30T22:53:49.733Z"
+    },
+    {
+      "id": "1197282524312436737",
+      "video_url": "/videos/hero_reels/reel_3.mp4",
+      "title": "Founder Reel 3",
+      "sort_order": "3",
+      "created_at": "2026-07-30T22:53:49.733Z"
+    }
   ],
   "heavyDresses": {
     "indoWestern": [
@@ -126,12 +381,34 @@
         "slug": "ice-blue-cape-drape",
         "description": "Contemporary ice blue fusion set featuring a embroidered cape jacket and fluid drape.",
         "price": "27000",
-        "collection_id": "1",
+        "collection_id": "8",
         "is_out_of_stock": false,
-        "images": ["/local-products/063-bespoke-suit-1-1.jpg"],
-        "variants": [{"color": "Default", "size": "S", "stock": 10}, {"color": "Default", "size": "M", "stock": 10}, {"color": "Default", "size": "L", "stock": 10}],
-        "collection_name": "Indo Western",
-        "collection_slug": "indo-western"
+        "images": [
+          "/local-products/063-bespoke-suit-1-1.jpg"
+        ],
+        "variants": [
+          {
+            "color": "Default",
+            "size": "S",
+            "stock": 10
+          },
+          {
+            "color": "Default",
+            "size": "M",
+            "stock": 10
+          },
+          {
+            "color": "Default",
+            "size": "L",
+            "stock": 10
+          }
+        ],
+        "collection_name": "Indo-Western",
+        "collection_slug": "indo-western",
+        "parent_collection_name": "Heavy Dresses",
+        "parent_collection_slug": "heavy-dresses",
+        "on_sale": false,
+        "tags": []
       },
       {
         "id": "iw-2",
@@ -139,12 +416,34 @@
         "slug": "blush-pink-drape-suit",
         "description": "Graceful blush pink drape set with intricate sequin and zari embroidery.",
         "price": "33333",
-        "collection_id": "1",
+        "collection_id": "8",
         "is_out_of_stock": false,
-        "images": ["/local-products/033-blush-pink-drape-1.jpg"],
-        "variants": [{"color": "Default", "size": "S", "stock": 10}, {"color": "Default", "size": "M", "stock": 10}, {"color": "Default", "size": "L", "stock": 10}],
-        "collection_name": "Indo Western",
-        "collection_slug": "indo-western"
+        "images": [
+          "/local-products/033-blush-pink-drape-1.jpg"
+        ],
+        "variants": [
+          {
+            "color": "Default",
+            "size": "S",
+            "stock": 10
+          },
+          {
+            "color": "Default",
+            "size": "M",
+            "stock": 10
+          },
+          {
+            "color": "Default",
+            "size": "L",
+            "stock": 10
+          }
+        ],
+        "collection_name": "Indo-Western",
+        "collection_slug": "indo-western",
+        "parent_collection_name": "Heavy Dresses",
+        "parent_collection_slug": "heavy-dresses",
+        "on_sale": false,
+        "tags": []
       },
       {
         "id": "iw-3",
@@ -152,12 +451,34 @@
         "slug": "monochrome-fusion-drape",
         "description": "Striking monochrome fusion silhouette featuring structured shoulders.",
         "price": "29000",
-        "collection_id": "1",
+        "collection_id": "8",
         "is_out_of_stock": false,
-        "images": ["/local-products/073-bespoke-suit-2-1.jpg"],
-        "variants": [{"color": "Default", "size": "S", "stock": 10}, {"color": "Default", "size": "M", "stock": 10}, {"color": "Default", "size": "L", "stock": 10}],
-        "collection_name": "Indo Western",
-        "collection_slug": "indo-western"
+        "images": [
+          "/local-products/073-bespoke-suit-2-1.jpg"
+        ],
+        "variants": [
+          {
+            "color": "Default",
+            "size": "S",
+            "stock": 10
+          },
+          {
+            "color": "Default",
+            "size": "M",
+            "stock": 10
+          },
+          {
+            "color": "Default",
+            "size": "L",
+            "stock": 10
+          }
+        ],
+        "collection_name": "Indo-Western",
+        "collection_slug": "indo-western",
+        "parent_collection_name": "Heavy Dresses",
+        "parent_collection_slug": "heavy-dresses",
+        "on_sale": false,
+        "tags": []
       },
       {
         "id": "iw-4",
@@ -165,12 +486,34 @@
         "slug": "lavender-embroidered-cape",
         "description": "Soft lavender drape set styled with a hand-embroidered organza cape.",
         "price": "34000",
-        "collection_id": "1",
+        "collection_id": "8",
         "is_out_of_stock": false,
-        "images": ["/local-products/069-bespoke-suit-12-1.jpg"],
-        "variants": [{"color": "Default", "size": "S", "stock": 10}, {"color": "Default", "size": "M", "stock": 10}, {"color": "Default", "size": "L", "stock": 10}],
-        "collection_name": "Indo Western",
-        "collection_slug": "indo-western"
+        "images": [
+          "/local-products/069-bespoke-suit-12-1.jpg"
+        ],
+        "variants": [
+          {
+            "color": "Default",
+            "size": "S",
+            "stock": 10
+          },
+          {
+            "color": "Default",
+            "size": "M",
+            "stock": 10
+          },
+          {
+            "color": "Default",
+            "size": "L",
+            "stock": 10
+          }
+        ],
+        "collection_name": "Indo-Western",
+        "collection_slug": "indo-western",
+        "parent_collection_name": "Heavy Dresses",
+        "parent_collection_slug": "heavy-dresses",
+        "on_sale": false,
+        "tags": []
       }
     ],
     "heavyGown": [
@@ -180,12 +523,34 @@
         "slug": "ivory-layered-royal-gown",
         "description": "Grand floor-length ivory gown with layered flared kalis and delicate threadwork.",
         "price": "33000",
-        "collection_id": "1",
+        "collection_id": "10",
         "is_out_of_stock": false,
-        "images": ["/local-products/065-bespoke-suit-4-1.jpg"],
-        "variants": [{"color": "Default", "size": "S", "stock": 10}, {"color": "Default", "size": "M", "stock": 10}, {"color": "Default", "size": "L", "stock": 10}],
-        "collection_name": "Heavy Gown",
-        "collection_slug": "heavy-gown"
+        "images": [
+          "/local-products/065-bespoke-suit-4-1.jpg"
+        ],
+        "variants": [
+          {
+            "color": "Default",
+            "size": "S",
+            "stock": 10
+          },
+          {
+            "color": "Default",
+            "size": "M",
+            "stock": 10
+          },
+          {
+            "color": "Default",
+            "size": "L",
+            "stock": 10
+          }
+        ],
+        "collection_name": "Gowns",
+        "collection_slug": "gowns",
+        "parent_collection_name": "Heavy Dresses",
+        "parent_collection_slug": "heavy-dresses",
+        "on_sale": false,
+        "tags": []
       },
       {
         "id": "hg-2",
@@ -193,12 +558,34 @@
         "slug": "sunshine-velvet-flared-gown",
         "description": "Opulent yellow couture gown tailored with structured bodice and rich flare.",
         "price": "31000",
-        "collection_id": "1",
+        "collection_id": "10",
         "is_out_of_stock": false,
-        "images": ["/local-products/109-bespoke-suit-3-1.jpg"],
-        "variants": [{"color": "Default", "size": "S", "stock": 10}, {"color": "Default", "size": "M", "stock": 10}, {"color": "Default", "size": "L", "stock": 10}],
-        "collection_name": "Heavy Gown",
-        "collection_slug": "heavy-gown"
+        "images": [
+          "/local-products/109-bespoke-suit-3-1.jpg"
+        ],
+        "variants": [
+          {
+            "color": "Default",
+            "size": "S",
+            "stock": 10
+          },
+          {
+            "color": "Default",
+            "size": "M",
+            "stock": 10
+          },
+          {
+            "color": "Default",
+            "size": "L",
+            "stock": 10
+          }
+        ],
+        "collection_name": "Gowns",
+        "collection_slug": "gowns",
+        "parent_collection_name": "Heavy Dresses",
+        "parent_collection_slug": "heavy-dresses",
+        "on_sale": false,
+        "tags": []
       },
       {
         "id": "hg-3",
@@ -206,12 +593,34 @@
         "slug": "royal-blue-embellished-gown",
         "description": "Majestic royal blue gown adorned with heavy metallic sequin embroidery.",
         "price": "28000",
-        "collection_id": "1",
+        "collection_id": "10",
         "is_out_of_stock": false,
-        "images": ["/local-products/099-bespoke-suit-9-1.jpg"],
-        "variants": [{"color": "Default", "size": "S", "stock": 10}, {"color": "Default", "size": "M", "stock": 10}, {"color": "Default", "size": "L", "stock": 10}],
-        "collection_name": "Heavy Gown",
-        "collection_slug": "heavy-gown"
+        "images": [
+          "/local-products/099-bespoke-suit-9-1.jpg"
+        ],
+        "variants": [
+          {
+            "color": "Default",
+            "size": "S",
+            "stock": 10
+          },
+          {
+            "color": "Default",
+            "size": "M",
+            "stock": 10
+          },
+          {
+            "color": "Default",
+            "size": "L",
+            "stock": 10
+          }
+        ],
+        "collection_name": "Gowns",
+        "collection_slug": "gowns",
+        "parent_collection_name": "Heavy Dresses",
+        "parent_collection_slug": "heavy-dresses",
+        "on_sale": false,
+        "tags": []
       },
       {
         "id": "hg-4",
@@ -219,12 +628,34 @@
         "slug": "ruby-silk-drape-gown",
         "description": "Deep ruby red silk gown with a contoured waist and draped trail.",
         "price": "26000",
-        "collection_id": "1",
+        "collection_id": "10",
         "is_out_of_stock": false,
-        "images": ["/local-products/103-bespoke-suit-8-1.jpg"],
-        "variants": [{"color": "Default", "size": "S", "stock": 10}, {"color": "Default", "size": "M", "stock": 10}, {"color": "Default", "size": "L", "stock": 10}],
-        "collection_name": "Heavy Gown",
-        "collection_slug": "heavy-gown"
+        "images": [
+          "/local-products/103-bespoke-suit-8-1.jpg"
+        ],
+        "variants": [
+          {
+            "color": "Default",
+            "size": "S",
+            "stock": 10
+          },
+          {
+            "color": "Default",
+            "size": "M",
+            "stock": 10
+          },
+          {
+            "color": "Default",
+            "size": "L",
+            "stock": 10
+          }
+        ],
+        "collection_name": "Gowns",
+        "collection_slug": "gowns",
+        "parent_collection_name": "Heavy Dresses",
+        "parent_collection_slug": "heavy-dresses",
+        "on_sale": false,
+        "tags": []
       }
     ],
     "shararas": [
@@ -234,12 +665,34 @@
         "slug": "anarkali-flared-sharara",
         "description": "Classic flared sharara paired with a hand-embroidered short kurti.",
         "price": "37000",
-        "collection_id": "1",
+        "collection_id": "9",
         "is_out_of_stock": false,
-        "images": ["/local-products/002-bespoke-suit-6-1.jpg"],
-        "variants": [{"color": "Default", "size": "S", "stock": 10}, {"color": "Default", "size": "M", "stock": 10}, {"color": "Default", "size": "L", "stock": 10}],
+        "images": [
+          "/local-products/002-bespoke-suit-6-1.jpg"
+        ],
+        "variants": [
+          {
+            "color": "Default",
+            "size": "S",
+            "stock": 10
+          },
+          {
+            "color": "Default",
+            "size": "M",
+            "stock": 10
+          },
+          {
+            "color": "Default",
+            "size": "L",
+            "stock": 10
+          }
+        ],
         "collection_name": "Shararas",
-        "collection_slug": "shararas"
+        "collection_slug": "shararas",
+        "parent_collection_name": "Heavy Dresses",
+        "parent_collection_slug": "heavy-dresses",
+        "on_sale": false,
+        "tags": []
       },
       {
         "id": "sh-2",
@@ -247,12 +700,34 @@
         "slug": "aqua-hand-draped-sharara",
         "description": "Serene aqua green sharara set with zari border detailing.",
         "price": "30000",
-        "collection_id": "1",
+        "collection_id": "9",
         "is_out_of_stock": false,
-        "images": ["/local-products/003-bespoke-suit-10-1.jpg"],
-        "variants": [{"color": "Default", "size": "S", "stock": 10}, {"color": "Default", "size": "M", "stock": 10}, {"color": "Default", "size": "L", "stock": 10}],
+        "images": [
+          "/local-products/003-bespoke-suit-10-1.jpg"
+        ],
+        "variants": [
+          {
+            "color": "Default",
+            "size": "S",
+            "stock": 10
+          },
+          {
+            "color": "Default",
+            "size": "M",
+            "stock": 10
+          },
+          {
+            "color": "Default",
+            "size": "L",
+            "stock": 10
+          }
+        ],
         "collection_name": "Shararas",
-        "collection_slug": "shararas"
+        "collection_slug": "shararas",
+        "parent_collection_name": "Heavy Dresses",
+        "parent_collection_slug": "heavy-dresses",
+        "on_sale": false,
+        "tags": []
       },
       {
         "id": "sh-3",
@@ -260,12 +735,34 @@
         "slug": "basanti-rang-printed-sharara",
         "description": "Vibrant printed cotton sharara with gold lace trim.",
         "price": "27000",
-        "collection_id": "1",
+        "collection_id": "9",
         "is_out_of_stock": false,
-        "images": ["/local-products/004-bespoke-suit-31-1.jpg"],
-        "variants": [{"color": "Default", "size": "S", "stock": 10}, {"color": "Default", "size": "M", "stock": 10}, {"color": "Default", "size": "L", "stock": 10}],
+        "images": [
+          "/local-products/004-bespoke-suit-31-1.jpg"
+        ],
+        "variants": [
+          {
+            "color": "Default",
+            "size": "S",
+            "stock": 10
+          },
+          {
+            "color": "Default",
+            "size": "M",
+            "stock": 10
+          },
+          {
+            "color": "Default",
+            "size": "L",
+            "stock": 10
+          }
+        ],
         "collection_name": "Shararas",
-        "collection_slug": "shararas"
+        "collection_slug": "shararas",
+        "parent_collection_name": "Heavy Dresses",
+        "parent_collection_slug": "heavy-dresses",
+        "on_sale": false,
+        "tags": []
       },
       {
         "id": "sh-4",
@@ -273,12 +770,34 @@
         "slug": "rajsi-gulabi-velvet-sharara",
         "description": "Rich pink velvet sharara featuring royal gota patti handwork.",
         "price": "31000",
-        "collection_id": "1",
+        "collection_id": "9",
         "is_out_of_stock": false,
-        "images": ["/local-products/093-rajsi-gulabi-1.jpg"],
-        "variants": [{"color": "Default", "size": "S", "stock": 10}, {"color": "Default", "size": "M", "stock": 10}, {"color": "Default", "size": "L", "stock": 10}],
+        "images": [
+          "/local-products/093-rajsi-gulabi-1.jpg"
+        ],
+        "variants": [
+          {
+            "color": "Default",
+            "size": "S",
+            "stock": 10
+          },
+          {
+            "color": "Default",
+            "size": "M",
+            "stock": 10
+          },
+          {
+            "color": "Default",
+            "size": "L",
+            "stock": 10
+          }
+        ],
         "collection_name": "Shararas",
-        "collection_slug": "shararas"
+        "collection_slug": "shararas",
+        "parent_collection_name": "Heavy Dresses",
+        "parent_collection_slug": "heavy-dresses",
+        "on_sale": false,
+        "tags": []
       }
     ]
   }
