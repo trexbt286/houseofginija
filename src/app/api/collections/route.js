@@ -35,9 +35,18 @@ export async function GET() {
         c.name ASC
     `);
 
+    const dbCollections = result.rows;
+    const fallbackCollections = getLocalCollectionsFallback();
+    const existingSlugs = new Set(dbCollections.map((c) => c.slug));
+
+    const mergedCollections = [
+      ...dbCollections,
+      ...fallbackCollections.filter((c) => !existingSlugs.has(c.slug)),
+    ];
+
     return NextResponse.json({
-      collections: result.rows,
-      categoryTree: buildCategoryTree(result.rows),
+      collections: mergedCollections,
+      categoryTree: buildCategoryTree(mergedCollections),
     });
   } catch (error) {
     console.error('Fetch collections error:', error);

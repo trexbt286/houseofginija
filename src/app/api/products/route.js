@@ -154,8 +154,33 @@ export async function GET(request) {
     const flash_sale_enabled =
       settingsResult.rows.length > 0 && settingsResult.rows[0].value === 'true';
 
+    const dbProducts = result.rows.map(mapProductData);
+    const fallbackProducts = getLocalProductsFallback();
+    const dbSlugs = new Set(dbProducts.map((p) => p.slug));
+
+    let matchingFallback = fallbackProducts.filter((p) => !dbSlugs.has(p.slug));
+    if (collection) {
+      matchingFallback = matchingFallback.filter((p) =>
+        p.collection_slug === collection ||
+        p.parent_collection_slug === collection ||
+        (collection === 'new-collection' && p.new_arrival) ||
+        (collection === 'flash-sale' && (p.on_sale || p.flash_sale))
+      );
+    }
+    if (tag) {
+      matchingFallback = matchingFallback.filter((p) =>
+        (p.tags || []).some((productTag) => productTag.slug === tag)
+      );
+    }
+    if (search) {
+      const term = search.toLowerCase();
+      matchingFallback = matchingFallback.filter((p) => p.name.toLowerCase().includes(term));
+    }
+
+    const finalProducts = [...dbProducts, ...matchingFallback];
+
     return NextResponse.json({
-      products: result.rows.map(mapProductData),
+      products: finalProducts,
       flash_sale_enabled,
     });
   } catch (error) {
