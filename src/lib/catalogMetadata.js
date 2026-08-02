@@ -120,9 +120,12 @@ export async function replaceProductTags(client, productId, tagIds) {
     await client.query(
       `
         INSERT INTO product_tags (product_id, tag_id)
-        SELECT $1, tag_id
+        SELECT $1, selected_tags.tag_id
         FROM unnest($2::int[]) AS selected_tags(tag_id)
-        ON CONFLICT (product_id, tag_id) DO NOTHING
+        WHERE NOT EXISTS (
+          SELECT 1 FROM product_tags pt 
+          WHERE pt.product_id = $1 AND pt.tag_id = selected_tags.tag_id
+        )
       `,
       [productId, tagIds]
     );

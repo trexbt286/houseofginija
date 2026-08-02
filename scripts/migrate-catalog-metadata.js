@@ -27,12 +27,18 @@ async function main() {
   try {
     await pool.query(sql);
     console.log('Catalog categories, on-sale metadata, and tags migrated successfully.');
+  } catch (error) {
+    console.error('Catalog metadata migration failed:', error);
+    if (!process.argv.includes('--if-configured')) {
+      throw error;
+    }
+    console.warn('Proceeding with build despite prebuild migration warning.');
   } finally {
     await pool.end();
   }
 }
 
 main().catch((error) => {
-  console.error('Catalog metadata migration failed:', error);
+  console.error('Fatal migration script error:', error);
   process.exitCode = 1;
 });

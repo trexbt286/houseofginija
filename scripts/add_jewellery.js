@@ -16,10 +16,14 @@ async function addJewellery() {
     
     // 1. Create Jewellery Collection
     console.log('Creating Jewellery collection...');
+    await client.query(`
+      UPDATE collections SET name = $1 WHERE slug = $2
+    `, ['Jewellery', 'jewellery']);
+
     const collectionRes = await client.query(`
       INSERT INTO collections (name, slug, description, image_url)
-      VALUES ($1, $2, $3, $4)
-      ON CONFLICT (slug) DO UPDATE SET name = EXCLUDED.name
+      SELECT $1, $2, $3, $4
+      WHERE NOT EXISTS (SELECT 1 FROM collections WHERE slug = $2)
       RETURNING id
     `, [
       'Jewellery', 
@@ -27,8 +31,13 @@ async function addJewellery() {
       'Exquisite artisan-crafted jewelry, featuring heirloom-quality necklaces, rings, earrings, and bracelets.', 
       '/images/jewellery/necklace/WhatsApp Image 2026-06-19 at 2.48.31 PM.jpeg' // Use first necklace as cover
     ]);
-    
-    const collectionId = collectionRes.rows[0].id;
+
+    let collectionId = collectionRes.rows[0]?.id;
+    if (!collectionId) {
+      const existing = await client.query(`SELECT id FROM collections WHERE slug = 'jewellery'`);
+      collectionId = existing.rows[0].id;
+    }
+
 
     // 2. Scan directories and inject products
     const categories = ['bracelets', 'earrings', 'necklace', 'rings'];
@@ -69,8 +78,8 @@ async function addJewellery() {
 
         await client.query(`
           INSERT INTO products (name, slug, description, price, collection_id, is_out_of_stock, images, variants)
-          VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
-          ON CONFLICT (slug) DO NOTHING
+          SELECT $1, $2, $3, $4, $5, $6, $7, $8
+          WHERE NOT EXISTS (SELECT 1 FROM products WHERE slug = $2)
         `, [
           name,
           slug,

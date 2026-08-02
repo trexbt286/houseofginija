@@ -39,8 +39,8 @@ async function migrate() {
     // Insert default setting for flash_sale_enabled
     await client.query(`
       INSERT INTO settings (key, value) 
-      VALUES ('flash_sale_enabled', 'false') 
-      ON CONFLICT (key) DO NOTHING
+      SELECT 'flash_sale_enabled', 'false'
+      WHERE NOT EXISTS (SELECT 1 FROM settings WHERE key = 'flash_sale_enabled')
     `);
     console.log('Inserted default settings.');
 

@@ -29,10 +29,13 @@ export async function POST(request) {
 
     for (const [key, value] of Object.entries(settings)) {
       await pool.query(
-        `INSERT INTO settings (key, value) 
-         VALUES ($1, $2) 
-         ON CONFLICT (key) 
-         DO UPDATE SET value = EXCLUDED.value`,
+        `UPDATE settings SET value = $2 WHERE key = $1`,
+        [key, String(value)]
+      );
+      await pool.query(
+        `INSERT INTO settings (key, value)
+         SELECT $1, $2
+         WHERE NOT EXISTS (SELECT 1 FROM settings WHERE key = $1)`,
         [key, String(value)]
       );
     }

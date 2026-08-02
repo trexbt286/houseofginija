@@ -15,10 +15,12 @@ async function run() {
     
     // 1. Set global setting to true
     await client.query(`
+      UPDATE settings SET value = 'true' WHERE key = 'new_arrivals_enabled'
+    `);
+    await client.query(`
       INSERT INTO settings (key, value) 
-      VALUES ('new_arrivals_enabled', 'true') 
-      ON CONFLICT (key) 
-      DO UPDATE SET value = 'true'
+      SELECT 'new_arrivals_enabled', 'true'
+      WHERE NOT EXISTS (SELECT 1 FROM settings WHERE key = 'new_arrivals_enabled')
     `);
     console.log('Global setting new_arrivals_enabled set to true.');
 
