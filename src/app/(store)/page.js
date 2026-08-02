@@ -376,104 +376,10 @@ export default function Home() {
       {/* 4. SHOP BY CATEGORIES */}
       <ShopByCategories />
 
-      {/* 4.5. NEW ARRIVALS SECTION */}
-      {(loading || (newArrivalsEnabled && newArrivalProducts.length > 0)) && (
-        <>
-          {/* Separator Line */}
-          <div style={{ height: '1px', backgroundColor: 'rgba(139, 119, 137, 0.15)', width: '100%' }}></div>
-
-          <section style={{ padding: '3rem 0', backgroundColor: '#FFFFFF' }} className="home-section home-new-arrivals-section">
-            <div className={loading ? 'container' : 'container animate-fade-in'}>
-              <div style={sectionHeaderStyle}>
-                <h2 style={{ ...sectionTitleStyle, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.6rem' }}>
-                  New Arrivals
-                </h2>
-                <div style={sectionDividerLineStyle}></div>
-                <p style={{
-                  fontSize: '0.85rem',
-                  color: 'rgba(0, 0, 0, 0.5)',
-                  fontWeight: '500',
-                  marginTop: '0.8rem',
-                }}>
-                  New season, new vibes, new arrivals – because you deserve the freshest picks.
-                </p>
-              </div>
-
-              <div className="new-arrivals-grid">
-                {loading ? (
-                  Array.from({ length: 4 }).map((_, i) => (
-                    <SkeletonCard key={i} type="home-new-arrival" />
-                  ))
-                ) : (
-                  (showAllNewArrivals ? newArrivalProducts : newArrivalProducts.slice(0, 4)).map((product, index) => {
-                    const isWishlisted = wishlist.includes(product.id);
-
-                    return (
-                      <div key={product.id} className="new-arrival-card">
-                        {/* Image Container */}
-                        <div className="new-arrival-img-container">
-                          <div onClick={(e) => handleProductClick(e, product)} style={{ cursor: 'pointer' }}>
-                            <ImageWithSkeleton 
-                              src={product.images?.[0] || '/icon.png'} 
-                              alt={product.name} 
-                              eager={index < 2}
-                              className="new-arrival-img-style" 
-                            />
-                          </div>
-
-                          {/* Wishlist Heart */}
-                          <button 
-                            onClick={() => toggleWishlist(product.id)}
-                            className="new-arrival-wishlist-btn"
-                          >
-                            <svg 
-                              width="18" 
-                              height="18" 
-                              viewBox="0 0 24 24" 
-                              fill={isWishlisted ? '#D98E9B' : 'none'} 
-                              stroke={isWishlisted ? '#D98E9B' : '#000000'} 
-                              strokeWidth="2.0" 
-                              strokeLinecap="round" 
-                              strokeLinejoin="round"
-                            >
-                              <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
-                            </svg>
-                          </button>
-                        </div>
-
-                        {/* Product Info */}
-                        <div className="new-arrival-card-content">
-                          <div onClick={(e) => handleProductClick(e, product)} style={{ cursor: 'pointer', color: 'inherit' }}>
-                            <h3 className="new-arrival-product-name">{product.name}</h3>
-                          </div>
-                          <div className="new-arrival-price">
-                            ₹{parseFloat(product.price).toLocaleString('en-IN')}
-                          </div>
-                        </div>
-                      </div>
-                    );
-                  })
-                )}
-              </div>
-
-              {!loading && newArrivalProducts.length > 4 && (
-                <div style={seeMoreBtnContainerStyle}>
-                  <button 
-                    onClick={() => setShowAllNewArrivals(!showAllNewArrivals)} 
-                    style={seeMoreButtonStyle}
-                    className="see-more-btn"
-                  >
-                    {showAllNewArrivals ? 'SHOW LESS' : 'SEE MORE →'}
-                  </button>
-                </div>
-              )}
-            </div>
-          </section>
-        </>
-      )}
 
       {/* Separator Line */}
       <div style={{ height: '1px', backgroundColor: 'rgba(139, 119, 137, 0.15)', width: '100%' }}></div>
+
 
       {/* ABOUT THE FOUNDER SECTION */}
       <section className="home-founder-section" style={{ backgroundColor: '#FFFFFF', padding: '4rem 1.2rem', textAlign: 'center' }}>
@@ -530,7 +436,7 @@ export default function Home() {
           </Link>
 
           {/* 3-Reel Row in About Founder Section */}
-          <FounderReelsRow founderReels={founderReels} loading={loading} />
+          <FounderReelsRow founderReels={LOCAL_HERO_REELS.slice(-3)} loading={false} />
 
         </div>
       </section>

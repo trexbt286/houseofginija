@@ -6,6 +6,7 @@ import ReelPlayerModal from './ReelPlayerModal';
 export default function FounderReelsRow({ founderReels = [], loading = false }) {
   const sectionRef = useRef(null);
   const videoRefs = useRef([]);
+  const scrollPosRef = useRef(0);
   const [shouldLoadVideos, setShouldLoadVideos] = useState(false);
   const [isSectionVisible, setIsSectionVisible] = useState(false);
   const [loadedVideos, setLoadedVideos] = useState(new Set());
@@ -19,6 +20,43 @@ export default function FounderReelsRow({ founderReels = [], loading = false }) 
       return next;
     });
   };
+
+  const handleOpenReel = (reel) => {
+    const currentY = window.scrollY || window.pageYOffset || document.documentElement.scrollTop || 0;
+    scrollPosRef.current = currentY;
+    if (typeof window !== 'undefined') {
+      window.history.pushState({ founderReelOpen: true }, '');
+    }
+    setSelectedReel(reel);
+  };
+
+  const handleCloseReel = () => {
+    setSelectedReel(null);
+    const targetY = scrollPosRef.current;
+    if (typeof window !== 'undefined' && window.history.state?.founderReelOpen) {
+      window.history.back();
+    }
+    requestAnimationFrame(() => {
+      window.scrollTo(0, targetY);
+      setTimeout(() => window.scrollTo(0, targetY), 50);
+    });
+  };
+
+  useEffect(() => {
+    const handlePopState = () => {
+      if (selectedReel) {
+        setSelectedReel(null);
+        const targetY = scrollPosRef.current;
+        requestAnimationFrame(() => {
+          window.scrollTo(0, targetY);
+          setTimeout(() => window.scrollTo(0, targetY), 50);
+        });
+      }
+    };
+
+    window.addEventListener('popstate', handlePopState);
+    return () => window.removeEventListener('popstate', handlePopState);
+  }, [selectedReel]);
 
   useEffect(() => {
     const section = sectionRef.current;
@@ -61,9 +99,9 @@ export default function FounderReelsRow({ founderReels = [], loading = false }) 
     });
   }, [isSectionVisible, selectedReel, shouldLoadVideos]);
   const fallbackReels = [
-    { id: 'f1', video_url: '/videos/hero_reels/reel_1.mp4', title: 'Founder Reel 1' },
-    { id: 'f2', video_url: '/videos/hero_reels/reel_2.mp4', title: 'Founder Reel 2' },
-    { id: 'f3', video_url: '/videos/hero_reels/reel_3.mp4', title: 'Founder Reel 3' },
+    { id: 'f6', video_url: '/videos/hero_reels/reel_6.mp4', title: 'Hero Reel 6' },
+    { id: 'f7', video_url: '/videos/hero_reels/reel_7.mp4', title: 'Hero Reel 7' },
+    { id: 'f8', video_url: '/videos/hero_reels/reel_8.mp4', title: 'Hero Reel 8' },
   ];
 
   const reelsToDisplay = (founderReels && founderReels.length > 0)
@@ -112,10 +150,10 @@ export default function FounderReelsRow({ founderReels = [], loading = false }) 
             const isVideoLoaded = loadedVideos.has(reel.id || idx);
             return (
               <button
-                type="button"
                 key={reel.id || idx}
-                onClick={() => setSelectedReel(reel)}
-                aria-label={`Open ${reel.title || `reel ${idx + 1}`}`}
+                type="button"
+                onClick={() => handleOpenReel(reel)}
+                aria-label={`Open ${reel.title || `Founder Reel ${idx + 1}`}`}
                 style={{
                   position: 'relative',
                   width: '100%',
@@ -157,7 +195,7 @@ export default function FounderReelsRow({ founderReels = [], loading = false }) 
           })
         )}
       </div>
-      <ReelPlayerModal reel={selectedReel} reels={reelsToDisplay} onClose={() => setSelectedReel(null)} />
+      <ReelPlayerModal reel={selectedReel} reels={reelsToDisplay} onClose={handleCloseReel} />
     </div>
   );
 }

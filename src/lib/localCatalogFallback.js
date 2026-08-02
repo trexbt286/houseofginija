@@ -1,5 +1,6 @@
 import homepageFallback from '@/data/local-homepage-fallback.json';
 import productsFallback from '@/data/local-products-fallback.json';
+import { getStore, findBySlug } from '@/lib/globalProductStore';
 
 const isProduction = process.env.NODE_ENV === 'production';
 const hasDatabaseUrl = Boolean(process.env.DATABASE_URL);
@@ -59,23 +60,16 @@ export function getLocalHomepageFallback() {
 }
 
 export function getLocalProductsFallback() {
-  const catalogProducts = productsFallback.products || [];
-  const homepageCategoryProducts = Object.values(homepageFallback.heavyDresses || {}).flat();
-  const knownSlugs = new Set(catalogProducts.map((product) => product.slug));
-
-  return [
-    ...catalogProducts,
-    ...homepageCategoryProducts.filter((product) => !knownSlugs.has(product.slug)),
-  ];
+  return getStore();
 }
 
 export function getLocalProductsResponseFallback() {
   return {
-    products: getLocalProductsFallback(),
+    products: getStore(),
     flash_sale_enabled: productsFallback.flash_sale_enabled ?? true,
   };
 }
 
 export function getLocalProductBySlugFallback(slug) {
-  return getLocalProductsFallback().find((product) => product.slug === slug);
+  return findBySlug(slug);
 }

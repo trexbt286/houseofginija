@@ -10,7 +10,7 @@ export default function Header() {
   const { cart, cartCount, updateCartQuantity, removeFromCart, wishlist, toggleWishlist, addToCart, user, logout, setIsLoginOpen } = useStore();
   const [menuOpen, setMenuOpen] = useState(false);
   const [heavyDressesOpen, setHeavyDressesOpen] = useState(false);
-  const [newCollectionOpen, setNewCollectionOpen] = useState(false);
+  const [jewelleryOpen, setJewelleryOpen] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -200,30 +200,36 @@ export default function Header() {
                     <div>
                       <Link 
                         href="/collections?collection=new-collection" 
-                        style={{ fontSize: '0.8rem', fontWeight: '700', color: '#000000', textTransform: 'uppercase', letterSpacing: '0.08em', textDecoration: 'none', display: 'block', marginBottom: '0.35rem' }}
+                        style={{ fontSize: '0.8rem', fontWeight: '700', color: '#000000', textTransform: 'uppercase', letterSpacing: '0.08em', textDecoration: 'none' }}
                         onClick={() => { setDropdownOpen(false); setMenuOpen(false); }}
                       >
                         New Collection
                       </Link>
-                      <div style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem', paddingLeft: '0.5rem', borderLeft: '2px solid #F4E1E5' }}>
-                        <Link href="/collections?collection=muslin" style={{ fontSize: '0.78rem', color: '#565959', textDecoration: 'none' }} onClick={() => { setDropdownOpen(false); setMenuOpen(false); }}>Muslin</Link>
-                        <Link href="/collections?collection=cotton" style={{ fontSize: '0.78rem', color: '#565959', textDecoration: 'none' }} onClick={() => { setDropdownOpen(false); setMenuOpen(false); }}>Cotton</Link>
-                        <Link href="/collections?collection=cotton-linen" style={{ fontSize: '0.78rem', color: '#565959', textDecoration: 'none' }} onClick={() => { setDropdownOpen(false); setMenuOpen(false); }}>Cotton Linen</Link>
-                      </div>
                     </div>
 
-                    {/* Heavy Dresses */}
-                    <div>
-                      <span 
-                        style={{ fontSize: '0.8rem', fontWeight: '700', color: '#000000', textTransform: 'uppercase', letterSpacing: '0.08em', display: 'block', marginBottom: '0.35rem', cursor: 'default' }}
+                    {/* Indo-Western, Shararas, Gowns */}
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '0.6rem' }}>
+                      <Link 
+                        href="/collections?collection=indo-western" 
+                        style={{ fontSize: '0.8rem', fontWeight: '700', color: '#000000', textTransform: 'uppercase', letterSpacing: '0.08em', textDecoration: 'none' }}
+                        onClick={() => { setDropdownOpen(false); setMenuOpen(false); }}
                       >
-                        Heavy Dresses
-                      </span>
-                      <div style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem', paddingLeft: '0.5rem', borderLeft: '2px solid #F4E1E5' }}>
-                        <Link href="/collections?collection=indo-western" style={{ fontSize: '0.78rem', color: '#565959', textDecoration: 'none' }} onClick={() => { setDropdownOpen(false); setMenuOpen(false); }}>Indo-Western</Link>
-                        <Link href="/collections?collection=heavy-gown" style={{ fontSize: '0.78rem', color: '#565959', textDecoration: 'none' }} onClick={() => { setDropdownOpen(false); setMenuOpen(false); }}>Heavy Gowns</Link>
-                        <Link href="/collections?collection=shararas" style={{ fontSize: '0.78rem', color: '#565959', textDecoration: 'none' }} onClick={() => { setDropdownOpen(false); setMenuOpen(false); }}>Shararas</Link>
-                      </div>
+                        Indo-Western
+                      </Link>
+                      <Link 
+                        href="/collections?collection=shararas" 
+                        style={{ fontSize: '0.8rem', fontWeight: '700', color: '#000000', textTransform: 'uppercase', letterSpacing: '0.08em', textDecoration: 'none' }}
+                        onClick={() => { setDropdownOpen(false); setMenuOpen(false); }}
+                      >
+                        Shararas
+                      </Link>
+                      <Link 
+                        href="/collections?collection=gowns" 
+                        style={{ fontSize: '0.8rem', fontWeight: '700', color: '#000000', textTransform: 'uppercase', letterSpacing: '0.08em', textDecoration: 'none' }}
+                        onClick={() => { setDropdownOpen(false); setMenuOpen(false); }}
+                      >
+                        Gowns
+                      </Link>
                     </div>
 
                     {/* Co-ords & Suits */}
@@ -244,18 +250,20 @@ export default function Header() {
                       </Link>
                     </div>
 
-                    {/* Jewellery & Flash Sale */}
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '0.6rem' }}>
-                      <Link 
-                        href="/collections?collection=jewellery" 
-                        style={{ fontSize: '0.8rem', fontWeight: '700', color: '#000000', textTransform: 'uppercase', letterSpacing: '0.08em', textDecoration: 'none' }}
-                        onClick={() => { setDropdownOpen(false); setMenuOpen(false); }}
-                      >
+                    {/* Jewellery Subcategories & Flash Sale */}
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem' }}>
+                      <span style={{ fontSize: '0.8rem', fontWeight: '700', color: '#000000', textTransform: 'uppercase', letterSpacing: '0.08em', display: 'block', marginBottom: '0.2rem' }}>
                         Jewellery
-                      </Link>
+                      </span>
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem', paddingLeft: '0.5rem', borderLeft: '2px solid #F4E1E5' }}>
+                        <Link href="/collections?collection=earrings" style={{ fontSize: '0.78rem', color: '#565959', textDecoration: 'none' }} onClick={() => { setDropdownOpen(false); setMenuOpen(false); }}>Earrings</Link>
+                        <Link href="/collections?collection=rings" style={{ fontSize: '0.78rem', color: '#565959', textDecoration: 'none' }} onClick={() => { setDropdownOpen(false); setMenuOpen(false); }}>Rings</Link>
+                        <Link href="/collections?collection=necklaces" style={{ fontSize: '0.78rem', color: '#565959', textDecoration: 'none' }} onClick={() => { setDropdownOpen(false); setMenuOpen(false); }}>Necklace</Link>
+                        <Link href="/collections?collection=bracelets" style={{ fontSize: '0.78rem', color: '#565959', textDecoration: 'none' }} onClick={() => { setDropdownOpen(false); setMenuOpen(false); }}>Bracelet</Link>
+                      </div>
                       <Link 
                         href="/collections?collection=flash-sale" 
-                        style={{ fontSize: '0.8rem', fontWeight: '700', color: '#D98E9B', textTransform: 'uppercase', letterSpacing: '0.08em', textDecoration: 'none' }}
+                        style={{ fontSize: '0.8rem', fontWeight: '700', color: '#D98E9B', textTransform: 'uppercase', letterSpacing: '0.08em', textDecoration: 'none', marginTop: '0.4rem' }}
                         onClick={() => { setDropdownOpen(false); setMenuOpen(false); }}
                       >
                         Flash Sale
@@ -386,21 +394,10 @@ export default function Header() {
             </Link>
 
             {/* 2. NEW COLLECTION */}
-            <div
+            <Link 
+              href="/collections?collection=new-collection" 
               className="mobile-nav-item-row"
-              role="link"
-              tabIndex={0}
-              onClick={() => {
-                setMenuOpen(false);
-                router.push('/collections?collection=new-collection');
-              }}
-              onKeyDown={(event) => {
-                if (event.key === 'Enter' || event.key === ' ') {
-                  event.preventDefault();
-                  setMenuOpen(false);
-                  router.push('/collections?collection=new-collection');
-                }
-              }}
+              onClick={() => setMenuOpen(false)}
             >
               <div className="mobile-nav-item-left">
                 <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#D98E9B" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
@@ -408,49 +405,12 @@ export default function Header() {
                 </svg>
                 <span className="mobile-nav-item-title">NEW COLLECTION</span>
               </div>
-              <button
-                type="button"
-                className="mobile-nav-item-chevron"
-                aria-label={newCollectionOpen ? 'Collapse New Collection menu' : 'Expand New Collection menu'}
-                aria-expanded={newCollectionOpen}
-                onClick={(event) => {
-                  event.preventDefault();
-                  event.stopPropagation();
-                  setNewCollectionOpen((open) => !open);
-                }}
-              >
-                <svg
-                  width="16"
-                  height="16"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2.5"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  style={{ transform: newCollectionOpen ? 'rotate(180deg)' : 'rotate(0deg)', transition: 'transform 0.25s ease' }}
-                >
-                  <polyline points="6 9 12 15 18 9"></polyline>
+              <div className="mobile-nav-item-chevron">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                  <polyline points="9 18 15 12 9 6"></polyline>
                 </svg>
-              </button>
-            </div>
-
-            {newCollectionOpen && (
-              <div className="mobile-nav-submenu-card animate-fade-in">
-                <Link href="/collections?collection=muslin" className="mobile-nav-submenu-item" onClick={() => setMenuOpen(false)}>
-                  <span className="mobile-nav-submenu-dot" />
-                  <span>MUSLIN</span>
-                </Link>
-                <Link href="/collections?collection=cotton" className="mobile-nav-submenu-item" onClick={() => setMenuOpen(false)}>
-                  <span className="mobile-nav-submenu-dot" />
-                  <span>COTTON</span>
-                </Link>
-                <Link href="/collections?collection=cotton-linen" className="mobile-nav-submenu-item" onClick={() => setMenuOpen(false)}>
-                  <span className="mobile-nav-submenu-dot" />
-                  <span>COTTON LINEN</span>
-                </Link>
               </div>
-            )}
+            </Link>
 
             {/* 3. HEAVY DRESSES */}
             <div
@@ -560,10 +520,20 @@ export default function Header() {
             </Link>
 
             {/* 6. JEWELLERY */}
-            <Link 
-              href="/jewellery" 
-              className={`mobile-nav-item-row ${isCurrent('/jewellery') ? 'active' : ''}`}
-              onClick={() => setMenuOpen(false)}
+            <div
+              className="mobile-nav-item-row"
+              role="button"
+              tabIndex={0}
+              onClick={() => {
+                setJewelleryOpen((open) => !open);
+              }}
+              onKeyDown={(event) => {
+                if (event.key === 'Enter' || event.key === ' ') {
+                  event.preventDefault();
+                  setJewelleryOpen((open) => !open);
+                }
+              }}
+              style={{ cursor: 'pointer' }}
             >
               <div className="mobile-nav-item-left">
                 <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#D98E9B" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
@@ -572,14 +542,53 @@ export default function Header() {
                 </svg>
                 <span className="mobile-nav-item-title">JEWELLERY</span>
               </div>
-              {!isCurrent('/jewellery') && (
-                <div className="mobile-nav-item-chevron">
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                    <polyline points="9 18 15 12 9 6"></polyline>
-                  </svg>
-                </div>
-              )}
-            </Link>
+              <button
+                type="button"
+                className="mobile-nav-item-chevron"
+                aria-label={jewelleryOpen ? 'Collapse Jewellery menu' : 'Expand Jewellery menu'}
+                aria-expanded={jewelleryOpen}
+                onClick={(event) => {
+                  event.preventDefault();
+                  event.stopPropagation();
+                  setJewelleryOpen((open) => !open);
+                }}
+              >
+                <svg
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2.5"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  style={{ transform: jewelleryOpen ? 'rotate(180deg)' : 'rotate(0deg)', transition: 'transform 0.25s ease' }}
+                >
+                  <polyline points="6 9 12 15 18 9"></polyline>
+                </svg>
+              </button>
+            </div>
+
+            {jewelleryOpen && (
+              <div className="mobile-nav-submenu-card animate-fade-in">
+                <Link href="/collections?collection=earrings" className="mobile-nav-submenu-item" onClick={() => setMenuOpen(false)}>
+                  <span className="mobile-nav-submenu-dot" />
+                  <span>EARRINGS</span>
+                </Link>
+                <Link href="/collections?collection=rings" className="mobile-nav-submenu-item" onClick={() => setMenuOpen(false)}>
+                  <span className="mobile-nav-submenu-dot" />
+                  <span>RINGS</span>
+                </Link>
+                <Link href="/collections?collection=necklaces" className="mobile-nav-submenu-item" onClick={() => setMenuOpen(false)}>
+                  <span className="mobile-nav-submenu-dot" />
+                  <span>NECKLACE</span>
+                </Link>
+                <Link href="/collections?collection=bracelets" className="mobile-nav-submenu-item" onClick={() => setMenuOpen(false)}>
+                  <span className="mobile-nav-submenu-dot" />
+                  <span>BRACELET</span>
+                </Link>
+              </div>
+            )}
 
             {/* 7. FLASH SALE */}
             <Link

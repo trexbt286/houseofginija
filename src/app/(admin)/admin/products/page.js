@@ -30,8 +30,32 @@ function AdminProductsContent() {
   });
 
   const [selectedTagIds, setSelectedTagIds] = useState([]);
+  const [selectedCategorySlugs, setSelectedCategorySlugs] = useState([]);
+  const [customTags, setCustomTags] = useState([]);
   const [images, setImages] = useState([]);
   const [variants, setVariants] = useState([]);
+
+  const ADMIN_CATEGORY_OPTIONS = [
+    { id: 'new-collection', name: 'New Collection' },
+    { id: 'flash-sale', name: 'Flash Sale' },
+    { id: 'suits', name: 'Unstitched Suits' },
+    { id: 'indo-western', name: 'Indo-Western' },
+    { id: 'shararas', name: 'Shararas' },
+    { id: 'gowns', name: 'Gowns' },
+    { id: 'co-ords', name: 'Co-ords' },
+    { id: 'rings', name: 'Rings' },
+    { id: 'necklaces', name: 'Necklace' },
+    { id: 'bracelets', name: 'Bracelet' },
+  ];
+
+  const toggleCategorySlug = (slug) => {
+    setSelectedCategorySlugs((prev) => {
+      if (prev.includes(slug)) {
+        return prev.filter((s) => s !== slug);
+      }
+      return [...prev, slug];
+    });
+  };
 
   // Temp states for adding single variant
   const [tempVariant, setTempVariant] = useState({
@@ -310,6 +334,8 @@ function AdminProductsContent() {
       is_out_of_stock: false,
       on_sale: false,
     });
+    setSelectedCategorySlugs(['suits']);
+    setCustomTags([]);
     setSelectedTagIds([]);
     setImages([]);
     setVariants([]);
@@ -327,6 +353,16 @@ function AdminProductsContent() {
       is_out_of_stock: !!product.is_out_of_stock,
       on_sale: !!product.on_sale,
     });
+    let initialSlugs = Array.isArray(product.collection_slugs) ? [...product.collection_slugs] : [];
+    if (initialSlugs.length === 0) {
+      if (product.collection_slug) initialSlugs.push(product.collection_slug);
+      if (product.parent_collection_slug) initialSlugs.push(product.parent_collection_slug);
+      if (product.new_arrival) initialSlugs.push('new-collection');
+      if (product.on_sale || product.flash_sale) initialSlugs.push('flash-sale');
+    }
+    setSelectedCategorySlugs([...new Set(initialSlugs)]);
+    const existingCustomTags = (product.tags || []).map((t) => (typeof t === 'string' ? t : t.name));
+    setCustomTags([...new Set(existingCustomTags)]);
     setSelectedTagIds((product.tags || []).map((tag) => Number(tag.id)));
     setImages(product.images || []);
     setVariants(product.variants || []);
@@ -338,6 +374,11 @@ function AdminProductsContent() {
     setError('');
     setSuccess('');
 
+    if (selectedCategorySlugs.length === 0) {
+      setError('Please select at least one category for the product.');
+      return;
+    }
+
     if (images.length === 0) {
       setError('Please upload at least one image.');
       return;
@@ -348,11 +389,22 @@ function AdminProductsContent() {
       return;
     }
 
+    const formattedCustomTags = customTags.map((name) => ({
+      id: name.toLowerCase().replace(/[^a-z0-9]+/g, '-'),
+      name: name.trim(),
+      slug: name.toLowerCase().trim().replace(/[^a-z0-9]+/g, '-'),
+    }));
+
     const payload = {
       ...formFields,
+      collection_slugs: selectedCategorySlugs,
       images,
       variants,
       tag_ids: selectedTagIds,
+      tags: formattedCustomTags,
+      new_arrival: selectedCategorySlugs.includes('new-collection'),
+      on_sale: selectedCategorySlugs.includes('flash-sale'),
+      flash_sale: selectedCategorySlugs.includes('flash-sale'),
     };
 
     if (editingId) {
@@ -479,9 +531,9 @@ function AdminProductsContent() {
                 </div>
               </div>
 
-              {/* Row 2: Price & Collection */}
-              <div style={formRowStyle}>
-                <div style={{ ...formGroupStyle, flex: 1 }}>
+              {/* Row 2: Price & Multi-Category Selector */}
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', marginBottom: '1.25rem' }}>
+                <div style={formGroupStyle}>
                   <label style={labelStyle}>Retail Price (₹ INR)</label>
                   <input
                     type="number"
@@ -493,22 +545,44 @@ function AdminProductsContent() {
                     placeholder="35000"
                   />
                 </div>
-                <div style={{ ...formGroupStyle, flex: 1 }}>
-                  <label style={labelStyle}>Category / Subcategory</label>
-                  <select
-                    name="collection_id"
-                    value={formFields.collection_id}
-                    onChange={handleTextChange}
-                    style={selectStyle}
-                    required
-                  >
-                    <option value="">-- Select Category --</option>
-                    {collections.map((category) => (
-                      <option key={category.id} value={category.id.toString()}>
-                        {category.parent_id ? `-- ${category.name}` : category.name}
-                      </option>
-                    ))}
-                  </select>
+
+                <div style={formGroupStyle}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.4rem' }}>
+                    <label style={labelStyle}>Product Categories (Select one or more)</label>
+                    <span style={{ fontSize: '0.75rem', color: '#B8860B', fontWeight: '700' }}>
+                      {selectedCategorySlugs.length} Selected
+                    </span>
+                  </div>
+                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem', padding: '0.8rem', backgroundColor: '#FFF7F8', borderRadius: '8px', border: '1px solid #F4E1E5' }}>
+                    {ADMIN_CATEGORY_OPTIONS.map((cat) => {
+                      const isSelected = selectedCategorySlugs.includes(cat.id);
+                      return (
+                        <button
+                          key={cat.id}
+                          type="button"
+                          onClick={() => toggleCategorySlug(cat.id)}
+                          style={{
+                            padding: '0.45rem 0.9rem',
+                            borderRadius: '999px',
+                            fontSize: '0.78rem',
+                            fontWeight: '700',
+                            cursor: 'pointer',
+                            transition: 'all 0.2s ease',
+                            border: isSelected ? '1.5px solid #B8860B' : '1px solid rgba(139, 119, 137, 0.2)',
+                            backgroundColor: isSelected ? '#B8860B' : '#FFFFFF',
+                            color: isSelected ? '#FFFFFF' : '#3C303A',
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '0.4rem',
+                            boxShadow: isSelected ? '0 2px 8px rgba(184, 134, 11, 0.25)' : 'none',
+                          }}
+                        >
+                          <span>{cat.name}</span>
+                          {isSelected && <span style={{ fontSize: '0.85rem' }}>✓</span>}
+                        </button>
+                      );
+                    })}
+                  </div>
                 </div>
               </div>
 
@@ -529,6 +603,8 @@ function AdminProductsContent() {
                 tags={tags}
                 selectedTagIds={selectedTagIds}
                 onSelectedTagIdsChange={setSelectedTagIds}
+                customTags={customTags}
+                onCustomTagsChange={setCustomTags}
                 onSale={formFields.on_sale}
                 onSaleChange={(onSale) => setFormFields((current) => ({ ...current, on_sale: onSale }))}
               />
@@ -748,7 +824,29 @@ function AdminProductsContent() {
                       <td style={{ ...tdStyle, fontSize: '0.8rem', color: '#000000' }} className="hide-on-mobile">
                         {p.slug}
                       </td>
-                      <td style={tdStyle} className="hide-on-mobile">{p.collection_name}</td>
+                      <td style={tdStyle} className="hide-on-mobile">
+                        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.25rem', maxWidth: '220px' }}>
+                          {(p.collection_slugs && p.collection_slugs.length > 0 ? p.collection_slugs : [p.collection_slug || 'suits']).map((slug) => {
+                            const catObj = ADMIN_CATEGORY_OPTIONS.find((c) => c.id === slug);
+                            return (
+                              <span
+                                key={slug}
+                                style={{
+                                  fontSize: '0.7rem',
+                                  fontWeight: '600',
+                                  backgroundColor: '#F6DDE2',
+                                  color: '#7D4352',
+                                  padding: '0.15rem 0.45rem',
+                                  borderRadius: '4px',
+                                  textTransform: 'capitalize',
+                                }}
+                              >
+                                {catObj ? catObj.name : slug}
+                              </span>
+                            );
+                          })}
+                        </div>
+                      </td>
                       <td style={tdStyle}>₹{parseFloat(p.price).toLocaleString('en-IN')}</td>
                       <td style={tdStyle} className="hide-on-mobile">
                         <span style={totalStock <= 5 ? lowStockHighlightStyle : null}>

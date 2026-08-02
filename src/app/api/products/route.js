@@ -93,8 +93,10 @@ export async function GET(request) {
         c.slug = $${paramIndex}
         OR parent_c.slug = $${paramIndex}
         OR ($${paramIndex} = 'gowns' AND c.slug = 'heavy-gown')
+        OR ($${paramIndex} = 'shararas' AND (c.slug = 'heavy-dresses' OR parent_c.slug = 'heavy-dresses'))
         OR ($${paramIndex} = 'new-collection' AND p.new_arrival = TRUE)
         OR ($${paramIndex} = 'flash-sale' AND (p.on_sale = TRUE OR p.flash_sale = TRUE))
+        OR (p.collection_slugs IS NOT NULL AND $${paramIndex} = ANY(p.collection_slugs))
       )`;
       queryParams.push(collection);
       paramIndex += 1;
@@ -160,12 +162,17 @@ export async function GET(request) {
 
     let matchingFallback = fallbackProducts.filter((p) => !dbSlugs.has(p.slug));
     if (collection) {
-      matchingFallback = matchingFallback.filter((p) =>
-        p.collection_slug === collection ||
-        p.parent_collection_slug === collection ||
-        (collection === 'new-collection' && p.new_arrival) ||
-        (collection === 'flash-sale' && (p.on_sale || p.flash_sale))
-      );
+      matchingFallback = matchingFallback.filter((p) => {
+        const slugs = Array.isArray(p.collection_slugs) ? p.collection_slugs : [];
+        return (
+          p.collection_slug === collection ||
+          p.parent_collection_slug === collection ||
+          slugs.includes(collection) ||
+          (collection === 'shararas' && (p.collection_slug === 'heavy-dresses' || p.parent_collection_slug === 'heavy-dresses')) ||
+          (collection === 'new-collection' && (p.new_arrival || slugs.includes('new-collection'))) ||
+          (collection === 'flash-sale' && (p.on_sale || p.flash_sale || slugs.includes('flash-sale')))
+        );
+      });
     }
     if (tag) {
       matchingFallback = matchingFallback.filter((p) =>

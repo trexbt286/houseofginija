@@ -39,12 +39,26 @@ export function mapProductData(product) {
     try { tags = JSON.parse(tags); } catch {}
   }
 
+  let collection_slugs = product.collection_slugs;
+  if (typeof collection_slugs === 'string') {
+    try { collection_slugs = JSON.parse(collection_slugs); } catch {}
+  }
+  if (!Array.isArray(collection_slugs) || collection_slugs.length === 0) {
+    const derived = [];
+    if (product.collection_slug) derived.push(product.collection_slug);
+    if (product.parent_collection_slug) derived.push(product.parent_collection_slug);
+    if (product.new_arrival) derived.push('new-collection');
+    if (product.on_sale || product.flash_sale) derived.push('flash-sale');
+    collection_slugs = [...new Set(derived)];
+  }
+
   return {
     ...product,
     on_sale: Boolean(product.on_sale),
     images: Array.isArray(images) ? images : [],
     variants: Array.isArray(variants) ? variants : [],
     tags: Array.isArray(tags) ? tags : [],
+    collection_slugs: Array.isArray(collection_slugs) ? collection_slugs : [],
   };
 }
 

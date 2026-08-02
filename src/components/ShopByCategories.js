@@ -2,19 +2,47 @@
 
 import Image from 'next/image';
 import Link from 'next/link';
-import { useRef } from 'react';
+import { useRef, useState, useEffect } from 'react';
 
-const categories = [
-  { name: 'New Collection', image: '/local-products/033-blush-pink-drape-1.jpg', href: '/collections?collection=new-collection' },
-  { name: 'Heavy Dresses', image: '/images/categories/heavy-dresses.png', href: '/collections?collection=heavy-dresses' },
-  { name: 'Co-ords', image: '/images/categories/co-ords.png', href: '/collections?collection=co-ords' },
-  { name: 'Unstitched Suits', image: '/images/categories/unstitched.png', href: '/collections?collection=suits' },
-  { name: 'Jewellery', image: '/images/categories/jewellery.png', href: '/collections?collection=jewellery' },
-  { name: 'Flash Sale', image: '/local-products/001-bespoke-necklace-4-1.jpg', href: '/collections?collection=flash-sale' },
+const DEFAULT_CATEGORIES = [
+  { name: 'New Collection', slug: 'new-collection', defaultImage: '/local-products/033-blush-pink-drape-1.jpg', href: '/collections?collection=new-collection' },
+  { name: 'Unstitched Suits', slug: 'suits',        defaultImage: '/images/categories/unstitched.png', href: '/collections?collection=suits' },
+  { name: 'Indo-Western',   slug: 'indo-western',   defaultImage: '/images/categories/indo-western.png', href: '/collections?collection=indo-western' },
+  { name: 'Shararas',       slug: 'shararas',       defaultImage: '/images/categories/heavy-dresses.png', href: '/collections?collection=shararas' },
+  { name: 'Gowns',          slug: 'gowns',          defaultImage: '/local-products/037-champagne-drape-saree-1.jpg', href: '/collections?collection=gowns' },
+  { name: 'Co-ords',        slug: 'co-ords',        defaultImage: '/images/categories/co-ords.png', href: '/collections?collection=co-ords' },
+  { name: 'Earrings',       slug: 'earrings',       defaultImage: '/images/categories/jewellery.png', href: '/collections?collection=earrings' },
+  { name: 'Rings',          slug: 'rings',          defaultImage: '/images/categories/jewellery.png', href: '/collections?collection=rings' },
+  { name: 'Necklace',       slug: 'necklace',       defaultImage: '/images/categories/jewellery.png', href: '/collections?collection=necklace' },
+  { name: 'Bracelet',       slug: 'bracelet',       defaultImage: '/images/categories/jewellery.png', href: '/collections?collection=bracelet' },
 ];
 
 export default function ShopByCategories() {
   const trackRef = useRef(null);
+  const [categoryImages, setCategoryImages] = useState({});
+
+  useEffect(() => {
+    fetch('/api/admin/settings')
+      .then((res) => res.ok ? res.json() : null)
+      .then((data) => {
+        if (data?.settings) {
+          const imgs = {};
+          Object.entries(data.settings).forEach(([key, value]) => {
+            if (key.startsWith('category_img_') && value) {
+              const slug = key.replace('category_img_', '');
+              imgs[slug] = value;
+            }
+          });
+          setCategoryImages(imgs);
+        }
+      })
+      .catch(() => {});
+  }, []);
+
+  const categories = DEFAULT_CATEGORIES.map((cat) => ({
+    ...cat,
+    image: categoryImages[cat.slug] || cat.defaultImage,
+  }));
 
   const move = (direction) => {
     trackRef.current?.scrollBy({
@@ -36,15 +64,24 @@ export default function ShopByCategories() {
           <button type="button" onClick={() => move(-1)} className="shop-categories__arrow shop-categories__arrow--left" aria-label="Previous categories">&#8249;</button>
           <div ref={trackRef} className="shop-categories__track">
             {categories.map((category, index) => (
-              <Link href={category.href} className="shop-categories__card" key={category.name}>
+              <Link href={category.href} className="shop-categories__card" key={category.slug}>
                 <span className="shop-categories__image">
-                  <Image
-                    src={category.image}
-                    alt={`${category.name} collection`}
-                    fill
-                    priority={index < 2}
-                    sizes="(max-width: 767px) 42vw, 280px"
-                  />
+                  {category.image.startsWith('data:') ? (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img
+                      src={category.image}
+                      alt={`${category.name} collection`}
+                      style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover' }}
+                    />
+                  ) : (
+                    <Image
+                      src={category.image}
+                      alt={`${category.name} collection`}
+                      fill
+                      priority={index < 2}
+                      sizes="(max-width: 767px) 42vw, 280px"
+                    />
+                  )}
                 </span>
                 <span className="shop-categories__name">{category.name}</span>
                 <span className="shop-categories__link">Explore collection <span aria-hidden="true">&rarr;</span></span>

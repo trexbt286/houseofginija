@@ -151,7 +151,35 @@ export default function ProductPage({ params }) {
           <h1 style={productNameStyle}>{product.name}</h1>
           <p style={priceStyle}>₹{parseFloat(product.price).toLocaleString('en-IN')}</p>
 
-          <div style={dividerLineStyle}></div>
+          {/* Custom Tag Badges between Price and Description (Matching Reference Design) */}
+          {Array.isArray(product.tags) && product.tags.length > 0 && (
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem', marginTop: '0.8rem', marginBottom: '1.2rem' }}>
+              {product.tags.map((tag, idx) => {
+                const tagName = typeof tag === 'string' ? tag : (tag.name || tag.slug);
+                if (!tagName) return null;
+                return (
+                  <span
+                    key={tag.id || tag.slug || idx}
+                    style={{
+                      fontSize: '0.78rem',
+                      fontWeight: '500',
+                      letterSpacing: '0.01em',
+                      backgroundColor: '#FFFFFF',
+                      color: '#A25867',
+                      padding: '0.35rem 0.75rem',
+                      borderRadius: '8px',
+                      border: '1px solid #EFA7B3',
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      lineHeight: '1.2',
+                    }}
+                  >
+                    {tagName}
+                  </span>
+                );
+              })}
+            </div>
+          )}
 
           <p style={descriptionStyle}>{product.description}</p>
 
