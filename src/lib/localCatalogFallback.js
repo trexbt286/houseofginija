@@ -2,6 +2,7 @@ import homepageFallback from '@/data/local-homepage-fallback.json';
 import productsFallback from '@/data/local-products-fallback.json';
 
 const isProduction = process.env.NODE_ENV === 'production';
+const hasDatabaseUrl = Boolean(process.env.DATABASE_URL);
 
 const fallbackTags = [
   { id: '1', name: 'Cotton', slug: 'cotton' },
@@ -33,11 +34,11 @@ function buildCategoryTree(collections) {
 }
 
 export function canUseLocalCatalogFallback() {
-  return !isProduction;
+  return !hasDatabaseUrl;
 }
 
 export function shouldUseLocalCatalogFallbackFirst() {
-  return canUseLocalCatalogFallback() && !process.env.DATABASE_URL;
+  return !hasDatabaseUrl;
 }
 
 export function getLocalCollectionsFallback() {
