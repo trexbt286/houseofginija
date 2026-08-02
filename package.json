@@ -4,6 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev --webpack",
+    "prebuild": "node scripts/migrate-catalog-metadata.js --if-configured",
     "build": "next build --webpack",
     "start": "next start",
     "lint": "eslint",

@@ -7,6 +7,11 @@ loadEnvConfig(process.cwd());
 
 async function main() {
   if (!process.env.DATABASE_URL) {
+    if (process.argv.includes('--if-configured')) {
+      console.log('Skipping catalog metadata migration because DATABASE_URL is not configured.');
+      return;
+    }
+
     throw new Error('DATABASE_URL is required to run the catalog metadata migration.');
   }
 
