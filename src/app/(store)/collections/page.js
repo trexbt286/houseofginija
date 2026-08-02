@@ -630,53 +630,76 @@ function CollectionsContent() {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  const renderCategoryIcon = (catId) => {
-    const strokeColor = '#B8860B'; // Gold accent color
+  const renderCategoryIcon = (catId, isActive = false) => {
+    const strokeColor = isActive ? '#FFFFFF' : '#C9A227';
     
     switch (catId) {
-      case 'all':
+      case 'heavy-dresses':
         return (
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={strokeColor} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-            <polygon points="12 2 22 8.5 22 15.5 12 22 2 15.5 2 8.5 12 2" />
-            <line x1="12" y1="2" x2="12" y2="22" />
-            <line x1="12" y1="12" x2="22" y2="8.5" />
-            <line x1="12" y1="12" x2="2" y2="8.5" />
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={strokeColor} strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M20.38 3.46L16 2a4 4 0 00-8 0L3.62 3.46a2 2 0 00-1.34 2.23l.58 3.47a1 1 0 00.99.84H6v10a2 2 0 002 2h8a2 2 0 002-2V10h2.15a1 1 0 00.99-.84l.58-3.47a2 2 0 00-1.34-2.23z" />
+          </svg>
+        );
+      case 'indo-western':
+        return (
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={strokeColor} strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M12 2L4 7v13a2 2 0 002 2h12a2 2 0 002-2V7l-8-5z" />
+            <path d="M12 22V7" />
+            <path d="M12 7l4 3" />
+            <path d="M12 7l-4 3" />
+          </svg>
+        );
+      case 'shararas':
+        return (
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={strokeColor} strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M6 3h12l1 7H5l1-7z" />
+            <path d="M5 10l-3 11h9L9 10" />
+            <path d="M19 10l3 11h-9l2-11" />
+          </svg>
+        );
+      case 'gowns':
+      case 'heavy-gown':
+        return (
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={strokeColor} strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M12 2a3 3 0 00-3 3h6a3 3 0 00-3-3z" />
+            <path d="M9 5l-4 5h14l-4-5" />
+            <path d="M5 10l-2 12h18l-2-12" />
           </svg>
         );
       case 'suits':
         return (
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={strokeColor} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-            <path d="M12 2a3 3 0 0 0-3 3h6a3 3 0 0 0-3-3z" />
-            <path d="M2 19V9a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2z" />
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={strokeColor} strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M12 2a3 3 0 00-3 3h6a3 3 0 00-3-3z" />
+            <path d="M2 19V9a2 2 0 012-2h16a2 2 0 012 2v10a2 2 0 01-2 2H4a2 2 0 01-2-2z" />
             <line x1="12" y1="5" x2="12" y2="21" />
             <path d="M6 9l6 4 6-4" />
           </svg>
         );
       case 'jewellery':
         return (
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={strokeColor} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={strokeColor} strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
             <polygon points="12 2 22 8.5 12 22 2 8.5" />
             <polygon points="12 2 17 8.5 12 15 7 8.5" />
           </svg>
         );
       case 'rings':
         return (
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={strokeColor} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={strokeColor} strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
             <circle cx="12" cy="14" r="6" />
             <polygon points="12 2 7 7 17 7" />
           </svg>
         );
       case 'necklaces':
+      case 'necklace':
         return (
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={strokeColor} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-            <path d="M12 2a8 8 0 0 0-8 8c0 4.4 3.6 8 8 8s8-3.6 8-8a8 8 0 0 0-8-8z" />
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={strokeColor} strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M12 2a8 8 0 00-8 8c0 4.4 3.6 8 8 8s8-3.6 8-8a8 8 0 00-8-8z" />
             <circle cx="12" cy="18" r="1.5" fill={strokeColor} />
-            <path d="M6 10l2 2m8-2l-2 2" />
           </svg>
         );
       case 'bracelets':
         return (
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={strokeColor} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={strokeColor} strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
             <rect x="3" y="10" width="5" height="4" rx="1.5" />
             <rect x="8" y="10" width="5" height="4" rx="1.5" />
             <rect x="13" y="10" width="5" height="4" rx="1.5" />
@@ -684,7 +707,7 @@ function CollectionsContent() {
         );
       case 'earrings':
         return (
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={strokeColor} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={strokeColor} strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
             <circle cx="7" cy="6" r="1.5" />
             <circle cx="17" cy="6" r="1.5" />
             <path d="M7 7.5v5.5m10-5.5v5.5" />
@@ -692,10 +715,30 @@ function CollectionsContent() {
             <polygon points="17 13 15 17 19 17" />
           </svg>
         );
+      case 'co-ords':
+        return (
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={strokeColor} strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+            <rect x="4" y="4" width="16" height="6" rx="2" />
+            <rect x="4" y="14" width="7" height="6" rx="2" />
+            <rect x="13" y="14" width="7" height="6" rx="2" />
+          </svg>
+        );
+      case 'new-collection':
+        return (
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={strokeColor} strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+            <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
+          </svg>
+        );
+      case 'flash-sale':
+        return (
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={strokeColor} strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+            <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" />
+          </svg>
+        );
       default:
         return (
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={strokeColor} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-            <path d="M12 2v20M2 12h20" />
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={strokeColor} strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M20.38 3.46L16 2a4 4 0 00-8 0L3.62 3.46a2 2 0 00-1.34 2.23l.58 3.47a1 1 0 00.99.84H6v10a2 2 0 002 2h8a2 2 0 002-2V10h2.15a1 1 0 00.99-.84l.58-3.47a2 2 0 00-1.34-2.23z" />
           </svg>
         );
     }
@@ -1268,36 +1311,18 @@ function CollectionsContent() {
             handleProductClick={handleProductClick} 
           />
 
-          {/* Blinkit Mobile Category Sidebar (Mobile only, hidden on desktop) */}
+          {/* Mobile Category Swipeable Chip Navigation Bar */}
           <aside className="blinkit-sidebar">
             <div 
-              className="blinkit-sidebar-item blinkit-sidebar-filter-btn"
+              className={`blinkit-sidebar-item blinkit-sidebar-filter-btn ${activeFilterCount > 0 ? 'active' : ''}`}
               onClick={() => setIsMobileFilterOpen(true)}
             >
-              <div style={{ position: 'relative', display: 'inline-flex' }}>
-                <div className="blinkit-sidebar-icon">
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#B8860B" strokeWidth="2.5">
-                    <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3" />
-                  </svg>
-                </div>
+              <div className="blinkit-sidebar-icon">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke={activeFilterCount > 0 ? '#FFFFFF' : '#C9A227'} strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                  <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3" />
+                </svg>
                 {activeFilterCount > 0 && (
-                  <span style={{
-                    position: 'absolute',
-                    top: '-4px',
-                    right: '-4px',
-                    backgroundColor: '#D98E9B',
-                    color: '#FFFFFF',
-                    borderRadius: '50%',
-                    width: '14px',
-                    height: '14px',
-                    fontSize: '9px',
-                    fontWeight: '700',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    border: '1.5px solid #FFFFFF',
-                    zIndex: 10
-                  }}>
+                  <span className="blinkit-sidebar-badge">
                     {activeFilterCount}
                   </span>
                 )}
@@ -1305,18 +1330,21 @@ function CollectionsContent() {
               <span>Filter</span>
             </div>
 
-            {getSidebarCategories().map(cat => (
-              <div 
-                key={cat.id} 
-                className={`blinkit-sidebar-item ${(!searchQuery && activeCategorySidebar === cat.id) ? 'active' : ''}`}
-                onClick={() => handleCategorySidebarClick(cat.id)}
-              >
-                <div className="blinkit-sidebar-icon">
-                  {renderCategoryIcon(cat.id)}
+            {getSidebarCategories().map((cat) => {
+              const isActive = !searchQuery && activeCategorySidebar === cat.id;
+              return (
+                <div 
+                  key={cat.id} 
+                  className={`blinkit-sidebar-item ${isActive ? 'active' : ''}`}
+                  onClick={() => handleCategorySidebarClick(cat.id)}
+                >
+                  <div className="blinkit-sidebar-icon">
+                    {renderCategoryIcon(cat.id, isActive)}
+                  </div>
+                  <span>{cat.name}</span>
                 </div>
-                <span>{cat.name}</span>
-              </div>
-            ))}
+              );
+            })}
           </aside>
 
           {/* Products Grid / Product Feed */}
