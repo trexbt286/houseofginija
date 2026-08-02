@@ -178,132 +178,93 @@ export default function Header() {
                 </svg>
               </Link>
               {dropdownOpen && (
-                <ul style={{...dropdownMenuStyle, gap: 0}}>
-                  <li style={{ position: 'relative' }}>
-                    {/* Vertical Trunk Line (from top of dropdown to Suits) */}
-                    <div style={{
-                      position: 'absolute',
-                      left: '16px',
-                      top: '-0.8rem',
-                      bottom: 0,
-                      width: '1px',
-                      backgroundColor: 'rgba(139, 119, 137, 0.25)'
-                    }} />
-                    {/* Horizontal Branch to Suits */}
-                    <div style={{
-                      position: 'absolute',
-                      left: '16px',
-                      top: '50%',
-                      width: '8px',
-                      height: '1px',
-                      backgroundColor: 'rgba(139, 119, 137, 0.25)'
-                    }} />
-                    <Link href="/collections?collection=suits" style={{...dropdownLinkItemStyle, paddingLeft: '2.0rem', fontWeight: '700'}} onClick={() => { setDropdownOpen(false); setMenuOpen(false); }}>
-                      Suits
-                    </Link>
-                  </li>
-                  <li style={{ position: 'relative' }}>
-                    {/* Main Trunk ends at middle of Jewellery */}
-                    <div style={{
-                      position: 'absolute',
-                      left: '16px',
-                      top: 0,
-                      bottom: '50%',
-                      width: '1px',
-                      backgroundColor: 'rgba(139, 119, 137, 0.25)'
-                    }} />
-                    {/* Horizontal Branch to Jewellery */}
-                    <div style={{
-                      position: 'absolute',
-                      left: '16px',
-                      top: '50%',
-                      width: '8px',
-                      height: '1px',
-                      backgroundColor: 'rgba(139, 119, 137, 0.25)'
-                    }} />
-                    {/* Sub-Trunk starts at Jewellery branch and goes down */}
-                    <div style={{
-                      position: 'absolute',
-                      left: '24px',
-                      top: '50%',
-                      bottom: 0,
-                      width: '1px',
-                      backgroundColor: 'rgba(139, 119, 137, 0.25)'
-                    }} />
-                    <Link href="/collections?collection=jewellery" style={{...dropdownLinkItemStyle, paddingLeft: '2.0rem', fontWeight: '700'}} onClick={() => { setDropdownOpen(false); setMenuOpen(false); }}>
-                      Jewellery
-                    </Link>
-                  </li>
-                  <li style={{ position: 'relative' }}>
-                    {/* Vertical Sub-Trunk */}
-                    <div style={{
-                      position: 'absolute',
-                      left: '24px',
-                      top: 0,
-                      bottom: 0,
-                      width: '1px',
-                      backgroundColor: 'rgba(139, 119, 137, 0.25)'
-                    }} />
-                    {/* Horizontal Branch */}
-                    <div style={{
-                      position: 'absolute',
-                      left: '24px',
-                      top: '50%',
-                      width: '10px',
-                      height: '1px',
-                      backgroundColor: 'rgba(139, 119, 137, 0.25)'
-                    }} />
-                    <Link href="/collections?collection=jewellery&category=rings" style={{...dropdownLinkItemStyle, paddingLeft: '2.8rem', fontSize: '0.8rem', fontWeight: '500', color: '#565959'}} onClick={() => { setDropdownOpen(false); setMenuOpen(false); }}>
-                      Rings
-                    </Link>
-                  </li>
-                  <li style={{ position: 'relative' }}>
-                    {/* Vertical Sub-Trunk */}
-                    <div style={{
-                      position: 'absolute',
-                      left: '24px',
-                      top: 0,
-                      bottom: 0,
-                      width: '1px',
-                      backgroundColor: 'rgba(139, 119, 137, 0.25)'
-                    }} />
-                    {/* Horizontal Branch */}
-                    <div style={{
-                      position: 'absolute',
-                      left: '24px',
-                      top: '50%',
-                      width: '10px',
-                      height: '1px',
-                      backgroundColor: 'rgba(139, 119, 137, 0.25)'
-                    }} />
-                    <Link href="/collections?collection=jewellery&category=necklace" style={{...dropdownLinkItemStyle, paddingLeft: '2.8rem', fontSize: '0.8rem', fontWeight: '500', color: '#565959'}} onClick={() => { setDropdownOpen(false); setMenuOpen(false); }}>
-                      Necklace
-                    </Link>
-                  </li>
-                  <li style={{ position: 'relative' }}>
-                    {/* Vertical Sub-Trunk terminates at middle */}
-                    <div style={{
-                      position: 'absolute',
-                      left: '24px',
-                      top: 0,
-                      bottom: '50%',
-                      width: '1px',
-                      backgroundColor: 'rgba(139, 119, 137, 0.25)'
-                    }} />
-                    {/* Horizontal Branch */}
-                    <div style={{
-                      position: 'absolute',
-                      left: '24px',
-                      top: '50%',
-                      width: '10px',
-                      height: '1px',
-                      backgroundColor: 'rgba(139, 119, 137, 0.25)'
-                    }} />
-                    <Link href="/collections?collection=jewellery&category=bracelets" style={{...dropdownLinkItemStyle, paddingLeft: '2.8rem', fontSize: '0.8rem', fontWeight: '500', color: '#565959'}} onClick={() => { setDropdownOpen(false); setMenuOpen(false); }}>
-                      Bracelets
-                    </Link>
-                  </li>
-                </ul>
+                <div 
+                  style={{
+                    position: 'absolute',
+                    top: '100%',
+                    left: '50%',
+                    transform: 'translateX(-50%)',
+                    backgroundColor: '#FFFFFF',
+                    boxShadow: '0 12px 36px rgba(60, 48, 58, 0.14)',
+                    borderRadius: '10px',
+                    padding: '1.25rem 1.5rem',
+                    minWidth: '380px',
+                    border: '1px solid rgba(139, 119, 137, 0.15)',
+                    zIndex: 1000,
+                  }}
+                  onMouseEnter={() => setDropdownOpen(true)}
+                  onMouseLeave={() => setDropdownOpen(false)}
+                >
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.25rem 1.8rem' }}>
+                    {/* New Collection */}
+                    <div>
+                      <Link 
+                        href="/collections?collection=new-collection" 
+                        style={{ fontSize: '0.8rem', fontWeight: '700', color: '#000000', textTransform: 'uppercase', letterSpacing: '0.08em', textDecoration: 'none', display: 'block', marginBottom: '0.35rem' }}
+                        onClick={() => { setDropdownOpen(false); setMenuOpen(false); }}
+                      >
+                        New Collection
+                      </Link>
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem', paddingLeft: '0.5rem', borderLeft: '2px solid #F4E1E5' }}>
+                        <Link href="/collections?collection=muslin" style={{ fontSize: '0.78rem', color: '#565959', textDecoration: 'none' }} onClick={() => { setDropdownOpen(false); setMenuOpen(false); }}>Muslin</Link>
+                        <Link href="/collections?collection=cotton" style={{ fontSize: '0.78rem', color: '#565959', textDecoration: 'none' }} onClick={() => { setDropdownOpen(false); setMenuOpen(false); }}>Cotton</Link>
+                        <Link href="/collections?collection=cotton-linen" style={{ fontSize: '0.78rem', color: '#565959', textDecoration: 'none' }} onClick={() => { setDropdownOpen(false); setMenuOpen(false); }}>Cotton Linen</Link>
+                      </div>
+                    </div>
+
+                    {/* Heavy Dresses */}
+                    <div>
+                      <Link 
+                        href="/collections?collection=heavy-dresses" 
+                        style={{ fontSize: '0.8rem', fontWeight: '700', color: '#000000', textTransform: 'uppercase', letterSpacing: '0.08em', textDecoration: 'none', display: 'block', marginBottom: '0.35rem' }}
+                        onClick={() => { setDropdownOpen(false); setMenuOpen(false); }}
+                      >
+                        Heavy Dresses
+                      </Link>
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem', paddingLeft: '0.5rem', borderLeft: '2px solid #F4E1E5' }}>
+                        <Link href="/collections?collection=indo-western" style={{ fontSize: '0.78rem', color: '#565959', textDecoration: 'none' }} onClick={() => { setDropdownOpen(false); setMenuOpen(false); }}>Indo-Western</Link>
+                        <Link href="/collections?collection=shararas" style={{ fontSize: '0.78rem', color: '#565959', textDecoration: 'none' }} onClick={() => { setDropdownOpen(false); setMenuOpen(false); }}>Shararas</Link>
+                        <Link href="/collections?collection=gowns" style={{ fontSize: '0.78rem', color: '#565959', textDecoration: 'none' }} onClick={() => { setDropdownOpen(false); setMenuOpen(false); }}>Gowns</Link>
+                      </div>
+                    </div>
+
+                    {/* Co-ords & Suits */}
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '0.6rem' }}>
+                      <Link 
+                        href="/collections?collection=co-ords" 
+                        style={{ fontSize: '0.8rem', fontWeight: '700', color: '#000000', textTransform: 'uppercase', letterSpacing: '0.08em', textDecoration: 'none' }}
+                        onClick={() => { setDropdownOpen(false); setMenuOpen(false); }}
+                      >
+                        Co-ords
+                      </Link>
+                      <Link 
+                        href="/collections?collection=suits" 
+                        style={{ fontSize: '0.8rem', fontWeight: '700', color: '#000000', textTransform: 'uppercase', letterSpacing: '0.08em', textDecoration: 'none' }}
+                        onClick={() => { setDropdownOpen(false); setMenuOpen(false); }}
+                      >
+                        Unstitched Suits
+                      </Link>
+                    </div>
+
+                    {/* Jewellery & Flash Sale */}
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '0.6rem' }}>
+                      <Link 
+                        href="/collections?collection=jewellery" 
+                        style={{ fontSize: '0.8rem', fontWeight: '700', color: '#000000', textTransform: 'uppercase', letterSpacing: '0.08em', textDecoration: 'none' }}
+                        onClick={() => { setDropdownOpen(false); setMenuOpen(false); }}
+                      >
+                        Jewellery
+                      </Link>
+                      <Link 
+                        href="/collections?collection=flash-sale" 
+                        style={{ fontSize: '0.8rem', fontWeight: '700', color: '#D98E9B', textTransform: 'uppercase', letterSpacing: '0.08em', textDecoration: 'none' }}
+                        onClick={() => { setDropdownOpen(false); setMenuOpen(false); }}
+                      >
+                        Flash Sale
+                      </Link>
+                    </div>
+                  </div>
+                </div>
               )}
             </li>
             <li>
