@@ -5,31 +5,28 @@ ALTER TABLE collections
   ADD COLUMN IF NOT EXISTS sort_order INTEGER NOT NULL DEFAULT 0,
   ADD COLUMN IF NOT EXISTS is_active BOOLEAN NOT NULL DEFAULT TRUE;
 
-DO $$
-BEGIN
-  IF NOT EXISTS (
-    SELECT 1
-    FROM pg_constraint
-    WHERE conname = 'collections_parent_id_fkey'
-      AND conrelid = 'collections'::regclass
-  ) THEN
-    ALTER TABLE collections
-      ADD CONSTRAINT collections_parent_id_fkey
-      FOREIGN KEY (parent_id) REFERENCES collections(id) ON DELETE SET NULL;
-  END IF;
-END $$;
+ALTER TABLE collections
+  DROP CONSTRAINT IF EXISTS collections_parent_id_fkey;
 
-CREATE INDEX IF NOT EXISTS collections_parent_id_idx ON collections(parent_id);
-CREATE INDEX IF NOT EXISTS collections_active_sort_idx ON collections(is_active, sort_order, id);
+ALTER TABLE collections
+  ADD CONSTRAINT collections_parent_id_fkey
+  FOREIGN KEY (parent_id) REFERENCES collections(id) ON DELETE SET NULL;
+
+DROP INDEX IF EXISTS collections_parent_id_idx;
+CREATE INDEX collections_parent_id_idx ON collections(parent_id);
+DROP INDEX IF EXISTS collections_active_sort_idx;
+CREATE INDEX collections_active_sort_idx ON collections(is_active, sort_order, id);
 
 ALTER TABLE products
   ADD COLUMN IF NOT EXISTS on_sale BOOLEAN NOT NULL DEFAULT FALSE;
 
-CREATE INDEX IF NOT EXISTS products_on_sale_idx ON products(on_sale DESC);
-CREATE INDEX IF NOT EXISTS products_collection_on_sale_idx ON products(collection_id, on_sale DESC);
+DROP INDEX IF EXISTS products_on_sale_idx;
+CREATE INDEX products_on_sale_idx ON products(on_sale DESC);
+DROP INDEX IF EXISTS products_collection_on_sale_idx;
+CREATE INDEX products_collection_on_sale_idx ON products(collection_id, on_sale DESC);
 
 CREATE TABLE IF NOT EXISTS tags (
-  id SERIAL PRIMARY KEY,
+  id INT PRIMARY KEY DEFAULT unique_rowid(),
   name VARCHAR(100) NOT NULL UNIQUE,
   slug VARCHAR(100) NOT NULL UNIQUE,
   created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
@@ -42,8 +39,10 @@ CREATE TABLE IF NOT EXISTS product_tags (
   PRIMARY KEY (product_id, tag_id)
 );
 
-CREATE INDEX IF NOT EXISTS tags_slug_idx ON tags(slug);
-CREATE INDEX IF NOT EXISTS product_tags_tag_id_idx ON product_tags(tag_id, product_id);
+DROP INDEX IF EXISTS tags_slug_idx;
+CREATE INDEX tags_slug_idx ON tags(slug);
+DROP INDEX IF EXISTS product_tags_tag_id_idx;
+CREATE INDEX product_tags_tag_id_idx ON product_tags(tag_id, product_id);
 
 INSERT INTO collections (name, slug, description, sort_order, is_active)
 VALUES
@@ -62,15 +61,10 @@ UPDATE collections
 SET parent_id = NULL
 WHERE slug IN ('new-collection', 'heavy-dresses', 'co-ords', 'suits', 'jewellery', 'flash-sale');
 
-DO $$
-BEGIN
-  IF EXISTS (SELECT 1 FROM collections WHERE slug = 'heavy-gown')
-     AND NOT EXISTS (SELECT 1 FROM collections WHERE slug = 'gowns') THEN
-    UPDATE collections
-    SET slug = 'gowns', name = 'Gowns'
-    WHERE slug = 'heavy-gown';
-  END IF;
-END $$;
+UPDATE collections
+SET slug = 'gowns', name = 'Gowns'
+WHERE slug = 'heavy-gown'
+  AND NOT EXISTS (SELECT 1 FROM collections WHERE slug = 'gowns');
 
 INSERT INTO collections (name, slug, description, parent_id, sort_order, is_active)
 SELECT child.name, child.slug, child.description, parent.id, child.sort_order, TRUE
