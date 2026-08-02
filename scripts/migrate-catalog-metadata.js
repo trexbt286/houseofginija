@@ -22,19 +22,28 @@ async function main() {
     '20260802_catalog_categories_and_tags.sql'
   );
   const sql = fs.readFileSync(sqlPath, 'utf8');
-  const pool = new Pool({ connectionString: process.env.DATABASE_URL });
+  const pool = new Pool({
+    connectionString: process.env.DATABASE_URL,
+    connectionTimeoutMillis: 3000
+  });
+
+  let timerId;
+  const timeout = new Promise((_, reject) => {
+    timerId = setTimeout(() => reject(new Error('DB Connection Timeout (3s)')), 3000);
+  });
 
   try {
-    await pool.query(sql);
+    await Promise.race([pool.query(sql), timeout]);
     console.log('Catalog categories, on-sale metadata, and tags migrated successfully.');
   } catch (error) {
-    console.error('Catalog metadata migration failed:', error);
+    console.error('Catalog metadata migration failed:', error.message);
     if (!process.argv.includes('--if-configured')) {
       throw error;
     }
     console.warn('Proceeding with build despite prebuild migration warning.');
   } finally {
-    await pool.end();
+    if (timerId) clearTimeout(timerId);
+    process.exit(0);
   }
 }
 

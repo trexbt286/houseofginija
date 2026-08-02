@@ -35,7 +35,7 @@ function buildCategoryTree(collections) {
 }
 
 export function canUseLocalCatalogFallback() {
-  return isBuild || !hasDatabaseUrl;
+  return true;
 }
 
 export function shouldUseLocalCatalogFallbackFirst() {
