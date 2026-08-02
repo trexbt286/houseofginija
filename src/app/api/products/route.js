@@ -90,11 +90,11 @@ export async function GET(request) {
 
     if (collection) {
       queryText += ` AND (
-        c.slug = ${paramIndex}
-        OR parent_c.slug = ${paramIndex}
-        OR (${paramIndex} = 'gowns' AND c.slug = 'heavy-gown')
-        OR (${paramIndex} = 'new-collection' AND p.new_arrival = TRUE)
-        OR (${paramIndex} = 'flash-sale' AND (p.on_sale = TRUE OR p.flash_sale = TRUE))
+        c.slug = $${paramIndex}
+        OR parent_c.slug = $${paramIndex}
+        OR ($${paramIndex} = 'gowns' AND c.slug = 'heavy-gown')
+        OR ($${paramIndex} = 'new-collection' AND p.new_arrival = TRUE)
+        OR ($${paramIndex} = 'flash-sale' AND (p.on_sale = TRUE OR p.flash_sale = TRUE))
       )`;
       queryParams.push(collection);
       paramIndex += 1;

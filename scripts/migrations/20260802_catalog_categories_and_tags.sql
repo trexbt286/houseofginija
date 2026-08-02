@@ -169,4 +169,19 @@ FROM (VALUES
 ) AS val(slug, name)
 WHERE t.slug = val.slug;
 
+-- Ensure products are mapped to subcollections where appropriate
+UPDATE products p
+SET collection_id = c.id
+FROM collections c
+WHERE c.slug = 'indo-western'
+  AND (p.slug ILIKE '%indo-western%' OR p.slug ILIKE '%drape%' OR p.slug ILIKE '%cape%')
+  AND (p.collection_id IS NULL OR p.collection_id IN (SELECT id FROM collections WHERE slug IN ('heavy-dresses', 'heavy-gown')));
+
+UPDATE products p
+SET collection_id = c.id
+FROM collections c
+WHERE c.slug = 'gowns'
+  AND (p.slug ILIKE '%gown%' OR p.slug ILIKE '%heavy-gown%')
+  AND (p.collection_id IS NULL OR p.collection_id IN (SELECT id FROM collections WHERE slug IN ('heavy-dresses', 'heavy-gown')));
+
 COMMIT;
