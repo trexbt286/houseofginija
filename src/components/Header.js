@@ -214,17 +214,15 @@ export default function Header() {
 
                     {/* Heavy Dresses */}
                     <div>
-                      <Link 
-                        href="/collections?collection=heavy-dresses" 
-                        style={{ fontSize: '0.8rem', fontWeight: '700', color: '#000000', textTransform: 'uppercase', letterSpacing: '0.08em', textDecoration: 'none', display: 'block', marginBottom: '0.35rem' }}
-                        onClick={() => { setDropdownOpen(false); setMenuOpen(false); }}
+                      <span 
+                        style={{ fontSize: '0.8rem', fontWeight: '700', color: '#000000', textTransform: 'uppercase', letterSpacing: '0.08em', display: 'block', marginBottom: '0.35rem', cursor: 'default' }}
                       >
                         Heavy Dresses
-                      </Link>
+                      </span>
                       <div style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem', paddingLeft: '0.5rem', borderLeft: '2px solid #F4E1E5' }}>
                         <Link href="/collections?collection=indo-western" style={{ fontSize: '0.78rem', color: '#565959', textDecoration: 'none' }} onClick={() => { setDropdownOpen(false); setMenuOpen(false); }}>Indo-Western</Link>
+                        <Link href="/collections?collection=heavy-gown" style={{ fontSize: '0.78rem', color: '#565959', textDecoration: 'none' }} onClick={() => { setDropdownOpen(false); setMenuOpen(false); }}>Heavy Gowns</Link>
                         <Link href="/collections?collection=shararas" style={{ fontSize: '0.78rem', color: '#565959', textDecoration: 'none' }} onClick={() => { setDropdownOpen(false); setMenuOpen(false); }}>Shararas</Link>
-                        <Link href="/collections?collection=gowns" style={{ fontSize: '0.78rem', color: '#565959', textDecoration: 'none' }} onClick={() => { setDropdownOpen(false); setMenuOpen(false); }}>Gowns</Link>
                       </div>
                     </div>
 
@@ -457,19 +455,18 @@ export default function Header() {
             {/* 3. HEAVY DRESSES */}
             <div
               className="mobile-nav-item-row"
-              role="link"
+              role="button"
               tabIndex={0}
               onClick={() => {
-                setMenuOpen(false);
-                router.push('/collections?collection=heavy-dresses');
+                setHeavyDressesOpen((open) => !open);
               }}
               onKeyDown={(event) => {
                 if (event.key === 'Enter' || event.key === ' ') {
                   event.preventDefault();
-                  setMenuOpen(false);
-                  router.push('/collections?collection=heavy-dresses');
+                  setHeavyDressesOpen((open) => !open);
                 }
               }}
+              style={{ cursor: 'pointer' }}
             >
               <div className="mobile-nav-item-left">
                 <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#D98E9B" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
@@ -510,13 +507,13 @@ export default function Header() {
                   <span className="mobile-nav-submenu-dot" />
                   <span>INDO-WESTERN</span>
                 </Link>
+                <Link href="/collections?collection=heavy-gown" className="mobile-nav-submenu-item" onClick={() => setMenuOpen(false)}>
+                  <span className="mobile-nav-submenu-dot" />
+                  <span>HEAVY GOWNS</span>
+                </Link>
                 <Link href="/collections?collection=shararas" className="mobile-nav-submenu-item" onClick={() => setMenuOpen(false)}>
                   <span className="mobile-nav-submenu-dot" />
                   <span>SHARARAS</span>
-                </Link>
-                <Link href="/collections?collection=gowns" className="mobile-nav-submenu-item" onClick={() => setMenuOpen(false)}>
-                  <span className="mobile-nav-submenu-dot" />
-                  <span>GOWNS</span>
                 </Link>
               </div>
             )}
