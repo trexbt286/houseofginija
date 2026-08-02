@@ -702,10 +702,16 @@ function CollectionsContent() {
   };
 
   const getSidebarCategories = () => {
+    const hasProductForCategory = (categorySlug) =>
+      allProducts.some((product) =>
+        product.collection_slug === categorySlug ||
+        product.parent_collection_slug === categorySlug
+      );
+
     const list = collections
       .filter((category) =>
         category.slug !== 'jewellery' &&
-        allProducts.some((product) => product.collection_slug === category.slug)
+        hasProductForCategory(category.slug)
       )
       .map((category) => ({
         id: category.slug,
