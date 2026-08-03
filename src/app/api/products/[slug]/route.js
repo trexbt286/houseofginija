@@ -32,6 +32,10 @@ export async function GET(request, { params }) {
     );
 
     if (result.rows.length === 0) {
+      if (canUseLocalCatalogFallback()) {
+        const product = getLocalProductBySlugFallback(slug);
+        if (product) return NextResponse.json({ product: mapProductData(product) });
+      }
       return NextResponse.json({ error: 'Product not found' }, { status: 404 });
     }
 

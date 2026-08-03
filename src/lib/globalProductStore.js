@@ -10,13 +10,7 @@
 import productsFallback from '@/data/local-products-fallback.json';
 import homepageFallback from '@/data/local-homepage-fallback.json';
 
-/**
- * The mutable in-memory store.  null means "not yet initialised".
- * Using a global variable at module scope ensures a single instance
- * across all Next.js route handlers that import this file within the
- * same server process.
- */
-let _store = null;
+const STORE_KEY = '__houseOfGinijaProductStore';
 
 function buildInitialStore() {
   const catalogProducts = productsFallback.products || [];
@@ -34,17 +28,17 @@ function buildInitialStore() {
  * on first call.
  */
 export function getStore() {
-  if (!_store) {
-    _store = buildInitialStore();
+  if (!globalThis[STORE_KEY]) {
+    globalThis[STORE_KEY] = buildInitialStore();
   }
-  return _store;
+  return globalThis[STORE_KEY];
 }
 
 /**
  * Replace the entire store (used after bulk operations).
  */
 export function setStore(products) {
-  _store = Array.isArray(products) ? products : [];
+  globalThis[STORE_KEY] = Array.isArray(products) ? products : [];
 }
 
 /**
@@ -65,7 +59,7 @@ export function upsertProduct(product) {
  * Remove a product from the store by id.
  */
 export function removeProduct(id) {
-  _store = getStore().filter((p) => String(p.id) !== String(id));
+  globalThis[STORE_KEY] = getStore().filter((p) => String(p.id) !== String(id));
 }
 
 /**

@@ -95,6 +95,14 @@ function parseProductPayload(body) {
   };
 }
 
+function normalizeLocalProductTags(body, availableTags = getLocalTagsFallback()) {
+  const selectedTagIds = normalizeTagIds(body);
+  const selectedTags = availableTags.filter((tag) => selectedTagIds.includes(Number(tag.id)));
+  const customTags = Array.isArray(body.tags) ? body.tags : [];
+
+  return [...selectedTags, ...customTags];
+}
+
 function validateRequiredProductFields(body, update = false) {
   if (
     (update && !body.id) ||
@@ -175,7 +183,7 @@ export async function POST(request) {
       collection_slugs: product.collectionSlugs,
       collection_slug: product.collectionSlugs[0] || 'suits',
       collection_name: product.collectionSlugs[0] || 'Unstitched Suits',
-      tags: [],
+      tags: normalizeLocalProductTags(body),
     });
     store.unshift(newProduct);
     return NextResponse.json({ success: true, product: newProduct });
@@ -261,7 +269,7 @@ export async function PUT(request) {
       collection_id: product.collectionId || 1,
       collection_slugs: product.collectionSlugs,
       collection_slug: product.collectionSlugs[0] || 'suits',
-      tags: Array.isArray(product.tags) ? product.tags : [],
+      tags: normalizeLocalProductTags(body),
     });
     upsertProduct(updatedProduct);
     return NextResponse.json({ success: true, product: updatedProduct });

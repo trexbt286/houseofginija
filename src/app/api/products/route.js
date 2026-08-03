@@ -8,6 +8,7 @@ import {
 import {
   shouldUseLocalCatalogFallbackFirst,
   canUseLocalCatalogFallback,
+  getLocalProductsFallback,
   getLocalProductsResponseFallback,
 } from '@/lib/localCatalogFallback';
 
