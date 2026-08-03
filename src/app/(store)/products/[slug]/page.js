@@ -162,25 +162,21 @@ export default function ProductPage({ params }) {
             )}
           </div>
 
-          {/* Custom Tag Badges below Price and above Description (Matching Reference Image) */}
+          {/* Custom Tag Badges below Price and above Description */}
           {(() => {
-            const rawTags = Array.isArray(product.tags) && product.tags.length > 0
-              ? product.tags
-              : [
-                  { id: 'handcrafted', name: 'Handcrafted' },
-                  { id: 'premium', name: 'Premium' },
-                  { id: 'exclusive', name: 'Exclusive' },
-                  { id: 'house-of-ginija', name: 'House of Ginija' },
-                  { id: 'limited-edition', name: 'Limited Edition' },
-                ];
+            let tagsList = product.tags;
+            if (typeof tagsList === 'string') {
+              try { tagsList = JSON.parse(tagsList); } catch {}
+            }
+            if (!Array.isArray(tagsList) || tagsList.length === 0) return null;
             return (
               <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.45rem', marginTop: '0.8rem', marginBottom: '1.2rem' }}>
-                {rawTags.map((tag, idx) => {
-                  const tagName = typeof tag === 'string' ? tag : (tag.name || tag.slug);
+                {tagsList.map((tag, idx) => {
+                  const tagName = typeof tag === 'string' ? tag : (tag?.name || tag?.slug);
                   if (!tagName) return null;
                   return (
                     <span
-                      key={tag.id || tag.slug || idx}
+                      key={tag?.id || tag?.slug || idx}
                       style={{
                         fontSize: '0.75rem',
                         fontWeight: '500',
