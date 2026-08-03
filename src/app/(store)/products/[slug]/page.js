@@ -128,6 +128,51 @@ export default function ProductPage({ params }) {
         {/* Left Column: Image Gallery */}
         <div style={galleryColumnStyle}>
           <div style={mainImageContainerStyle}>
+            <button
+              onClick={() => router.back()}
+              aria-label="Go back"
+              style={overlayBackBtnStyle}
+            >
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#111111" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M15 18l-6-6 6-6"/>
+              </svg>
+            </button>
+
+            <div style={overlayTopRightStyle}>
+              {product.flash_sale && product.flash_sale_price && (
+                <span style={overlayDiscountBadgeStyle}>
+                  -{Math.round(((parseFloat(product.price) - parseFloat(product.flash_sale_price)) / parseFloat(product.price)) * 100)}%
+                </span>
+              )}
+              <button
+                onClick={() => toggleWishlist(product.id)}
+                aria-label="Wishlist"
+                style={overlayIconBtnStyle}
+              >
+                <svg width="20" height="20" viewBox="0 0 24 24" fill={isStarred ? '#D98E9B' : 'none'} stroke={isStarred ? '#D98E9B' : '#111111'} strokeWidth="1.8">
+                  <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+                </svg>
+              </button>
+              <button
+                onClick={() => {
+                  if (typeof navigator !== 'undefined' && navigator.share) {
+                    navigator.share({ title: product.name, url: window.location.href }).catch(() => {});
+                  } else if (typeof navigator !== 'undefined' && navigator.clipboard) {
+                    navigator.clipboard.writeText(window.location.href);
+                    alert('Link copied to clipboard!');
+                  }
+                }}
+                aria-label="Share"
+                style={overlayIconBtnStyle}
+              >
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#111111" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/>
+                  <polyline points="16 6 12 2 8 6"/>
+                  <line x1="12" y1="2" x2="12" y2="15"/>
+                </svg>
+              </button>
+            </div>
+
             <img src={activeImage} alt={product.name} style={mainImageStyle} loading="lazy" />
           </div>
           {product.images && product.images.length > 1 && (
@@ -514,17 +559,81 @@ const galleryColumnStyle = {
 const mainImageContainerStyle = {
   position: 'relative',
   width: '100%',
-  height: '550px',
-  borderRadius: '8px',
+  height: '68vh',
+  minHeight: '480px',
+  maxHeight: '750px',
+  borderRadius: '16px',
   overflow: 'hidden',
-  boxShadow: 'var(--shadow-md)',
-  backgroundColor: '#FFFFFF',
+  backgroundColor: '#FAF7F5',
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  boxShadow: '0 8px 30px rgba(0,0,0,0.06)',
 };
 
 const mainImageStyle = {
   width: '100%',
   height: '100%',
-  objectFit: 'cover',
+  objectFit: 'contain',
+  padding: '0.5rem',
+  transition: 'all 0.3s ease',
+};
+
+const overlayBackBtnStyle = {
+  position: 'absolute',
+  top: '1rem',
+  left: '1rem',
+  width: '40px',
+  height: '40px',
+  borderRadius: '50%',
+  backgroundColor: 'rgba(255, 255, 255, 0.92)',
+  backdropFilter: 'blur(8px)',
+  WebkitBackdropFilter: 'blur(8px)',
+  border: 'none',
+  boxShadow: '0 2px 10px rgba(0,0,0,0.12)',
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  cursor: 'pointer',
+  zIndex: 10,
+  transition: 'transform 0.2s ease',
+};
+
+const overlayTopRightStyle = {
+  position: 'absolute',
+  top: '1rem',
+  right: '1rem',
+  display: 'flex',
+  alignItems: 'center',
+  gap: '0.6rem',
+  zIndex: 10,
+};
+
+const overlayDiscountBadgeStyle = {
+  backgroundColor: '#E74C3C',
+  color: '#FFFFFF',
+  padding: '0.35rem 0.75rem',
+  borderRadius: '999px',
+  fontSize: '0.72rem',
+  fontWeight: '700',
+  letterSpacing: '0.04em',
+  boxShadow: '0 2px 8px rgba(0,0,0,0.15)',
+};
+
+const overlayIconBtnStyle = {
+  width: '40px',
+  height: '40px',
+  borderRadius: '50%',
+  backgroundColor: 'rgba(255, 255, 255, 0.92)',
+  backdropFilter: 'blur(8px)',
+  WebkitBackdropFilter: 'blur(8px)',
+  border: 'none',
+  boxShadow: '0 2px 10px rgba(0,0,0,0.12)',
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  cursor: 'pointer',
+  transition: 'transform 0.2s ease',
 };
 
 const heroPinkBadgeStyle = {
