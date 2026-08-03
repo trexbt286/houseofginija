@@ -1,0 +1,131 @@
+
+> houseofginija@0.1.0 prebuild
+> node scripts/migrate-catalog-metadata.js --if-configured
+
+Skipping catalog metadata migration because DATABASE_URL is not configured.
+
+> houseofginija@0.1.0 build
+> next build --webpack
+
+▲ Next.js 16.2.9 (webpack)
+
+⚠ The "middleware" file convention is deprecated. Please use "proxy" instead. Learn more: https://nextjs.org/docs/messages/middleware-to-proxy
+  Creating an optimized production build ...
+✓ Compiled successfully in 5.5s
+  Running TypeScript ...
+  Finished TypeScript in 157ms ...
+  Collecting page data using 3 workers ...
+  Generating static pages using 3 workers (0/46) ...
+Fetch collections error: AggregateError: 
+    at async j (D:\houseofginija\.next\server\app\api\collections\route.js:1:7276) {
+  code: 'ECONNREFUSED',
+  [errors]: [
+    Error: connect ECONNREFUSED ::1:5432
+        at <unknown> (Error: connect ECONNREFUSED ::1:5432) {
+      errno: -4078,
+      code: 'ECONNREFUSED',
+      syscall: 'connect',
+      address: '::1',
+      port: 5432
+    },
+    Error: connect ECONNREFUSED 127.0.0.1:5432
+        at <unknown> (Error: connect ECONNREFUSED 127.0.0.1:5432) {
+      errno: -4078,
+      code: 'ECONNREFUSED',
+      syscall: 'connect',
+      address: '127.0.0.1',
+      port: 5432
+    }
+  ]
+}
+Fetch homepage data error: AggregateError: 
+    at async j (D:\houseofginija\.next\server\app\api\homepage\route.js:41:23) {
+  code: 'ECONNREFUSED',
+  [errors]: [
+    Error: connect ECONNREFUSED ::1:5432
+        at <unknown> (Error: connect ECONNREFUSED ::1:5432) {
+      errno: -4078,
+      code: 'ECONNREFUSED',
+      syscall: 'connect',
+      address: '::1',
+      port: 5432
+    },
+    Error: connect ECONNREFUSED 127.0.0.1:5432
+        at <unknown> (Error: connect ECONNREFUSED 127.0.0.1:5432) {
+      errno: -4078,
+      code: 'ECONNREFUSED',
+      syscall: 'connect',
+      address: '127.0.0.1',
+      port: 5432
+    }
+  ]
+}
+  Generating static pages using 3 workers (11/46) 
+  Generating static pages using 3 workers (22/46) 
+  Generating static pages using 3 workers (34/46) 
+✓ Generating static pages using 3 workers (46/46) in 1563ms
+  Finalizing page optimization ...
+  Collecting build traces ...
+
+Route (app)
+┌ ○ /
+├ ○ /_not-found
+├ ○ /about
+├ ○ /account
+├ ○ /admin/coupons
+├ ○ /admin/dashboard
+├ ○ /admin/flash-sale
+├ ○ /admin/founder-reels
+├ ○ /admin/hero-reels
+├ ○ /admin/login
+├ ○ /admin/new-arrivals
+├ ○ /admin/orders
+├ ○ /admin/products
+├ ƒ /api/account/address
+├ ƒ /api/account/orders
+├ ƒ /api/account/wishlist
+├ ƒ /api/account/wishlist/merge
+├ ƒ /api/admin/analytics
+├ ƒ /api/admin/coupons
+├ ƒ /api/admin/founder-reels
+├ ƒ /api/admin/hero-reels
+├ ƒ /api/admin/orders
+├ ƒ /api/admin/products
+├ ƒ /api/admin/settings
+├ ƒ /api/admin/upload
+├ ƒ /api/analytics/track
+├ ƒ /api/auth/login
+├ ƒ /api/auth/logout
+├ ƒ /api/auth/me
+├ ƒ /api/auth/signup
+├ ƒ /api/checkout/coupon
+├ ƒ /api/checkout/razorpay
+├ ƒ /api/checkout/verify
+├ ƒ /api/checkout/webhook
+├ ƒ /api/collections
+├ ƒ /api/homepage
+├ ƒ /api/newsletter/subscribe
+├ ƒ /api/orders/[id]
+├ ƒ /api/products
+├ ƒ /api/products/[slug]
+├ ○ /cart
+├ ○ /checkout
+├ ○ /checkout/success
+├ ○ /collections
+├ ○ /contact
+├ ○ /icon.png
+├ ○ /jewellery
+├ ○ /login
+├ ○ /privacy-policy
+├ ƒ /products/[slug]
+├ ○ /shipping-returns
+├ ○ /signup
+├ ○ /suits
+└ ○ /terms
+
+
+ƒ Proxy (Middleware)
+
+○  (Static)   prerendered as static content
+ƒ  (Dynamic)  server-rendered on demand
+

@@ -1,0 +1,1146 @@
+⚠ The "middleware" file convention is deprecated. Please use "proxy" instead. Learn more: https://nextjs.org/docs/messages/middleware-to-proxy
+Analytics tracking error: AggregateError: 
+    at async POST (src\app\api\analytics\track\route.js:30:5)
+  28 |
+  29 |     // Insert visit event to the page_visits database table
+> 30 |     await pool.query(
+     |     ^
+  31 |       'INSERT INTO page_visits (path, session_id) VALUES ($1, $2)',
+  32 |       [path, sessionId]
+  33 |     ); {
+  code: 'ECONNREFUSED',
+  [errors]: [
+    Error: connect ECONNREFUSED ::1:5432
+        at <unknown> (Error: connect ECONNREFUSED ::1:5432) {
+      errno: -4078,
+      code: 'ECONNREFUSED',
+      syscall: 'connect',
+      address: '::1',
+      port: 5432
+    },
+    Error: connect ECONNREFUSED 127.0.0.1:5432
+        at <unknown> (Error: connect ECONNREFUSED 127.0.0.1:5432) {
+      errno: -4078,
+      code: 'ECONNREFUSED',
+      syscall: 'connect',
+      address: '127.0.0.1',
+      port: 5432
+    }
+  ]
+}
+Analytics tracking error: AggregateError: 
+    at async POST (src\app\api\analytics\track\route.js:30:5)
+  28 |
+  29 |     // Insert visit event to the page_visits database table
+> 30 |     await pool.query(
+     |     ^
+  31 |       'INSERT INTO page_visits (path, session_id) VALUES ($1, $2)',
+  32 |       [path, sessionId]
+  33 |     ); {
+  code: 'ECONNREFUSED',
+  [errors]: [
+    Error: connect ECONNREFUSED ::1:5432
+        at <unknown> (Error: connect ECONNREFUSED ::1:5432) {
+      errno: -4078,
+      code: 'ECONNREFUSED',
+      syscall: 'connect',
+      address: '::1',
+      port: 5432
+    },
+    Error: connect ECONNREFUSED 127.0.0.1:5432
+        at <unknown> (Error: connect ECONNREFUSED 127.0.0.1:5432) {
+      errno: -4078,
+      code: 'ECONNREFUSED',
+      syscall: 'connect',
+      address: '127.0.0.1',
+      port: 5432
+    }
+  ]
+}
+Analytics tracking error: AggregateError: 
+    at async POST (src\app\api\analytics\track\route.js:30:5)
+  28 |
+  29 |     // Insert visit event to the page_visits database table
+> 30 |     await pool.query(
+     |     ^
+  31 |       'INSERT INTO page_visits (path, session_id) VALUES ($1, $2)',
+  32 |       [path, sessionId]
+  33 |     ); {
+  code: 'ECONNREFUSED',
+  [errors]: [
+    Error: connect ECONNREFUSED ::1:5432
+        at <unknown> (Error: connect ECONNREFUSED ::1:5432) {
+      errno: -4078,
+      code: 'ECONNREFUSED',
+      syscall: 'connect',
+      address: '::1',
+      port: 5432
+    },
+    Error: connect ECONNREFUSED 127.0.0.1:5432
+        at <unknown> (Error: connect ECONNREFUSED 127.0.0.1:5432) {
+      errno: -4078,
+      code: 'ECONNREFUSED',
+      syscall: 'connect',
+      address: '127.0.0.1',
+      port: 5432
+    }
+  ]
+}
+[browser] Detected `scroll-behavior: smooth` on the `<html>` element. To disable smooth scrolling during route transitions, add `data-scroll-behavior="smooth"` to your <html> element. Learn more: https://nextjs.org/docs/messages/missing-data-scroll-behavior
+Analytics tracking error: AggregateError: 
+    at async POST (src\app\api\analytics\track\route.js:30:5)
+  28 |
+  29 |     // Insert visit event to the page_visits database table
+> 30 |     await pool.query(
+     |     ^
+  31 |       'INSERT INTO page_visits (path, session_id) VALUES ($1, $2)',
+  32 |       [path, sessionId]
+  33 |     ); {
+  code: 'ECONNREFUSED',
+  [errors]: [
+    Error: connect ECONNREFUSED ::1:5432
+        at <unknown> (Error: connect ECONNREFUSED ::1:5432) {
+      errno: -4078,
+      code: 'ECONNREFUSED',
+      syscall: 'connect',
+      address: '::1',
+      port: 5432
+    },
+    Error: connect ECONNREFUSED 127.0.0.1:5432
+        at <unknown> (Error: connect ECONNREFUSED 127.0.0.1:5432) {
+      errno: -4078,
+      code: 'ECONNREFUSED',
+      syscall: 'connect',
+      address: '127.0.0.1',
+      port: 5432
+    }
+  ]
+}
+Analytics tracking error: AggregateError: 
+    at async POST (src\app\api\analytics\track\route.js:30:5)
+  28 |
+  29 |     // Insert visit event to the page_visits database table
+> 30 |     await pool.query(
+     |     ^
+  31 |       'INSERT INTO page_visits (path, session_id) VALUES ($1, $2)',
+  32 |       [path, sessionId]
+  33 |     ); {
+  code: 'ECONNREFUSED',
+  [errors]: [
+    Error: connect ECONNREFUSED ::1:5432
+        at <unknown> (Error: connect ECONNREFUSED ::1:5432) {
+      errno: -4078,
+      code: 'ECONNREFUSED',
+      syscall: 'connect',
+      address: '::1',
+      port: 5432
+    },
+    Error: connect ECONNREFUSED 127.0.0.1:5432
+        at <unknown> (Error: connect ECONNREFUSED 127.0.0.1:5432) {
+      errno: -4078,
+      code: 'ECONNREFUSED',
+      syscall: 'connect',
+      address: '127.0.0.1',
+      port: 5432
+    }
+  ]
+}
+Analytics tracking error: AggregateError: 
+    at async POST (src\app\api\analytics\track\route.js:30:5)
+  28 |
+  29 |     // Insert visit event to the page_visits database table
+> 30 |     await pool.query(
+     |     ^
+  31 |       'INSERT INTO page_visits (path, session_id) VALUES ($1, $2)',
+  32 |       [path, sessionId]
+  33 |     ); {
+  code: 'ECONNREFUSED',
+  [errors]: [
+    Error: connect ECONNREFUSED ::1:5432
+        at <unknown> (Error: connect ECONNREFUSED ::1:5432) {
+      errno: -4078,
+      code: 'ECONNREFUSED',
+      syscall: 'connect',
+      address: '::1',
+      port: 5432
+    },
+    Error: connect ECONNREFUSED 127.0.0.1:5432
+        at <unknown> (Error: connect ECONNREFUSED 127.0.0.1:5432) {
+      errno: -4078,
+      code: 'ECONNREFUSED',
+      syscall: 'connect',
+      address: '127.0.0.1',
+      port: 5432
+    }
+  ]
+}
+Analytics tracking error: AggregateError: 
+    at async POST (src\app\api\analytics\track\route.js:30:5)
+  28 |
+  29 |     // Insert visit event to the page_visits database table
+> 30 |     await pool.query(
+     |     ^
+  31 |       'INSERT INTO page_visits (path, session_id) VALUES ($1, $2)',
+  32 |       [path, sessionId]
+  33 |     ); {
+  code: 'ECONNREFUSED',
+  [errors]: [
+    Error: connect ECONNREFUSED ::1:5432
+        at <unknown> (Error: connect ECONNREFUSED ::1:5432) {
+      errno: -4078,
+      code: 'ECONNREFUSED',
+      syscall: 'connect',
+      address: '::1',
+      port: 5432
+    },
+    Error: connect ECONNREFUSED 127.0.0.1:5432
+        at <unknown> (Error: connect ECONNREFUSED 127.0.0.1:5432) {
+      errno: -4078,
+      code: 'ECONNREFUSED',
+      syscall: 'connect',
+      address: '127.0.0.1',
+      port: 5432
+    }
+  ]
+}
+Analytics tracking error: AggregateError: 
+    at async POST (src\app\api\analytics\track\route.js:30:5)
+  28 |
+  29 |     // Insert visit event to the page_visits database table
+> 30 |     await pool.query(
+     |     ^
+  31 |       'INSERT INTO page_visits (path, session_id) VALUES ($1, $2)',
+  32 |       [path, sessionId]
+  33 |     ); {
+  code: 'ECONNREFUSED',
+  [errors]: [
+    Error: connect ECONNREFUSED ::1:5432
+        at <unknown> (Error: connect ECONNREFUSED ::1:5432) {
+      errno: -4078,
+      code: 'ECONNREFUSED',
+      syscall: 'connect',
+      address: '::1',
+      port: 5432
+    },
+    Error: connect ECONNREFUSED 127.0.0.1:5432
+        at <unknown> (Error: connect ECONNREFUSED 127.0.0.1:5432) {
+      errno: -4078,
+      code: 'ECONNREFUSED',
+      syscall: 'connect',
+      address: '127.0.0.1',
+      port: 5432
+    }
+  ]
+}
+[browser] Detected `scroll-behavior: smooth` on the `<html>` element. To disable smooth scrolling during route transitions, add `data-scroll-behavior="smooth"` to your <html> element. Learn more: https://nextjs.org/docs/messages/missing-data-scroll-behavior
+Analytics tracking error: AggregateError: 
+    at async POST (src\app\api\analytics\track\route.js:30:5)
+  28 |
+  29 |     // Insert visit event to the page_visits database table
+> 30 |     await pool.query(
+     |     ^
+  31 |       'INSERT INTO page_visits (path, session_id) VALUES ($1, $2)',
+  32 |       [path, sessionId]
+  33 |     ); {
+  code: 'ECONNREFUSED',
+  [errors]: [
+    Error: connect ECONNREFUSED ::1:5432
+        at <unknown> (Error: connect ECONNREFUSED ::1:5432) {
+      errno: -4078,
+      code: 'ECONNREFUSED',
+      syscall: 'connect',
+      address: '::1',
+      port: 5432
+    },
+    Error: connect ECONNREFUSED 127.0.0.1:5432
+        at <unknown> (Error: connect ECONNREFUSED 127.0.0.1:5432) {
+      errno: -4078,
+      code: 'ECONNREFUSED',
+      syscall: 'connect',
+      address: '127.0.0.1',
+      port: 5432
+    }
+  ]
+}
+Analytics tracking error: AggregateError: 
+    at async POST (src\app\api\analytics\track\route.js:30:5)
+  28 |
+  29 |     // Insert visit event to the page_visits database table
+> 30 |     await pool.query(
+     |     ^
+  31 |       'INSERT INTO page_visits (path, session_id) VALUES ($1, $2)',
+  32 |       [path, sessionId]
+  33 |     ); {
+  code: 'ECONNREFUSED',
+  [errors]: [
+    Error: connect ECONNREFUSED ::1:5432
+        at <unknown> (Error: connect ECONNREFUSED ::1:5432) {
+      errno: -4078,
+      code: 'ECONNREFUSED',
+      syscall: 'connect',
+      address: '::1',
+      port: 5432
+    },
+    Error: connect ECONNREFUSED 127.0.0.1:5432
+        at <unknown> (Error: connect ECONNREFUSED 127.0.0.1:5432) {
+      errno: -4078,
+      code: 'ECONNREFUSED',
+      syscall: 'connect',
+      address: '127.0.0.1',
+      port: 5432
+    }
+  ]
+}
+[browser] Detected `scroll-behavior: smooth` on the `<html>` element. To disable smooth scrolling during route transitions, add `data-scroll-behavior="smooth"` to your <html> element. Learn more: https://nextjs.org/docs/messages/missing-data-scroll-behavior
+Analytics tracking error: AggregateError: 
+    at async POST (src\app\api\analytics\track\route.js:30:5)
+  28 |
+  29 |     // Insert visit event to the page_visits database table
+> 30 |     await pool.query(
+     |     ^
+  31 |       'INSERT INTO page_visits (path, session_id) VALUES ($1, $2)',
+  32 |       [path, sessionId]
+  33 |     ); {
+  code: 'ECONNREFUSED',
+  [errors]: [
+    Error: connect ECONNREFUSED ::1:5432
+        at <unknown> (Error: connect ECONNREFUSED ::1:5432) {
+      errno: -4078,
+      code: 'ECONNREFUSED',
+      syscall: 'connect',
+      address: '::1',
+      port: 5432
+    },
+    Error: connect ECONNREFUSED 127.0.0.1:5432
+        at <unknown> (Error: connect ECONNREFUSED 127.0.0.1:5432) {
+      errno: -4078,
+      code: 'ECONNREFUSED',
+      syscall: 'connect',
+      address: '127.0.0.1',
+      port: 5432
+    }
+  ]
+}
+Analytics tracking error: AggregateError: 
+    at async POST (src\app\api\analytics\track\route.js:30:5)
+  28 |
+  29 |     // Insert visit event to the page_visits database table
+> 30 |     await pool.query(
+     |     ^
+  31 |       'INSERT INTO page_visits (path, session_id) VALUES ($1, $2)',
+  32 |       [path, sessionId]
+  33 |     ); {
+  code: 'ECONNREFUSED',
+  [errors]: [
+    Error: connect ECONNREFUSED ::1:5432
+        at <unknown> (Error: connect ECONNREFUSED ::1:5432) {
+      errno: -4078,
+      code: 'ECONNREFUSED',
+      syscall: 'connect',
+      address: '::1',
+      port: 5432
+    },
+    Error: connect ECONNREFUSED 127.0.0.1:5432
+        at <unknown> (Error: connect ECONNREFUSED 127.0.0.1:5432) {
+      errno: -4078,
+      code: 'ECONNREFUSED',
+      syscall: 'connect',
+      address: '127.0.0.1',
+      port: 5432
+    }
+  ]
+}
+Analytics tracking error: AggregateError: 
+    at async POST (src\app\api\analytics\track\route.js:30:5)
+  28 |
+  29 |     // Insert visit event to the page_visits database table
+> 30 |     await pool.query(
+     |     ^
+  31 |       'INSERT INTO page_visits (path, session_id) VALUES ($1, $2)',
+  32 |       [path, sessionId]
+  33 |     ); {
+  code: 'ECONNREFUSED',
+  [errors]: [
+    Error: connect ECONNREFUSED ::1:5432
+        at <unknown> (Error: connect ECONNREFUSED ::1:5432) {
+      errno: -4078,
+      code: 'ECONNREFUSED',
+      syscall: 'connect',
+      address: '::1',
+      port: 5432
+    },
+    Error: connect ECONNREFUSED 127.0.0.1:5432
+        at <unknown> (Error: connect ECONNREFUSED 127.0.0.1:5432) {
+      errno: -4078,
+      code: 'ECONNREFUSED',
+      syscall: 'connect',
+      address: '127.0.0.1',
+      port: 5432
+    }
+  ]
+}
+Analytics tracking error: AggregateError: 
+    at async POST (src\app\api\analytics\track\route.js:30:5)
+  28 |
+  29 |     // Insert visit event to the page_visits database table
+> 30 |     await pool.query(
+     |     ^
+  31 |       'INSERT INTO page_visits (path, session_id) VALUES ($1, $2)',
+  32 |       [path, sessionId]
+  33 |     ); {
+  code: 'ECONNREFUSED',
+  [errors]: [
+    Error: connect ECONNREFUSED ::1:5432
+        at <unknown> (Error: connect ECONNREFUSED ::1:5432) {
+      errno: -4078,
+      code: 'ECONNREFUSED',
+      syscall: 'connect',
+      address: '::1',
+      port: 5432
+    },
+    Error: connect ECONNREFUSED 127.0.0.1:5432
+        at <unknown> (Error: connect ECONNREFUSED 127.0.0.1:5432) {
+      errno: -4078,
+      code: 'ECONNREFUSED',
+      syscall: 'connect',
+      address: '127.0.0.1',
+      port: 5432
+    }
+  ]
+}
+Analytics tracking error: AggregateError: 
+    at async POST (src\app\api\analytics\track\route.js:30:5)
+  28 |
+  29 |     // Insert visit event to the page_visits database table
+> 30 |     await pool.query(
+     |     ^
+  31 |       'INSERT INTO page_visits (path, session_id) VALUES ($1, $2)',
+  32 |       [path, sessionId]
+  33 |     ); {
+  code: 'ECONNREFUSED',
+  [errors]: [
+    Error: connect ECONNREFUSED ::1:5432
+        at <unknown> (Error: connect ECONNREFUSED ::1:5432) {
+      errno: -4078,
+      code: 'ECONNREFUSED',
+      syscall: 'connect',
+      address: '::1',
+      port: 5432
+    },
+    Error: connect ECONNREFUSED 127.0.0.1:5432
+        at <unknown> (Error: connect ECONNREFUSED 127.0.0.1:5432) {
+      errno: -4078,
+      code: 'ECONNREFUSED',
+      syscall: 'connect',
+      address: '127.0.0.1',
+      port: 5432
+    }
+  ]
+}
+Analytics tracking error: AggregateError: 
+    at async POST (src\app\api\analytics\track\route.js:30:5)
+  28 |
+  29 |     // Insert visit event to the page_visits database table
+> 30 |     await pool.query(
+     |     ^
+  31 |       'INSERT INTO page_visits (path, session_id) VALUES ($1, $2)',
+  32 |       [path, sessionId]
+  33 |     ); {
+  code: 'ECONNREFUSED',
+  [errors]: [
+    Error: connect ECONNREFUSED ::1:5432
+        at <unknown> (Error: connect ECONNREFUSED ::1:5432) {
+      errno: -4078,
+      code: 'ECONNREFUSED',
+      syscall: 'connect',
+      address: '::1',
+      port: 5432
+    },
+    Error: connect ECONNREFUSED 127.0.0.1:5432
+        at <unknown> (Error: connect ECONNREFUSED 127.0.0.1:5432) {
+      errno: -4078,
+      code: 'ECONNREFUSED',
+      syscall: 'connect',
+      address: '127.0.0.1',
+      port: 5432
+    }
+  ]
+}
+[browser] Detected `scroll-behavior: smooth` on the `<html>` element. To disable smooth scrolling during route transitions, add `data-scroll-behavior="smooth"` to your <html> element. Learn more: https://nextjs.org/docs/messages/missing-data-scroll-behavior
+Analytics tracking error: AggregateError: 
+    at async POST (src\app\api\analytics\track\route.js:30:5)
+  28 |
+  29 |     // Insert visit event to the page_visits database table
+> 30 |     await pool.query(
+     |     ^
+  31 |       'INSERT INTO page_visits (path, session_id) VALUES ($1, $2)',
+  32 |       [path, sessionId]
+  33 |     ); {
+  code: 'ECONNREFUSED',
+  [errors]: [
+    Error: connect ECONNREFUSED ::1:5432
+        at <unknown> (Error: connect ECONNREFUSED ::1:5432) {
+      errno: -4078,
+      code: 'ECONNREFUSED',
+      syscall: 'connect',
+      address: '::1',
+      port: 5432
+    },
+    Error: connect ECONNREFUSED 127.0.0.1:5432
+        at <unknown> (Error: connect ECONNREFUSED 127.0.0.1:5432) {
+      errno: -4078,
+      code: 'ECONNREFUSED',
+      syscall: 'connect',
+      address: '127.0.0.1',
+      port: 5432
+    }
+  ]
+}
+Analytics tracking error: AggregateError: 
+    at async POST (src\app\api\analytics\track\route.js:30:5)
+  28 |
+  29 |     // Insert visit event to the page_visits database table
+> 30 |     await pool.query(
+     |     ^
+  31 |       'INSERT INTO page_visits (path, session_id) VALUES ($1, $2)',
+  32 |       [path, sessionId]
+  33 |     ); {
+  code: 'ECONNREFUSED',
+  [errors]: [
+    Error: connect ECONNREFUSED ::1:5432
+        at <unknown> (Error: connect ECONNREFUSED ::1:5432) {
+      errno: -4078,
+      code: 'ECONNREFUSED',
+      syscall: 'connect',
+      address: '::1',
+      port: 5432
+    },
+    Error: connect ECONNREFUSED 127.0.0.1:5432
+        at <unknown> (Error: connect ECONNREFUSED 127.0.0.1:5432) {
+      errno: -4078,
+      code: 'ECONNREFUSED',
+      syscall: 'connect',
+      address: '127.0.0.1',
+      port: 5432
+    }
+  ]
+}
+[browser] Detected `scroll-behavior: smooth` on the `<html>` element. To disable smooth scrolling during route transitions, add `data-scroll-behavior="smooth"` to your <html> element. Learn more: https://nextjs.org/docs/messages/missing-data-scroll-behavior
+Analytics tracking error: AggregateError: 
+    at async POST (src\app\api\analytics\track\route.js:30:5)
+  28 |
+  29 |     // Insert visit event to the page_visits database table
+> 30 |     await pool.query(
+     |     ^
+  31 |       'INSERT INTO page_visits (path, session_id) VALUES ($1, $2)',
+  32 |       [path, sessionId]
+  33 |     ); {
+  code: 'ECONNREFUSED',
+  [errors]: [
+    Error: connect ECONNREFUSED ::1:5432
+        at <unknown> (Error: connect ECONNREFUSED ::1:5432) {
+      errno: -4078,
+      code: 'ECONNREFUSED',
+      syscall: 'connect',
+      address: '::1',
+      port: 5432
+    },
+    Error: connect ECONNREFUSED 127.0.0.1:5432
+        at <unknown> (Error: connect ECONNREFUSED 127.0.0.1:5432) {
+      errno: -4078,
+      code: 'ECONNREFUSED',
+      syscall: 'connect',
+      address: '127.0.0.1',
+      port: 5432
+    }
+  ]
+}
+Analytics tracking error: AggregateError: 
+    at async POST (src\app\api\analytics\track\route.js:30:5)
+  28 |
+  29 |     // Insert visit event to the page_visits database table
+> 30 |     await pool.query(
+     |     ^
+  31 |       'INSERT INTO page_visits (path, session_id) VALUES ($1, $2)',
+  32 |       [path, sessionId]
+  33 |     ); {
+  code: 'ECONNREFUSED',
+  [errors]: [
+    Error: connect ECONNREFUSED ::1:5432
+        at <unknown> (Error: connect ECONNREFUSED ::1:5432) {
+      errno: -4078,
+      code: 'ECONNREFUSED',
+      syscall: 'connect',
+      address: '::1',
+      port: 5432
+    },
+    Error: connect ECONNREFUSED 127.0.0.1:5432
+        at <unknown> (Error: connect ECONNREFUSED 127.0.0.1:5432) {
+      errno: -4078,
+      code: 'ECONNREFUSED',
+      syscall: 'connect',
+      address: '127.0.0.1',
+      port: 5432
+    }
+  ]
+}
+[browser] Detected `scroll-behavior: smooth` on the `<html>` element. To disable smooth scrolling during route transitions, add `data-scroll-behavior="smooth"` to your <html> element. Learn more: https://nextjs.org/docs/messages/missing-data-scroll-behavior
+Analytics tracking error: AggregateError: 
+    at async POST (src\app\api\analytics\track\route.js:30:5)
+  28 |
+  29 |     // Insert visit event to the page_visits database table
+> 30 |     await pool.query(
+     |     ^
+  31 |       'INSERT INTO page_visits (path, session_id) VALUES ($1, $2)',
+  32 |       [path, sessionId]
+  33 |     ); {
+  code: 'ECONNREFUSED',
+  [errors]: [
+    Error: connect ECONNREFUSED ::1:5432
+        at <unknown> (Error: connect ECONNREFUSED ::1:5432) {
+      errno: -4078,
+      code: 'ECONNREFUSED',
+      syscall: 'connect',
+      address: '::1',
+      port: 5432
+    },
+    Error: connect ECONNREFUSED 127.0.0.1:5432
+        at <unknown> (Error: connect ECONNREFUSED 127.0.0.1:5432) {
+      errno: -4078,
+      code: 'ECONNREFUSED',
+      syscall: 'connect',
+      address: '127.0.0.1',
+      port: 5432
+    }
+  ]
+}
+Analytics tracking error: AggregateError: 
+    at async POST (src\app\api\analytics\track\route.js:30:5)
+  28 |
+  29 |     // Insert visit event to the page_visits database table
+> 30 |     await pool.query(
+     |     ^
+  31 |       'INSERT INTO page_visits (path, session_id) VALUES ($1, $2)',
+  32 |       [path, sessionId]
+  33 |     ); {
+  code: 'ECONNREFUSED',
+  [errors]: [
+    Error: connect ECONNREFUSED ::1:5432
+        at <unknown> (Error: connect ECONNREFUSED ::1:5432) {
+      errno: -4078,
+      code: 'ECONNREFUSED',
+      syscall: 'connect',
+      address: '::1',
+      port: 5432
+    },
+    Error: connect ECONNREFUSED 127.0.0.1:5432
+        at <unknown> (Error: connect ECONNREFUSED 127.0.0.1:5432) {
+      errno: -4078,
+      code: 'ECONNREFUSED',
+      syscall: 'connect',
+      address: '127.0.0.1',
+      port: 5432
+    }
+  ]
+}
+[browser] Detected `scroll-behavior: smooth` on the `<html>` element. To disable smooth scrolling during route transitions, add `data-scroll-behavior="smooth"` to your <html> element. Learn more: https://nextjs.org/docs/messages/missing-data-scroll-behavior
+Analytics tracking error: AggregateError: 
+    at async POST (src\app\api\analytics\track\route.js:30:5)
+  28 |
+  29 |     // Insert visit event to the page_visits database table
+> 30 |     await pool.query(
+     |     ^
+  31 |       'INSERT INTO page_visits (path, session_id) VALUES ($1, $2)',
+  32 |       [path, sessionId]
+  33 |     ); {
+  code: 'ECONNREFUSED',
+  [errors]: [
+    Error: connect ECONNREFUSED ::1:5432
+        at <unknown> (Error: connect ECONNREFUSED ::1:5432) {
+      errno: -4078,
+      code: 'ECONNREFUSED',
+      syscall: 'connect',
+      address: '::1',
+      port: 5432
+    },
+    Error: connect ECONNREFUSED 127.0.0.1:5432
+        at <unknown> (Error: connect ECONNREFUSED 127.0.0.1:5432) {
+      errno: -4078,
+      code: 'ECONNREFUSED',
+      syscall: 'connect',
+      address: '127.0.0.1',
+      port: 5432
+    }
+  ]
+}
+Analytics tracking error: AggregateError: 
+    at async POST (src\app\api\analytics\track\route.js:30:5)
+  28 |
+  29 |     // Insert visit event to the page_visits database table
+> 30 |     await pool.query(
+     |     ^
+  31 |       'INSERT INTO page_visits (path, session_id) VALUES ($1, $2)',
+  32 |       [path, sessionId]
+  33 |     ); {
+  code: 'ECONNREFUSED',
+  [errors]: [
+    Error: connect ECONNREFUSED ::1:5432
+        at <unknown> (Error: connect ECONNREFUSED ::1:5432) {
+      errno: -4078,
+      code: 'ECONNREFUSED',
+      syscall: 'connect',
+      address: '::1',
+      port: 5432
+    },
+    Error: connect ECONNREFUSED 127.0.0.1:5432
+        at <unknown> (Error: connect ECONNREFUSED 127.0.0.1:5432) {
+      errno: -4078,
+      code: 'ECONNREFUSED',
+      syscall: 'connect',
+      address: '127.0.0.1',
+      port: 5432
+    }
+  ]
+}
+[browser] Detected `scroll-behavior: smooth` on the `<html>` element. To disable smooth scrolling during route transitions, add `data-scroll-behavior="smooth"` to your <html> element. Learn more: https://nextjs.org/docs/messages/missing-data-scroll-behavior
+Analytics tracking error: AggregateError: 
+    at async POST (src\app\api\analytics\track\route.js:30:5)
+  28 |
+  29 |     // Insert visit event to the page_visits database table
+> 30 |     await pool.query(
+     |     ^
+  31 |       'INSERT INTO page_visits (path, session_id) VALUES ($1, $2)',
+  32 |       [path, sessionId]
+  33 |     ); {
+  code: 'ECONNREFUSED',
+  [errors]: [
+    Error: connect ECONNREFUSED ::1:5432
+        at <unknown> (Error: connect ECONNREFUSED ::1:5432) {
+      errno: -4078,
+      code: 'ECONNREFUSED',
+      syscall: 'connect',
+      address: '::1',
+      port: 5432
+    },
+    Error: connect ECONNREFUSED 127.0.0.1:5432
+        at <unknown> (Error: connect ECONNREFUSED 127.0.0.1:5432) {
+      errno: -4078,
+      code: 'ECONNREFUSED',
+      syscall: 'connect',
+      address: '127.0.0.1',
+      port: 5432
+    }
+  ]
+}
+Analytics tracking error: AggregateError: 
+    at async POST (src\app\api\analytics\track\route.js:30:5)
+  28 |
+  29 |     // Insert visit event to the page_visits database table
+> 30 |     await pool.query(
+     |     ^
+  31 |       'INSERT INTO page_visits (path, session_id) VALUES ($1, $2)',
+  32 |       [path, sessionId]
+  33 |     ); {
+  code: 'ECONNREFUSED',
+  [errors]: [
+    Error: connect ECONNREFUSED ::1:5432
+        at <unknown> (Error: connect ECONNREFUSED ::1:5432) {
+      errno: -4078,
+      code: 'ECONNREFUSED',
+      syscall: 'connect',
+      address: '::1',
+      port: 5432
+    },
+    Error: connect ECONNREFUSED 127.0.0.1:5432
+        at <unknown> (Error: connect ECONNREFUSED 127.0.0.1:5432) {
+      errno: -4078,
+      code: 'ECONNREFUSED',
+      syscall: 'connect',
+      address: '127.0.0.1',
+      port: 5432
+    }
+  ]
+}
+[browser] Detected `scroll-behavior: smooth` on the `<html>` element. To disable smooth scrolling during route transitions, add `data-scroll-behavior="smooth"` to your <html> element. Learn more: https://nextjs.org/docs/messages/missing-data-scroll-behavior
+Analytics tracking error: AggregateError: 
+    at async POST (src\app\api\analytics\track\route.js:30:5)
+  28 |
+  29 |     // Insert visit event to the page_visits database table
+> 30 |     await pool.query(
+     |     ^
+  31 |       'INSERT INTO page_visits (path, session_id) VALUES ($1, $2)',
+  32 |       [path, sessionId]
+  33 |     ); {
+  code: 'ECONNREFUSED',
+  [errors]: [
+    Error: connect ECONNREFUSED ::1:5432
+        at <unknown> (Error: connect ECONNREFUSED ::1:5432) {
+      errno: -4078,
+      code: 'ECONNREFUSED',
+      syscall: 'connect',
+      address: '::1',
+      port: 5432
+    },
+    Error: connect ECONNREFUSED 127.0.0.1:5432
+        at <unknown> (Error: connect ECONNREFUSED 127.0.0.1:5432) {
+      errno: -4078,
+      code: 'ECONNREFUSED',
+      syscall: 'connect',
+      address: '127.0.0.1',
+      port: 5432
+    }
+  ]
+}
+Analytics tracking error: AggregateError: 
+    at async POST (src\app\api\analytics\track\route.js:30:5)
+  28 |
+  29 |     // Insert visit event to the page_visits database table
+> 30 |     await pool.query(
+     |     ^
+  31 |       'INSERT INTO page_visits (path, session_id) VALUES ($1, $2)',
+  32 |       [path, sessionId]
+  33 |     ); {
+  code: 'ECONNREFUSED',
+  [errors]: [
+    Error: connect ECONNREFUSED ::1:5432
+        at <unknown> (Error: connect ECONNREFUSED ::1:5432) {
+      errno: -4078,
+      code: 'ECONNREFUSED',
+      syscall: 'connect',
+      address: '::1',
+      port: 5432
+    },
+    Error: connect ECONNREFUSED 127.0.0.1:5432
+        at <unknown> (Error: connect ECONNREFUSED 127.0.0.1:5432) {
+      errno: -4078,
+      code: 'ECONNREFUSED',
+      syscall: 'connect',
+      address: '127.0.0.1',
+      port: 5432
+    }
+  ]
+}
+[browser] Detected `scroll-behavior: smooth` on the `<html>` element. To disable smooth scrolling during route transitions, add `data-scroll-behavior="smooth"` to your <html> element. Learn more: https://nextjs.org/docs/messages/missing-data-scroll-behavior
+Analytics tracking error: AggregateError: 
+    at async POST (src\app\api\analytics\track\route.js:30:5)
+  28 |
+  29 |     // Insert visit event to the page_visits database table
+> 30 |     await pool.query(
+     |     ^
+  31 |       'INSERT INTO page_visits (path, session_id) VALUES ($1, $2)',
+  32 |       [path, sessionId]
+  33 |     ); {
+  code: 'ECONNREFUSED',
+  [errors]: [
+    Error: connect ECONNREFUSED ::1:5432
+        at <unknown> (Error: connect ECONNREFUSED ::1:5432) {
+      errno: -4078,
+      code: 'ECONNREFUSED',
+      syscall: 'connect',
+      address: '::1',
+      port: 5432
+    },
+    Error: connect ECONNREFUSED 127.0.0.1:5432
+        at <unknown> (Error: connect ECONNREFUSED 127.0.0.1:5432) {
+      errno: -4078,
+      code: 'ECONNREFUSED',
+      syscall: 'connect',
+      address: '127.0.0.1',
+      port: 5432
+    }
+  ]
+}
+Analytics tracking error: AggregateError: 
+    at async POST (src\app\api\analytics\track\route.js:30:5)
+  28 |
+  29 |     // Insert visit event to the page_visits database table
+> 30 |     await pool.query(
+     |     ^
+  31 |       'INSERT INTO page_visits (path, session_id) VALUES ($1, $2)',
+  32 |       [path, sessionId]
+  33 |     ); {
+  code: 'ECONNREFUSED',
+  [errors]: [
+    Error: connect ECONNREFUSED ::1:5432
+        at <unknown> (Error: connect ECONNREFUSED ::1:5432) {
+      errno: -4078,
+      code: 'ECONNREFUSED',
+      syscall: 'connect',
+      address: '::1',
+      port: 5432
+    },
+    Error: connect ECONNREFUSED 127.0.0.1:5432
+        at <unknown> (Error: connect ECONNREFUSED 127.0.0.1:5432) {
+      errno: -4078,
+      code: 'ECONNREFUSED',
+      syscall: 'connect',
+      address: '127.0.0.1',
+      port: 5432
+    }
+  ]
+}
+[browser] Detected `scroll-behavior: smooth` on the `<html>` element. To disable smooth scrolling during route transitions, add `data-scroll-behavior="smooth"` to your <html> element. Learn more: https://nextjs.org/docs/messages/missing-data-scroll-behavior
+Analytics tracking error: AggregateError: 
+    at async POST (src\app\api\analytics\track\route.js:30:5)
+  28 |
+  29 |     // Insert visit event to the page_visits database table
+> 30 |     await pool.query(
+     |     ^
+  31 |       'INSERT INTO page_visits (path, session_id) VALUES ($1, $2)',
+  32 |       [path, sessionId]
+  33 |     ); {
+  code: 'ECONNREFUSED',
+  [errors]: [
+    Error: connect ECONNREFUSED ::1:5432
+        at <unknown> (Error: connect ECONNREFUSED ::1:5432) {
+      errno: -4078,
+      code: 'ECONNREFUSED',
+      syscall: 'connect',
+      address: '::1',
+      port: 5432
+    },
+    Error: connect ECONNREFUSED 127.0.0.1:5432
+        at <unknown> (Error: connect ECONNREFUSED 127.0.0.1:5432) {
+      errno: -4078,
+      code: 'ECONNREFUSED',
+      syscall: 'connect',
+      address: '127.0.0.1',
+      port: 5432
+    }
+  ]
+}
+Analytics tracking error: AggregateError: 
+    at async POST (src\app\api\analytics\track\route.js:30:5)
+  28 |
+  29 |     // Insert visit event to the page_visits database table
+> 30 |     await pool.query(
+     |     ^
+  31 |       'INSERT INTO page_visits (path, session_id) VALUES ($1, $2)',
+  32 |       [path, sessionId]
+  33 |     ); {
+  code: 'ECONNREFUSED',
+  [errors]: [
+    Error: connect ECONNREFUSED ::1:5432
+        at <unknown> (Error: connect ECONNREFUSED ::1:5432) {
+      errno: -4078,
+      code: 'ECONNREFUSED',
+      syscall: 'connect',
+      address: '::1',
+      port: 5432
+    },
+    Error: connect ECONNREFUSED 127.0.0.1:5432
+        at <unknown> (Error: connect ECONNREFUSED 127.0.0.1:5432) {
+      errno: -4078,
+      code: 'ECONNREFUSED',
+      syscall: 'connect',
+      address: '127.0.0.1',
+      port: 5432
+    }
+  ]
+}
+[browser] Detected `scroll-behavior: smooth` on the `<html>` element. To disable smooth scrolling during route transitions, add `data-scroll-behavior="smooth"` to your <html> element. Learn more: https://nextjs.org/docs/messages/missing-data-scroll-behavior
+Analytics tracking error: AggregateError: 
+    at async POST (src\app\api\analytics\track\route.js:30:5)
+  28 |
+  29 |     // Insert visit event to the page_visits database table
+> 30 |     await pool.query(
+     |     ^
+  31 |       'INSERT INTO page_visits (path, session_id) VALUES ($1, $2)',
+  32 |       [path, sessionId]
+  33 |     ); {
+  code: 'ECONNREFUSED',
+  [errors]: [
+    Error: connect ECONNREFUSED ::1:5432
+        at <unknown> (Error: connect ECONNREFUSED ::1:5432) {
+      errno: -4078,
+      code: 'ECONNREFUSED',
+      syscall: 'connect',
+      address: '::1',
+      port: 5432
+    },
+    Error: connect ECONNREFUSED 127.0.0.1:5432
+        at <unknown> (Error: connect ECONNREFUSED 127.0.0.1:5432) {
+      errno: -4078,
+      code: 'ECONNREFUSED',
+      syscall: 'connect',
+      address: '127.0.0.1',
+      port: 5432
+    }
+  ]
+}
+Analytics tracking error: AggregateError: 
+    at async POST (src\app\api\analytics\track\route.js:30:5)
+  28 |
+  29 |     // Insert visit event to the page_visits database table
+> 30 |     await pool.query(
+     |     ^
+  31 |       'INSERT INTO page_visits (path, session_id) VALUES ($1, $2)',
+  32 |       [path, sessionId]
+  33 |     ); {
+  code: 'ECONNREFUSED',
+  [errors]: [
+    Error: connect ECONNREFUSED ::1:5432
+        at <unknown> (Error: connect ECONNREFUSED ::1:5432) {
+      errno: -4078,
+      code: 'ECONNREFUSED',
+      syscall: 'connect',
+      address: '::1',
+      port: 5432
+    },
+    Error: connect ECONNREFUSED 127.0.0.1:5432
+        at <unknown> (Error: connect ECONNREFUSED 127.0.0.1:5432) {
+      errno: -4078,
+      code: 'ECONNREFUSED',
+      syscall: 'connect',
+      address: '127.0.0.1',
+      port: 5432
+    }
+  ]
+}
+[browser] Detected `scroll-behavior: smooth` on the `<html>` element. To disable smooth scrolling during route transitions, add `data-scroll-behavior="smooth"` to your <html> element. Learn more: https://nextjs.org/docs/messages/missing-data-scroll-behavior
+Analytics tracking error: AggregateError: 
+    at async POST (src\app\api\analytics\track\route.js:30:5)
+  28 |
+  29 |     // Insert visit event to the page_visits database table
+> 30 |     await pool.query(
+     |     ^
+  31 |       'INSERT INTO page_visits (path, session_id) VALUES ($1, $2)',
+  32 |       [path, sessionId]
+  33 |     ); {
+  code: 'ECONNREFUSED',
+  [errors]: [
+    Error: connect ECONNREFUSED ::1:5432
+        at <unknown> (Error: connect ECONNREFUSED ::1:5432) {
+      errno: -4078,
+      code: 'ECONNREFUSED',
+      syscall: 'connect',
+      address: '::1',
+      port: 5432
+    },
+    Error: connect ECONNREFUSED 127.0.0.1:5432
+        at <unknown> (Error: connect ECONNREFUSED 127.0.0.1:5432) {
+      errno: -4078,
+      code: 'ECONNREFUSED',
+      syscall: 'connect',
+      address: '127.0.0.1',
+      port: 5432
+    }
+  ]
+}
+Analytics tracking error: AggregateError: 
+    at async POST (src\app\api\analytics\track\route.js:30:5)
+  28 |
+  29 |     // Insert visit event to the page_visits database table
+> 30 |     await pool.query(
+     |     ^
+  31 |       'INSERT INTO page_visits (path, session_id) VALUES ($1, $2)',
+  32 |       [path, sessionId]
+  33 |     ); {
+  code: 'ECONNREFUSED',
+  [errors]: [
+    Error: connect ECONNREFUSED ::1:5432
+        at <unknown> (Error: connect ECONNREFUSED ::1:5432) {
+      errno: -4078,
+      code: 'ECONNREFUSED',
+      syscall: 'connect',
+      address: '::1',
+      port: 5432
+    },
+    Error: connect ECONNREFUSED 127.0.0.1:5432
+        at <unknown> (Error: connect ECONNREFUSED 127.0.0.1:5432) {
+      errno: -4078,
+      code: 'ECONNREFUSED',
+      syscall: 'connect',
+      address: '127.0.0.1',
+      port: 5432
+    }
+  ]
+}
+Analytics tracking error: AggregateError: 
+    at async POST (src\app\api\analytics\track\route.js:30:5)
+  28 |
+  29 |     // Insert visit event to the page_visits database table
+> 30 |     await pool.query(
+     |     ^
+  31 |       'INSERT INTO page_visits (path, session_id) VALUES ($1, $2)',
+  32 |       [path, sessionId]
+  33 |     ); {
+  code: 'ECONNREFUSED',
+  [errors]: [
+    Error: connect ECONNREFUSED ::1:5432
+        at <unknown> (Error: connect ECONNREFUSED ::1:5432) {
+      errno: -4078,
+      code: 'ECONNREFUSED',
+      syscall: 'connect',
+      address: '::1',
+      port: 5432
+    },
+    Error: connect ECONNREFUSED 127.0.0.1:5432
+        at <unknown> (Error: connect ECONNREFUSED 127.0.0.1:5432) {
+      errno: -4078,
+      code: 'ECONNREFUSED',
+      syscall: 'connect',
+      address: '127.0.0.1',
+      port: 5432
+    }
+  ]
+}
+[browser] Detected `scroll-behavior: smooth` on the `<html>` element. To disable smooth scrolling during route transitions, add `data-scroll-behavior="smooth"` to your <html> element. Learn more: https://nextjs.org/docs/messages/missing-data-scroll-behavior
+Analytics tracking error: AggregateError: 
+    at async POST (src\app\api\analytics\track\route.js:30:5)
+  28 |
+  29 |     // Insert visit event to the page_visits database table
+> 30 |     await pool.query(
+     |     ^
+  31 |       'INSERT INTO page_visits (path, session_id) VALUES ($1, $2)',
+  32 |       [path, sessionId]
+  33 |     ); {
+  code: 'ECONNREFUSED',
+  [errors]: [
+    Error: connect ECONNREFUSED ::1:5432
+        at <unknown> (Error: connect ECONNREFUSED ::1:5432) {
+      errno: -4078,
+      code: 'ECONNREFUSED',
+      syscall: 'connect',
+      address: '::1',
+      port: 5432
+    },
+    Error: connect ECONNREFUSED 127.0.0.1:5432
+        at <unknown> (Error: connect ECONNREFUSED 127.0.0.1:5432) {
+      errno: -4078,
+      code: 'ECONNREFUSED',
+      syscall: 'connect',
+      address: '127.0.0.1',
+      port: 5432
+    }
+  ]
+}
+Analytics tracking error: AggregateError: 
+    at async POST (src\app\api\analytics\track\route.js:30:5)
+  28 |
+  29 |     // Insert visit event to the page_visits database table
+> 30 |     await pool.query(
+     |     ^
+  31 |       'INSERT INTO page_visits (path, session_id) VALUES ($1, $2)',
+  32 |       [path, sessionId]
+  33 |     ); {
+  code: 'ECONNREFUSED',
+  [errors]: [
+    Error: connect ECONNREFUSED ::1:5432
+        at <unknown> (Error: connect ECONNREFUSED ::1:5432) {
+      errno: -4078,
+      code: 'ECONNREFUSED',
+      syscall: 'connect',
+      address: '::1',
+      port: 5432
+    },
+    Error: connect ECONNREFUSED 127.0.0.1:5432
+        at <unknown> (Error: connect ECONNREFUSED 127.0.0.1:5432) {
+      errno: -4078,
+      code: 'ECONNREFUSED',
+      syscall: 'connect',
+      address: '127.0.0.1',
+      port: 5432
+    }
+  ]
+}

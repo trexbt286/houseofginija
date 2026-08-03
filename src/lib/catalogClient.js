@@ -1,25 +1,36 @@
 export function productMatchesCategory(product, selectedCategory) {
   if (!selectedCategory) return true;
 
-  if (selectedCategory === 'rings') {
-    return product.slug.toLowerCase().includes('ring');
+  const cat = selectedCategory.toLowerCase();
+  const slug = (product.slug || '').toLowerCase();
+  const colSlug = (product.collection_slug || '').toLowerCase();
+  const parentColSlug = (product.parent_collection_slug || '').toLowerCase();
+  const colName = (product.collection_name || '').toLowerCase();
+
+  if (cat === 'rings' || cat === 'ring') {
+    return slug.includes('ring') || colSlug === 'rings';
   }
-  if (selectedCategory === 'necklaces') {
-    return product.slug.toLowerCase().includes('necklace');
+  if (cat === 'necklaces' || cat === 'necklace') {
+    return slug.includes('necklace') || colSlug === 'necklaces' || colSlug === 'jewellery';
   }
-  if (selectedCategory === 'bracelets') {
-    return product.slug.toLowerCase().includes('bracelet');
+  if (cat === 'bracelets' || cat === 'bracelet') {
+    return slug.includes('bracelet') || colSlug === 'bracelets';
+  }
+  if (cat === 'earrings' || cat === 'earring') {
+    return slug.includes('earring') || colSlug === 'earrings';
   }
 
   const categoryMatch =
-    product.collection_slug === selectedCategory ||
-    product.parent_collection_slug === selectedCategory ||
-    (product.collection_name && product.collection_name.toLowerCase() === selectedCategory.toLowerCase()) ||
-    (selectedCategory === 'gowns' && product.collection_slug === 'heavy-gown');
+    colSlug === cat ||
+    parentColSlug === cat ||
+    colName === cat ||
+    (cat === 'gowns' && (colSlug === 'heavy-gown' || colSlug === 'gowns' || slug.includes('gown'))) ||
+    (cat === 'shararas' && (colSlug === 'shararas' || slug.includes('sharara'))) ||
+    (cat === 'indo-western' && (colSlug === 'indo-western' || slug.includes('indo-western')));
 
   if (categoryMatch) return true;
-  if (selectedCategory === 'new-collection') return Boolean(product.new_arrival);
-  if (selectedCategory === 'flash-sale') {
+  if (cat === 'new-collection') return Boolean(product.new_arrival);
+  if (cat === 'flash-sale') {
     return Boolean(product.on_sale || product.flash_sale);
   }
 

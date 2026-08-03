@@ -4,6 +4,8 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useRef, useState, useEffect } from 'react';
 
+import { productMatchesCategory } from '@/lib/catalogClient';
+
 const DEFAULT_CATEGORIES = [
   { name: 'New Collection', slug: 'new-collection', defaultImage: '/local-products/033-blush-pink-drape-1.jpg', href: '/collections?collection=new-collection' },
   { name: 'Unstitched Suits', slug: 'suits',        defaultImage: '/images/categories/unstitched.png', href: '/collections?collection=suits' },
@@ -22,26 +24,32 @@ export default function ShopByCategories() {
   const [categoryImages, setCategoryImages] = useState({});
 
   useEffect(() => {
-    fetch('/api/admin/settings', { cache: 'no-store' })
-      .then((res) => res.ok ? res.json() : null)
+    fetch('/api/products')
+      .then((res) => (res.ok ? res.json() : null))
       .then((data) => {
-        if (data?.settings) {
+        const products = data?.products || [];
+        if (products.length > 0) {
           const imgs = {};
-          Object.entries(data.settings).forEach(([key, value]) => {
-            if (key.startsWith('category_img_') && value) {
-              const slug = key.replace('category_img_', '');
-              imgs[slug] = value;
+          DEFAULT_CATEGORIES.forEach((cat) => {
+            const matching = products.filter((p) => productMatchesCategory(p, cat.slug));
+            if (matching.length > 0) {
+              const randomIndex = Math.floor(Math.random() * matching.length);
+              const randomProduct = matching[randomIndex];
+              const primaryImg = randomProduct.images?.[0] || randomProduct.image_url;
+              if (primaryImg) {
+                imgs[cat.slug] = primaryImg;
+              }
             }
           });
           setCategoryImages(imgs);
         }
       })
-      .catch(() => {});
+      .catch((err) => console.error('ShopByCategories fetch products error:', err));
   }, []);
 
   const categories = DEFAULT_CATEGORIES.map((cat) => ({
     ...cat,
-    image: categoryImages[cat.slug] || cat.defaultImage,
+    image: categoryImages[cat.slug] || cat.defaultImage || '/placeholder.png',
   }));
 
   const move = (direction) => {

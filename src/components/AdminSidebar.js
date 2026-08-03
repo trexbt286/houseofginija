@@ -57,12 +57,6 @@ export default function AdminSidebar({ active }) {
           New Arrivals
         </Link>
         <Link 
-          href="/admin/categories" 
-          style={active === "categories" ? activeNavLinkStyle : navLinkStyle}
-        >
-          Category Thumbnails
-        </Link>
-        <Link 
           href="/admin/orders" 
           style={active === "orders" ? activeNavLinkStyle : navLinkStyle}
         >
