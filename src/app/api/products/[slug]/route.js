@@ -16,7 +16,7 @@ export async function GET(request, { params }) {
 
   if (shouldUseLocalCatalogFallbackFirst()) {
     const product = getLocalProductBySlugFallback(slug);
-    if (product) return NextResponse.json({ product: mapProductData(product) });
+    if (product) return NextResponse.json({ product });
     return NextResponse.json({ error: 'Product not found' }, { status: 404 });
   }
 
@@ -40,7 +40,7 @@ export async function GET(request, { params }) {
     console.error('Fetch product by slug error:', error);
     if (canUseLocalCatalogFallback()) {
       const product = getLocalProductBySlugFallback(slug);
-      if (product) return NextResponse.json({ product: mapProductData(product) });
+      if (product) return NextResponse.json({ product });
       return NextResponse.json({ error: 'Product not found' }, { status: 404 });
     }
     return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
