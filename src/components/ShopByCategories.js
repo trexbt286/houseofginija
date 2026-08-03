@@ -22,7 +22,7 @@ export default function ShopByCategories() {
   const [categoryImages, setCategoryImages] = useState({});
 
   useEffect(() => {
-    fetch('/api/admin/settings')
+    fetch('/api/admin/settings', { cache: 'no-store' })
       .then((res) => res.ok ? res.json() : null)
       .then((data) => {
         if (data?.settings) {

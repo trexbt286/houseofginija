@@ -14,6 +14,7 @@ export function productMatchesCategory(product, selectedCategory) {
   const categoryMatch =
     product.collection_slug === selectedCategory ||
     product.parent_collection_slug === selectedCategory ||
+    (product.collection_name && product.collection_name.toLowerCase() === selectedCategory.toLowerCase()) ||
     (selectedCategory === 'gowns' && product.collection_slug === 'heavy-gown');
 
   if (categoryMatch) return true;

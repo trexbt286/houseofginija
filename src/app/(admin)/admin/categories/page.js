@@ -76,10 +76,32 @@ export default function AdminCategoriesPage() {
     setSuccess('');
 
     try {
-      // Compress & resize to ≤400×400 JPEG — keeps payload well under body size limits
-      const imageUrl = await compressImage(file);
+      let imageUrl = '';
 
-      // Save compressed base64 data URL directly to settings
+      // 1. Upload to backend upload API endpoint
+      try {
+        const formData = new FormData();
+        formData.append('file', file);
+
+        const uploadRes = await fetch('/api/admin/upload', {
+          method: 'POST',
+          body: formData,
+        });
+
+        const uploadData = await uploadRes.json().catch(() => ({}));
+        if (uploadRes.ok && uploadData.url) {
+          imageUrl = uploadData.url;
+        }
+      } catch (err) {
+        console.warn('Backend upload endpoint error, using compressed image fallback:', err);
+      }
+
+      // Fallback to client-side compressed JPEG if backend upload URL not generated
+      if (!imageUrl) {
+        imageUrl = await compressImage(file);
+      }
+
+      // 2. Save image URL centrally to server settings & database
       const settingsRes = await fetch('/api/admin/settings', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -88,11 +110,11 @@ export default function AdminCategoriesPage() {
 
       const settingsData = await settingsRes.json().catch(() => ({}));
       if (!settingsRes.ok || !settingsData.success) {
-        throw new Error(settingsData.error || 'Failed to save setting');
+        throw new Error(settingsData.error || 'Failed to save setting on server');
       }
 
       setCategoryImages((prev) => ({ ...prev, [slug]: imageUrl }));
-      setSuccess(`Thumbnail updated for "${ALL_CATEGORIES.find(c => c.slug === slug)?.name}". It will appear on the homepage immediately.`);
+      setSuccess(`Thumbnail updated for "${ALL_CATEGORIES.find(c => c.slug === slug)?.name}". It will appear for all users across all devices immediately.`);
     } catch (err) {
       console.error(err);
       setError(err.message || 'Failed to update category image.');

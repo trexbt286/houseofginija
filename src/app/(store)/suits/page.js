@@ -190,7 +190,7 @@ function CollectionsContent() {
   const [loading, setLoading] = useState(true);
 
   // Read initial params
-  const initialCollection = searchParams.get('category') || searchParams.get('collection') || '';
+  const initialCollection = searchParams.get('category') || searchParams.get('collection') || 'suits';
   const [selectedCollection, setSelectedCollection] = useState(initialCollection);
   const [searchQuery, setSearchQuery] = useState(searchParams.get('search') || '');
   const [selectedSize, setSelectedSize] = useState('');
@@ -204,7 +204,7 @@ function CollectionsContent() {
   const [activeProductColor, setActiveProductColor] = useState('');
   const [activeProductQty, setActiveProductQty] = useState(1);
   const [isMobileFilterOpen, setIsMobileFilterOpen] = useState(false);
-  const [activeCategorySidebar, setActiveCategorySidebar] = useState('');
+  const [activeCategorySidebar, setActiveCategorySidebar] = useState(initialCollection);
 
   // Viewport width state for mobile sibling switcher centering
   const [viewportWidth, setViewportWidth] = useState(390);
@@ -257,7 +257,7 @@ function CollectionsContent() {
   useEffect(() => {
     const handleReset = () => {
       setActiveProduct(null);
-      setSelectedCollection('');
+      setSelectedCollection('suits');
       setSearchQuery('');
       setSelectedSize('');
       setSelectedColor('');
@@ -270,7 +270,7 @@ function CollectionsContent() {
   }, []);
 
   // Synchronize state when URL query parameters change (e.g., from Header dropdown links)
-  const colParam = searchParams.get('category') || searchParams.get('collection') || '';
+  const colParam = searchParams.get('category') || searchParams.get('collection') || 'suits';
   const searchParam = searchParams.get('search') || '';
   const categoryParam = searchParams.get('category') || '';
 

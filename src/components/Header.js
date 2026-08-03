@@ -480,7 +480,7 @@ export default function Header() {
 
             {/* 4. UNSTITCHED SUITS */}
             <Link 
-              href="/suits" 
+              href="/collections?collection=suits" 
               className={`mobile-nav-item-row ${isCurrent('/suits') ? 'active' : ''}`}
               onClick={() => setMenuOpen(false)}
             >
@@ -491,13 +491,11 @@ export default function Header() {
                 </svg>
                 <span className="mobile-nav-item-title">UNSTITCHED SUITS</span>
               </div>
-              {!isCurrent('/suits') && (
-                <div className="mobile-nav-item-chevron">
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                    <polyline points="9 18 15 12 9 6"></polyline>
-                  </svg>
-                </div>
-              )}
+              <div className="mobile-nav-item-chevron">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                  <polyline points="9 18 15 12 9 6"></polyline>
+                </svg>
+              </div>
             </Link>
 
             {/* 5. CO-ORDS */}
