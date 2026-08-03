@@ -216,7 +216,7 @@ export async function POST(request) {
     );
 
     const productId = result.rows[0].id;
-    await replaceProductTags(client, productId, [...(tagIds || []), ...(product.tags || [])]);
+    await replaceProductTags(client, productId, tagIds);
     const savedProduct = await fetchProductById(client, productId);
     await client.query('COMMIT');
 
@@ -277,6 +277,7 @@ export async function PUT(request) {
 
     await client.query('BEGIN');
     await validateCollection(client, product.collectionId);
+    if (tagIds) await validateTagIds(client, tagIds);
 
     const result = await client.query(
       `
@@ -320,9 +321,7 @@ export async function PUT(request) {
       throw error;
     }
 
-    if (shouldReplaceTags) {
-      await replaceProductTags(client, body.id, [...(tagIds || []), ...(product.tags || [])]);
-    }
+    if (tagIds) await replaceProductTags(client, body.id, tagIds);
     const savedProduct = await fetchProductById(client, body.id);
     await client.query('COMMIT');
 

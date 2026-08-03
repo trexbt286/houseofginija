@@ -127,46 +127,10 @@ export async function validateTagIds(client, tagIds) {
   }
 }
 
-export async function replaceProductTags(client, productId, rawTagsPayload = []) {
+export async function replaceProductTags(client, productId, tagIds) {
   await client.query('DELETE FROM product_tags WHERE product_id = $1', [productId]);
 
-  if (!Array.isArray(rawTagsPayload) || rawTagsPayload.length === 0) return;
-
-  const tagIds = [];
-
-  for (const tagItem of rawTagsPayload) {
-    if (typeof tagItem === 'number' || (typeof tagItem === 'string' && /^\d+$/.test(tagItem))) {
-      tagIds.push(Number(tagItem));
-    } else {
-      const name = typeof tagItem === 'string' ? tagItem.trim() : (tagItem.name || tagItem.slug || '').trim();
-      if (!name) continue;
-      const slug = typeof tagItem === 'object' && tagItem.slug
-        ? tagItem.slug
-        : name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
-
-      try {
-        const tagResult = await client.query(
-          `
-            INSERT INTO tags (name, slug)
-            VALUES ($1, $2)
-            ON CONFLICT (slug) DO UPDATE SET name = EXCLUDED.name
-            RETURNING id
-          `,
-          [name, slug]
-        );
-
-        if (tagResult.rows[0]?.id) {
-          tagIds.push(tagResult.rows[0].id);
-        }
-      } catch (err) {
-        console.warn('Error upserting custom tag:', err);
-      }
-    }
-  }
-
-  const uniqueTagIds = [...new Set(tagIds)];
-
-  if (uniqueTagIds.length > 0) {
+  if (tagIds.length > 0) {
     await client.query(
       `
         INSERT INTO product_tags (product_id, tag_id)
@@ -177,7 +141,7 @@ export async function replaceProductTags(client, productId, rawTagsPayload = [])
           WHERE pt.product_id = $1 AND pt.tag_id = selected_tags.tag_id
         )
       `,
-      [productId, uniqueTagIds]
+      [productId, tagIds]
     );
   }
 }

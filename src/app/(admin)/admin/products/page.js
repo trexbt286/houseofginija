@@ -599,15 +599,6 @@ function AdminProductsContent() {
                 ></textarea>
               </div>
 
-              {/* Product Tags & Custom Highlights */}
-              <AdminProductMetadataFields
-                tags={tags}
-                selectedTagIds={selectedTagIds}
-                onSelectedTagIdsChange={setSelectedTagIds}
-                customTags={customTags}
-                onCustomTagsChange={setCustomTags}
-              />
-
               <AdminProductMetadataFields
                 tags={tags}
                 selectedTagIds={selectedTagIds}
