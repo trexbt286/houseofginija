@@ -196,35 +196,53 @@ export default function ProductPage({ params }) {
           <h1 style={productNameStyle}>{product.name}</h1>
           <p style={priceStyle}>₹{parseFloat(product.price).toLocaleString('en-IN')}</p>
 
-          {/* Custom Tag Badges between Price and Description (Matching Reference Design) */}
-          {Array.isArray(product.tags) && product.tags.length > 0 && (
-            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem', marginTop: '0.8rem', marginBottom: '1.2rem' }}>
-              {product.tags.map((tag, idx) => {
-                const tagName = typeof tag === 'string' ? tag : (tag.name || tag.slug);
-                if (!tagName) return null;
-                return (
-                  <span
-                    key={tag.id || tag.slug || idx}
-                    style={{
-                      fontSize: '0.78rem',
-                      fontWeight: '500',
-                      letterSpacing: '0.01em',
-                      backgroundColor: '#FFFFFF',
-                      color: '#A25867',
-                      padding: '0.35rem 0.75rem',
-                      borderRadius: '8px',
-                      border: '1px solid #EFA7B3',
-                      display: 'inline-flex',
-                      alignItems: 'center',
-                      lineHeight: '1.2',
-                    }}
-                  >
-                    {tagName}
-                  </span>
-                );
-              })}
-            </div>
-          )}
+          {/* Custom Tag Badges below Price and above Description */}
+          {(() => {
+            let raw = product.tags;
+            if (typeof raw === 'string') {
+              try { raw = JSON.parse(raw); } catch {}
+            }
+            if (!Array.isArray(raw) || raw.length === 0) return null;
+            const normalizedTags = raw.map((tag) => {
+              if (typeof tag === 'string') {
+                try {
+                  const parsed = JSON.parse(tag);
+                  if (parsed && typeof parsed === 'object') return parsed;
+                } catch {}
+                return { name: tag };
+              }
+              return tag;
+            }).filter(Boolean);
+
+            return (
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.45rem', marginTop: '0.8rem', marginBottom: '1.2rem' }}>
+                {normalizedTags.map((tag, idx) => {
+                  const tagName = typeof tag === 'string' ? tag : (tag?.name || tag?.slug);
+                  if (!tagName) return null;
+                  return (
+                    <span
+                      key={tag?.id || tag?.slug || idx}
+                      style={{
+                        fontSize: '0.75rem',
+                        fontWeight: '500',
+                        letterSpacing: '0.01em',
+                        backgroundColor: '#FFF7F8',
+                        color: '#8B4C5C',
+                        padding: '0.3rem 0.7rem',
+                        borderRadius: '6px',
+                        border: '1px solid #EFA7B3',
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        lineHeight: '1.2',
+                      }}
+                    >
+                      {tagName}
+                    </span>
+                  );
+                })}
+              </div>
+            );
+          })()}
 
           <p style={descriptionStyle}>{product.description}</p>
 
