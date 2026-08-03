@@ -86,6 +86,40 @@ export function ProductShareButton({ product }) {
   );
 }
 
+export function ProductTagBadges({ tags }) {
+  if (!Array.isArray(tags) || tags.length === 0) return null;
+
+  const normalizedTags = tags
+    .map((tag) => {
+      if (typeof tag === 'string') {
+        try {
+          const parsed = JSON.parse(tag);
+          if (parsed && typeof parsed === 'object') return parsed;
+        } catch {}
+        return { name: tag };
+      }
+      return tag;
+    })
+    .filter(Boolean);
+
+  if (normalizedTags.length === 0) return null;
+
+  return (
+    <div className="product-tag-badges">
+      {normalizedTags.map((tag, idx) => {
+        const tagName = typeof tag === 'string' ? tag : (tag?.name || tag?.slug);
+        if (!tagName) return null;
+
+        return (
+          <span className="product-tag-badge" key={tag?.id || tag?.slug || idx}>
+            {tagName}
+          </span>
+        );
+      })}
+    </div>
+  );
+}
+
 export function AddToBagLabel() {
   return (
     <span className="detail-add-label">

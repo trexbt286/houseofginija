@@ -8,7 +8,7 @@ import ImageWithSkeleton from '@/components/ImageWithSkeleton';
 import SkeletonCard from '@/components/SkeletonCard';
 import HeroReelsSection from '@/components/HeroReelsSection';
 import ProductImageGallery from '@/components/ProductImageGallery';
-import { AddToBagLabel, ProductFeatureStrip, ProductShareButton } from '@/components/ProductQuickViewExtras';
+import { AddToBagLabel, ProductFeatureStrip, ProductShareButton, ProductTagBadges } from '@/components/ProductQuickViewExtras';
 import FounderReelsRow from '@/components/FounderReelsRow';
 import ShopByCategories from '@/components/ShopByCategories';
 
@@ -836,6 +836,7 @@ export default function Home() {
                 ) : (
                   <p style={detailPriceStyle} className="detail-product-price">₹{parseFloat(activeProduct.price).toLocaleString('en-IN')}</p>
                 )}
+                <ProductTagBadges tags={activeProduct.tags} />
                 <div style={detailDividerStyle} className="detail-divider"></div>
                 <p style={detailDescStyle} className="detail-product-desc">{(activeProduct.description && activeProduct.description.trim()) ? activeProduct.description.trim() : 'Exclusive luxury item, crafted from premium archival coutures.'}</p>
 

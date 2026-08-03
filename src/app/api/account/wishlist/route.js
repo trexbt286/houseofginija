@@ -2,6 +2,11 @@ import { NextResponse } from 'next/server';
 import { verifyJWT } from '@/lib/auth';
 import pool from '@/lib/db';
 import { cookies } from 'next/headers';
+import {
+  PRODUCT_COLLECTION_JOINS,
+  PRODUCT_SELECT_FIELDS,
+  mapProductData,
+} from '@/lib/catalogMetadata';
 
 export async function POST(request) {
   try {
@@ -69,15 +74,15 @@ export async function GET(request) {
     if (details) {
       // Return full product details joined with collections info
       const result = await pool.query(
-        `SELECT p.*, c.name as collection_name 
+        `SELECT ${PRODUCT_SELECT_FIELDS}
          FROM wishlist w 
          JOIN products p ON w.product_id = p.id 
-         LEFT JOIN collections c ON p.collection_id = c.id 
+         ${PRODUCT_COLLECTION_JOINS}
          WHERE w.user_id = $1 
          ORDER BY p.id DESC`,
         [decoded.id]
       );
-      return NextResponse.json({ wishlist: result.rows });
+      return NextResponse.json({ wishlist: result.rows.map(mapProductData) });
     } else {
       // Return only product IDs array
       const result = await pool.query(
