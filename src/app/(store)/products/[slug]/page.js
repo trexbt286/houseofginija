@@ -559,9 +559,9 @@ const galleryColumnStyle = {
 const mainImageContainerStyle = {
   position: 'relative',
   width: '100%',
-  height: '72vh',
-  minHeight: '520px',
-  maxHeight: '800px',
+  height: '78vh',
+  minHeight: '560px',
+  maxHeight: '850px',
   borderRadius: '16px',
   overflow: 'hidden',
   backgroundColor: '#FAF7F5',
@@ -575,9 +575,10 @@ const mainImageStyle = {
   width: '100%',
   height: '100%',
   objectFit: 'cover',
-  objectPosition: 'center 20%',
+  objectPosition: 'center center',
   padding: '0',
-  transform: 'scale(1.05)',
+  transform: 'scale(1.35)',
+  transformOrigin: 'center center',
   transition: 'transform 0.3s ease',
 };
 
