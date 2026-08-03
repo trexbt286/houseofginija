@@ -559,9 +559,9 @@ const galleryColumnStyle = {
 const mainImageContainerStyle = {
   position: 'relative',
   width: '100%',
-  height: '68vh',
-  minHeight: '480px',
-  maxHeight: '750px',
+  height: '72vh',
+  minHeight: '520px',
+  maxHeight: '800px',
   borderRadius: '16px',
   overflow: 'hidden',
   backgroundColor: '#FAF7F5',
@@ -574,9 +574,11 @@ const mainImageContainerStyle = {
 const mainImageStyle = {
   width: '100%',
   height: '100%',
-  objectFit: 'contain',
-  padding: '0.5rem',
-  transition: 'all 0.3s ease',
+  objectFit: 'cover',
+  objectPosition: 'center 20%',
+  padding: '0',
+  transform: 'scale(1.05)',
+  transition: 'transform 0.3s ease',
 };
 
 const overlayBackBtnStyle = {
