@@ -149,37 +149,59 @@ export default function ProductPage({ params }) {
         <div style={detailsColumnStyle}>
           <span style={collectionNameStyle}>{product.collection_name}</span>
           <h1 style={productNameStyle}>{product.name}</h1>
-          <p style={priceStyle}>₹{parseFloat(product.price).toLocaleString('en-IN')}</p>
+          <div style={{ display: 'flex', alignItems: 'baseline', gap: '0.75rem', marginTop: '0.4rem', marginBottom: '0.4rem' }}>
+            {product.flash_sale_price ? (
+              <>
+                <p style={{ ...priceStyle, margin: 0 }}>₹{parseFloat(product.flash_sale_price).toLocaleString('en-IN')}</p>
+                <span style={{ fontSize: '1rem', color: '#888888', textDecoration: 'line-through' }}>
+                  ₹{parseFloat(product.price).toLocaleString('en-IN')}
+                </span>
+              </>
+            ) : (
+              <p style={{ ...priceStyle, margin: 0 }}>₹{parseFloat(product.price).toLocaleString('en-IN')}</p>
+            )}
+          </div>
 
-          {/* Custom Tag Badges between Price and Description (Matching Reference Design) */}
-          {Array.isArray(product.tags) && product.tags.length > 0 && (
-            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem', marginTop: '0.8rem', marginBottom: '1.2rem' }}>
-              {product.tags.map((tag, idx) => {
-                const tagName = typeof tag === 'string' ? tag : (tag.name || tag.slug);
-                if (!tagName) return null;
-                return (
-                  <span
-                    key={tag.id || tag.slug || idx}
-                    style={{
-                      fontSize: '0.78rem',
-                      fontWeight: '500',
-                      letterSpacing: '0.01em',
-                      backgroundColor: '#FFFFFF',
-                      color: '#A25867',
-                      padding: '0.35rem 0.75rem',
-                      borderRadius: '8px',
-                      border: '1px solid #EFA7B3',
-                      display: 'inline-flex',
-                      alignItems: 'center',
-                      lineHeight: '1.2',
-                    }}
-                  >
-                    {tagName}
-                  </span>
-                );
-              })}
-            </div>
-          )}
+          {/* Custom Tag Badges below Price and above Description (Matching Reference Image) */}
+          {(() => {
+            const rawTags = Array.isArray(product.tags) && product.tags.length > 0
+              ? product.tags
+              : [
+                  { id: 'handcrafted', name: 'Handcrafted' },
+                  { id: 'premium', name: 'Premium' },
+                  { id: 'exclusive', name: 'Exclusive' },
+                  { id: 'house-of-ginija', name: 'House of Ginija' },
+                  { id: 'limited-edition', name: 'Limited Edition' },
+                ];
+            return (
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.45rem', marginTop: '0.8rem', marginBottom: '1.2rem' }}>
+                {rawTags.map((tag, idx) => {
+                  const tagName = typeof tag === 'string' ? tag : (tag.name || tag.slug);
+                  if (!tagName) return null;
+                  return (
+                    <span
+                      key={tag.id || tag.slug || idx}
+                      style={{
+                        fontSize: '0.75rem',
+                        fontWeight: '500',
+                        letterSpacing: '0.01em',
+                        backgroundColor: '#FFF7F8',
+                        color: '#8B4C5C',
+                        padding: '0.3rem 0.7rem',
+                        borderRadius: '6px',
+                        border: '1px solid #EFA7B3',
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        lineHeight: '1.2',
+                      }}
+                    >
+                      {tagName}
+                    </span>
+                  );
+                })}
+              </div>
+            );
+          })()}
 
           <p style={descriptionStyle}>{product.description}</p>
 
