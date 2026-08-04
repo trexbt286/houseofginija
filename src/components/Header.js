@@ -228,7 +228,7 @@ export default function Header() {
                         style={{ fontSize: '0.8rem', fontWeight: '700', color: '#000000', textTransform: 'uppercase', letterSpacing: '0.08em', textDecoration: 'none' }}
                         onClick={() => { setDropdownOpen(false); setMenuOpen(false); }}
                       >
-                        Gowns
+                        Heavy Gowns
                       </Link>
                     </div>
 

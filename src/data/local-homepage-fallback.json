@@ -86,9 +86,9 @@
     },
     {
       "id": "10",
-      "name": "Gowns",
+      "name": "Heavy Gowns",
       "slug": "gowns",
-      "description": "Opulent floor-length gowns.",
+      "description": "Opulent floor-length heavy gowns.",
       "image_url": null,
       "parent_id": "7",
       "parent_name": "Heavy Dresses",
@@ -545,7 +545,7 @@
             "stock": 10
           }
         ],
-        "collection_name": "Gowns",
+        "collection_name": "Heavy Gowns",
         "collection_slug": "gowns",
         "parent_collection_name": "Heavy Dresses",
         "parent_collection_slug": "heavy-dresses",
@@ -580,7 +580,7 @@
             "stock": 10
           }
         ],
-        "collection_name": "Gowns",
+        "collection_name": "Heavy Gowns",
         "collection_slug": "gowns",
         "parent_collection_name": "Heavy Dresses",
         "parent_collection_slug": "heavy-dresses",
@@ -615,7 +615,7 @@
             "stock": 10
           }
         ],
-        "collection_name": "Gowns",
+        "collection_name": "Heavy Gowns",
         "collection_slug": "gowns",
         "parent_collection_name": "Heavy Dresses",
         "parent_collection_slug": "heavy-dresses",
@@ -650,7 +650,7 @@
             "stock": 10
           }
         ],
-        "collection_name": "Gowns",
+        "collection_name": "Heavy Gowns",
         "collection_slug": "gowns",
         "parent_collection_name": "Heavy Dresses",
         "parent_collection_slug": "heavy-dresses",

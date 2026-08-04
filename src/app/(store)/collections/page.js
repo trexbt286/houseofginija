@@ -751,7 +751,7 @@ function CollectionsContent() {
       { id: 'suits', name: 'Unstitched Suits', targetId: 'suits' },
       { id: 'indo-western', name: 'Indo-Western', targetId: 'indo-western' },
       { id: 'shararas', name: 'Shararas', targetId: 'shararas' },
-      { id: 'gowns', name: 'Gowns', targetId: 'gowns' },
+      { id: 'gowns', name: 'Heavy Gowns', targetId: 'gowns' },
       { id: 'co-ords', name: 'Co-ords', targetId: 'co-ords' },
       { id: 'earrings', name: 'Earrings', targetId: 'earrings' },
       { id: 'rings', name: 'Rings', targetId: 'rings' },

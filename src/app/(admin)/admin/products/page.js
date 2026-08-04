@@ -41,7 +41,7 @@ function AdminProductsContent() {
     { id: 'suits', name: 'Unstitched Suits' },
     { id: 'indo-western', name: 'Indo-Western' },
     { id: 'shararas', name: 'Shararas' },
-    { id: 'gowns', name: 'Gowns' },
+    { id: 'gowns', name: 'Heavy Gowns' },
     { id: 'co-ords', name: 'Co-ords' },
     { id: 'rings', name: 'Rings' },
     { id: 'necklaces', name: 'Necklace' },

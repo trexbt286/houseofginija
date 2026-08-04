@@ -543,7 +543,7 @@ export default function Home() {
                   letterSpacing: '0.02em',
                   marginBottom: '0.4rem'
                 }}>
-                  Gowns
+                  Heavy Gowns
                 </h3>
                 <div style={{ width: '40px', height: '1.5px', backgroundColor: '#B97285', margin: '0 auto' }}></div>
               </div>
