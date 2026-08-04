@@ -23,7 +23,7 @@ export const PRODUCT_COLLECTION_JOINS = `
   LEFT JOIN collections parent_c ON c.parent_id = parent_c.id
 `;
 
-export function mapProductData(product) {
+export function mapProductData(product, options = {}) {
   let images = product.images;
   if (typeof images === 'string') {
     try { images = JSON.parse(images); } catch {}
@@ -43,22 +43,44 @@ export function mapProductData(product) {
   if (typeof collection_slugs === 'string') {
     try { collection_slugs = JSON.parse(collection_slugs); } catch {}
   }
-  if (!Array.isArray(collection_slugs) || collection_slugs.length === 0) {
-    const derived = [];
-    if (product.collection_slug) derived.push(product.collection_slug);
-    if (product.parent_collection_slug) derived.push(product.parent_collection_slug);
-    if (product.new_arrival) derived.push('new-collection');
-    if (product.on_sale || product.flash_sale) derived.push('flash-sale');
-    collection_slugs = [...new Set(derived)];
+  
+  const isFlashSale = Boolean(product.flash_sale || product.on_sale || (Array.isArray(collection_slugs) && collection_slugs.includes('flash-sale')));
+  const isNewArrival = Boolean(product.new_arrival || (Array.isArray(collection_slugs) && collection_slugs.includes('new-collection')));
+
+  if (!Array.isArray(collection_slugs)) {
+    collection_slugs = [];
+  }
+  if (product.collection_slug && !collection_slugs.includes(product.collection_slug)) {
+    collection_slugs.push(product.collection_slug);
+  }
+  if (product.parent_collection_slug && !collection_slugs.includes(product.parent_collection_slug)) {
+    collection_slugs.push(product.parent_collection_slug);
+  }
+  if (isNewArrival && !collection_slugs.includes('new-collection')) {
+    collection_slugs.push('new-collection');
+  }
+  if (isFlashSale && !collection_slugs.includes('flash-sale')) {
+    collection_slugs.push('flash-sale');
+  }
+
+  const rawPrice = Number.parseFloat(product.price) || 0;
+  let flashSalePrice = product.flash_sale_price !== null && product.flash_sale_price !== undefined
+    ? Number.parseFloat(product.flash_sale_price)
+    : null;
+  if (isFlashSale && (!flashSalePrice || Number.isNaN(flashSalePrice))) {
+    flashSalePrice = Math.round(rawPrice * 0.8);
   }
 
   return {
     ...product,
-    on_sale: Boolean(product.on_sale),
+    flash_sale: isFlashSale,
+    on_sale: isFlashSale,
+    new_arrival: isNewArrival,
+    flash_sale_price: flashSalePrice !== null && !Number.isNaN(flashSalePrice) ? String(flashSalePrice) : null,
     images: Array.isArray(images) ? images : [],
     variants: Array.isArray(variants) ? variants : [],
     tags: Array.isArray(tags) ? tags : [],
-    collection_slugs: Array.isArray(collection_slugs) ? collection_slugs : [],
+    collection_slugs: [...new Set(collection_slugs)],
   };
 }
 

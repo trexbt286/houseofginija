@@ -54,7 +54,7 @@ async function fetchProductById(client, productId) {
     `,
     [productId]
   );
-  return result.rows[0] ? mapProductData(result.rows[0]) : null;
+  return result.rows[0] ? mapProductData(result.rows[0], { isAdmin: true }) : null;
 }
 
 function parseProductPayload(body) {
@@ -69,12 +69,22 @@ function parseProductPayload(body) {
     ? Number.parseInt(body.collection_id, 10)
     : null;
 
-  const collectionSlugs = Array.isArray(body.collection_slugs) ? body.collection_slugs : [];
+  const collectionSlugs = Array.isArray(body.collection_slugs) ? [...body.collection_slugs] : [];
 
-  const flashSale = collectionSlugs.includes('flash-sale') || Boolean(body.flash_sale);
+  const flashSale = collectionSlugs.includes('flash-sale') || Boolean(body.flash_sale) || Boolean(body.on_sale);
+  if (flashSale && !collectionSlugs.includes('flash-sale')) {
+    collectionSlugs.push('flash-sale');
+  }
+
+  const newArrival = collectionSlugs.includes('new-collection') || Boolean(body.new_arrival);
+  if (newArrival && !collectionSlugs.includes('new-collection')) {
+    collectionSlugs.push('new-collection');
+  }
+
   let flashSalePrice = null;
   if (flashSale) {
-    flashSalePrice = body.flash_sale_price ? Number.parseFloat(body.flash_sale_price) : priceNum * 0.8;
+    const parsed = body.flash_sale_price ? Number.parseFloat(body.flash_sale_price) : null;
+    flashSalePrice = parsed && !Number.isNaN(parsed) && parsed > 0 ? parsed : Math.round(priceNum * 0.8);
   }
 
   return {
@@ -83,15 +93,15 @@ function parseProductPayload(body) {
     description: body.description || '',
     price: priceNum,
     collectionId,
-    collectionSlugs,
+    collectionSlugs: [...new Set(collectionSlugs)],
     isOutOfStock: Boolean(body.is_out_of_stock),
     images: body.images,
     variants: body.variants,
     tags: Array.isArray(body.tags) ? body.tags : [],
     flashSale,
     flashSalePrice,
-    newArrival: collectionSlugs.includes('new-collection') || Boolean(body.new_arrival),
-    onSale: collectionSlugs.includes('flash-sale') || Boolean(body.on_sale),
+    newArrival,
+    onSale: flashSale,
   };
 }
 
@@ -126,7 +136,7 @@ function validateRequiredProductFields(body, update = false) {
 export async function GET() {
   if (shouldUseLocalCatalogFallbackFirst()) {
     return NextResponse.json({
-      products: getStoreProducts(),
+      products: getStoreProducts().map((p) => mapProductData(p, { isAdmin: true })),
       collections: getLocalCollectionsFallback(),
       categoryTree: getLocalCategoryTreeFallback(),
       tags: getLocalTagsFallback(),
@@ -146,7 +156,7 @@ export async function GET() {
     ]);
 
     return NextResponse.json({
-      products: productsResult.rows.map(mapProductData),
+      products: productsResult.rows.map((row) => mapProductData(row, { isAdmin: true })),
       collections: collectionsResult.rows,
       categoryTree: buildCategoryTree(collectionsResult.rows),
       tags: tagsResult.rows,
@@ -154,7 +164,7 @@ export async function GET() {
   } catch (error) {
     console.error('Admin GET products error:', error);
     return NextResponse.json({
-      products: getStoreProducts(),
+      products: getStoreProducts().map((p) => mapProductData(p, { isAdmin: true })),
       collections: getLocalCollectionsFallback(),
       categoryTree: getLocalCategoryTreeFallback(),
       tags: getLocalTagsFallback(),
@@ -184,7 +194,7 @@ export async function POST(request) {
       collection_slug: product.collectionSlugs[0] || 'suits',
       collection_name: product.collectionSlugs[0] || 'Unstitched Suits',
       tags: normalizeLocalProductTags(body),
-    });
+    }, { isAdmin: true });
     store.unshift(newProduct);
     return NextResponse.json({ success: true, product: newProduct });
   }

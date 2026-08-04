@@ -56,7 +56,17 @@ export function getLocalTagsFallback() {
 }
 
 export function getLocalHomepageFallback() {
-  return homepageFallback;
+  const store = getStore();
+  const flashProducts = store.filter((p) => Boolean(p.flash_sale || p.on_sale || (Array.isArray(p.collection_slugs) && p.collection_slugs.includes('flash-sale'))));
+  const newArrivalProducts = store.filter((p) => Boolean(p.new_arrival || (Array.isArray(p.collection_slugs) && p.collection_slugs.includes('new-collection'))));
+
+  return {
+    ...homepageFallback,
+    flashProducts: flashProducts.length > 0 ? flashProducts : (homepageFallback.flashProducts || []),
+    flash_sale_enabled: true,
+    newArrivalProducts: newArrivalProducts.length > 0 ? newArrivalProducts : (homepageFallback.newArrivalProducts || []),
+    new_arrivals_enabled: true,
+  };
 }
 
 export function getLocalProductsFallback() {

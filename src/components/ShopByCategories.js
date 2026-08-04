@@ -7,7 +7,7 @@ import { useRef, useState, useEffect } from 'react';
 import { productMatchesCategory } from '@/lib/catalogClient';
 
 const DEFAULT_CATEGORIES = [
-  { name: 'New Collection', slug: 'new-collection', defaultImage: '/local-products/033-blush-pink-drape-1.jpg', href: '/collections?collection=new-collection' },
+  { name: 'New Collection', slug: 'new-collection', defaultImage: '/images/categories/new-collection.jpg', href: '/collections?collection=new-collection' },
   { name: 'Unstitched Suits', slug: 'suits',        defaultImage: '/images/categories/unstitched.png', href: '/collections?collection=suits' },
   { name: 'Indo-Western',   slug: 'indo-western',   defaultImage: '/images/categories/indo-western.png', href: '/collections?collection=indo-western' },
   { name: 'Shararas',       slug: 'shararas',       defaultImage: '/images/categories/heavy-dresses.png', href: '/collections?collection=shararas' },
@@ -31,6 +31,10 @@ export default function ShopByCategories() {
         if (products.length > 0) {
           const imgs = {};
           DEFAULT_CATEGORIES.forEach((cat) => {
+            if (cat.slug === 'new-collection') {
+              imgs[cat.slug] = '/images/categories/new-collection.jpg';
+              return;
+            }
             const matching = products.filter((p) => productMatchesCategory(p, cat.slug));
             if (matching.length > 0) {
               const randomIndex = Math.floor(Math.random() * matching.length);

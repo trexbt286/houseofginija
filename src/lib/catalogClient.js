@@ -8,10 +8,10 @@ export function productMatchesCategory(product, selectedCategory) {
   const colName = (product.collection_name || '').toLowerCase();
 
   if (cat === 'rings' || cat === 'ring') {
-    return slug.includes('ring') || colSlug === 'rings';
+    return (slug.includes('ring') && !slug.includes('earring')) || colSlug === 'rings';
   }
   if (cat === 'necklaces' || cat === 'necklace') {
-    return slug.includes('necklace') || colSlug === 'necklaces' || colSlug === 'jewellery';
+    return slug.includes('necklace') || colSlug === 'necklaces';
   }
   if (cat === 'bracelets' || cat === 'bracelet') {
     return slug.includes('bracelet') || colSlug === 'bracelets';
@@ -59,9 +59,10 @@ export function compareCatalogProducts(a, b, selectedSort = 'name_asc') {
 
 export function getCategoryTitle(collections, selectedCategory) {
   if (!selectedCategory) return 'All collections';
-  if (selectedCategory === 'rings') return 'Rings';
-  if (selectedCategory === 'necklaces') return 'Necklaces';
-  if (selectedCategory === 'bracelets') return 'Bracelets';
+  if (selectedCategory === 'rings' || selectedCategory === 'ring') return 'Rings';
+  if (selectedCategory === 'necklaces' || selectedCategory === 'necklace') return 'Necklaces';
+  if (selectedCategory === 'bracelets' || selectedCategory === 'bracelet') return 'Bracelets';
+  if (selectedCategory === 'earrings' || selectedCategory === 'earring') return 'Earrings';
 
   const category = collections.find((item) => item.slug === selectedCategory);
   return category ? category.name : 'Collection';

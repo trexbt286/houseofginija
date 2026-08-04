@@ -5,47 +5,11 @@
       "name": "New Collection",
       "slug": "new-collection",
       "description": "The latest House of Ginija seasonal creations.",
-      "image_url": "/local-products/033-blush-pink-drape-1.jpg",
+      "image_url": "/images/categories/new-collection.jpg",
       "parent_id": null,
       "parent_name": null,
       "parent_slug": null,
       "sort_order": 10,
-      "is_active": true
-    },
-    {
-      "id": "4",
-      "name": "Muslin",
-      "slug": "muslin",
-      "description": "Lightweight muslin creations.",
-      "image_url": null,
-      "parent_id": "3",
-      "parent_name": "New Collection",
-      "parent_slug": "new-collection",
-      "sort_order": 10,
-      "is_active": true
-    },
-    {
-      "id": "5",
-      "name": "Cotton",
-      "slug": "cotton",
-      "description": "Breathable cotton creations.",
-      "image_url": null,
-      "parent_id": "3",
-      "parent_name": "New Collection",
-      "parent_slug": "new-collection",
-      "sort_order": 20,
-      "is_active": true
-    },
-    {
-      "id": "6",
-      "name": "Cotton Linen",
-      "slug": "cotton-linen",
-      "description": "Cotton-linen blend creations.",
-      "image_url": null,
-      "parent_id": "3",
-      "parent_name": "New Collection",
-      "parent_slug": "new-collection",
-      "sort_order": 30,
       "is_active": true
     },
     {

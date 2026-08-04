@@ -422,12 +422,13 @@ function CollectionsContent() {
           onChange={(e) => setSelectedCollection(e.target.value)}
           style={selectFieldStyle}
         >
-          <option value="">All Categories</option>
-          {collections.map((category) => (
-            <option key={category.id} value={category.slug}>
-              {category.parent_id ? `-- ${category.name}` : category.name}
-            </option>
-          ))}
+          {collections
+            .filter((c) => c.parent_slug !== 'new-collection' && String(c.parent_id) !== '3' && c.slug !== 'muslin' && c.slug !== 'cotton' && c.slug !== 'cotton-linen')
+            .map((category) => (
+              <option key={category.id} value={category.slug}>
+                {category.name}
+              </option>
+            ))}
           <option disabled>-- Jewellery Types --</option>
           <option value="rings">Rings</option>
           <option value="necklaces">Necklaces</option>
@@ -583,10 +584,10 @@ function CollectionsContent() {
       let groupName = 'Other';
       const slug = p.slug.toLowerCase();
       if (slug.includes('suit')) groupName = 'Suits';
+      else if (slug.includes('earring')) groupName = 'Earrings';
       else if (slug.includes('ring')) groupName = 'Rings';
       else if (slug.includes('necklace')) groupName = 'Necklaces';
       else if (slug.includes('bracelet')) groupName = 'Bracelets';
-      else if (slug.includes('earring')) groupName = 'Earrings';
       else groupName = p.collection_name || 'Other';
       
       if (!groupedProducts[groupName]) groupedProducts[groupName] = [];

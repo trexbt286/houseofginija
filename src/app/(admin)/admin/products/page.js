@@ -6,12 +6,14 @@ import { useSearchParams } from 'next/navigation';
 import { useStore } from '@/context/StoreContext';
 import AdminSidebar from '@/components/AdminSidebar';
 import { AdminProductMetadataBadges, AdminProductMetadataFields } from '@/components/AdminProductMetadataFields';
+import { productMatchesCategory } from '@/lib/catalogClient';
 
 function AdminProductsContent() {
   const { logout } = useStore();
   const [products, setProducts] = useState([]);
   const [collections, setCollections] = useState([]);
   const [tags, setTags] = useState([]);
+  const [filterCategory, setFilterCategory] = useState('');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
@@ -67,7 +69,7 @@ function AdminProductsContent() {
   const [uploadingImage, setUploadingImage] = useState(false);
   const [imageError, setImageError] = useState('');
 
-  const sizesOptions = ['XS', 'S', 'M', 'L', 'XL', 'XXL', 'One Size'];
+  const sizesOptions = ['XS', 'S', 'M', 'L', 'XL', 'XXL', 'One Size', 'Unstitched Fabric'];
   const colorsOptions = [
     'Champagne Pink',
     'Deep Plum',
@@ -354,12 +356,11 @@ function AdminProductsContent() {
       on_sale: !!product.on_sale,
     });
     let initialSlugs = Array.isArray(product.collection_slugs) ? [...product.collection_slugs] : [];
-    if (initialSlugs.length === 0) {
-      if (product.collection_slug) initialSlugs.push(product.collection_slug);
-      if (product.parent_collection_slug) initialSlugs.push(product.parent_collection_slug);
-      if (product.new_arrival) initialSlugs.push('new-collection');
-      if (product.on_sale || product.flash_sale) initialSlugs.push('flash-sale');
-    }
+    if (product.collection_slug && !initialSlugs.includes(product.collection_slug)) initialSlugs.push(product.collection_slug);
+    if (product.parent_collection_slug && !initialSlugs.includes(product.parent_collection_slug)) initialSlugs.push(product.parent_collection_slug);
+    if (product.new_arrival && !initialSlugs.includes('new-collection')) initialSlugs.push('new-collection');
+    if ((product.on_sale || product.flash_sale) && !initialSlugs.includes('flash-sale')) initialSlugs.push('flash-sale');
+
     setSelectedCategorySlugs([...new Set(initialSlugs)]);
     const existingCustomTags = (product.tags || []).map((t) => (typeof t === 'string' ? t : t.name));
     setCustomTags([...new Set(existingCustomTags)]);
@@ -395,16 +396,22 @@ function AdminProductsContent() {
       slug: name.toLowerCase().trim().replace(/[^a-z0-9]+/g, '-'),
     }));
 
+    const isFlashSale = selectedCategorySlugs.includes('flash-sale') || Boolean(formFields.on_sale);
+    const isNewArrival = selectedCategorySlugs.includes('new-collection');
+    const finalSlugs = [...new Set(selectedCategorySlugs)];
+    if (isFlashSale && !finalSlugs.includes('flash-sale')) finalSlugs.push('flash-sale');
+    if (isNewArrival && !finalSlugs.includes('new-collection')) finalSlugs.push('new-collection');
+
     const payload = {
       ...formFields,
-      collection_slugs: selectedCategorySlugs,
+      collection_slugs: finalSlugs,
       images,
       variants,
       tag_ids: selectedTagIds,
       tags: formattedCustomTags,
-      new_arrival: selectedCategorySlugs.includes('new-collection'),
-      on_sale: selectedCategorySlugs.includes('flash-sale'),
-      flash_sale: selectedCategorySlugs.includes('flash-sale'),
+      new_arrival: isNewArrival,
+      on_sale: isFlashSale,
+      flash_sale: isFlashSale,
     };
 
     if (editingId) {
@@ -790,22 +797,97 @@ function AdminProductsContent() {
         {/* PRODUCTS LIST TABLE */}
         {loading ? (
           <div>Catalog retrieving...</div>
-        ) : (
-          <div style={tableCardStyle}>
-            <table style={catalogTableStyle}>
-              <thead>
-                <tr>
-                  <th style={thStyle}>Creation Details</th>
-                  <th style={thStyle} className="hide-on-mobile">Slug</th>
-                  <th style={thStyle} className="hide-on-mobile">Collection</th>
-                  <th style={thStyle}>Price</th>
-                  <th style={thStyle} className="hide-on-mobile">Stock (Sum)</th>
-                  <th style={thStyle} className="hide-on-mobile">Status</th>
-                  <th style={{ ...thStyle, width: '120px', textAlign: 'center' }}>Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                {products.map((p) => {
+        ) : (() => {
+          const filteredProducts = products.filter((p) => {
+            if (!filterCategory) return true;
+            return productMatchesCategory(p, filterCategory);
+          });
+
+          return (
+            <div>
+              {/* Category Filter Bar */}
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.2rem', gap: '1rem', flexWrap: 'wrap', backgroundColor: '#FFF7F8', padding: '0.9rem 1.2rem', borderRadius: '8px', border: '1px solid #F4E1E5' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.8rem', flexWrap: 'wrap' }}>
+                  <label style={{ fontSize: '0.85rem', fontWeight: '700', color: '#3C303A' }}>
+                    Filter by Category:
+                  </label>
+                  <select
+                    value={filterCategory}
+                    onChange={(e) => setFilterCategory(e.target.value)}
+                    style={{
+                      padding: '0.5rem 1rem',
+                      borderRadius: '6px',
+                      border: '1px solid #D98E9B',
+                      backgroundColor: '#FFFFFF',
+                      fontSize: '0.85rem',
+                      color: '#3C303A',
+                      fontWeight: '600',
+                      cursor: 'pointer',
+                      outline: 'none',
+                      boxShadow: '0 2px 6px rgba(217, 142, 155, 0.12)',
+                    }}
+                  >
+                    <option value="">All Categories ({products.length})</option>
+                    <option value="new-collection">New Collection</option>
+                    <option value="indo-western">Indo-Western</option>
+                    <option value="shararas">Shararas</option>
+                    <option value="gowns">Heavy Gowns</option>
+                    <option value="co-ords">Co-ords</option>
+                    <option value="suits">Unstitched Suits</option>
+                    <option value="jewellery">Jewellery</option>
+                    <option value="earrings">Earrings</option>
+                    <option value="necklaces">Necklace</option>
+                    <option value="rings">Rings</option>
+                    <option value="bracelets">Bracelet</option>
+                    <option value="flash-sale">Flash Sale</option>
+                  </select>
+
+                  {filterCategory && (
+                    <button
+                      onClick={() => setFilterCategory('')}
+                      style={{
+                        padding: '0.45rem 0.9rem',
+                        fontSize: '0.78rem',
+                        color: '#FFFFFF',
+                        backgroundColor: '#D98E9B',
+                        border: 'none',
+                        borderRadius: '6px',
+                        cursor: 'pointer',
+                        fontWeight: '700',
+                      }}
+                    >
+                      Clear Filter (Show All)
+                    </button>
+                  )}
+                </div>
+
+                <div style={{ fontSize: '0.85rem', color: '#8B7789', fontWeight: '700' }}>
+                  Showing <span style={{ color: '#D98E9B' }}>{filteredProducts.length}</span> of {products.length} Products
+                </div>
+              </div>
+
+              <div style={tableCardStyle}>
+                <table style={catalogTableStyle}>
+                  <thead>
+                    <tr>
+                      <th style={thStyle}>Creation Details</th>
+                      <th style={thStyle} className="hide-on-mobile">Slug</th>
+                      <th style={thStyle} className="hide-on-mobile">Collection</th>
+                      <th style={thStyle}>Price</th>
+                      <th style={thStyle} className="hide-on-mobile">Stock (Sum)</th>
+                      <th style={thStyle} className="hide-on-mobile">Status</th>
+                      <th style={{ ...thStyle, width: '120px', textAlign: 'center' }}>Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {filteredProducts.length === 0 ? (
+                      <tr>
+                        <td colSpan="7" style={{ padding: '2rem', textAlign: 'center', color: '#8B7789', fontWeight: '600' }}>
+                          No products found matching the selected category filter.
+                        </td>
+                      </tr>
+                    ) : (
+                      filteredProducts.map((p) => {
                   const totalStock = (p.variants || []).reduce((sum, v) => sum + v.stock, 0);
                   const isForcedOut = p.is_out_of_stock;
                   return (
@@ -874,11 +956,14 @@ function AdminProductsContent() {
                       </td>
                     </tr>
                   );
-                })}
-              </tbody>
-            </table>
-          </div>
-        )}
+                })
+              )}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          );
+        })()}
       </main>
     </div>
   );

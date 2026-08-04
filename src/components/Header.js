@@ -467,7 +467,7 @@ export default function Header() {
                   <span className="mobile-nav-submenu-dot" />
                   <span>INDO-WESTERN</span>
                 </Link>
-                <Link href="/collections?collection=heavy-gown" className="mobile-nav-submenu-item" onClick={() => setMenuOpen(false)}>
+                <Link href="/collections?collection=gowns" className="mobile-nav-submenu-item" onClick={() => setMenuOpen(false)}>
                   <span className="mobile-nav-submenu-dot" />
                   <span>HEAVY GOWNS</span>
                 </Link>

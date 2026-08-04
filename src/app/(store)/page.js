@@ -273,7 +273,9 @@ export default function Home() {
                 ))
               ) : (
                 flashProducts.map((product, index) => {
-                  const discountPct = Math.round(((parseFloat(product.price) - parseFloat(product.flash_sale_price)) / parseFloat(product.price)) * 100);
+                  const regPrice = parseFloat(product.price) || 0;
+                  const flashPrice = parseFloat(product.flash_sale_price) || Math.round(regPrice * 0.8);
+                  const discountPct = regPrice > 0 ? Math.max(1, Math.round(((regPrice - flashPrice) / regPrice) * 100)) : 20;
                   const isWishlisted = wishlist.includes(product.id);
 
                   return (
@@ -320,8 +322,8 @@ export default function Home() {
                       <h3 style={flashSaleProductNameStyle} className="flash-sale-product-name">{product.name}</h3>
                     </div>
                     <div style={flashSalePriceRowStyle} className="flash-sale-price-row">
-                      <span style={flashSaleDiscountPriceStyle} className="flash-sale-discount-price">₹{parseFloat(product.flash_sale_price).toLocaleString('en-IN')}</span>
-                      <span style={flashSaleOriginalPriceStyle} className="flash-sale-original-price">₹{parseFloat(product.price).toLocaleString('en-IN')}</span>
+                      <span style={flashSaleDiscountPriceStyle} className="flash-sale-discount-price">₹{flashPrice.toLocaleString('en-IN')}</span>
+                      <span style={flashSaleOriginalPriceStyle} className="flash-sale-original-price">₹{regPrice.toLocaleString('en-IN')}</span>
                     </div>
                   </div>
                 );
@@ -330,7 +332,7 @@ export default function Home() {
             </div>
 
             <div style={{ textAlign: 'center', marginTop: '1rem', marginBottom: '1rem' }}>
-              <Link href="/collections" style={flashSaleShopAllStyle}>
+              <Link href="/collections?collection=flash-sale" style={flashSaleShopAllStyle}>
                 SHOP ALL FLASH SALE &rarr;
               </Link>
             </div>

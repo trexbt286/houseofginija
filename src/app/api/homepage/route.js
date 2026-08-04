@@ -39,7 +39,7 @@ export async function GET() {
       SELECT ${PRODUCT_SELECT_FIELDS}
       FROM products p
       ${PRODUCT_COLLECTION_JOINS}
-      WHERE p.flash_sale = TRUE
+      WHERE p.flash_sale = TRUE OR p.on_sale = TRUE
       ORDER BY
         p.on_sale DESC,
         SUBSTRING(p.name FROM '^[^0-9]+') ASC,

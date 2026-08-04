@@ -79,17 +79,6 @@ export default function Footer() {
       )
     },
     {
-      id: 'collections',
-      title: 'COLLECTIONS',
-      content: (
-        <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: '0.5rem', fontSize: '0.85rem' }}>
-          <li><Link href="/suits" style={{ color: '#000000', textDecoration: 'none' }}>Suits Collection</Link></li>
-          <li><Link href="/jewellery" style={{ color: '#000000', textDecoration: 'none' }}>Jewellery Collection</Link></li>
-          <li><Link href="/collections" style={{ color: '#000000', textDecoration: 'none' }}>All Creations</Link></li>
-        </ul>
-      )
-    },
-    {
       id: 'client-services',
       title: 'CLIENT SERVICES',
       content: (
