@@ -3658,9 +3658,11 @@ body.mobile-nav-locked .storefront-header {
   .detail-main-img,
   .gallery-image {
     display: block !important;
-    object-fit: contain !important;
+    object-fit: cover !important;
     object-position: center center !important;
     background: #F7F1F2 !important;
+    transform: scale(1.04) !important;
+    transform-origin: center center !important;
   }
 
   .gallery-dots {
@@ -4356,4 +4358,25 @@ body.mobile-nav-locked .storefront-header {
   font-size: 0.72rem;
   font-weight: 600;
   line-height: 1.2;
+}
+
+@media (max-width: 768px) {
+  .product-detail-grid {
+    display: grid !important;
+    grid-template-columns: 1fr !important;
+    gap: 2rem !important;
+  }
+
+  .product-detail-main-image-container {
+    width: 100% !important;
+    height: min(72vh, 640px) !important;
+    min-height: 440px !important;
+  }
+
+  .product-detail-main-image {
+    object-fit: cover !important;
+    object-position: center center !important;
+    transform: scale(1.06) !important;
+    transform-origin: center center !important;
+  }
 }

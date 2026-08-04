@@ -124,10 +124,10 @@ export default function ProductPage({ params }) {
         <span>{product.name}</span>
       </div>
 
-      <div style={productGridStyle}>
+      <div style={productGridStyle} className="product-detail-grid">
         {/* Left Column: Image Gallery */}
         <div style={galleryColumnStyle}>
-          <div style={mainImageContainerStyle}>
+          <div style={mainImageContainerStyle} className="product-detail-main-image-container">
             <button
               onClick={() => router.back()}
               aria-label="Go back"
@@ -173,7 +173,7 @@ export default function ProductPage({ params }) {
               </button>
             </div>
 
-            <img src={activeImage} alt={product.name} style={mainImageStyle} loading="lazy" />
+            <img src={activeImage} alt={product.name} style={mainImageStyle} className="product-detail-main-image" loading="lazy" />
           </div>
           {product.images && product.images.length > 1 && (
             <div style={thumbnailRowStyle}>
