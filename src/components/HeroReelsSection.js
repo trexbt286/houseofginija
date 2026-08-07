@@ -15,6 +15,11 @@ export default function HeroReelsSection({ heroReels = [], loading = false }) {
   const [playingVideos, setPlayingVideos] = useState(new Set());
   const [requestedVideoIndexes, setRequestedVideoIndexes] = useState(() => new Set([0, 1]));
   const [selectedReel, setSelectedReel] = useState(null);
+  const [isMounted, setIsMounted] = useState(false);
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
 
   const handleVideoPlaying = (id) => {
     setPlayingVideos((prev) => {
@@ -196,8 +201,8 @@ export default function HeroReelsSection({ heroReels = [], loading = false }) {
                     )}
                     <video
                       ref={(element) => { videoRefs.current[idx] = element; }}
-                      src={shouldLoadVideo ? reel.video_url : undefined}
-                      autoPlay={shouldLoadVideo && !selectedReel}
+                      src={(isMounted && shouldLoadVideo) ? reel.video_url : undefined}
+                      autoPlay={isMounted && shouldLoadVideo && !selectedReel}
                       muted
                       loop
                       playsInline
@@ -214,7 +219,7 @@ export default function HeroReelsSection({ heroReels = [], loading = false }) {
                       }}
                       style={{
                         ...videoElementStyle,
-                        opacity: isVideoPlaying ? 1 : 0,
+                        opacity: (isMounted && isVideoPlaying) ? 1 : 0,
                         transition: 'opacity 0.25s ease-in',
                       }}
                     />

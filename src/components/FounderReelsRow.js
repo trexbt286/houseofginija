@@ -11,6 +11,11 @@ export default function FounderReelsRow({ founderReels = [], loading = false }) 
   const [isSectionVisible, setIsSectionVisible] = useState(false);
   const [playingVideos, setPlayingVideos] = useState(new Set());
   const [selectedReel, setSelectedReel] = useState(null);
+  const [isMounted, setIsMounted] = useState(false);
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
 
   const handleVideoPlaying = (id) => {
     setPlayingVideos((prev) => {
@@ -181,8 +186,8 @@ export default function FounderReelsRow({ founderReels = [], loading = false }) 
                 )}
                 <video
                   ref={(element) => { videoRefs.current[idx] = element; }}
-                  src={shouldLoadVideos ? reel.video_url : undefined}
-                  autoPlay={isSectionVisible && !selectedReel}
+                  src={(isMounted && shouldLoadVideos) ? reel.video_url : undefined}
+                  autoPlay={isMounted && isSectionVisible && !selectedReel}
                   muted
                   loop
                   playsInline
@@ -202,7 +207,7 @@ export default function FounderReelsRow({ founderReels = [], loading = false }) 
                     height: '100%',
                     objectFit: 'cover',
                     display: 'block',
-                    opacity: isVideoPlaying ? 1 : 0,
+                    opacity: (isMounted && isVideoPlaying) ? 1 : 0,
                     transition: 'opacity 0.35s ease',
                   }}
                 />
