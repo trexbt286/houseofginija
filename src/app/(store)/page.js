@@ -266,10 +266,10 @@ export default function Home() {
               </p>
             </div>
 
-            <div className="flash-sale-row-container">
+            <div className="new-arrivals-grid">
               {loading ? (
                 Array.from({ length: 6 }).map((_, i) => (
-                  <SkeletonCard key={i} type="home-flash" />
+                  <SkeletonCard key={i} type="home-new-arrival" />
                 ))
               ) : (
                 flashProducts.slice(0, 6).map((product, index) => {
@@ -279,56 +279,57 @@ export default function Home() {
                   const isWishlisted = wishlist.includes(product.id);
 
                   return (
-                    <div key={product.id} className="flash-sale-card" style={{ position: 'relative' }}>
-                    {/* Product Image Container */}
-                    <div style={flashSaleImgContainerStyle} className="flash-sale-img-container">
-                      <div onClick={(e) => handleProductClick(e, product)} style={{ cursor: 'pointer' }}>
-                        <ImageWithSkeleton 
-                          src={product.images?.[0] || '/icon.png'} 
-                          alt={product.name} 
-                          eager={index < 2}
-                          style={flashSaleImgStyle} 
-                        />
-                      </div>
-                      
-                      {/* Discount Badge on Top Left */}
-                      <div style={flashSaleBadgeStyle} className="flash-sale-badge">
-                        -{discountPct}%
-                      </div>
+                    <div key={product.id} className="new-arrival-card">
+                      {/* Product Image Container */}
+                      <div className="new-arrival-img-container">
+                        <div onClick={(e) => handleProductClick(e, product)} style={{ cursor: 'pointer', width: '100%', height: '100%' }}>
+                          <ImageWithSkeleton 
+                            src={product.images?.[0] || '/icon.png'} 
+                            alt={product.name} 
+                            eager={index < 2}
+                            className="new-arrival-img-style" 
+                          />
+                        </div>
+                        
+                        {/* Discount Badge on Top Left */}
+                        <div style={flashSaleBadgeStyle} className="flash-sale-badge">
+                          -{discountPct}%
+                        </div>
 
-                      {/* Wishlist Heart on Top Right */}
-                      <button 
-                        onClick={() => toggleWishlist(product.id)}
-                        style={flashSaleWishlistBtnStyle}
-                        className="flash-sale-wishlist-btn"
-                      >
-                        <svg 
-                          width="18" 
-                          height="18" 
-                          viewBox="0 0 24 24" 
-                          fill={isWishlisted ? '#D98E9B' : 'none'} 
-                          stroke={isWishlisted ? '#D98E9B' : '#000000'} 
-                          strokeWidth="2.0" 
-                          strokeLinecap="round" 
-                          strokeLinejoin="round"
+                        {/* Wishlist Heart on Top Right */}
+                        <button 
+                          onClick={() => toggleWishlist(product.id)}
+                          className="new-arrival-wishlist-btn"
                         >
-                          <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
-                        </svg>
-                      </button>
-                    </div>
+                          <svg 
+                            width="18" 
+                            height="18" 
+                            viewBox="0 0 24 24" 
+                            fill={isWishlisted ? '#D98E9B' : 'none'} 
+                            stroke={isWishlisted ? '#D98E9B' : '#000000'} 
+                            strokeWidth="2.0" 
+                            strokeLinecap="round" 
+                            strokeLinejoin="round"
+                          >
+                            <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+                          </svg>
+                        </button>
+                      </div>
 
-                    {/* Product Info */}
-                    <div onClick={(e) => handleProductClick(e, product)} style={{ cursor: 'pointer', color: 'inherit' }}>
-                      <h3 style={flashSaleProductNameStyle} className="flash-sale-product-name">{product.name}</h3>
+                      {/* Product Info */}
+                      <div className="new-arrival-card-content">
+                        <div onClick={(e) => handleProductClick(e, product)} style={{ cursor: 'pointer', color: 'inherit' }}>
+                          <h3 className="new-arrival-product-name">{product.name}</h3>
+                        </div>
+                        <div className="new-arrival-price" style={{ display: 'flex', alignItems: 'baseline', gap: '0.5rem', flexWrap: 'wrap' }}>
+                          <span style={{ color: '#B97285' }}>₹{flashPrice.toLocaleString('en-IN')}</span>
+                          <span style={{ fontSize: '0.78rem', color: 'rgba(0, 0, 0, 0.4)', textDecoration: 'line-through', fontWeight: 'normal' }}>₹{regPrice.toLocaleString('en-IN')}</span>
+                        </div>
+                      </div>
                     </div>
-                    <div style={flashSalePriceRowStyle} className="flash-sale-price-row">
-                      <span style={flashSaleDiscountPriceStyle} className="flash-sale-discount-price">₹{flashPrice.toLocaleString('en-IN')}</span>
-                      <span style={flashSaleOriginalPriceStyle} className="flash-sale-original-price">₹{regPrice.toLocaleString('en-IN')}</span>
-                    </div>
-                  </div>
-                );
-              })
-            )}
+                  );
+                })
+              )}
             </div>
 
             <div style={{ textAlign: 'center', marginTop: '1rem', marginBottom: '1rem' }}>
