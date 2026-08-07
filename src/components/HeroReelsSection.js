@@ -169,6 +169,7 @@ export default function HeroReelsSection({ heroReels = [], loading = false }) {
           ) : (
             heroReels.map((reel, idx) => {
               const shouldLoadVideo = requestedVideoIndexes.has(idx);
+              const isVideoLoaded = loadedVideos.has(reel.id || idx);
               return (
                 <button
                   ref={(element) => { reelCardRefs.current[idx] = element; }}
@@ -181,10 +182,21 @@ export default function HeroReelsSection({ heroReels = [], loading = false }) {
                   aria-label={`Open ${reel.title || `reel ${idx + 1}`}`}
                 >
                   <div style={videoWrapperStyle}>
+                    {!isVideoLoaded && (
+                      <div
+                        style={{
+                          position: 'absolute',
+                          inset: 0,
+                          backgroundColor: '#F6DDE2',
+                          borderRadius: '24px',
+                          zIndex: 2,
+                        }}
+                        className="skeleton-pulse"
+                      />
+                    )}
                     <video
                       ref={(element) => { videoRefs.current[idx] = element; }}
                       src={shouldLoadVideo ? reel.video_url : undefined}
-                      poster={reel.thumbnail_url || reel.poster_url || reel.image_url}
                       autoPlay={shouldLoadVideo && !selectedReel}
                       muted
                       loop
@@ -193,10 +205,11 @@ export default function HeroReelsSection({ heroReels = [], loading = false }) {
                       onLoadedMetadata={() => handleVideoLoad(reel.id || idx)}
                       onLoadedData={() => handleVideoLoad(reel.id || idx)}
                       onCanPlay={() => handleVideoLoad(reel.id || idx)}
+                      onPlaying={() => handleVideoLoad(reel.id || idx)}
                       style={{
                         ...videoElementStyle,
-                        visibility: 'visible',
-                        opacity: 1,
+                        opacity: isVideoLoaded ? 1 : 0,
+                        transition: 'opacity 0.3s ease',
                       }}
                     />
                   </div>

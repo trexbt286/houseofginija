@@ -187,8 +187,17 @@ export default function FounderReelsRow({ founderReels = [], loading = false }) 
                   loop
                   playsInline
                   preload={shouldLoadVideos ? 'auto' : 'none'}
+                  onLoadedData={() => handleVideoLoad(reel.id || idx)}
                   onCanPlay={() => handleVideoLoad(reel.id || idx)}
-                  style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
+                  onPlaying={() => handleVideoLoad(reel.id || idx)}
+                  style={{
+                    width: '100%',
+                    height: '100%',
+                    objectFit: 'cover',
+                    display: 'block',
+                    opacity: isVideoLoaded ? 1 : 0,
+                    transition: 'opacity 0.3s ease',
+                  }}
                 />
               </button>
             );
