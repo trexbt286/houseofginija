@@ -268,11 +268,11 @@ export default function Home() {
 
             <div className="flash-sale-row-container">
               {loading ? (
-                Array.from({ length: 3 }).map((_, i) => (
+                Array.from({ length: 6 }).map((_, i) => (
                   <SkeletonCard key={i} type="home-flash" />
                 ))
               ) : (
-                flashProducts.map((product, index) => {
+                flashProducts.slice(0, 6).map((product, index) => {
                   const regPrice = parseFloat(product.price) || 0;
                   const flashPrice = parseFloat(product.flash_sale_price) || Math.round(regPrice * 0.8);
                   const discountPct = regPrice > 0 ? Math.max(1, Math.round(((regPrice - flashPrice) / regPrice) * 100)) : 20;
