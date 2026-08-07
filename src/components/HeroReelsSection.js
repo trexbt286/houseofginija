@@ -202,19 +202,20 @@ export default function HeroReelsSection({ heroReels = [], loading = false }) {
                       loop
                       playsInline
                       preload={idx < 2 ? 'auto' : 'metadata'}
-                      onLoadedData={() => handleVideoPlaying(reel.id || idx)}
-                      onCanPlay={() => handleVideoPlaying(reel.id || idx)}
-                      onPlay={() => handleVideoPlaying(reel.id || idx)}
-                      onPlaying={() => handleVideoPlaying(reel.id || idx)}
+                      onPlaying={(e) => {
+                        if (e.target && e.target.currentTime > 0.1) {
+                          handleVideoPlaying(reel.id || idx);
+                        }
+                      }}
                       onTimeUpdate={(e) => {
-                        if (e.target && e.target.currentTime >= 0) {
+                        if (e.target && e.target.currentTime > 0.1) {
                           handleVideoPlaying(reel.id || idx);
                         }
                       }}
                       style={{
                         ...videoElementStyle,
                         opacity: isVideoPlaying ? 1 : 0,
-                        transition: 'opacity 0.2s ease-in',
+                        transition: 'opacity 0.25s ease-in',
                       }}
                     />
                   </div>
@@ -253,7 +254,7 @@ export default function HeroReelsSection({ heroReels = [], loading = false }) {
           width: 100%;
           box-sizing: border-box;
           padding: 1rem 0.8rem 1.5rem 0.8rem;
-          background-color: #F6DDE2;
+          background-color: #FAF5F6;
         }
 
         .reels-scroll-track {
@@ -319,7 +320,7 @@ const sectionContainerStyle = {
   overflow: 'hidden',
   width: '100%',
   minHeight: 'clamp(340px, 85vw, 620px)',
-  backgroundColor: '#F6DDE2',
+  backgroundColor: '#FAF5F6',
 };
 
 const carouselWrapperStyle = {

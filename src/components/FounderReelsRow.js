@@ -187,9 +187,13 @@ export default function FounderReelsRow({ founderReels = [], loading = false }) 
                   loop
                   playsInline
                   preload={shouldLoadVideos ? 'auto' : 'none'}
-                  onPlaying={() => handleVideoPlaying(reel.id || idx)}
+                  onPlaying={(e) => {
+                    if (e.target && e.target.currentTime > 0.1) {
+                      handleVideoPlaying(reel.id || idx);
+                    }
+                  }}
                   onTimeUpdate={(e) => {
-                    if (e.target && e.target.currentTime > 0) {
+                    if (e.target && e.target.currentTime > 0.1) {
                       handleVideoPlaying(reel.id || idx);
                     }
                   }}
