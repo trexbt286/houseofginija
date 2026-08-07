@@ -9,11 +9,11 @@ export default function FounderReelsRow({ founderReels = [], loading = false }) 
   const scrollPosRef = useRef(0);
   const [shouldLoadVideos, setShouldLoadVideos] = useState(false);
   const [isSectionVisible, setIsSectionVisible] = useState(false);
-  const [loadedVideos, setLoadedVideos] = useState(new Set());
+  const [playingVideos, setPlayingVideos] = useState(new Set());
   const [selectedReel, setSelectedReel] = useState(null);
 
-  const handleVideoLoad = (id) => {
-    setLoadedVideos((prev) => {
+  const handleVideoPlaying = (id) => {
+    setPlayingVideos((prev) => {
       if (prev.has(id)) return prev;
       const next = new Set(prev);
       next.add(id);
@@ -147,7 +147,7 @@ export default function FounderReelsRow({ founderReels = [], loading = false }) 
           ))
         ) : (
           reelsToDisplay.map((reel, idx) => {
-            const isVideoLoaded = loadedVideos.has(reel.id || idx);
+            const isVideoPlaying = playingVideos.has(reel.id || idx);
             return (
               <button
                 key={reel.id || idx}
@@ -167,7 +167,7 @@ export default function FounderReelsRow({ founderReels = [], loading = false }) 
                   cursor: 'pointer'
                 }}
               >
-                {!isVideoLoaded && (
+                {!isVideoPlaying && (
                   <div
                     style={{
                       position: 'absolute',
@@ -187,16 +187,19 @@ export default function FounderReelsRow({ founderReels = [], loading = false }) 
                   loop
                   playsInline
                   preload={shouldLoadVideos ? 'auto' : 'none'}
-                  onLoadedData={() => handleVideoLoad(reel.id || idx)}
-                  onCanPlay={() => handleVideoLoad(reel.id || idx)}
-                  onPlaying={() => handleVideoLoad(reel.id || idx)}
+                  onPlaying={() => handleVideoPlaying(reel.id || idx)}
+                  onTimeUpdate={(e) => {
+                    if (e.target && e.target.currentTime > 0) {
+                      handleVideoPlaying(reel.id || idx);
+                    }
+                  }}
                   style={{
                     width: '100%',
                     height: '100%',
                     objectFit: 'cover',
                     display: 'block',
-                    opacity: isVideoLoaded ? 1 : 0,
-                    transition: 'opacity 0.3s ease',
+                    opacity: isVideoPlaying ? 1 : 0,
+                    transition: 'opacity 0.35s ease',
                   }}
                 />
               </button>

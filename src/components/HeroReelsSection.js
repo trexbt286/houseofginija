@@ -12,12 +12,12 @@ export default function HeroReelsSection({ heroReels = [], loading = false }) {
   const scrollFrameRef = useRef(null);
   const nearIndexesRef = useRef(new Set([0, 1]));
   const sectionVisibleRef = useRef(true);
-  const [loadedVideos, setLoadedVideos] = useState(new Set());
+  const [playingVideos, setPlayingVideos] = useState(new Set());
   const [requestedVideoIndexes, setRequestedVideoIndexes] = useState(() => new Set([0, 1]));
   const [selectedReel, setSelectedReel] = useState(null);
 
-  const handleVideoLoad = (id) => {
-    setLoadedVideos((prev) => {
+  const handleVideoPlaying = (id) => {
+    setPlayingVideos((prev) => {
       if (prev.has(id)) return prev;
       const next = new Set(prev);
       next.add(id);
@@ -169,7 +169,7 @@ export default function HeroReelsSection({ heroReels = [], loading = false }) {
           ) : (
             heroReels.map((reel, idx) => {
               const shouldLoadVideo = requestedVideoIndexes.has(idx);
-              const isVideoLoaded = loadedVideos.has(reel.id || idx);
+              const isVideoPlaying = playingVideos.has(reel.id || idx);
               return (
                 <button
                   ref={(element) => { reelCardRefs.current[idx] = element; }}
@@ -182,7 +182,7 @@ export default function HeroReelsSection({ heroReels = [], loading = false }) {
                   aria-label={`Open ${reel.title || `reel ${idx + 1}`}`}
                 >
                   <div style={videoWrapperStyle}>
-                    {!isVideoLoaded && (
+                    {!isVideoPlaying && (
                       <div
                         style={{
                           position: 'absolute',
@@ -202,14 +202,16 @@ export default function HeroReelsSection({ heroReels = [], loading = false }) {
                       loop
                       playsInline
                       preload={shouldLoadVideo ? 'auto' : 'none'}
-                      onLoadedMetadata={() => handleVideoLoad(reel.id || idx)}
-                      onLoadedData={() => handleVideoLoad(reel.id || idx)}
-                      onCanPlay={() => handleVideoLoad(reel.id || idx)}
-                      onPlaying={() => handleVideoLoad(reel.id || idx)}
+                      onPlaying={() => handleVideoPlaying(reel.id || idx)}
+                      onTimeUpdate={(e) => {
+                        if (e.target && e.target.currentTime > 0) {
+                          handleVideoPlaying(reel.id || idx);
+                        }
+                      }}
                       style={{
                         ...videoElementStyle,
-                        opacity: isVideoLoaded ? 1 : 0,
-                        transition: 'opacity 0.3s ease',
+                        opacity: isVideoPlaying ? 1 : 0,
+                        transition: 'opacity 0.35s ease',
                       }}
                     />
                   </div>
