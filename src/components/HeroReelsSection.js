@@ -201,17 +201,20 @@ export default function HeroReelsSection({ heroReels = [], loading = false }) {
                       muted
                       loop
                       playsInline
-                      preload={shouldLoadVideo ? 'auto' : 'none'}
+                      preload={idx < 2 ? 'auto' : 'metadata'}
+                      onLoadedData={() => handleVideoPlaying(reel.id || idx)}
+                      onCanPlay={() => handleVideoPlaying(reel.id || idx)}
+                      onPlay={() => handleVideoPlaying(reel.id || idx)}
                       onPlaying={() => handleVideoPlaying(reel.id || idx)}
                       onTimeUpdate={(e) => {
-                        if (e.target && e.target.currentTime > 0) {
+                        if (e.target && e.target.currentTime >= 0) {
                           handleVideoPlaying(reel.id || idx);
                         }
                       }}
                       style={{
                         ...videoElementStyle,
                         opacity: isVideoPlaying ? 1 : 0,
-                        transition: 'opacity 0.35s ease',
+                        transition: 'opacity 0.2s ease-in',
                       }}
                     />
                   </div>
