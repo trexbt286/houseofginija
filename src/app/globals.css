@@ -3030,23 +3030,7 @@ body.mobile-nav-locked .whatsapp-floating-btn {
     border-bottom: 1px solid rgba(139, 119, 137, 0.12) !important;
   }
 
-  /* Hero section has its own full height, no padding, but has bottom border */
-  .home-hero-section {
-    padding-top: 0 !important;
-    padding-bottom: 0 !important;
-    margin-top: 0 !important;
-    margin-bottom: 0 !important;
-    height: calc(100svh - 107px) !important;
-    border-bottom: 1px solid rgba(139, 119, 137, 0.12) !important;
-  }
 
-  .home-hero-section .hero-video {
-    height: calc(100svh - 107px - 70px) !important;
-  }
-
-  .home-hero-section .hero-overlay {
-    height: calc(100svh - 107px - 70px) !important;
-  }
 
   .home-hero-section .hero-value-props-bar {
     position: relative !important;

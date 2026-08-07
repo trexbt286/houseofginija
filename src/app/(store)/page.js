@@ -1128,114 +1128,7 @@ const pageContainerStyle = {
   width: '100%',
 };
 
-const heroSectionStyle = {
-  height: 'calc(100vh - 107px)',
-  position: 'relative',
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'center',
-  overflow: 'hidden',
-};
 
-const heroOverlayStyle = {
-  width: '100%',
-  height: '100%',
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'center',
-  padding: '0 2rem',
-  background: 'linear-gradient(135deg, rgba(28, 22, 28, 0.45) 0%, rgba(28, 22, 28, 0.7) 100%)',
-  position: 'absolute',
-  top: 0,
-  left: 0,
-  zIndex: 1,
-};
-
-const heroContentStyle = {
-  maxWidth: '750px',
-  textAlign: 'center',
-  color: '#FFFFFF',
-};
-
-const heroBadgeStyle = {
-  border: '1px solid #D98E9B',
-  color: '#FFFFFF',
-  padding: '0.4rem 1.2rem',
-  borderRadius: '999px',
-  fontSize: '0.75rem',
-  fontWeight: '700',
-  textTransform: 'uppercase',
-  letterSpacing: '0.15em',
-  display: 'inline-block',
-  marginBottom: '1.5rem',
-};
-
-const heroTitleStyle = {
-  fontFamily: 'var(--font-serif)',
-  fontSize: '4.2rem',
-  fontWeight: '400',
-  color: '#FFFFFF',
-  marginBottom: '0.5rem',
-  letterSpacing: '0.05em',
-  textShadow: '0 2px 15px rgba(0, 0, 0, 0.4)',
-};
-
-const heroTaglineStyle = {
-  fontSize: '3.2rem',
-  color: '#D98E9B',
-  marginBottom: '1.5rem',
-  textShadow: '0 2px 15px rgba(0, 0, 0, 0.4)',
-  fontFamily: 'var(--font-serif)',
-  fontStyle: 'italic',
-  fontWeight: '400',
-};
-
-const heroDescriptionStyle = {
-  fontSize: '1.1rem',
-  lineHeight: 1.65,
-  color: 'rgba(255, 255, 255, 0.9)',
-  marginBottom: '2.5rem',
-  fontWeight: '300',
-  textShadow: '0 1px 5px rgba(0, 0, 0, 0.15)',
-};
-
-const heroActionsStyle = {
-  display: 'flex',
-  justifyContent: 'center',
-  gap: '1.2rem',
-  flexWrap: 'wrap',
-};
-
-const heroBtnPinkStyle = {
-  backgroundColor: '#D98E9B',
-  color: '#000000',
-  padding: '0.9rem 2.2rem',
-  borderRadius: '999px',
-  fontSize: '0.85rem',
-  fontWeight: '700',
-  textTransform: 'uppercase',
-  letterSpacing: '0.12em',
-  boxShadow: '0 4px 15px rgba(74, 52, 57, 0.08)',
-  transition: 'all 0.3s ease',
-  border: '1.5px solid #FBF0EC',
-  display: 'inline-flex',
-  alignItems: 'center',
-  gap: '0.5rem',
-  textDecoration: 'none'
-};
-
-const heroBtnOutlineStyle = {
-  backgroundColor: 'transparent',
-  color: '#000000',
-  border: '1px solid #000000',
-  padding: '0.9rem 2.2rem',
-  borderRadius: '999px',
-  fontSize: '0.85rem',
-  fontWeight: '600',
-  textTransform: 'uppercase',
-  letterSpacing: '0.12em',
-  transition: 'all 0.3s ease',
-};
 
 const sectionHeaderStyle = {
   textAlign: 'center',
@@ -1468,9 +1361,7 @@ const atelierPromoGridStyle = {
 };
 
 const atelierPromoImgStyle = {
-  backgroundImage: 'url("https://images.unsplash.com/photo-1544441893-675973e31985?w=800&auto=format&fit=crop&q=80")',
-  backgroundSize: 'cover',
-  backgroundPosition: 'center',
+  backgroundColor: '#FAF5F6',
   minHeight: '350px',
 };
 
