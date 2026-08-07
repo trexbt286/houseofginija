@@ -253,7 +253,7 @@ export default function HeroReelsSection({ heroReels = [], loading = false }) {
           width: 100%;
           box-sizing: border-box;
           padding: 1rem 0.8rem 1.5rem 0.8rem;
-          background-color: #FAF5F6;
+          background-color: #F6DDE2;
         }
 
         .reels-scroll-track {
@@ -319,7 +319,7 @@ const sectionContainerStyle = {
   overflow: 'hidden',
   width: '100%',
   minHeight: 'clamp(340px, 85vw, 620px)',
-  backgroundColor: '#FAF5F6',
+  backgroundColor: '#F6DDE2',
 };
 
 const carouselWrapperStyle = {
