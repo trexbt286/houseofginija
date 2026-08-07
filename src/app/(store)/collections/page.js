@@ -181,7 +181,7 @@ function MobileSearchBar({ allProducts, initialQuery, onSearch, handleProductCli
 function CollectionsContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
-  const { user, cart, addToCart, updateCartQuantity, wishlist, toggleWishlist } = useStore();
+  const { user, cart, addToCart, updateCartQuantity, wishlist, toggleWishlist, jewelleryEnabled } = useStore();
 
   // Filter States
   const [products, setProducts] = useState([]);
@@ -429,10 +429,14 @@ function CollectionsContent() {
                 {category.name}
               </option>
             ))}
-          <option disabled>-- Jewellery Types --</option>
-          <option value="rings">Rings</option>
-          <option value="necklaces">Necklaces</option>
-          <option value="bracelets">Bracelets</option>
+          {jewelleryEnabled !== false && (
+            <>
+              <option disabled>-- Jewellery Types --</option>
+              <option value="rings">Rings</option>
+              <option value="necklaces">Necklaces</option>
+              <option value="bracelets">Bracelets</option>
+            </>
+          )}
         </select>
       </div>
 
@@ -751,7 +755,7 @@ function CollectionsContent() {
       { id: 'flash-sale', name: 'Flash Sale', targetId: 'flash-sale' },
       { id: 'suits', name: 'Unstitched Suits', targetId: 'suits' },
       { id: 'indo-western', name: 'Indo-Western', targetId: 'indo-western' },
-      { id: 'shararas', name: 'Shararas', targetId: 'shararas' },
+      { id: 'shararas', name: 'Drape Sarees', targetId: 'shararas' },
       { id: 'gowns', name: 'Heavy Gowns', targetId: 'gowns' },
       { id: 'co-ords', name: 'Co-ords', targetId: 'co-ords' },
       { id: 'earrings', name: 'Earrings', targetId: 'earrings' },
@@ -762,7 +766,105 @@ function CollectionsContent() {
   };
 
   const renderProductCard = (p, index = 0) => {
+    const isHeavyDress = 
+      productMatchesCategory(p, 'indo-western') || 
+      productMatchesCategory(p, 'gowns') || 
+      productMatchesCategory(p, 'shararas');
+
     const outOfStock = p.is_out_of_stock;
+
+    if (isHeavyDress) {
+      const regPrice = parseFloat(p.price) || 0;
+      const salePrice = p.flash_sale && p.flash_sale_price ? parseFloat(p.flash_sale_price) : (p.on_sale && p.sale_price ? parseFloat(p.sale_price) : regPrice);
+      const isOnSale = regPrice > salePrice;
+      const discountPct = regPrice > 0 ? Math.max(1, Math.round(((regPrice - salePrice) / regPrice) * 100)) : 20;
+      const isWishlisted = wishlist.includes(p.id);
+
+      return (
+        <div key={p.id} className="new-arrival-card" style={{ opacity: outOfStock ? 0.8 : 1, transition: 'opacity 0.3s ease' }}>
+          {/* Product Image Container */}
+          <div className="new-arrival-img-container">
+            <div onClick={(e) => handleProductClick(e, p)} style={{ cursor: 'pointer', width: '100%', height: '100%' }}>
+              <ImageWithSkeleton 
+                src={p.images?.[0] || '/icon.png'} 
+                alt={p.name} 
+                eager={index < 2}
+                className="new-arrival-img-style" 
+                style={{ filter: outOfStock ? 'grayscale(100%) opacity(50%)' : 'none' }}
+              />
+            </div>
+            
+            {/* Discount Badge on Top Left */}
+            {isOnSale && (
+              <div style={flashSaleBadgeStyle} className="flash-sale-badge">
+                -{discountPct}%
+              </div>
+            )}
+
+            {/* Wishlist Heart on Top Right */}
+            <button 
+              onClick={(e) => {
+                e.stopPropagation();
+                e.preventDefault();
+                toggleWishlist(p.id);
+              }}
+              className="new-arrival-wishlist-btn"
+            >
+              <svg 
+                width="18" 
+                height="18" 
+                viewBox="0 0 24 24" 
+                fill={isWishlisted ? '#D98E9B' : 'none'} 
+                stroke={isWishlisted ? '#D98E9B' : '#000000'} 
+                strokeWidth="2.0" 
+                strokeLinecap="round" 
+                strokeLinejoin="round"
+              >
+                <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+              </svg>
+            </button>
+
+            {outOfStock && (
+              <div style={{
+                position: 'absolute',
+                bottom: '12px',
+                right: '12px',
+                backgroundColor: 'rgba(51, 51, 51, 0.85)',
+                color: '#FFFFFF',
+                padding: '4px 10px',
+                borderRadius: '2px',
+                fontSize: '0.65rem',
+                fontWeight: '600',
+                textTransform: 'uppercase',
+                letterSpacing: '0.1em',
+                boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
+                zIndex: 10
+              }}>
+                Out of Stock
+              </div>
+            )}
+          </div>
+
+          {/* Product Content */}
+          <div className="new-arrival-card-content">
+            <div onClick={(e) => handleProductClick(e, p)} style={{ cursor: 'pointer', color: 'inherit' }}>
+              <h3 className="new-arrival-product-name">{p.name}</h3>
+            </div>
+            {isOnSale ? (
+              <div className="new-arrival-price" style={{ display: 'flex', alignItems: 'baseline', gap: '0.5rem', flexWrap: 'wrap' }}>
+                <span style={{ color: '#B97285' }}>₹{salePrice.toLocaleString('en-IN')}</span>
+                <span style={{ fontSize: '0.78rem', color: 'rgba(0, 0, 0, 0.4)', textDecoration: 'line-through', fontWeight: 'normal' }}>₹{regPrice.toLocaleString('en-IN')}</span>
+              </div>
+            ) : (
+              <div className="new-arrival-price">
+                ₹{regPrice.toLocaleString('en-IN')}
+              </div>
+            )}
+          </div>
+        </div>
+      );
+    }
+
     const rating = (4.0 + ((p.id * 13) % 10) / 10).toFixed(1);
     const reviews = (p.id * 37) % 950 + 50; 
     
@@ -1372,9 +1474,12 @@ function CollectionsContent() {
             </section>
 
             {loading && products.length === 0 ? (
-              <div className="grid-cols-shop">
+              <div className={(selectedCollection === 'indo-western' || selectedCollection === 'gowns' || selectedCollection === 'shararas') ? "new-arrivals-grid" : "grid-cols-shop"}>
                 {Array.from({ length: 8 }).map((_, i) => (
-                  <SkeletonCard key={i} type="collection" />
+                  <SkeletonCard 
+                    key={i} 
+                    type={(selectedCollection === 'indo-western' || selectedCollection === 'gowns' || selectedCollection === 'shararas') ? "home-new-arrival" : "collection"} 
+                  />
                 ))}
               </div>
             ) : products.length === 0 ? (
@@ -1399,13 +1504,14 @@ function CollectionsContent() {
                       .map(cat => {
                         const group = cat.name;
                         const items = groupedProducts[group] || [];
+                        const isHeavy = cat.id === 'indo-western' || cat.id === 'gowns' || cat.id === 'shararas';
                         return (
                           <div key={cat.id} id={cat.id} className="blinkit-feed-section">
                             <h2 className="blinkit-feed-section-title" id={cat.id}>
                               {group}
                             </h2>
                             {items.length > 0 ? (
-                              <div className="grid-cols-shop">
+                              <div className={isHeavy ? "new-arrivals-grid" : "grid-cols-shop"}>
                                 {items.map((p, index) => renderProductCard(p, index))}
                               </div>
                             ) : (
@@ -1433,7 +1539,7 @@ function CollectionsContent() {
                         {getCollectionTitle()}
                       </h2>
                     )}
-                    <div className="grid-cols-shop">
+                    <div className={(selectedCollection === 'indo-western' || selectedCollection === 'gowns' || selectedCollection === 'shararas') ? "new-arrivals-grid" : "grid-cols-shop"}>
                       {products.map((p, index) => renderProductCard(p, index))}
                     </div>
                   </div>
@@ -2197,4 +2303,17 @@ const mobileStickyBtnStyle = {
   textTransform: 'uppercase',
   letterSpacing: '0.05em',
   cursor: 'pointer',
+};
+
+const flashSaleBadgeStyle = {
+  position: 'absolute',
+  top: '8px',
+  left: '8px',
+  backgroundColor: '#B97285',
+  color: '#FFFFFF',
+  padding: '0.25rem 0.6rem',
+  borderRadius: '6px',
+  fontSize: '0.75rem',
+  fontWeight: '700',
+  zIndex: 10,
 };

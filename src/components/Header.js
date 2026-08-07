@@ -7,7 +7,7 @@ import { usePathname, useRouter } from 'next/navigation';
 import ImageWithSkeleton from '@/components/ImageWithSkeleton';
 
 export default function Header() {
-  const { cart, cartCount, updateCartQuantity, removeFromCart, wishlist, toggleWishlist, addToCart, user, logout, setIsLoginOpen } = useStore();
+  const { cart, cartCount, updateCartQuantity, removeFromCart, wishlist, toggleWishlist, addToCart, user, logout, setIsLoginOpen, jewelleryEnabled } = useStore();
   const [menuOpen, setMenuOpen] = useState(false);
   const [heavyDressesOpen, setHeavyDressesOpen] = useState(false);
   const [jewelleryOpen, setJewelleryOpen] = useState(false);
@@ -221,7 +221,7 @@ export default function Header() {
                         style={{ fontSize: '0.8rem', fontWeight: '700', color: '#000000', textTransform: 'uppercase', letterSpacing: '0.08em', textDecoration: 'none' }}
                         onClick={() => { setDropdownOpen(false); setMenuOpen(false); }}
                       >
-                        Shararas
+                        Drape Sarees
                       </Link>
                       <Link 
                         href="/collections?collection=gowns" 
@@ -252,15 +252,19 @@ export default function Header() {
 
                     {/* Jewellery Subcategories & Flash Sale */}
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem' }}>
-                      <span style={{ fontSize: '0.8rem', fontWeight: '700', color: '#000000', textTransform: 'uppercase', letterSpacing: '0.08em', display: 'block', marginBottom: '0.2rem' }}>
-                        Jewellery
-                      </span>
-                      <div style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem', paddingLeft: '0.5rem', borderLeft: '2px solid #F4E1E5' }}>
-                        <Link href="/collections?collection=earrings" style={{ fontSize: '0.78rem', color: '#565959', textDecoration: 'none' }} onClick={() => { setDropdownOpen(false); setMenuOpen(false); }}>Earrings</Link>
-                        <Link href="/collections?collection=rings" style={{ fontSize: '0.78rem', color: '#565959', textDecoration: 'none' }} onClick={() => { setDropdownOpen(false); setMenuOpen(false); }}>Rings</Link>
-                        <Link href="/collections?collection=necklaces" style={{ fontSize: '0.78rem', color: '#565959', textDecoration: 'none' }} onClick={() => { setDropdownOpen(false); setMenuOpen(false); }}>Necklace</Link>
-                        <Link href="/collections?collection=bracelets" style={{ fontSize: '0.78rem', color: '#565959', textDecoration: 'none' }} onClick={() => { setDropdownOpen(false); setMenuOpen(false); }}>Bracelet</Link>
-                      </div>
+                      {jewelleryEnabled !== false && (
+                        <>
+                          <span style={{ fontSize: '0.8rem', fontWeight: '700', color: '#000000', textTransform: 'uppercase', letterSpacing: '0.08em', display: 'block', marginBottom: '0.2rem' }}>
+                            Jewellery
+                          </span>
+                          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem', paddingLeft: '0.5rem', borderLeft: '2px solid #F4E1E5' }}>
+                            <Link href="/collections?collection=earrings" style={{ fontSize: '0.78rem', color: '#565959', textDecoration: 'none' }} onClick={() => { setDropdownOpen(false); setMenuOpen(false); }}>Earrings</Link>
+                            <Link href="/collections?collection=rings" style={{ fontSize: '0.78rem', color: '#565959', textDecoration: 'none' }} onClick={() => { setDropdownOpen(false); setMenuOpen(false); }}>Rings</Link>
+                            <Link href="/collections?collection=necklaces" style={{ fontSize: '0.78rem', color: '#565959', textDecoration: 'none' }} onClick={() => { setDropdownOpen(false); setMenuOpen(false); }}>Necklace</Link>
+                            <Link href="/collections?collection=bracelets" style={{ fontSize: '0.78rem', color: '#565959', textDecoration: 'none' }} onClick={() => { setDropdownOpen(false); setMenuOpen(false); }}>Bracelet</Link>
+                          </div>
+                        </>
+                      )}
                       <Link 
                         href="/collections?collection=flash-sale" 
                         style={{ fontSize: '0.8rem', fontWeight: '700', color: '#D98E9B', textTransform: 'uppercase', letterSpacing: '0.08em', textDecoration: 'none', marginTop: '0.4rem' }}
@@ -473,7 +477,7 @@ export default function Header() {
                 </Link>
                 <Link href="/collections?collection=shararas" className="mobile-nav-submenu-item" onClick={() => setMenuOpen(false)}>
                   <span className="mobile-nav-submenu-dot" />
-                  <span>SHARARAS</span>
+                  <span>DRAPE SAREES</span>
                 </Link>
               </div>
             )}
@@ -518,56 +522,58 @@ export default function Header() {
             </Link>
 
             {/* 6. JEWELLERY */}
-            <div
-              className="mobile-nav-item-row"
-              role="button"
-              tabIndex={0}
-              onClick={() => {
-                setJewelleryOpen((open) => !open);
-              }}
-              onKeyDown={(event) => {
-                if (event.key === 'Enter' || event.key === ' ') {
-                  event.preventDefault();
-                  setJewelleryOpen((open) => !open);
-                }
-              }}
-              style={{ cursor: 'pointer' }}
-            >
-              <div className="mobile-nav-item-left">
-                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#D98E9B" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M6 3c0 6 2.7 11 6 11s6-5 6-11" />
-                  <circle cx="12" cy="17" r="2" />
-                </svg>
-                <span className="mobile-nav-item-title">JEWELLERY</span>
-              </div>
-              <button
-                type="button"
-                className="mobile-nav-item-chevron"
-                aria-label={jewelleryOpen ? 'Collapse Jewellery menu' : 'Expand Jewellery menu'}
-                aria-expanded={jewelleryOpen}
-                onClick={(event) => {
-                  event.preventDefault();
-                  event.stopPropagation();
-                  setJewelleryOpen((open) => !open);
-                }}
-              >
-                <svg
-                  width="16"
-                  height="16"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2.5"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  style={{ transform: jewelleryOpen ? 'rotate(180deg)' : 'rotate(0deg)', transition: 'transform 0.25s ease' }}
+            {jewelleryEnabled !== false && (
+              <>
+                <div
+                  className="mobile-nav-item-row"
+                  role="button"
+                  tabIndex={0}
+                  onClick={() => {
+                    setJewelleryOpen((open) => !open);
+                  }}
+                  onKeyDown={(event) => {
+                    if (event.key === 'Enter' || event.key === ' ') {
+                      event.preventDefault();
+                      setJewelleryOpen((open) => !open);
+                    }
+                  }}
+                  style={{ cursor: 'pointer' }}
                 >
-                  <polyline points="6 9 12 15 18 9"></polyline>
-                </svg>
-              </button>
-            </div>
+                  <div className="mobile-nav-item-left">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#D98E9B" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M6 3c0 6 2.7 11 6 11s6-5 6-11" />
+                      <circle cx="12" cy="17" r="2" />
+                    </svg>
+                    <span className="mobile-nav-item-title">JEWELLERY</span>
+                  </div>
+                  <button
+                    type="button"
+                    className="mobile-nav-item-chevron"
+                    aria-label={jewelleryOpen ? 'Collapse Jewellery menu' : 'Expand Jewellery menu'}
+                    aria-expanded={jewelleryOpen}
+                    onClick={(event) => {
+                      event.preventDefault();
+                      event.stopPropagation();
+                      setJewelleryOpen((open) => !open);
+                    }}
+                  >
+                    <svg
+                      width="16"
+                      height="16"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2.5"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      style={{ transform: jewelleryOpen ? 'rotate(180deg)' : 'rotate(0deg)', transition: 'transform 0.25s ease' }}
+                    >
+                      <polyline points="6 9 12 15 18 9"></polyline>
+                    </svg>
+                  </button>
+                </div>
 
-            {jewelleryOpen && (
+                {jewelleryOpen && (
               <div className="mobile-nav-submenu-card animate-fade-in">
                 <Link href="/collections?collection=earrings" className="mobile-nav-submenu-item" onClick={() => setMenuOpen(false)}>
                   <span className="mobile-nav-submenu-dot" />
@@ -587,6 +593,8 @@ export default function Header() {
                 </Link>
               </div>
             )}
+          </>
+        )}
 
             {/* 7. FLASH SALE */}
             <Link

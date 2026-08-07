@@ -68,6 +68,12 @@ export default function AdminSidebar({ active }) {
         >
           Coupons
         </Link>
+        <Link 
+          href="/admin/settings" 
+          style={active === "settings" ? activeNavLinkStyle : navLinkStyle}
+        >
+          Settings
+        </Link>
       </nav>
       <div style={sidebarFooterStyle}>
         <span style={sidebarFooterTextStyle}>

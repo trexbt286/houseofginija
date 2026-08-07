@@ -180,8 +180,13 @@ function MobileSearchBar({ allProducts, initialQuery, onSearch, handleProductCli
 
 function CollectionsContent() {
   const searchParams = useSearchParams();
-  const router = useRouter();
-  const { user, cart, addToCart, updateCartQuantity, wishlist, toggleWishlist } = useStore();
+  const { user, cart, addToCart, updateCartQuantity, wishlist, toggleWishlist, jewelleryEnabled } = useStore();
+
+  useEffect(() => {
+    if (jewelleryEnabled === false) {
+      router.replace('/collections');
+    }
+  }, [jewelleryEnabled, router]);
 
   // Filter States
   const [products, setProducts] = useState([]);
@@ -751,7 +756,7 @@ function CollectionsContent() {
       { id: 'flash-sale', name: 'Flash Sale', targetId: 'flash-sale' },
       { id: 'suits', name: 'Unstitched Suits', targetId: 'suits' },
       { id: 'indo-western', name: 'Indo-Western', targetId: 'indo-western' },
-      { id: 'shararas', name: 'Shararas', targetId: 'shararas' },
+      { id: 'shararas', name: 'Drape Sarees', targetId: 'shararas' },
       { id: 'gowns', name: 'Heavy Gowns', targetId: 'gowns' },
       { id: 'co-ords', name: 'Co-ords', targetId: 'co-ords' },
       { id: 'earrings', name: 'Earrings', targetId: 'earrings' },

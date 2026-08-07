@@ -3,55 +3,101 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRef, useState, useEffect } from 'react';
-
 import { productMatchesCategory } from '@/lib/catalogClient';
 
-const DEFAULT_CATEGORIES = [
-  { name: 'New Collection', slug: 'new-collection', defaultImage: '/images/categories/new-collection.jpg', href: '/collections?collection=new-collection' },
-  { name: 'Unstitched Suits', slug: 'suits',        defaultImage: '/images/categories/unstitched.png', href: '/collections?collection=suits' },
-  { name: 'Indo-Western',   slug: 'indo-western',   defaultImage: '/images/categories/indo-western.png', href: '/collections?collection=indo-western' },
-  { name: 'Shararas',       slug: 'shararas',       defaultImage: '/images/categories/heavy-dresses.png', href: '/collections?collection=shararas' },
-  { name: 'Heavy Gowns',    slug: 'gowns',          defaultImage: '/local-products/037-champagne-drape-saree-1.jpg', href: '/collections?collection=gowns' },
-  { name: 'Co-ords',        slug: 'co-ords',        defaultImage: '/images/categories/co-ords.png', href: '/collections?collection=co-ords' },
-  { name: 'Earrings',       slug: 'earrings',       defaultImage: '/images/categories/jewellery.png', href: '/collections?collection=earrings' },
-  { name: 'Rings',          slug: 'rings',          defaultImage: '/images/categories/jewellery.png', href: '/collections?collection=rings' },
-  { name: 'Necklace',       slug: 'necklace',       defaultImage: '/images/categories/jewellery.png', href: '/collections?collection=necklace' },
-  { name: 'Bracelet',       slug: 'bracelet',       defaultImage: '/images/categories/jewellery.png', href: '/collections?collection=bracelet' },
+const ALL_CATEGORY_ITEMS = [
+  { 
+    id: 'discounted_suits',
+    name: 'Discounted Unstitched Suits', 
+    slug: 'discounted-suits', 
+    defaultImage: '/images/categories/unstitched.png', 
+    href: '/collections?collection=suits&flash_sale=true',
+    isDiscounted: true,
+  },
+  { 
+    id: 'discounted_heavy',
+    name: 'Discounted Heavy Dresses', 
+    slug: 'discounted-heavy', 
+    defaultImage: '/images/categories/heavy-dresses.png', 
+    href: '/collections?collection=gowns&flash_sale=true',
+    isDiscounted: true,
+  },
+  { 
+    id: 'suits',
+    name: 'Unstitched Suits', 
+    slug: 'suits', 
+    defaultImage: '/images/categories/unstitched.png', 
+    href: '/collections?collection=suits' 
+  },
+  { 
+    id: 'indo-western',
+    name: 'Indo Western', 
+    slug: 'indo-western', 
+    defaultImage: '/images/categories/indo-western.png', 
+    href: '/collections?collection=indo-western' 
+  },
+  { 
+    id: 'gowns',
+    name: 'Heavy Gowns', 
+    slug: 'gowns', 
+    defaultImage: '/local-products/037-champagne-drape-saree-1.jpg', 
+    href: '/collections?collection=gowns' 
+  },
+  { 
+    id: 'shararas',
+    name: 'Drape Sarees', 
+    slug: 'shararas', 
+    defaultImage: '/images/categories/heavy-dresses.png', 
+    href: '/collections?collection=shararas' 
+  },
 ];
 
-export default function ShopByCategories() {
+export default function ShopByCategories({ initialCategoryCounts }) {
   const trackRef = useRef(null);
   const [categoryImages, setCategoryImages] = useState({});
+  const [counts, setCounts] = useState(initialCategoryCounts || null);
 
   useEffect(() => {
-    fetch('/api/products')
+    fetch('/api/homepage')
       .then((res) => (res.ok ? res.json() : null))
       .then((data) => {
-        const products = data?.products || [];
-        if (products.length > 0) {
+        if (data) {
+          if (data.categoryCounts) {
+            setCounts(data.categoryCounts);
+          }
+
+          // Generate dynamic random product images for categories
+          const flash = data.flashProducts || [];
+          const heavy = data.heavyDresses || {};
           const imgs = {};
-          DEFAULT_CATEGORIES.forEach((cat) => {
-            if (cat.slug === 'new-collection') {
-              imgs[cat.slug] = '/images/categories/new-collection.jpg';
-              return;
-            }
-            const matching = products.filter((p) => productMatchesCategory(p, cat.slug));
-            if (matching.length > 0) {
-              const randomIndex = Math.floor(Math.random() * matching.length);
-              const randomProduct = matching[randomIndex];
-              const primaryImg = randomProduct.images?.[0] || randomProduct.image_url;
-              if (primaryImg) {
-                imgs[cat.slug] = primaryImg;
-              }
-            }
-          });
+
+          const suitsDiscounted = flash.filter((p) => p.collection_slug === 'suits' || p.collection_slug === 'unstitched');
+          if (suitsDiscounted.length > 0) {
+            imgs['discounted-suits'] = suitsDiscounted[0].images?.[0] || suitsDiscounted[0].image_url;
+          }
+
+          const heavyDiscounted = flash.filter((p) => ['indo-western', 'gowns', 'heavy-gown', 'shararas'].includes(p.collection_slug));
+          if (heavyDiscounted.length > 0) {
+            imgs['discounted-heavy'] = heavyDiscounted[0].images?.[0] || heavyDiscounted[0].image_url;
+          }
+
+          if (heavy.indoWestern?.[0]) imgs['indo-western'] = heavy.indoWestern[0].images?.[0] || heavy.indoWestern[0].image_url;
+          if (heavy.heavyGown?.[0]) imgs['gowns'] = heavy.heavyGown[0].images?.[0] || heavy.heavyGown[0].image_url;
+          if (heavy.shararas?.[0]) imgs['shararas'] = heavy.shararas[0].images?.[0] || heavy.shararas[0].image_url;
+
           setCategoryImages(imgs);
         }
       })
-      .catch((err) => console.error('ShopByCategories fetch products error:', err));
+      .catch((err) => console.error('ShopByCategories fetch homepage data error:', err));
   }, []);
 
-  const categories = DEFAULT_CATEGORIES.map((cat) => ({
+  // Filter categories based on zero product counts for discounted items
+  const activeCategories = ALL_CATEGORY_ITEMS.filter((item) => {
+    if (!counts) return true; // Show by default until counts load
+    if (item.id === 'discounted_suits' && counts.discounted_suits === 0) return false;
+    if (item.id === 'discounted_heavy' && counts.discounted_heavy === 0) return false;
+    return true;
+  }).map((cat) => ({
     ...cat,
     image: categoryImages[cat.slug] || cat.defaultImage || '/placeholder.png',
   }));
@@ -75,7 +121,7 @@ export default function ShopByCategories() {
         <div className="shop-categories__carousel">
           <button type="button" onClick={() => move(-1)} className="shop-categories__arrow shop-categories__arrow--left" aria-label="Previous categories">&#8249;</button>
           <div ref={trackRef} className="shop-categories__track">
-            {categories.map((category, index) => (
+            {activeCategories.map((category, index) => (
               <Link href={category.href} className="shop-categories__card" key={category.slug}>
                 <span className="shop-categories__image">
                   {category.image.startsWith('data:') ? (
@@ -115,13 +161,13 @@ export default function ShopByCategories() {
         .shop-categories__carousel { position: relative; max-width: 700px; margin: 0 auto; }
         .shop-categories__track { display: grid; grid-auto-flow: column; grid-auto-columns: calc(50% - .45rem); gap: .9rem; overflow-x: auto; padding: .5rem .9rem 1rem; scroll-behavior: smooth; scroll-snap-type: x mandatory; scrollbar-width: none; }
         .shop-categories__track::-webkit-scrollbar { display: none; }
-        .shop-categories__card { min-width: 0; color: inherit; text-align: center; text-decoration: none; scroll-snap-align: start; }
+        .shop-categories__card { min-width: 0; color: inherit; text-align: center; text-decoration: none; scroll-snap-align: start; display: flex; flex-direction: column; height: 100%; }
         .shop-categories__image { position: relative; display: block; width: 100%; aspect-ratio: 1; overflow: hidden; border: 3px solid #fff; border-radius: 50%; background: #f4e1e5; box-shadow: 0 12px 30px rgba(118,65,79,.16); transition: transform .3s ease, box-shadow .3s ease; }
         .shop-categories__image :global(img) { object-fit: cover; transition: transform .5s ease; }
         .shop-categories__card:hover .shop-categories__image { transform: translateY(-4px); box-shadow: 0 16px 34px rgba(118,65,79,.22); }
         .shop-categories__card:hover .shop-categories__image :global(img) { transform: scale(1.04); }
-        .shop-categories__name { display: block; margin-top: 1rem; color: #282226; font-family: var(--font-serif); font-size: clamp(1rem, 4vw, 1.35rem); line-height: 1.15; }
-        .shop-categories__link { display: block; margin-top: .4rem; color: #a66c7b; font-size: .61rem; font-weight: 700; letter-spacing: .09em; text-transform: uppercase; }
+        .shop-categories__name { display: flex; align-items: center; justify-content: center; margin-top: .8rem; color: #282226; font-family: var(--font-serif); font-size: clamp(0.88rem, 3.6vw, 1.2rem); line-height: 1.18; min-height: 2.5em; text-align: center; }
+        .shop-categories__link { display: block; margin-top: auto; padding-top: .4rem; color: #a66c7b; font-size: .61rem; font-weight: 700; letter-spacing: .09em; text-transform: uppercase; }
         .shop-categories__arrow { position: absolute; top: 42%; z-index: 2; width: 40px; height: 40px; padding: 0 0 4px; border: 1px solid rgba(166,108,123,.2); border-radius: 50%; background: rgba(255,255,255,.94); color: #402f34; box-shadow: 0 6px 18px rgba(0,0,0,.1); cursor: pointer; font: 300 1.9rem/1 var(--font-serif); }
         .shop-categories__arrow--left { left: .1rem; transform: translate(-25%,-50%); }
         .shop-categories__arrow--right { right: .1rem; transform: translate(25%,-50%); }

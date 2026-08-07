@@ -11,7 +11,20 @@ export function StoreProvider({ children }) {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [isLoginOpen, setIsLoginOpen] = useState(false);
+  const [jewelleryEnabled, setJewelleryEnabled] = useState(true);
   const router = useRouter();
+
+  // Load initial settings (jewellery_enabled) once on mount
+  useEffect(() => {
+    fetch('/api/homepage')
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data) => {
+        if (data && typeof data.jewellery_enabled === 'boolean') {
+          setJewelleryEnabled(data.jewellery_enabled);
+        }
+      })
+      .catch(() => {});
+  }, []);
 
   // Load cart, wishlist and session on mount
   useEffect(() => {
@@ -440,6 +453,8 @@ export function StoreProvider({ children }) {
         triggerSparkleConfetti,
         isLoginOpen,
         setIsLoginOpen,
+        jewelleryEnabled,
+        setJewelleryEnabled,
       }}
     >
       {children}

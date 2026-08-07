@@ -42,7 +42,7 @@ function AdminProductsContent() {
     { id: 'flash-sale', name: 'Flash Sale' },
     { id: 'suits', name: 'Unstitched Suits' },
     { id: 'indo-western', name: 'Indo-Western' },
-    { id: 'shararas', name: 'Shararas' },
+    { id: 'shararas', name: 'Drape Sarees' },
     { id: 'gowns', name: 'Heavy Gowns' },
     { id: 'co-ords', name: 'Co-ords' },
     { id: 'rings', name: 'Rings' },
@@ -830,7 +830,7 @@ function AdminProductsContent() {
                     <option value="">All Categories ({products.length})</option>
                     <option value="new-collection">New Collection</option>
                     <option value="indo-western">Indo-Western</option>
-                    <option value="shararas">Shararas</option>
+                    <option value="shararas">Drape Sarees</option>
                     <option value="gowns">Heavy Gowns</option>
                     <option value="co-ords">Co-ords</option>
                     <option value="suits">Unstitched Suits</option>

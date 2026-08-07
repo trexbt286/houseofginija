@@ -333,7 +333,7 @@ export default function Home() {
             </div>
 
             <div style={{ textAlign: 'center', marginTop: '1rem', marginBottom: '1rem' }}>
-              <Link href="/collections?collection=flash-sale" style={flashSaleShopAllStyle}>
+              <Link href="/flash-sale" style={flashSaleShopAllStyle}>
                 SHOP ALL FLASH SALE &rarr;
               </Link>
             </div>
@@ -448,7 +448,7 @@ export default function Home() {
       <div style={{ height: '1px', backgroundColor: 'rgba(139, 119, 137, 0.15)', width: '100%' }}></div>
 
       {/* HEAVY DRESSES SECTION */}
-      <section id="heavy-dresses" style={{ backgroundColor: '#FFFFFF', padding: '4rem 1.2rem 3rem 1.2rem' }} className="home-section home-heavy-dresses-section">
+      <section id="heavy-dresses" style={{ backgroundColor: '#FFFFFF', padding: '4rem 0 3rem 0' }} className="home-section home-heavy-dresses-section">
         <div className="container">
           {/* Main Section Header */}
           <div style={sectionHeaderStyle} className="animate-fade-in">
@@ -482,6 +482,10 @@ export default function Home() {
                   ))
                 ) : (
                   (heavyDresses.indoWestern || []).slice(0, 4).map((product, index) => {
+                    const regPrice = parseFloat(product.price) || 0;
+                    const salePrice = product.flash_sale && product.flash_sale_price ? parseFloat(product.flash_sale_price) : (product.on_sale && product.sale_price ? parseFloat(product.sale_price) : regPrice);
+                    const isOnSale = regPrice > salePrice;
+                    const discountPct = regPrice > 0 ? Math.max(1, Math.round(((regPrice - salePrice) / regPrice) * 100)) : 20;
                     const isWishlisted = wishlist.includes(product.id);
                     return (
                       <div key={product.id || index} className="new-arrival-card">
@@ -494,6 +498,13 @@ export default function Home() {
                               className="new-arrival-img-style" 
                             />
                           </div>
+
+                          {/* Discount Badge on Top Left */}
+                          {isOnSale && (
+                            <div style={flashSaleBadgeStyle} className="flash-sale-badge">
+                              -{discountPct}%
+                            </div>
+                          )}
 
                           <button 
                             onClick={() => toggleWishlist(product.id)}
@@ -518,9 +529,16 @@ export default function Home() {
                           <div onClick={(e) => handleProductClick(e, product)} style={{ cursor: 'pointer', color: 'inherit' }}>
                             <h3 className="new-arrival-product-name">{product.name}</h3>
                           </div>
-                          <div className="new-arrival-price">
-                            ₹{parseFloat(product.price).toLocaleString('en-IN')}
-                          </div>
+                          {isOnSale ? (
+                            <div className="new-arrival-price" style={{ display: 'flex', alignItems: 'baseline', gap: '0.5rem', flexWrap: 'wrap' }}>
+                              <span style={{ color: '#B97285' }}>₹{salePrice.toLocaleString('en-IN')}</span>
+                              <span style={{ fontSize: '0.78rem', color: 'rgba(0, 0, 0, 0.4)', textDecoration: 'line-through', fontWeight: 'normal' }}>₹{regPrice.toLocaleString('en-IN')}</span>
+                            </div>
+                          ) : (
+                            <div className="new-arrival-price">
+                              ₹{regPrice.toLocaleString('en-IN')}
+                            </div>
+                          )}
                         </div>
                       </div>
                     );
@@ -528,9 +546,9 @@ export default function Home() {
                 )}
               </div>
 
-              <div style={seeMoreBtnContainerStyle}>
-                <Link href="/collections?collection=indo-western" style={seeMoreButtonStyle} className="see-more-btn">
-                  SEE MORE &rarr;
+              <div style={{ textAlign: 'center', marginTop: '1rem', marginBottom: '1rem' }}>
+                <Link href="/collections?collection=indo-western" style={flashSaleShopAllStyle}>
+                  SHOP ALL INDO WESTERN &rarr;
                 </Link>
               </div>
             </div>
@@ -558,6 +576,10 @@ export default function Home() {
                   ))
                 ) : (
                   (heavyDresses.heavyGown || []).slice(0, 4).map((product, index) => {
+                    const regPrice = parseFloat(product.price) || 0;
+                    const salePrice = product.flash_sale && product.flash_sale_price ? parseFloat(product.flash_sale_price) : (product.on_sale && product.sale_price ? parseFloat(product.sale_price) : regPrice);
+                    const isOnSale = regPrice > salePrice;
+                    const discountPct = regPrice > 0 ? Math.max(1, Math.round(((regPrice - salePrice) / regPrice) * 100)) : 20;
                     const isWishlisted = wishlist.includes(product.id);
                     return (
                       <div key={product.id || index} className="new-arrival-card">
@@ -570,6 +592,13 @@ export default function Home() {
                               className="new-arrival-img-style" 
                             />
                           </div>
+
+                          {/* Discount Badge on Top Left */}
+                          {isOnSale && (
+                            <div style={flashSaleBadgeStyle} className="flash-sale-badge">
+                              -{discountPct}%
+                            </div>
+                          )}
 
                           <button 
                             onClick={() => toggleWishlist(product.id)}
@@ -594,9 +623,16 @@ export default function Home() {
                           <div onClick={(e) => handleProductClick(e, product)} style={{ cursor: 'pointer', color: 'inherit' }}>
                             <h3 className="new-arrival-product-name">{product.name}</h3>
                           </div>
-                          <div className="new-arrival-price">
-                            ₹{parseFloat(product.price).toLocaleString('en-IN')}
-                          </div>
+                          {isOnSale ? (
+                            <div className="new-arrival-price" style={{ display: 'flex', alignItems: 'baseline', gap: '0.5rem', flexWrap: 'wrap' }}>
+                              <span style={{ color: '#B97285' }}>₹{salePrice.toLocaleString('en-IN')}</span>
+                              <span style={{ fontSize: '0.78rem', color: 'rgba(0, 0, 0, 0.4)', textDecoration: 'line-through', fontWeight: 'normal' }}>₹{regPrice.toLocaleString('en-IN')}</span>
+                            </div>
+                          ) : (
+                            <div className="new-arrival-price">
+                              ₹{regPrice.toLocaleString('en-IN')}
+                            </div>
+                          )}
                         </div>
                       </div>
                     );
@@ -604,9 +640,9 @@ export default function Home() {
                 )}
               </div>
 
-              <div style={seeMoreBtnContainerStyle}>
-                <Link href="/collections?collection=gowns" style={seeMoreButtonStyle} className="see-more-btn">
-                  SEE MORE &rarr;
+              <div style={{ textAlign: 'center', marginTop: '1rem', marginBottom: '1rem' }}>
+                <Link href="/collections?collection=gowns" style={flashSaleShopAllStyle}>
+                  SHOP ALL HEAVY GOWNS &rarr;
                 </Link>
               </div>
             </div>
@@ -622,7 +658,7 @@ export default function Home() {
                   letterSpacing: '0.02em',
                   marginBottom: '0.4rem'
                 }}>
-                  Shararas
+                  Drape Sarees
                 </h3>
                 <div style={{ width: '40px', height: '1.5px', backgroundColor: '#B97285', margin: '0 auto' }}></div>
               </div>
@@ -634,6 +670,10 @@ export default function Home() {
                   ))
                 ) : (
                   (heavyDresses.shararas || []).slice(0, 4).map((product, index) => {
+                    const regPrice = parseFloat(product.price) || 0;
+                    const salePrice = product.flash_sale && product.flash_sale_price ? parseFloat(product.flash_sale_price) : (product.on_sale && product.sale_price ? parseFloat(product.sale_price) : regPrice);
+                    const isOnSale = regPrice > salePrice;
+                    const discountPct = regPrice > 0 ? Math.max(1, Math.round(((regPrice - salePrice) / regPrice) * 100)) : 20;
                     const isWishlisted = wishlist.includes(product.id);
                     return (
                       <div key={product.id || index} className="new-arrival-card">
@@ -646,6 +686,13 @@ export default function Home() {
                               className="new-arrival-img-style" 
                             />
                           </div>
+
+                          {/* Discount Badge on Top Left */}
+                          {isOnSale && (
+                            <div style={flashSaleBadgeStyle} className="flash-sale-badge">
+                              -{discountPct}%
+                            </div>
+                          )}
 
                           <button 
                             onClick={() => toggleWishlist(product.id)}
@@ -670,9 +717,16 @@ export default function Home() {
                           <div onClick={(e) => handleProductClick(e, product)} style={{ cursor: 'pointer', color: 'inherit' }}>
                             <h3 className="new-arrival-product-name">{product.name}</h3>
                           </div>
-                          <div className="new-arrival-price">
-                            ₹{parseFloat(product.price).toLocaleString('en-IN')}
-                          </div>
+                          {isOnSale ? (
+                            <div className="new-arrival-price" style={{ display: 'flex', alignItems: 'baseline', gap: '0.5rem', flexWrap: 'wrap' }}>
+                              <span style={{ color: '#B97285' }}>₹{salePrice.toLocaleString('en-IN')}</span>
+                              <span style={{ fontSize: '0.78rem', color: 'rgba(0, 0, 0, 0.4)', textDecoration: 'line-through', fontWeight: 'normal' }}>₹{regPrice.toLocaleString('en-IN')}</span>
+                            </div>
+                          ) : (
+                            <div className="new-arrival-price">
+                              ₹{regPrice.toLocaleString('en-IN')}
+                            </div>
+                          )}
                         </div>
                       </div>
                     );
@@ -680,9 +734,9 @@ export default function Home() {
                 )}
               </div>
 
-              <div style={seeMoreBtnContainerStyle}>
-                <Link href="/collections?collection=shararas" style={seeMoreButtonStyle} className="see-more-btn">
-                  SEE MORE &rarr;
+              <div style={{ textAlign: 'center', marginTop: '1rem', marginBottom: '1rem' }}>
+                <Link href="/collections?collection=shararas" style={flashSaleShopAllStyle}>
+                  SHOP ALL DRAPE SAREES &rarr;
                 </Link>
               </div>
             </div>

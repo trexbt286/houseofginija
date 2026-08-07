@@ -751,7 +751,7 @@ function CollectionsContent() {
       { id: 'flash-sale', name: 'Flash Sale', targetId: 'flash-sale' },
       { id: 'suits', name: 'Unstitched Suits', targetId: 'suits' },
       { id: 'indo-western', name: 'Indo-Western', targetId: 'indo-western' },
-      { id: 'shararas', name: 'Shararas', targetId: 'shararas' },
+      { id: 'shararas', name: 'Drape Sarees', targetId: 'shararas' },
       { id: 'gowns', name: 'Heavy Gowns', targetId: 'gowns' },
       { id: 'co-ords', name: 'Co-ords', targetId: 'co-ords' },
       { id: 'earrings', name: 'Earrings', targetId: 'earrings' },

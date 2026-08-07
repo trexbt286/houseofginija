@@ -39,9 +39,8 @@ export async function GET() {
       SELECT ${PRODUCT_SELECT_FIELDS}
       FROM products p
       ${PRODUCT_COLLECTION_JOINS}
-      WHERE p.flash_sale = TRUE OR p.on_sale = TRUE
+      WHERE p.flash_sale = TRUE
       ORDER BY
-        p.on_sale DESC,
         SUBSTRING(p.name FROM '^[^0-9]+') ASC,
         COALESCE(NULLIF(SUBSTRING(p.name FROM '[0-9]+'), ''), '0')::integer ASC,
         p.name ASC
@@ -53,7 +52,6 @@ export async function GET() {
       ${PRODUCT_COLLECTION_JOINS}
       WHERE p.new_arrival = TRUE
       ORDER BY
-        p.on_sale DESC,
         SUBSTRING(p.name FROM '^[^0-9]+') ASC,
         COALESCE(NULLIF(SUBSTRING(p.name FROM '[0-9]+'), ''), '0')::integer ASC,
         p.name ASC
@@ -64,11 +62,18 @@ export async function GET() {
       FROM products p
       ${PRODUCT_COLLECTION_JOINS}
       WHERE c.slug IN ('indo-western', 'gowns', 'heavy-gown', 'shararas')
-      ORDER BY p.on_sale DESC, p.id ASC
+      ORDER BY p.id ASC
+    `;
+
+    const allProductsQuery = `
+      SELECT ${PRODUCT_SELECT_FIELDS}
+      FROM products p
+      ${PRODUCT_COLLECTION_JOINS}
+      WHERE p.is_out_of_stock = FALSE
     `;
 
     const settingsQuery =
-      "SELECT key, value FROM settings WHERE key IN ('flash_sale_enabled', 'new_arrivals_enabled')";
+      "SELECT key, value FROM settings WHERE key IN ('flash_sale_enabled', 'new_arrivals_enabled', 'jewellery_enabled')";
     const heroReelsQuery = 'SELECT * FROM hero_reels ORDER BY sort_order ASC, id ASC';
     const founderReelsQuery =
       'SELECT * FROM founder_reels ORDER BY sort_order ASC, id ASC LIMIT 3';
@@ -81,6 +86,7 @@ export async function GET() {
       heroReelsResult,
       founderReelsResult,
       heavyDressesResult,
+      allProductsResult,
     ] = await Promise.all([
       pool.query(collectionsQuery),
       pool.query(flashProductsQuery),
@@ -89,16 +95,32 @@ export async function GET() {
       pool.query(heroReelsQuery),
       pool.query(founderReelsQuery),
       pool.query(heavyDressesQuery),
+      pool.query(allProductsQuery),
     ]);
 
     const flash_sale_enabled =
-      settingsResult.rows.find((row) => row.key === 'flash_sale_enabled')?.value === 'true';
+      settingsResult.rows.find((row) => row.key === 'flash_sale_enabled')?.value !== 'false';
     const new_arrivals_enabled =
-      settingsResult.rows.find((row) => row.key === 'new_arrivals_enabled')?.value === 'true';
+      settingsResult.rows.find((row) => row.key === 'new_arrivals_enabled')?.value !== 'false';
+    const jewellery_enabled =
+      settingsResult.rows.find((row) => row.key === 'jewellery_enabled')?.value !== 'false';
 
     const flashProducts = flashProductsResult.rows.map(mapProductData);
     const newArrivalProducts = newArrivalsResult.rows.map(mapProductData);
     const heavyDressProducts = heavyDressesResult.rows.map(mapProductData);
+    const allProductsMapped = allProductsResult.rows.map(mapProductData);
+
+    const isSuitsCategory = (slug) => slug === 'suits' || slug === 'unstitched';
+    const isHeavyCategory = (slug) => ['indo-western', 'gowns', 'heavy-gown', 'shararas'].includes(slug);
+
+    const categoryCounts = {
+      discounted_suits: allProductsMapped.filter((p) => Boolean(p.flash_sale) && isSuitsCategory(p.collection_slug)).length,
+      discounted_heavy: allProductsMapped.filter((p) => Boolean(p.flash_sale) && isHeavyCategory(p.collection_slug)).length,
+      suits: allProductsMapped.filter((p) => isSuitsCategory(p.collection_slug)).length,
+      indo_western: allProductsMapped.filter((p) => p.collection_slug === 'indo-western').length,
+      gowns: allProductsMapped.filter((p) => p.collection_slug === 'gowns' || p.collection_slug === 'heavy-gown').length,
+      shararas: allProductsMapped.filter((p) => p.collection_slug === 'shararas').length,
+    };
 
     const fallbackHeavyDresses = getLocalHomepageFallback().heavyDresses || {};
     const getCategoryProducts = (slugs, fallbackItems = []) => {
@@ -141,6 +163,8 @@ export async function GET() {
       flash_sale_enabled,
       newArrivalProducts,
       new_arrivals_enabled,
+      jewellery_enabled,
+      categoryCounts,
       heroReels: heroReelsResult.rows || [],
       founderReels: founderReelsResult.rows || [],
       heavyDresses,
