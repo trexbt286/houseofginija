@@ -314,6 +314,9 @@ export default function HeroReelsSection({ heroReels = [], loading = false }) {
 const sectionContainerStyle = {
   position: 'relative',
   overflow: 'hidden',
+  width: '100%',
+  minHeight: 'clamp(340px, 85vw, 620px)',
+  backgroundColor: '#FAF5F6',
 };
 
 const carouselWrapperStyle = {

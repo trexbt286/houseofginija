@@ -286,7 +286,7 @@ export default function Home() {
                           <ImageWithSkeleton 
                             src={product.images?.[0] || '/icon.png'} 
                             alt={product.name} 
-                            eager={index < 2}
+                            eager={false}
                             className="new-arrival-img-style" 
                           />
                         </div>
@@ -494,7 +494,7 @@ export default function Home() {
                             <ImageWithSkeleton 
                               src={product.images?.[0] || '/icon.png'} 
                               alt={product.name} 
-                              eager={index < 2}
+                              eager={false}
                               className="new-arrival-img-style" 
                             />
                           </div>
@@ -588,7 +588,7 @@ export default function Home() {
                             <ImageWithSkeleton 
                               src={product.images?.[0] || '/icon.png'} 
                               alt={product.name} 
-                              eager={index < 2}
+                              eager={false}
                               className="new-arrival-img-style" 
                             />
                           </div>
@@ -682,7 +682,7 @@ export default function Home() {
                             <ImageWithSkeleton 
                               src={product.images?.[0] || '/icon.png'} 
                               alt={product.name} 
-                              eager={index < 2}
+                              eager={false}
                               className="new-arrival-img-style" 
                             />
                           </div>
