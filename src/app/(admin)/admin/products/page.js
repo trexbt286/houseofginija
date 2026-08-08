@@ -90,19 +90,22 @@ function AdminProductsContent() {
   ];
 
   const fetchProductsAndCollections = async () => {
-    setLoading(true);
     try {
       const res = await fetch('/api/admin/products');
-      if (!res.ok) {
-        throw new Error('Failed to fetch catalog.');
+      if (res.ok) {
+        const data = await res.json();
+        if (data.products && Array.isArray(data.products) && data.products.length > 0) {
+          setProducts(data.products);
+        }
+        if (data.collections && Array.isArray(data.collections) && data.collections.length > 0) {
+          setCollections(data.collections);
+        }
+        if (data.tags && Array.isArray(data.tags)) {
+          setTags(data.tags);
+        }
       }
-      const data = await res.json();
-      setProducts(data.products || []);
-      setCollections(data.collections || []);
-      setTags(data.tags || []);
     } catch (err) {
-      console.error(err);
-      setError(err.message || 'Error fetching catalog details.');
+      console.error('Failed to fetch catalog details:', err);
     } finally {
       setLoading(false);
     }

@@ -24,6 +24,7 @@ export const PRODUCT_COLLECTION_JOINS = `
 `;
 
 export function mapProductData(product, options = {}) {
+  if (!product) return null;
   let images = product.images;
   if (typeof images === 'string') {
     try { images = JSON.parse(images); } catch {}

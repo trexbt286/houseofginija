@@ -143,7 +143,7 @@ function validateRequiredProductFields(body, update = false) {
 export async function GET() {
   if (shouldUseLocalCatalogFallbackFirst()) {
     return NextResponse.json({
-      products: getStoreProducts().map((p) => mapProductData(p, { isAdmin: true })),
+      products: getStoreProducts().map((p) => mapProductData(p, { isAdmin: true })).filter(Boolean),
       collections: getLocalCollectionsFallback(),
       categoryTree: getLocalCategoryTreeFallback(),
       tags: getLocalTagsFallback(),
@@ -163,7 +163,7 @@ export async function GET() {
     ]);
 
     return NextResponse.json({
-      products: productsResult.rows.map((row) => mapProductData(row, { isAdmin: true })),
+      products: productsResult.rows.map((row) => mapProductData(row, { isAdmin: true })).filter(Boolean),
       collections: collectionsResult.rows,
       categoryTree: buildCategoryTree(collectionsResult.rows),
       tags: tagsResult.rows,
@@ -171,7 +171,7 @@ export async function GET() {
   } catch (error) {
     console.error('Admin GET products error:', error);
     return NextResponse.json({
-      products: getStoreProducts().map((p) => mapProductData(p, { isAdmin: true })),
+      products: getStoreProducts().map((p) => mapProductData(p, { isAdmin: true })).filter(Boolean),
       collections: getLocalCollectionsFallback(),
       categoryTree: getLocalCategoryTreeFallback(),
       tags: getLocalTagsFallback(),
