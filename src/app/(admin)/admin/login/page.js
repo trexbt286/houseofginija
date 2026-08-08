@@ -57,10 +57,6 @@ export default function AdminLoginPage() {
     }
   };
 
-  if (loading) {
-    return <div style={loadingContainerStyle}>Accessing secured portal...</div>;
-  }
-
   return (
     <div style={pageStyle} className="animate-fade-in">
       <div style={cardStyle}>

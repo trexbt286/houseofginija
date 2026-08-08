@@ -7,10 +7,6 @@ import AdminSidebar from '@/components/AdminSidebar';
 
 export default function AdminDashboard() {
   const { user, logout } = useStore();
-  const [data, setData] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState('');
-
   const DEFAULT_ANALYTICS = {
     metrics: { totalOrders: 0, totalRevenue: 0 },
     bestSellers: [],
@@ -19,6 +15,10 @@ export default function AdminDashboard() {
     customers: [],
     subscribers: [],
   };
+
+  const [data, setData] = useState(DEFAULT_ANALYTICS);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
 
   useEffect(() => {
     const fetchAnalytics = async () => {
@@ -51,10 +51,6 @@ export default function AdminDashboard() {
     const interval = setInterval(fetchAnalytics, 5000);
     return () => clearInterval(interval);
   }, []);
-
-  if (loading) {
-    return <div style={loadingContainerStyle}>Curating metrics...</div>;
-  }
 
   const activeData = data || DEFAULT_ANALYTICS;
   const { metrics, bestSellers, lowStockAlerts, visitsTrend, customers, subscribers } = activeData;
