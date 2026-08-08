@@ -690,7 +690,7 @@ function AdminProductsContent() {
                               max="99"
                               value={formFields.flash_sale_percent || ''}
                               onChange={handleDiscountPercentChange}
-                              placeholder="20"
+                              placeholder="Enter discount %"
                               style={{
                                 width: '100%',
                                 padding: '0.45rem 0.6rem',
@@ -718,7 +718,7 @@ function AdminProductsContent() {
                               name="flash_sale_price"
                               value={formFields.flash_sale_price || ''}
                               onChange={handleDiscountPriceChange}
-                              placeholder={formFields.price ? Math.round(parseFloat(formFields.price) * 0.8).toString() : '28000'}
+                              placeholder="Enter sale price"
                               style={{
                                 width: '100%',
                                 padding: '0.45rem 0.6rem',
