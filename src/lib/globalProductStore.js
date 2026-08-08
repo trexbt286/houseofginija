@@ -10,6 +10,32 @@
 import productsFallback from '@/data/local-products-fallback.json';
 import homepageFallback from '@/data/local-homepage-fallback.json';
 
+function persistStoreToDisk(store) {
+  try {
+    if (typeof window !== 'undefined') return;
+    const req = typeof __webpack_require__ === 'function' ? null : require;
+    const fs = req ? req('fs') : null;
+    const path = req ? req('path') : null;
+    if (!fs || !path) return;
+
+    const prodsFilePath = path.join(process.cwd(), 'src/data/local-products-fallback.json');
+    const homeFilePath = path.join(process.cwd(), 'src/data/local-homepage-fallback.json');
+
+    if (fs.existsSync(prodsFilePath)) {
+      const content = { products: store };
+      fs.writeFileSync(prodsFilePath, JSON.stringify(content, null, 2), 'utf8');
+    }
+
+    if (fs.existsSync(homeFilePath)) {
+      const homeContent = JSON.parse(fs.readFileSync(homeFilePath, 'utf8'));
+      homeContent.flashProducts = store.filter((p) => Boolean(p.flash_sale || p.on_sale));
+      fs.writeFileSync(homeFilePath, JSON.stringify(homeContent, null, 2), 'utf8');
+    }
+  } catch (err) {
+    // Silent catch for client bundle context
+  }
+}
+
 const STORE_KEY = '__houseOfGinijaProductStore';
 
 function buildInitialStore() {
@@ -49,6 +75,7 @@ export function getStore() {
  */
 export function setStore(products) {
   globalThis[STORE_KEY] = Array.isArray(products) ? products : [];
+  persistStoreToDisk(globalThis[STORE_KEY]);
 }
 
 /**
@@ -59,10 +86,11 @@ export function upsertProduct(product) {
   const store = getStore();
   const idx = store.findIndex((p) => String(p.id) === String(product.id) || p.slug === product.slug);
   if (idx !== -1) {
-    store[idx] = product;
+    store[idx] = { ...store[idx], ...product };
   } else {
     store.unshift(product);
   }
+  persistStoreToDisk(store);
 }
 
 /**
@@ -70,6 +98,7 @@ export function upsertProduct(product) {
  */
 export function removeProduct(id) {
   globalThis[STORE_KEY] = getStore().filter((p) => String(p.id) !== String(id));
+  persistStoreToDisk(globalThis[STORE_KEY]);
 }
 
 /**
