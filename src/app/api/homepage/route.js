@@ -105,10 +105,17 @@ export async function GET() {
     const jewellery_enabled =
       settingsResult.rows.find((row) => row.key === 'jewellery_enabled')?.value !== 'false';
 
-    const flashProducts = flashProductsResult.rows.map(mapProductData);
-    const newArrivalProducts = newArrivalsResult.rows.map(mapProductData);
-    const heavyDressProducts = heavyDressesResult.rows.map(mapProductData);
-    const allProductsMapped = allProductsResult.rows.map(mapProductData);
+    const dbFlashProducts = flashProductsResult.rows.map((row) => mapProductData(row, { isAdmin: false }));
+    const localFlashProducts = getLocalHomepageFallback().flashProducts || [];
+    const dbFlashSlugs = new Set(dbFlashProducts.map((p) => p.slug));
+    const flashProducts = [
+      ...dbFlashProducts,
+      ...localFlashProducts.filter((p) => !dbFlashSlugs.has(p.slug) && (p.flash_sale || p.on_sale))
+    ];
+
+    const newArrivalProducts = newArrivalsResult.rows.map((row) => mapProductData(row, { isAdmin: false }));
+    const heavyDressProducts = heavyDressesResult.rows.map((row) => mapProductData(row, { isAdmin: false }));
+    const allProductsMapped = allProductsResult.rows.map((row) => mapProductData(row, { isAdmin: false }));
 
     const isSuitsCategory = (slug) => slug === 'suits' || slug === 'unstitched';
     const isHeavyCategory = (slug) => ['indo-western', 'gowns', 'heavy-gown', 'shararas'].includes(slug);

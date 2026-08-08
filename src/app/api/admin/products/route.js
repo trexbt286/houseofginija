@@ -243,6 +243,9 @@ export async function POST(request) {
     await replaceProductTags(client, productId, [...(tagIds || []), ...(product.tags || [])]);
     const savedProduct = await fetchProductById(client, productId);
     await client.query('COMMIT');
+    if (savedProduct) {
+      upsertProduct(savedProduct);
+    }
 
     return NextResponse.json({ success: true, product: savedProduct });
   } catch (error) {
@@ -347,6 +350,9 @@ export async function PUT(request) {
     }
     const savedProduct = await fetchProductById(client, body.id);
     await client.query('COMMIT');
+    if (savedProduct) {
+      upsertProduct(savedProduct);
+    }
 
     return NextResponse.json({ success: true, product: savedProduct });
   } catch (error) {
