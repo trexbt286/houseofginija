@@ -66,6 +66,30 @@ export default function AdminFlashSalePage() {
     setPriceInputs(initialPrices);
 
     fetchData();
+
+    const handleCatalogUpdate = (e) => {
+      if (e.detail && e.detail.product) {
+        const updated = e.detail.product;
+        setProducts((prev) => {
+          const exists = prev.some((p) => String(p.id) === String(updated.id));
+          const next = exists
+            ? prev.map((p) => (String(p.id) === String(updated.id) ? updated : p))
+            : [updated, ...prev];
+          return next.sort((a, b) => a.name.localeCompare(b.name, undefined, { numeric: true, sensitivity: 'base' }));
+        });
+      } else {
+        fetchData();
+      }
+    };
+
+    if (typeof window !== 'undefined') {
+      window.addEventListener('catalog-updated', handleCatalogUpdate);
+    }
+    return () => {
+      if (typeof window !== 'undefined') {
+        window.removeEventListener('catalog-updated', handleCatalogUpdate);
+      }
+    };
   }, []);
 
   // Toggle global flash sale section on homepage
@@ -131,6 +155,9 @@ export default function AdminFlashSalePage() {
       const data = await res.json();
       if (res.ok) {
         setProducts(prev => prev.map(p => String(p.id) === String(product.id) ? data.product : p));
+        if (typeof window !== 'undefined') {
+          window.dispatchEvent(new CustomEvent('catalog-updated', { detail: { product: data.product } }));
+        }
         if (enableSale) {
           setSuccess(`"${product.name}" is now ON FLASH SALE for ₹${salePriceNum.toLocaleString('en-IN')}!`);
         } else {
@@ -192,6 +219,9 @@ export default function AdminFlashSalePage() {
       const data = await res.json();
       if (res.ok) {
         setProducts(prev => prev.map(p => String(p.id) === String(product.id) ? data.product : p));
+        if (typeof window !== 'undefined') {
+          window.dispatchEvent(new CustomEvent('catalog-updated', { detail: { product: data.product } }));
+        }
         setSuccess(`"${product.name}" added to Flash Sale at ₹${computedPrice.toLocaleString('en-IN')} (-${pct}%)!`);
         setIsAddModalOpen(false);
       } else {

@@ -116,6 +116,30 @@ function AdminProductsContent() {
 
   useEffect(() => {
     fetchProductsAndCollections();
+
+    const handleCatalogUpdate = (e) => {
+      if (e.detail && e.detail.product) {
+        const updated = e.detail.product;
+        setProducts((prev) => {
+          const exists = prev.some((p) => String(p.id) === String(updated.id));
+          const next = exists
+            ? prev.map((p) => (String(p.id) === String(updated.id) ? updated : p))
+            : [updated, ...prev];
+          return next.sort((a, b) => a.name.localeCompare(b.name, undefined, { numeric: true, sensitivity: 'base' }));
+        });
+      } else {
+        fetchProductsAndCollections();
+      }
+    };
+
+    if (typeof window !== 'undefined') {
+      window.addEventListener('catalog-updated', handleCatalogUpdate);
+    }
+    return () => {
+      if (typeof window !== 'undefined') {
+        window.removeEventListener('catalog-updated', handleCatalogUpdate);
+      }
+    };
   }, []);
 
   useEffect(() => {
@@ -498,6 +522,18 @@ function AdminProductsContent() {
       if (res.ok) {
         setSuccess(`Product "${formFields.name}" successfully saved.`);
         setIsFormOpen(false);
+        if (data.product) {
+          setProducts((prev) => {
+            const exists = prev.some((p) => String(p.id) === String(data.product.id));
+            const next = exists
+              ? prev.map((p) => (String(p.id) === String(data.product.id) ? data.product : p))
+              : [data.product, ...prev];
+            return next.sort((a, b) => a.name.localeCompare(b.name, undefined, { numeric: true, sensitivity: 'base' }));
+          });
+          if (typeof window !== 'undefined') {
+            window.dispatchEvent(new CustomEvent('catalog-updated', { detail: { product: data.product } }));
+          }
+        }
         fetchProductsAndCollections();
       } else {
         setError(data.error || 'Failed to save product.');
