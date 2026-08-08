@@ -439,6 +439,9 @@ function AdminProductsContent() {
     setImages([]);
     setVariants([]);
     setIsFormOpen(true);
+    if (typeof window !== 'undefined') {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
   };
 
   function openEditForm(product) {
@@ -469,6 +472,9 @@ function AdminProductsContent() {
     setImages(product.images || []);
     setVariants(product.variants || []);
     setIsFormOpen(true);
+    if (typeof window !== 'undefined') {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
   };
 
   const handleFormSubmit = async (e) => {
