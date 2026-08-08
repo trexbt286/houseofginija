@@ -29,6 +29,20 @@ function AdminProductsContent() {
 
   // Form states
   const [isFormOpen, setIsFormOpen] = useState(false);
+
+  // Disable background scrolling when modal is open
+  useEffect(() => {
+    if (isFormOpen && typeof document !== 'undefined') {
+      document.body.style.overflow = 'hidden';
+    } else if (typeof document !== 'undefined') {
+      document.body.style.overflow = 'unset';
+    }
+    return () => {
+      if (typeof document !== 'undefined') {
+        document.body.style.overflow = 'unset';
+      }
+    };
+  }, [isFormOpen]);
   const [editingId, setEditingId] = useState(null); // Null means creating
   const [formFields, setFormFields] = useState({
     name: '',

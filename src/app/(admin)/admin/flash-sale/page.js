@@ -22,6 +22,20 @@ export default function AdminFlashSalePage() {
 
   // Quick Modal State
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+
+  // Disable background scrolling when modal is open
+  useEffect(() => {
+    if (isAddModalOpen && typeof document !== 'undefined') {
+      document.body.style.overflow = 'hidden';
+    } else if (typeof document !== 'undefined') {
+      document.body.style.overflow = 'unset';
+    }
+    return () => {
+      if (typeof document !== 'undefined') {
+        document.body.style.overflow = 'unset';
+      }
+    };
+  }, [isAddModalOpen]);
   const [selectedProductId, setSelectedProductId] = useState('');
   const [discountPercent, setDiscountPercent] = useState('');
   const [isAdding, setIsAdding] = useState(false);
