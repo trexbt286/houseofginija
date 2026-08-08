@@ -3,13 +3,15 @@
 import { useState, useEffect } from 'react';
 import { useStore } from '@/context/StoreContext';
 import AdminSidebar from '@/components/AdminSidebar';
+import productsFallback from '@/data/local-products-fallback.json';
+import homepageFallback from '@/data/local-homepage-fallback.json';
 
 export default function AdminFlashSalePage() {
   const { logout } = useStore();
-  const [products, setProducts] = useState([]);
-  const [collections, setCollections] = useState([]);
-  const [flashSaleEnabled, setFlashSaleEnabled] = useState(false);
-  const [loading, setLoading] = useState(true);
+  const [products, setProducts] = useState(productsFallback.products || []);
+  const [collections, setCollections] = useState(homepageFallback.collections || []);
+  const [flashSaleEnabled, setFlashSaleEnabled] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [savingSettings, setSavingSettings] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
@@ -26,7 +28,6 @@ export default function AdminFlashSalePage() {
   const [savingId, setSavingId] = useState(null);
 
   const fetchData = async () => {
-    setLoading(true);
     setError('');
     try {
       const prodRes = await fetch('/api/admin/products');
