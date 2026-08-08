@@ -1214,7 +1214,7 @@ const dashboardLayoutStyle = {
 
 const mainPanelStyle = {
   padding: '3rem',
-  overflowY: 'auto',
+  minHeight: '100vh',
 };
 
 const headerRightActionsStyle = {
