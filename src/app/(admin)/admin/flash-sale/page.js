@@ -11,21 +11,24 @@ export default function AdminFlashSalePage() {
   const [products, setProducts] = useState(productsFallback.products || []);
   const [collections, setCollections] = useState(homepageFallback.collections || []);
   const [flashSaleEnabled, setFlashSaleEnabled] = useState(true);
-  const [loading, setLoading] = useState(false);
   const [savingSettings, setSavingSettings] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
 
-  // Add Product Modal states
+  // Table Filters
+  const [searchQuery, setSearchQuery] = useState('');
+  const [filterCategory, setFilterCategory] = useState('ALL');
+
+  // Quick Modal State
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [selectedProductId, setSelectedProductId] = useState('');
-  const [discountType, setDiscountType] = useState('PERCENTAGE'); // 'PERCENTAGE' | 'PRICE'
-  const [discountValue, setDiscountValue] = useState('20');
+  const [discountPercent, setDiscountPercent] = useState('20');
   const [isAdding, setIsAdding] = useState(false);
   const [addError, setAddError] = useState('');
 
-  // Edit / Save row state
+  // Saving states per product ID
   const [savingId, setSavingId] = useState(null);
+  const [priceInputs, setPriceInputs] = useState({});
 
   const fetchData = async () => {
     setError('');
@@ -35,6 +38,13 @@ export default function AdminFlashSalePage() {
         const prodData = await prodRes.json();
         setProducts(prodData.products || []);
         setCollections(prodData.collections || []);
+        
+        // Initialize price inputs
+        const initialPrices = {};
+        (prodData.products || []).forEach(p => {
+          initialPrices[p.id] = p.flash_sale_price ? p.flash_sale_price.toString() : Math.round((parseFloat(p.price) || 0) * 0.8).toString();
+        });
+        setPriceInputs(initialPrices);
       }
 
       const settingsRes = await fetch('/api/admin/settings');
@@ -44,16 +54,21 @@ export default function AdminFlashSalePage() {
       }
     } catch (err) {
       console.error(err);
-      setError('Error loading catalog data.');
-    } finally {
-      setLoading(false);
     }
   };
 
   useEffect(() => {
+    // Initialize price inputs for fallback data
+    const initialPrices = {};
+    (productsFallback.products || []).forEach(p => {
+      initialPrices[p.id] = p.flash_sale_price ? p.flash_sale_price.toString() : Math.round((parseFloat(p.price) || 0) * 0.8).toString();
+    });
+    setPriceInputs(initialPrices);
+
     fetchData();
   }, []);
 
+  // Toggle global flash sale section on homepage
   const handleGlobalToggle = async () => {
     setSavingSettings(true);
     setError('');
@@ -71,21 +86,82 @@ export default function AdminFlashSalePage() {
       });
       if (res.ok) {
         setFlashSaleEnabled(newValue);
-        setSuccess(`Flash Sale section is now ${newValue ? 'ENABLED' : 'DISABLED'} on the store.`);
+        setSuccess(`Flash Sale section is now ${newValue ? 'ENABLED' : 'DISABLED'} on your store homepage.`);
       } else {
         const data = await res.json();
         setError(data.error || 'Failed to save global setting.');
       }
     } catch (err) {
       console.error(err);
-      setError('Network request error.');
+      setError('Network error.');
     } finally {
       setSavingSettings(false);
     }
   };
 
-  // Add Product to Flash Sale
-  const handleAddProductToFlashSale = async (e) => {
+  // 1-Click Toggle Flash Sale ON/OFF for any product
+  const handleToggleProductFlashSale = async (product, enableSale) => {
+    setSavingId(product.id);
+    setError('');
+    setSuccess('');
+
+    const origPrice = parseFloat(product.price) || 0;
+    let salePriceNum = null;
+
+    if (enableSale) {
+      const enteredPrice = parseFloat(priceInputs[product.id]);
+      if (!isNaN(enteredPrice) && enteredPrice > 0 && enteredPrice < origPrice) {
+        salePriceNum = enteredPrice;
+      } else {
+        salePriceNum = Math.round(origPrice * 0.8); // 20% off default
+      }
+    }
+
+    try {
+      const res = await fetch('/api/admin/products', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          ...product,
+          flash_sale: enableSale,
+          flash_sale_price: salePriceNum
+        })
+      });
+
+      const data = await res.json();
+      if (res.ok) {
+        setProducts(prev => prev.map(p => p.id === product.id ? data.product : p));
+        if (enableSale) {
+          setSuccess(`"${product.name}" is now ON FLASH SALE for ₹${salePriceNum.toLocaleString('en-IN')}!`);
+        } else {
+          setSuccess(`"${product.name}" removed from Flash Sale.`);
+        }
+      } else {
+        setError(data.error || 'Failed to update product.');
+      }
+    } catch (err) {
+      console.error(err);
+      setError('Network request failed.');
+    } finally {
+      setSavingId(null);
+    }
+  };
+
+  // Save new price input for a product
+  const handleSavePriceChange = async (product) => {
+    const origPrice = parseFloat(product.price) || 0;
+    const newPrice = parseFloat(priceInputs[product.id]);
+
+    if (isNaN(newPrice) || newPrice <= 0 || newPrice >= origPrice) {
+      setError(`Flash sale price for "${product.name}" must be between ₹1 and ₹${(origPrice - 1).toLocaleString('en-IN')}.`);
+      return;
+    }
+
+    handleToggleProductFlashSale(product, true);
+  };
+
+  // Quick Add via Modal
+  const handleModalAdd = async (e) => {
     e.preventDefault();
     setAddError('');
 
@@ -95,28 +171,11 @@ export default function AdminFlashSalePage() {
     }
 
     const product = products.find(p => p.id.toString() === selectedProductId.toString());
-    if (!product) {
-      setAddError('Selected product not found.');
-      return;
-    }
+    if (!product) return;
 
     const origPrice = parseFloat(product.price) || 0;
-    let computedPrice = 0;
-
-    if (discountType === 'PERCENTAGE') {
-      const pct = parseFloat(discountValue);
-      if (isNaN(pct) || pct <= 0 || pct >= 100) {
-        setAddError('Discount percentage must be between 1% and 99%.');
-        return;
-      }
-      computedPrice = Math.round(origPrice * (1 - pct / 100));
-    } else {
-      computedPrice = parseFloat(discountValue);
-      if (isNaN(computedPrice) || computedPrice <= 0 || computedPrice >= origPrice) {
-        setAddError(`Flash sale price must be greater than ₹0 and less than ₹${origPrice}.`);
-        return;
-      }
-    }
+    const pct = parseFloat(discountPercent) || 20;
+    const computedPrice = Math.round(origPrice * (1 - pct / 100));
 
     setIsAdding(true);
     try {
@@ -133,12 +192,10 @@ export default function AdminFlashSalePage() {
       const data = await res.json();
       if (res.ok) {
         setProducts(prev => prev.map(p => p.id === product.id ? data.product : p));
-        setSuccess(`"${product.name}" added to Flash Sale at ₹${computedPrice.toLocaleString('en-IN')}!`);
+        setSuccess(`"${product.name}" added to Flash Sale at ₹${computedPrice.toLocaleString('en-IN')} (-${pct}%)!`);
         setIsAddModalOpen(false);
-        setSelectedProductId('');
-        setDiscountValue('20');
       } else {
-        setAddError(data.error || 'Failed to update product.');
+        setAddError(data.error || 'Failed to add product.');
       }
     } catch (err) {
       console.error(err);
@@ -148,83 +205,14 @@ export default function AdminFlashSalePage() {
     }
   };
 
-  // Remove Product from Flash Sale
-  const handleRemoveFromFlashSale = async (product) => {
-    setSavingId(product.id);
-    setError('');
-    setSuccess('');
-    try {
-      const res = await fetch('/api/admin/products', {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          ...product,
-          flash_sale: false,
-          flash_sale_price: null
-        })
-      });
-
-      const data = await res.json();
-      if (res.ok) {
-        setProducts(prev => prev.map(p => p.id === product.id ? data.product : p));
-        setSuccess(`"${product.name}" removed from Flash Sale.`);
-      } else {
-        setError(data.error || 'Failed to update product.');
-      }
-    } catch (err) {
-      console.error(err);
-      setError('Network request error.');
-    } finally {
-      setSavingId(null);
-    }
-  };
-
-  // Quick Update Sale Price for active item
-  const handleUpdatePrice = async (product, newPriceStr) => {
-    const newPrice = parseFloat(newPriceStr);
-    const origPrice = parseFloat(product.price) || 0;
-    if (isNaN(newPrice) || newPrice <= 0 || newPrice >= origPrice) {
-      setError(`Flash sale price must be greater than ₹0 and less than ₹${origPrice}.`);
-      return;
-    }
-
-    setSavingId(product.id);
-    setError('');
-    setSuccess('');
-    try {
-      const res = await fetch('/api/admin/products', {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          ...product,
-          flash_sale: true,
-          flash_sale_price: newPrice
-        })
-      });
-
-      const data = await res.json();
-      if (res.ok) {
-        setProducts(prev => prev.map(p => p.id === product.id ? data.product : p));
-        setSuccess(`Updated Flash Sale price for "${product.name}" to ₹${newPrice.toLocaleString('en-IN')}.`);
-      } else {
-        setError(data.error || 'Failed to update price.');
-      }
-    } catch (err) {
-      console.error(err);
-      setError('Network request error.');
-    } finally {
-      setSavingId(null);
-    }
-  };
-
   const activeFlashProducts = products.filter(p => !!p.flash_sale);
-  const eligibleProducts = products.filter(p => !p.flash_sale);
+  const nonFlashProducts = products.filter(p => !p.flash_sale);
 
-  const calculateDiscount = (original, discountVal) => {
+  const calculateDiscountPct = (original, saleVal) => {
     const orig = parseFloat(original);
-    const disc = parseFloat(discountVal);
-    if (isNaN(orig) || isNaN(disc) || orig <= 0 || disc <= 0 || disc >= orig) return null;
-    const pct = Math.round(((orig - disc) / orig) * 100);
+    const sale = parseFloat(saleVal);
+    if (isNaN(orig) || isNaN(sale) || orig <= 0 || sale <= 0 || sale >= orig) return null;
+    const pct = Math.round(((orig - sale) / orig) * 100);
     return `-${pct}%`;
   };
 
@@ -237,23 +225,23 @@ export default function AdminFlashSalePage() {
         <header style={headerBarStyle}>
           <div>
             <h1 style={pageTitleStyle}>Flash Sale Manager</h1>
-            <p style={pageSubStyle}>Promotions, discounts, and section management</p>
+            <p style={pageSubStyle}>Easily put any product on Flash Sale with custom discount prices</p>
           </div>
           <button onClick={logout} style={logoutBtnStyle}>
             Sign Out
           </button>
         </header>
 
-        {/* Alerts */}
+        {/* Global Notifications */}
         {error && <div style={errorBannerStyle}>{error}</div>}
         {success && <div style={successBannerStyle}>{success}</div>}
 
-        {/* Global settings panel */}
+        {/* SECTION 1: GLOBAL STOREFRONT TOGGLE */}
         <section style={sectionCardStyle}>
           <div style={globalRowStyle}>
             <div>
-              <h2 style={sectionTitleStyle}>Global Configuration</h2>
-              <p style={sectionSubStyle}>Enable or disable the Flash Sale section on the storefront.</p>
+              <h2 style={sectionTitleStyle}>Store Homepage Banner Status</h2>
+              <p style={sectionSubStyle}>Turn the entire Flash Sale section ON or OFF on your website homepage.</p>
             </div>
             <div>
               <button 
@@ -265,27 +253,25 @@ export default function AdminFlashSalePage() {
                   color: '#FFFFFF'
                 }}
               >
-                {savingSettings ? 'Saving...' : (flashSaleEnabled ? 'DISABLE FLASH SALE' : 'ENABLE FLASH SALE')}
+                {savingSettings ? 'Saving...' : (flashSaleEnabled ? 'FLASH SALE SECTION: ACTIVE' : 'FLASH SALE SECTION: HIDDEN')}
               </button>
             </div>
           </div>
         </section>
 
-        {/* ACTIVE FLASH SALE PRODUCTS SECTION */}
+        {/* SECTION 2: ACTIVE FLASH SALE PRODUCTS SUMMARY */}
         <section style={sectionCardStyle}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem', marginBottom: '1.5rem' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem', marginBottom: '1.2rem' }}>
             <div>
               <h2 style={sectionTitleStyle}>Active Flash Sale Items ({activeFlashProducts.length})</h2>
-              <p style={{ ...sectionSubStyle, marginBottom: 0 }}>Products currently featured in the flash sale section.</p>
+              <p style={{ ...sectionSubStyle, marginBottom: 0 }}>These items currently feature discounted prices on your store.</p>
             </div>
-            
+
             <button
               onClick={() => {
                 setIsAddModalOpen(true);
                 setAddError('');
-                if (eligibleProducts.length > 0) {
-                  setSelectedProductId(eligibleProducts[0].id);
-                }
+                if (nonFlashProducts.length > 0) setSelectedProductId(nonFlashProducts[0].id);
               }}
               style={{
                 ...actionBtnStyle,
@@ -299,76 +285,43 @@ export default function AdminFlashSalePage() {
           </div>
 
           {activeFlashProducts.length === 0 ? (
-            <div style={{ textAlign: 'center', padding: '3rem 1rem', color: 'rgba(0, 0, 0, 0.45)', backgroundColor: '#FAF5F6', borderRadius: '12px', border: '1px dashed rgba(139, 119, 137, 0.2)' }}>
-              <p style={{ fontSize: '1rem', fontWeight: '600', marginBottom: '0.5rem', color: '#000' }}>No active flash sale products.</p>
-              <p style={{ fontSize: '0.85rem', marginBottom: '1.2rem' }}>Click "+ ADD PRODUCT TO FLASH SALE" to select and discount products.</p>
-              <button
-                onClick={() => {
-                  setIsAddModalOpen(true);
-                  if (eligibleProducts.length > 0) setSelectedProductId(eligibleProducts[0].id);
-                }}
-                style={{ ...actionBtnStyle, backgroundColor: '#D98E9B', color: '#FFF' }}
-              >
-                + Add First Product
-              </button>
+            <div style={{ textAlign: 'center', padding: '2.5rem 1rem', backgroundColor: '#FAF5F6', borderRadius: '12px', border: '1px dashed rgba(139, 119, 137, 0.2)' }}>
+              <p style={{ fontSize: '0.95rem', fontWeight: '600', color: '#000', marginBottom: '0.4rem' }}>No products are currently on Flash Sale.</p>
+              <p style={{ fontSize: '0.85rem', color: 'rgba(0,0,0,0.5)', marginBottom: '1rem' }}>Turn ON the Flash Sale switch for any product in the catalog table below!</p>
             </div>
           ) : (
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))', gap: '1.2rem' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '1rem' }}>
               {activeFlashProducts.map(product => {
                 const origPrice = parseFloat(product.price) || 0;
-                const flashPrice = parseFloat(product.flash_sale_price) || Math.round(origPrice * 0.8);
-                const discountText = calculateDiscount(origPrice, flashPrice);
+                const salePrice = parseFloat(product.flash_sale_price) || Math.round(origPrice * 0.8);
+                const discountTag = calculateDiscountPct(origPrice, salePrice);
 
                 return (
-                  <div key={product.id} style={productCardStyle}>
-                    <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
+                  <div key={product.id} style={activeCardStyle}>
+                    <div style={{ display: 'flex', gap: '0.9rem', alignItems: 'center' }}>
                       <img 
                         src={product.images?.[0] || '/icon.png'} 
                         alt={product.name} 
-                        style={{ width: '64px', height: '80px', objectFit: 'cover', borderRadius: '8px', border: '1px solid rgba(0,0,0,0.06)' }} 
+                        style={{ width: '56px', height: '70px', objectFit: 'cover', borderRadius: '8px' }} 
                       />
                       <div style={{ flex: 1, minWidth: 0 }}>
-                        <h4 style={{ fontSize: '0.95rem', fontWeight: '600', color: '#000', marginBottom: '0.2rem', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                        <h4 style={{ fontSize: '0.9rem', fontWeight: '600', color: '#000', marginBottom: '0.2rem', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
                           {product.name}
                         </h4>
-                        <p style={{ fontSize: '0.75rem', color: 'rgba(0,0,0,0.5)', marginBottom: '0.4rem' }}>
-                          {product.collection_name || 'Collection Item'}
-                        </p>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
-                          <span style={{ fontSize: '0.8rem', color: 'rgba(0,0,0,0.4)', textDecoration: 'line-through' }}>
-                            ₹{origPrice.toLocaleString('en-IN')}
-                          </span>
-                          <span style={{ fontSize: '1rem', fontWeight: '700', color: '#B65C73' }}>
-                            ₹{flashPrice.toLocaleString('en-IN')}
-                          </span>
-                          {discountText && (
-                            <span style={badgeStyle}>{discountText}</span>
-                          )}
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                          <span style={{ fontSize: '0.75rem', color: 'rgba(0,0,0,0.4)', textDecoration: 'line-through' }}>₹{origPrice.toLocaleString('en-IN')}</span>
+                          <span style={{ fontSize: '0.95rem', fontWeight: '700', color: '#B65C73' }}>₹{salePrice.toLocaleString('en-IN')}</span>
+                          {discountTag && <span style={badgeStyle}>{discountTag}</span>}
                         </div>
                       </div>
                     </div>
-
-                    <div style={{ display: 'flex', gap: '0.5rem', marginTop: '1rem', paddingTop: '0.8rem', borderTop: '1px solid rgba(139, 119, 137, 0.1)' }}>
-                      <button
-                        onClick={() => {
-                          const newPrice = prompt(`Enter new Flash Sale Price (₹) for "${product.name}" (Original: ₹${origPrice}):`, flashPrice);
-                          if (newPrice !== null && newPrice !== '') {
-                            handleUpdatePrice(product, newPrice);
-                          }
-                        }}
-                        disabled={savingId === product.id}
-                        style={smallBtnOutlineStyle}
-                      >
-                        {savingId === product.id ? 'Saving...' : 'Edit Price'}
-                      </button>
-                      <button
-                        onClick={() => handleRemoveFromFlashSale(product)}
-                        disabled={savingId === product.id}
-                        style={smallBtnDangerStyle}
-                      >
-                        {savingId === product.id ? 'Removing...' : 'Remove'}
-                      </button>
-                    </div>
+                    <button
+                      onClick={() => handleToggleProductFlashSale(product, false)}
+                      disabled={savingId === product.id}
+                      style={removeBtnStyle}
+                    >
+                      {savingId === product.id ? 'Updating...' : 'Remove from Sale ✕'}
+                    </button>
                   </div>
                 );
               })}
@@ -376,13 +329,174 @@ export default function AdminFlashSalePage() {
           )}
         </section>
 
-        {/* MODAL: ADD PRODUCT TO FLASH SALE */}
+        {/* SECTION 3: ALL CATALOG PRODUCTS TABLE WITH ON/OFF SWITCHES */}
+        <section style={sectionCardStyle}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem', marginBottom: '1.5rem' }}>
+            <div>
+              <h2 style={sectionTitleStyle}>All Catalog Products</h2>
+              <p style={{ ...sectionSubStyle, marginBottom: 0 }}>Flip the Flash Sale switch ON for any product and enter its discounted price.</p>
+            </div>
+
+            <div style={{ display: 'flex', gap: '0.8rem', alignItems: 'center', flexWrap: 'wrap' }}>
+              <input
+                type="text"
+                placeholder="Search products by name..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                style={{
+                  padding: '0.55rem 1rem',
+                  borderRadius: '20px',
+                  border: '1px solid rgba(139, 119, 137, 0.25)',
+                  fontSize: '0.8rem',
+                  outline: 'none',
+                  minWidth: '220px'
+                }}
+              />
+              <select
+                value={filterCategory}
+                onChange={(e) => setFilterCategory(e.target.value)}
+                style={{
+                  padding: '0.55rem 1rem',
+                  borderRadius: '20px',
+                  border: '1px solid rgba(139, 119, 137, 0.25)',
+                  fontSize: '0.8rem',
+                  backgroundColor: '#FFFFFF',
+                  outline: 'none',
+                  cursor: 'pointer'
+                }}
+              >
+                <option value="ALL">All Categories</option>
+                <option value="FLASH_ONLY">On Flash Sale Only</option>
+                {collections.map(c => (
+                  <option key={c.id} value={c.slug || c.name}>{c.name}</option>
+                ))}
+              </select>
+            </div>
+          </div>
+
+          <div style={tableWrapperStyle}>
+            <table style={tableStyle}>
+              <thead>
+                <tr>
+                  <th style={thStyle}>Product</th>
+                  <th style={thStyle} className="hide-on-mobile">Category</th>
+                  <th style={thStyle} className="hide-on-mobile">Original Price</th>
+                  <th style={{ ...thStyle, textAlign: 'center' }}>Flash Sale Status</th>
+                  <th style={thStyle}>Sale Price (₹)</th>
+                  <th style={thStyle} className="hide-on-mobile">Discount Badge</th>
+                  <th style={{ ...thStyle, textAlign: 'center' }}>Save</th>
+                </tr>
+              </thead>
+              <tbody>
+                {products.filter(product => {
+                  const matchesSearch = !searchQuery || product.name.toLowerCase().includes(searchQuery.toLowerCase());
+                  let matchesCat = true;
+                  if (filterCategory === 'FLASH_ONLY') {
+                    matchesCat = !!product.flash_sale;
+                  } else if (filterCategory !== 'ALL') {
+                    matchesCat = (product.collection_slug === filterCategory || product.collection_name === filterCategory);
+                  }
+                  return matchesSearch && matchesCat;
+                }).map(product => {
+                  const isFlashSale = !!product.flash_sale;
+                  const origPrice = parseFloat(product.price) || 0;
+                  const currentInputPrice = priceInputs[product.id] || '';
+                  const discountTag = isFlashSale ? calculateDiscountPct(origPrice, product.flash_sale_price) : calculateDiscountPct(origPrice, currentInputPrice);
+
+                  return (
+                    <tr key={product.id} style={{ ...trStyle, backgroundColor: isFlashSale ? '#FFF9FA' : 'transparent' }}>
+                      <td style={tdStyle}>
+                        <div style={productInfoStyle}>
+                          <img 
+                            src={product.images?.[0] || '/icon.png'} 
+                            alt={product.name} 
+                            style={productImgStyle} 
+                            loading="lazy"
+                          />
+                          <div>
+                            <span style={productNameStyle}>{product.name}</span>
+                            {isFlashSale && <span style={activeTagStyle}>ACTIVE ON SALE</span>}
+                          </div>
+                        </div>
+                      </td>
+                      <td style={tdStyle} className="hide-on-mobile">{product.collection_name || 'Unassigned'}</td>
+                      <td style={{ ...tdStyle, fontWeight: '600' }} className="hide-on-mobile">₹{origPrice.toLocaleString('en-IN')}</td>
+                      
+                      {/* 1-CLICK TOGGLE SWITCH */}
+                      <td style={{ ...tdStyle, textAlign: 'center' }}>
+                        <button
+                          onClick={() => handleToggleProductFlashSale(product, !isFlashSale)}
+                          disabled={savingId === product.id}
+                          style={{
+                            padding: '0.4rem 0.9rem',
+                            borderRadius: '20px',
+                            border: 'none',
+                            fontSize: '0.75rem',
+                            fontWeight: '700',
+                            cursor: 'pointer',
+                            transition: 'all 0.2s ease',
+                            backgroundColor: isFlashSale ? '#B65C73' : 'rgba(139, 119, 137, 0.15)',
+                            color: isFlashSale ? '#FFFFFF' : 'rgba(0,0,0,0.6)'
+                          }}
+                        >
+                          {savingId === product.id ? 'Updating...' : (isFlashSale ? 'ON (ACTIVE)' : 'OFF')}
+                        </button>
+                      </td>
+
+                      {/* DISCOUNT PRICE INPUT */}
+                      <td style={tdStyle}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+                          <span style={{ fontSize: '0.85rem', color: 'rgba(0,0,0,0.5)' }}>₹</span>
+                          <input 
+                            type="number"
+                            placeholder="Sale price"
+                            value={currentInputPrice}
+                            onChange={(e) => {
+                              const val = e.target.value;
+                              setPriceInputs(prev => ({ ...prev, [product.id]: val }));
+                            }}
+                            style={{
+                              ...priceInputStyle,
+                              borderColor: isFlashSale ? '#D98E9B' : 'rgba(139, 119, 137, 0.2)',
+                              fontWeight: isFlashSale ? '700' : '400',
+                              color: isFlashSale ? '#B65C73' : '#000'
+                            }}
+                          />
+                        </div>
+                      </td>
+
+                      <td style={tdStyle} className="hide-on-mobile">
+                        {discountTag ? (
+                          <span style={badgeStyle}>{discountTag}</span>
+                        ) : (
+                          <span style={{ color: 'rgba(0, 0, 0, 0.3)', fontSize: '0.8rem' }}>—</span>
+                        )}
+                      </td>
+
+                      <td style={{ ...tdStyle, textAlign: 'center' }}>
+                        <button
+                          onClick={() => handleSavePriceChange(product)}
+                          disabled={savingId === product.id}
+                          style={saveBtnStyle}
+                        >
+                          {savingId === product.id ? 'Saving...' : 'Save Price'}
+                        </button>
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        {/* MODAL: QUICK ADD PRODUCT TO FLASH SALE */}
         {isAddModalOpen && (
           <div style={modalOverlayStyle} onClick={() => setIsAddModalOpen(false)}>
             <div style={modalContentStyle} onClick={(e) => e.stopPropagation()}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
                 <h3 style={{ fontFamily: 'var(--font-serif)', fontSize: '1.4rem', fontWeight: '600', color: '#000' }}>
-                  Add Product to Flash Sale
+                  Put Product on Flash Sale
                 </h3>
                 <button 
                   onClick={() => setIsAddModalOpen(false)}
@@ -394,7 +508,7 @@ export default function AdminFlashSalePage() {
 
               {addError && <div style={{ ...errorBannerStyle, marginBottom: '1rem' }}>{addError}</div>}
 
-              <form onSubmit={handleAddProductToFlashSale}>
+              <form onSubmit={handleModalAdd}>
                 <div style={{ marginBottom: '1.2rem' }}>
                   <label style={labelStyle}>Select Product</label>
                   <select
@@ -403,10 +517,10 @@ export default function AdminFlashSalePage() {
                     style={inputSelectStyle}
                     required
                   >
-                    {eligibleProducts.length === 0 ? (
-                      <option value="">All catalog products are already on flash sale!</option>
+                    {nonFlashProducts.length === 0 ? (
+                      <option value="">All products are already on flash sale!</option>
                     ) : (
-                      eligibleProducts.map(p => (
+                      nonFlashProducts.map(p => (
                         <option key={p.id} value={p.id}>
                           {p.name} — ₹{parseFloat(p.price).toLocaleString('en-IN')}
                         </option>
@@ -416,63 +530,26 @@ export default function AdminFlashSalePage() {
                 </div>
 
                 <div style={{ marginBottom: '1.2rem' }}>
-                  <label style={labelStyle}>Set Discount Method</label>
-                  <div style={{ display: 'flex', gap: '0.8rem', marginBottom: '0.8rem' }}>
-                    <button
-                      type="button"
-                      onClick={() => setDiscountType('PERCENTAGE')}
-                      style={{
-                        ...toggleBtnStyle,
-                        backgroundColor: discountType === 'PERCENTAGE' ? '#D98E9B' : '#F5E6E9',
-                        color: discountType === 'PERCENTAGE' ? '#FFFFFF' : '#000000'
-                      }}
-                    >
-                      Discount % Off
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => setDiscountType('PRICE')}
-                      style={{
-                        ...toggleBtnStyle,
-                        backgroundColor: discountType === 'PRICE' ? '#D98E9B' : '#F5E6E9',
-                        color: discountType === 'PRICE' ? '#FFFFFF' : '#000000'
-                      }}
-                    >
-                      Exact Sale Price (₹)
-                    </button>
+                  <label style={labelStyle}>Discount Percentage Off</label>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                    <input
+                      type="number"
+                      placeholder="e.g. 20"
+                      min="1"
+                      max="99"
+                      value={discountPercent}
+                      onChange={(e) => setDiscountPercent(e.target.value)}
+                      style={inputSelectStyle}
+                      required
+                    />
+                    <span style={{ fontSize: '1rem', fontWeight: '700', color: '#B65C73' }}>%</span>
                   </div>
-
-                  {discountType === 'PERCENTAGE' ? (
-                    <div>
-                      <input
-                        type="number"
-                        placeholder="e.g. 20"
-                        min="1"
-                        max="99"
-                        value={discountValue}
-                        onChange={(e) => setDiscountValue(e.target.value)}
-                        style={inputSelectStyle}
-                        required
-                      />
-                      {selectedProductId && (
-                        <p style={{ fontSize: '0.75rem', color: 'rgba(0,0,0,0.5)', marginTop: '0.4rem' }}>
-                          Calculated Sale Price: <strong style={{ color: '#B65C73' }}>₹{
-                            Math.round((parseFloat(products.find(p => p.id.toString() === selectedProductId.toString())?.price || 0)) * (1 - (parseFloat(discountValue) || 0) / 100)).toLocaleString('en-IN')
-                          }</strong>
-                        </p>
-                      )}
-                    </div>
-                  ) : (
-                    <div>
-                      <input
-                        type="number"
-                        placeholder="e.g. 25000"
-                        value={discountValue}
-                        onChange={(e) => setDiscountValue(e.target.value)}
-                        style={inputSelectStyle}
-                        required
-                      />
-                    </div>
+                  {selectedProductId && (
+                    <p style={{ fontSize: '0.78rem', color: 'rgba(0,0,0,0.5)', marginTop: '0.5rem' }}>
+                      Calculated Sale Price: <strong style={{ color: '#B65C73' }}>₹{
+                        Math.round((parseFloat(products.find(p => p.id.toString() === selectedProductId.toString())?.price || 0)) * (1 - (parseFloat(discountPercent) || 0) / 100)).toLocaleString('en-IN')
+                      }</strong>
+                    </p>
                   )}
                 </div>
 
@@ -486,10 +563,10 @@ export default function AdminFlashSalePage() {
                   </button>
                   <button
                     type="submit"
-                    disabled={isAdding || eligibleProducts.length === 0}
+                    disabled={isAdding || nonFlashProducts.length === 0}
                     style={{ ...actionBtnStyle, backgroundColor: '#D98E9B', color: '#FFF' }}
                   >
-                    {isAdding ? 'Adding...' : 'Add to Flash Sale'}
+                    {isAdding ? 'Adding...' : 'Put Product On Sale'}
                   </button>
                 </div>
               </form>
@@ -610,14 +687,15 @@ const successBannerStyle = {
   fontWeight: '600',
 };
 
-const productCardStyle = {
+const activeCardStyle = {
   backgroundColor: '#FFF7F8',
   borderRadius: '12px',
   padding: '1rem',
   border: '1px solid #F4E1E5',
   display: 'flex',
   flexDirection: 'column',
-  justify: 'space-between',
+  justifyContent: 'space-between',
+  gap: '0.8rem',
 };
 
 const badgeStyle = {
@@ -630,27 +708,96 @@ const badgeStyle = {
   border: '1px solid rgba(182, 92, 115, 0.2)',
 };
 
-const smallBtnOutlineStyle = {
-  flex: 1,
-  padding: '0.45rem 0.8rem',
-  borderRadius: '20px',
-  border: '1px solid rgba(139, 119, 137, 0.3)',
-  backgroundColor: '#FFFFFF',
-  color: '#000000',
-  fontSize: '0.75rem',
-  fontWeight: '600',
-  cursor: 'pointer',
+const activeTagStyle = {
+  display: 'inline-block',
+  backgroundColor: '#FDF2F4',
+  color: '#B65C73',
+  fontSize: '0.65rem',
+  fontWeight: '700',
+  padding: '0.15rem 0.4rem',
+  borderRadius: '4px',
+  marginTop: '0.2rem',
 };
 
-const smallBtnDangerStyle = {
-  flex: 1,
-  padding: '0.45rem 0.8rem',
+const removeBtnStyle = {
+  width: '100%',
+  padding: '0.45rem',
   borderRadius: '20px',
   border: '1px solid #F8B4B4',
   backgroundColor: '#FDF2F2',
   color: '#C81E1E',
   fontSize: '0.75rem',
   fontWeight: '600',
+  cursor: 'pointer',
+};
+
+const tableWrapperStyle = {
+  overflowX: 'auto',
+};
+
+const tableStyle = {
+  width: '100%',
+  borderCollapse: 'collapse',
+  textAlign: 'left',
+};
+
+const thStyle = {
+  padding: '0.8rem 1rem',
+  fontSize: '0.75rem',
+  fontWeight: '700',
+  color: 'rgba(0, 0, 0, 0.5)',
+  textTransform: 'uppercase',
+  letterSpacing: '0.08em',
+  borderBottom: '1px solid rgba(139, 119, 137, 0.12)',
+};
+
+const trStyle = {
+  borderBottom: '1px solid rgba(139, 119, 137, 0.08)',
+  transition: 'background-color 0.2s ease',
+};
+
+const tdStyle = {
+  padding: '1rem',
+  fontSize: '0.85rem',
+  verticalAlign: 'middle',
+};
+
+const productInfoStyle = {
+  display: 'flex',
+  alignItems: 'center',
+  gap: '0.8rem',
+};
+
+const productImgStyle = {
+  width: '44px',
+  height: '56px',
+  objectFit: 'cover',
+  borderRadius: '6px',
+};
+
+const productNameStyle = {
+  fontWeight: '600',
+  color: '#000000',
+  display: 'block',
+};
+
+const priceInputStyle = {
+  width: '110px',
+  padding: '0.45rem 0.6rem',
+  borderRadius: '6px',
+  border: '1px solid rgba(139, 119, 137, 0.2)',
+  fontSize: '0.85rem',
+  outline: 'none',
+};
+
+const saveBtnStyle = {
+  padding: '0.45rem 0.9rem',
+  borderRadius: '20px',
+  border: 'none',
+  backgroundColor: '#D98E9B',
+  color: '#FFFFFF',
+  fontSize: '0.75rem',
+  fontWeight: '700',
   cursor: 'pointer',
 };
 
@@ -670,7 +817,7 @@ const modalContentStyle = {
   borderRadius: '16px',
   padding: '2rem',
   width: '100%',
-  maxWidth: '480px',
+  maxWidth: '460px',
   boxShadow: '0 10px 40px rgba(0, 0, 0, 0.15)',
 };
 
@@ -692,13 +839,13 @@ const inputSelectStyle = {
   backgroundColor: '#FFFFFF',
 };
 
-const toggleBtnStyle = {
-  flex: 1,
-  padding: '0.5rem 0.8rem',
+const smallBtnOutlineStyle = {
+  padding: '0.5rem 1rem',
   borderRadius: '20px',
-  border: 'none',
+  border: '1px solid rgba(139, 119, 137, 0.3)',
+  backgroundColor: '#FFFFFF',
+  color: '#000000',
   fontSize: '0.8rem',
   fontWeight: '600',
   cursor: 'pointer',
-  transition: 'all 0.2s ease',
 };
