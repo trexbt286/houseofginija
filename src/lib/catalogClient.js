@@ -27,8 +27,25 @@ export function productMatchesCategory(product, selectedCategory) {
   if (cat === 'earrings' || cat === 'earring') {
     return colSlug === 'earrings' || colSlugs.includes('earrings') || colId === '4';
   }
-  if (cat === 'suits' || cat === 'unstitched') {
-    return colSlug === 'suits' || colSlug === 'unstitched' || colSlugs.includes('suits') || colId === '1';
+  if (cat === 'suits' || cat === 'unstitched' || cat === 'unstitched-suits') {
+    const isJewellery = colSlug === 'rings' || colSlug === 'necklaces' || colSlug === 'bracelets' || colSlug === 'earrings' || colSlug === 'jewellery' || ['2', '4', '5', '6'].includes(colId) || colSlugs.some((s) => ['rings', 'necklaces', 'bracelets', 'earrings', 'jewellery'].includes(s));
+    if (isJewellery) return false;
+
+    const hasSuitTag = Array.isArray(product.tags) && product.tags.some((t) => {
+      const tagSlug = (typeof t === 'string' ? t : t?.slug || t?.name || '').toLowerCase();
+      return tagSlug === 'suits' || tagSlug === 'unstitched' || tagSlug === 'unstitched-suits';
+    });
+
+    return (
+      colSlug === 'suits' ||
+      colSlug === 'unstitched' ||
+      colSlugs.includes('suits') ||
+      colSlugs.includes('unstitched') ||
+      colName.includes('suit') ||
+      colName.includes('unstitched') ||
+      hasSuitTag ||
+      colId === '1'
+    );
   }
   if (cat === 'indo-western') {
     return colSlug === 'indo-western' || colSlugs.includes('indo-western') || colId === '8';
