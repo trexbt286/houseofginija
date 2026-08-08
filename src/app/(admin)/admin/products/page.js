@@ -8,13 +8,16 @@ import AdminSidebar from '@/components/AdminSidebar';
 import { AdminProductMetadataBadges, AdminProductMetadataFields } from '@/components/AdminProductMetadataFields';
 import { productMatchesCategory } from '@/lib/catalogClient';
 
+import productsFallback from '@/data/local-products-fallback.json';
+import homepageFallback from '@/data/local-homepage-fallback.json';
+
 function AdminProductsContent() {
   const { logout } = useStore();
-  const [products, setProducts] = useState([]);
-  const [collections, setCollections] = useState([]);
+  const [products, setProducts] = useState(productsFallback.products || []);
+  const [collections, setCollections] = useState(homepageFallback.collections || []);
   const [tags, setTags] = useState([]);
   const [filterCategory, setFilterCategory] = useState('');
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
 
@@ -795,9 +798,7 @@ function AdminProductsContent() {
         )}
 
         {/* PRODUCTS LIST TABLE */}
-        {loading ? (
-          <div>Catalog retrieving...</div>
-        ) : (() => {
+        {(() => {
           const filteredProducts = products.filter((p) => {
             if (!filterCategory) return true;
             return productMatchesCategory(p, filterCategory);

@@ -8,7 +8,7 @@ import AdminSidebar from '@/components/AdminSidebar';
 export default function AdminOrdersPage() {
   const { logout } = useStore();
   const [orders, setOrders] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
   
@@ -17,7 +17,7 @@ export default function AdminOrdersPage() {
   const [statusFilter, setStatusFilter] = useState('');
 
   const fetchOrders = async () => {
-    setLoading(true);
+    if (orders.length === 0) setLoading(true);
     try {
       const res = await fetch('/api/admin/orders');
       if (!res.ok) {
@@ -137,8 +137,8 @@ export default function AdminOrdersPage() {
         </div>
 
         {/* Orders Table */}
-        {loading ? (
-          <div>Retrieving orders database...</div>
+        {loading && orders.length === 0 ? (
+          <div style={{ textAlign: 'center', padding: '2.5rem', color: 'rgba(0,0,0,0.5)', fontSize: '0.9rem' }}>Loading orders...</div>
         ) : filteredOrders.length === 0 ? (
           <div style={emptyStateStyle}>No orders found matching criteria.</div>
         ) : (
