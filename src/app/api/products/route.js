@@ -11,6 +11,7 @@ import {
   getLocalProductsFallback,
   getLocalProductsResponseFallback,
 } from '@/lib/localCatalogFallback';
+import { productMatchesCategory } from '@/lib/catalogClient';
 
 export const dynamic = 'force-dynamic';
 
@@ -31,12 +32,7 @@ export async function GET(request) {
       products = products.filter((product) => selectedIds.has(String(product.id)));
     }
     if (collection) {
-      products = products.filter((product) =>
-        product.collection_slug === collection ||
-        product.parent_collection_slug === collection ||
-        (collection === 'new-collection' && product.new_arrival) ||
-        (collection === 'flash-sale' && (product.on_sale || product.flash_sale))
-      );
+      products = products.filter((product) => productMatchesCategory(product, collection));
     }
     if (tag) {
       products = products.filter((product) =>
