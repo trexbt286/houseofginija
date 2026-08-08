@@ -439,9 +439,6 @@ function AdminProductsContent() {
     setImages([]);
     setVariants([]);
     setIsFormOpen(true);
-    if (typeof window !== 'undefined') {
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    }
   };
 
   function openEditForm(product) {
@@ -472,9 +469,6 @@ function AdminProductsContent() {
     setImages(product.images || []);
     setVariants(product.variants || []);
     setIsFormOpen(true);
-    if (typeof window !== 'undefined') {
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    }
   };
 
   const handleFormSubmit = async (e) => {
@@ -627,10 +621,17 @@ function AdminProductsContent() {
         {success && <div style={successBannerStyle}>{success}</div>}
         {error && <div style={errorBannerStyle}>{error}</div>}
 
-        {/* CRUD FORM PANEL */}
+        {/* CRUD FORM MODAL DIALOG */}
         {isFormOpen && (
-          <section style={formContainerStyle} className="animate-fade-in">
-            <div style={formHeaderRowStyle}>
+          <div
+            style={formOverlayBackdropStyle}
+            className="animate-fade-in"
+            onClick={(e) => {
+              if (e.target === e.currentTarget) setIsFormOpen(false);
+            }}
+          >
+            <section style={formModalContainerStyle}>
+              <div style={formHeaderRowStyle}>
               <h2 style={formTitleStyle}>
                 {editingId ? `Edit: ${formFields.name}` : 'Create New Creation'}
               </h2>
@@ -1009,6 +1010,7 @@ function AdminProductsContent() {
               </button>
             </form>
           </section>
+        </div>
         )}
 
         {/* PRODUCTS LIST TABLE */}
@@ -1290,14 +1292,34 @@ const errorBannerStyle = {
   border: '1px solid #ffcdd2',
 };
 
-// Form Container Styles
-const formContainerStyle = {
+// Form Overlay & Modal Styles
+const formOverlayBackdropStyle = {
+  position: 'fixed',
+  top: 0,
+  left: 0,
+  right: 0,
+  bottom: 0,
+  backgroundColor: 'rgba(0, 0, 0, 0.65)',
+  backdropFilter: 'blur(6px)',
+  WebkitBackdropFilter: 'blur(6px)',
+  zIndex: 9999,
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  padding: '1.5rem',
+};
+
+const formModalContainerStyle = {
   backgroundColor: '#FFFFFF',
-  padding: '2.5rem',
-  borderRadius: '8px',
-  border: '1px solid rgba(139, 119, 137, 0.15)',
-  boxShadow: 'var(--shadow-md)',
-  marginBottom: '3rem',
+  padding: '2.2rem',
+  borderRadius: '16px',
+  border: '1px solid #F4E1E5',
+  boxShadow: '0 25px 60px rgba(0, 0, 0, 0.35)',
+  maxWidth: '920px',
+  width: '100%',
+  maxHeight: '88vh',
+  overflowY: 'auto',
+  position: 'relative',
 };
 
 const formHeaderRowStyle = {
