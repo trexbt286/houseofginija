@@ -5,10 +5,11 @@ import { useStore } from '@/context/StoreContext';
 import AdminSidebar from '@/components/AdminSidebar';
 import productsFallback from '@/data/local-products-fallback.json';
 import homepageFallback from '@/data/local-homepage-fallback.json';
+import { getLocalProductsFallback } from '@/lib/localCatalogFallback';
 
 export default function AdminFlashSalePage() {
   const { logout } = useStore();
-  const [products, setProducts] = useState(productsFallback.products || []);
+  const [products, setProducts] = useState(getLocalProductsFallback() || productsFallback.products || []);
   const [collections, setCollections] = useState(homepageFallback.collections || []);
   const [flashSaleEnabled, setFlashSaleEnabled] = useState(true);
   const [savingSettings, setSavingSettings] = useState(false);
@@ -260,9 +261,17 @@ export default function AdminFlashSalePage() {
     }
   };
 
+  const isProductOnFlashSale = (p) => Boolean(
+    p.flash_sale ||
+    p.flashSale ||
+    p.on_sale ||
+    p.onSale ||
+    (Array.isArray(p.collection_slugs) && p.collection_slugs.includes('flash-sale'))
+  );
+
   const sortedProducts = [...products].sort((a, b) => a.name.localeCompare(b.name, undefined, { numeric: true, sensitivity: 'base' }));
-  const activeFlashProducts = sortedProducts.filter(p => !!p.flash_sale);
-  const nonFlashProducts = sortedProducts.filter(p => !p.flash_sale);
+  const activeFlashProducts = sortedProducts.filter(isProductOnFlashSale);
+  const nonFlashProducts = sortedProducts.filter(p => !isProductOnFlashSale(p));
 
   const calculateDiscountPct = (original, saleVal) => {
     const orig = parseFloat(original);
