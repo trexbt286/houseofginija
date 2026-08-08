@@ -33,7 +33,7 @@ function AdminProductsContent() {
     is_out_of_stock: false,
     on_sale: false,
     flash_sale_price: '',
-    flash_sale_percent: '20',
+    flash_sale_percent: '',
   });
 
   const [selectedTagIds, setSelectedTagIds] = useState([]);
@@ -129,8 +129,8 @@ function AdminProductsContent() {
     
     if (name === 'price') {
       const origPrice = parseFloat(value) || 0;
-      const pct = parseFloat(formFields.flash_sale_percent) || 20;
-      const computedPrice = origPrice > 0 ? Math.round(origPrice * (1 - pct / 100)) : '';
+      const pct = parseFloat(formFields.flash_sale_percent);
+      const computedPrice = (origPrice > 0 && !isNaN(pct) && pct > 0) ? Math.round(origPrice * (1 - pct / 100)) : '';
       setFormFields((prev) => ({
         ...prev,
         price: value,
@@ -389,7 +389,7 @@ function AdminProductsContent() {
       is_out_of_stock: false,
       on_sale: false,
       flash_sale_price: '',
-      flash_sale_percent: '20',
+      flash_sale_percent: '',
     });
     setSelectedCategorySlugs(['suits']);
     setCustomTags([]);
@@ -412,7 +412,7 @@ function AdminProductsContent() {
       flash_sale_price: product.flash_sale_price !== null && product.flash_sale_price !== undefined ? product.flash_sale_price.toString() : '',
       flash_sale_percent: (product.price && product.flash_sale_price && parseFloat(product.price) > parseFloat(product.flash_sale_price))
         ? Math.round(((parseFloat(product.price) - parseFloat(product.flash_sale_price)) / parseFloat(product.price)) * 100).toString()
-        : '20',
+        : '',
     });
     let initialSlugs = Array.isArray(product.collection_slugs) ? [...product.collection_slugs] : [];
     if (product.collection_slug && !initialSlugs.includes(product.collection_slug)) initialSlugs.push(product.collection_slug);

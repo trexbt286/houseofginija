@@ -22,7 +22,7 @@ export default function AdminFlashSalePage() {
   // Quick Modal State
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [selectedProductId, setSelectedProductId] = useState('');
-  const [discountPercent, setDiscountPercent] = useState('20');
+  const [discountPercent, setDiscountPercent] = useState('');
   const [isAdding, setIsAdding] = useState(false);
   const [addError, setAddError] = useState('');
 
@@ -42,7 +42,7 @@ export default function AdminFlashSalePage() {
         // Initialize price inputs
         const initialPrices = {};
         (prodData.products || []).forEach(p => {
-          initialPrices[p.id] = p.flash_sale_price ? p.flash_sale_price.toString() : Math.round((parseFloat(p.price) || 0) * 0.8).toString();
+          initialPrices[p.id] = p.flash_sale_price ? p.flash_sale_price.toString() : '';
         });
         setPriceInputs(initialPrices);
       }
@@ -61,7 +61,7 @@ export default function AdminFlashSalePage() {
     // Initialize price inputs for fallback data
     const initialPrices = {};
     (productsFallback.products || []).forEach(p => {
-      initialPrices[p.id] = p.flash_sale_price ? p.flash_sale_price.toString() : Math.round((parseFloat(p.price) || 0) * 0.8).toString();
+      initialPrices[p.id] = p.flash_sale_price ? p.flash_sale_price.toString() : '';
     });
     setPriceInputs(initialPrices);
 
