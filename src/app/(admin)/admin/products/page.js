@@ -7,7 +7,12 @@ import { useSearchParams } from 'next/navigation';
 import { useStore } from '@/context/StoreContext';
 import AdminSidebar from '@/components/AdminSidebar';
 import { AdminProductMetadataBadges, AdminProductMetadataFields } from '@/components/AdminProductMetadataFields';
-import { productMatchesCategory } from '@/lib/catalogClient';
+import {
+  productMatchesCategory,
+  saveStoredLocalCatalogOverride,
+  removeStoredLocalCatalogOverride,
+  mergeCatalogWithLocalOverrides,
+} from '@/lib/catalogClient';
 
 import productsFallback from '@/data/local-products-fallback.json';
 import homepageFallback from '@/data/local-homepage-fallback.json';
@@ -122,7 +127,9 @@ function AdminProductsContent() {
         const rawText = await res.text();
         const data = rawText ? JSON.parse(rawText) : {};
         if (data.products && Array.isArray(data.products) && data.products.length > 0) {
-          setProducts(data.products);
+          setProducts(mergeCatalogWithLocalOverrides(data.products));
+        } else {
+          setProducts(mergeCatalogWithLocalOverrides([]));
         }
         if (data.collections && Array.isArray(data.collections) && data.collections.length > 0) {
           setCollections(data.collections);
@@ -581,6 +588,8 @@ function AdminProductsContent() {
     setIsFormOpen(false);
     setSuccess(`Product "${formFields.name}" saved successfully.`);
 
+    saveStoredLocalCatalogOverride(optimisticProduct);
+
     if (typeof window !== 'undefined') {
       window.dispatchEvent(new CustomEvent('catalog-updated', { detail: { product: optimisticProduct } }));
       try {
@@ -620,6 +629,7 @@ function AdminProductsContent() {
       });
 
       if (res.ok) {
+        removeStoredLocalCatalogOverride(id);
         setSuccess(`Product "${name}" deleted from catalog.`);
         fetchProductsAndCollections();
       } else {

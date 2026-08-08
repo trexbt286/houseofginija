@@ -8,6 +8,7 @@ import ProductImageGallery from '@/components/ProductImageGallery';
 import { AddToBagLabel, ProductFeatureStrip, ProductShareButton, ProductTagBadges } from '@/components/ProductQuickViewExtras';
 import { useStore } from '@/context/StoreContext';
 import { getLocalHomepageFallback } from '@/lib/localCatalogFallback';
+import { mergeCatalogWithLocalOverrides } from '@/lib/catalogClient';
 
 function FlashSaleContent() {
   const { cart, wishlist, toggleWishlist, addToCart, updateCartQuantity, user } = useStore();
@@ -29,7 +30,7 @@ function FlashSaleContent() {
     fetch('/api/products?collection=flash-sale', { cache: 'no-store', headers: { 'Cache-Control': 'no-cache' } })
       .then((res) => (res.ok ? res.json() : null))
       .then((data) => {
-        const all = data?.products || [];
+        const all = mergeCatalogWithLocalOverrides(data?.products || []);
         const flashOnly = all.filter(isFlashProduct);
         setProducts(flashOnly);
         setLoading(false);

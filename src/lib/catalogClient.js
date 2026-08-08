@@ -60,7 +60,60 @@ export function getCategoryTitle(collections, selectedCategory) {
   if (selectedCategory === 'necklaces' || selectedCategory === 'necklace') return 'Necklaces';
   if (selectedCategory === 'bracelets' || selectedCategory === 'bracelet') return 'Bracelets';
   if (selectedCategory === 'earrings' || selectedCategory === 'earring') return 'Earrings';
+  if (selectedCategory === 'new-collection') return 'Fresh Collection';
+  if (selectedCategory === 'flash-sale') return 'Flash Sale';
 
-  const category = collections.find((item) => item.slug === selectedCategory);
-  return category ? category.name : 'Collection';
+  const match = (collections || []).find((c) => c.slug === selectedCategory);
+  return match ? match.name : selectedCategory.replace(/-/g, ' ');
+}
+
+export function getStoredLocalCatalogOverrides() {
+  if (typeof window === 'undefined') return [];
+  try {
+    const raw = localStorage.getItem('houseofginija_custom_products');
+    return raw ? JSON.parse(raw) : [];
+  } catch {
+    return [];
+  }
+}
+
+export function saveStoredLocalCatalogOverride(product) {
+  if (typeof window === 'undefined') return;
+  try {
+    const existing = getStoredLocalCatalogOverrides();
+    const idx = existing.findIndex((p) => String(p.id) === String(product.id) || p.slug === product.slug);
+    let updated;
+    if (idx !== -1) {
+      updated = existing.map((p, i) => (i === idx ? { ...p, ...product } : p));
+    } else {
+      updated = [product, ...existing];
+    }
+    localStorage.setItem('houseofginija_custom_products', JSON.stringify(updated));
+  } catch {}
+}
+
+export function removeStoredLocalCatalogOverride(id) {
+  if (typeof window === 'undefined') return;
+  try {
+    const existing = getStoredLocalCatalogOverrides();
+    const updated = existing.filter((p) => String(p.id) !== String(id));
+    localStorage.setItem('houseofginija_custom_products', JSON.stringify(updated));
+  } catch {}
+}
+
+export function mergeCatalogWithLocalOverrides(fetchedList = []) {
+  const overrides = getStoredLocalCatalogOverrides();
+  if (!Array.isArray(overrides) || overrides.length === 0) return fetchedList;
+
+  let merged = [...fetchedList];
+  overrides.forEach((override) => {
+    const idx = merged.findIndex((p) => String(p.id) === String(override.id) || p.slug === override.slug);
+    if (idx !== -1) {
+      merged[idx] = { ...merged[idx], ...override };
+    } else {
+      merged.unshift(override);
+    }
+  });
+
+  return merged.sort((a, b) => a.name.localeCompare(b.name, undefined, { numeric: true, sensitivity: 'base' }));
 }
