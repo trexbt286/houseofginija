@@ -22,6 +22,11 @@ export default function AdminFlashSalePage() {
 
   // Quick Modal State
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   // Disable background scrolling when modal is open
   useEffect(() => {
@@ -348,7 +353,9 @@ export default function AdminFlashSalePage() {
         <section style={sectionCardStyle}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem', marginBottom: '1.2rem' }}>
             <div>
-              <h2 style={sectionTitleStyle}>Active Flash Sale Items ({activeFlashProducts.length})</h2>
+              <h2 suppressHydrationWarning style={sectionTitleStyle}>
+                Active Flash Sale Items ({mounted ? activeFlashProducts.length : activeFlashProducts.length})
+              </h2>
               <p style={{ ...sectionSubStyle, marginBottom: 0 }}>These items currently feature discounted prices on your store.</p>
             </div>
 
