@@ -665,7 +665,7 @@
         "slug": "bespoke-suit-1",
         "description": "A finely tailored bespoke suit, crafted from exceptional textiles with structured shoulders and a modern silhouette.",
         "price": "27000",
-        "collection_id": "1",
+        "collection_id": "8",
         "is_out_of_stock": false,
         "images": [
           "/local-products/063-bespoke-suit-1-1.jpg",
@@ -691,12 +691,15 @@
         "flash_sale": false,
         "flash_sale_price": null,
         "new_arrival": false,
-        "collection_name": "Suits",
-        "collection_slug": "suits",
+        "collection_name": "Indo-Western",
+        "collection_slug": "indo-western",
         "on_sale": false,
         "tags": [],
         "parent_collection_name": null,
-        "parent_collection_slug": null
+        "parent_collection_slug": null,
+        "collection_slugs": [
+          "indo-western"
+        ]
       },
       {
         "id": "101",
@@ -704,7 +707,7 @@
         "slug": "blush-pink-drape-2",
         "description": "A graceful blush pink drape set featuring a heavily hand-embellished blouse with intricate sequins, beads, and zari work, paired with a fluid draped skirt and an elegant long shrug. Perfect for cocktail parties, engagement ceremonies, wedding festivities, and contemporary festive celebrations.",
         "price": "33333",
-        "collection_id": "1",
+        "collection_id": "8",
         "is_out_of_stock": false,
         "images": [
           "/local-products/033-blush-pink-drape-1.jpg",
@@ -742,14 +745,15 @@
         "flash_sale": true,
         "flash_sale_price": "26666",
         "new_arrival": false,
-        "collection_name": "Suits",
-        "collection_slug": "suits",
+        "collection_name": "Indo-Western",
+        "collection_slug": "indo-western",
         "on_sale": true,
         "tags": [],
         "parent_collection_name": null,
         "parent_collection_slug": null,
         "collection_slugs": [
-          "flash-sale"
+          "flash-sale",
+          "indo-western"
         ]
       },
       {
@@ -758,7 +762,7 @@
         "slug": "bespoke-suit-2",
         "description": "A finely tailored bespoke suit, crafted from exceptional textiles with structured shoulders and a modern silhouette.",
         "price": "29000",
-        "collection_id": "1",
+        "collection_id": "8",
         "is_out_of_stock": false,
         "images": [
           "/local-products/073-bespoke-suit-2-1.jpg"
@@ -783,12 +787,15 @@
         "flash_sale": false,
         "flash_sale_price": null,
         "new_arrival": false,
-        "collection_name": "Suits",
-        "collection_slug": "suits",
+        "collection_name": "Indo-Western",
+        "collection_slug": "indo-western",
         "on_sale": false,
         "tags": [],
         "parent_collection_name": null,
-        "parent_collection_slug": null
+        "parent_collection_slug": null,
+        "collection_slugs": [
+          "indo-western"
+        ]
       },
       {
         "id": "12",
@@ -796,7 +803,7 @@
         "slug": "bespoke-suit-12",
         "description": "Soft lavender drape set with an embroidered cape for a graceful festive look.",
         "price": "34000",
-        "collection_id": "1",
+        "collection_id": "8",
         "is_out_of_stock": false,
         "images": [
           "/local-products/069-bespoke-suit-12-1.jpg"
@@ -821,12 +828,15 @@
         "flash_sale": false,
         "flash_sale_price": null,
         "new_arrival": false,
-        "collection_name": "Suits",
-        "collection_slug": "suits",
+        "collection_name": "Indo-Western",
+        "collection_slug": "indo-western",
         "on_sale": false,
         "tags": [],
         "parent_collection_name": null,
-        "parent_collection_slug": null
+        "parent_collection_slug": null,
+        "collection_slugs": [
+          "indo-western"
+        ]
       }
     ],
     "heavyGown": [

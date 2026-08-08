@@ -26,7 +26,12 @@ export function productMatchesCategory(product, selectedCategory) {
     colName === cat ||
     (cat === 'gowns' && (colSlug === 'heavy-gown' || colSlug === 'gowns' || slug.includes('gown'))) ||
     (cat === 'shararas' && (colSlug === 'shararas' || slug.includes('sharara'))) ||
-    (cat === 'indo-western' && (colSlug === 'indo-western' || slug.includes('indo-western')));
+    (cat === 'indo-western' && (
+      colSlug === 'indo-western' ||
+      slug.includes('indo-western') ||
+      String(product.collection_id) === '8' ||
+      (Array.isArray(product.collection_slugs) && product.collection_slugs.includes('indo-western'))
+    ));
 
   if (categoryMatch) return true;
   if (cat === 'new-collection') return Boolean(product.new_arrival);
