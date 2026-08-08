@@ -119,7 +119,8 @@ function AdminProductsContent() {
     try {
       const res = await fetch('/api/admin/products', { cache: 'no-store', headers: { 'Cache-Control': 'no-cache' } });
       if (res.ok) {
-        const data = await res.json();
+        const rawText = await res.text();
+        const data = rawText ? JSON.parse(rawText) : {};
         if (data.products && Array.isArray(data.products) && data.products.length > 0) {
           setProducts(data.products);
         }
@@ -333,7 +334,8 @@ function AdminProductsContent() {
           body: formData,
         });
 
-        const data = await res.json();
+        const rawText = await res.text();
+        const data = rawText ? JSON.parse(rawText) : {};
         if (res.ok && data.url) {
           return data.url;
         } else {
@@ -557,7 +559,13 @@ function AdminProductsContent() {
         body: JSON.stringify(payload),
       });
 
-      const data = await res.json();
+      let data = {};
+      try {
+        const rawText = await res.text();
+        data = rawText ? JSON.parse(rawText) : {};
+      } catch (e) {
+        console.error('Failed to parse response JSON:', e);
+      }
 
       if (res.ok) {
         setSuccess(`Product "${formFields.name}" successfully saved.`);
@@ -606,7 +614,8 @@ function AdminProductsContent() {
         setSuccess(`Product "${name}" deleted from catalog.`);
         fetchProductsAndCollections();
       } else {
-        const data = await res.json();
+        const rawText = await res.text();
+        const data = rawText ? JSON.parse(rawText) : {};
         setError(data.error || 'Failed to delete product.');
       }
     } catch (err) {
