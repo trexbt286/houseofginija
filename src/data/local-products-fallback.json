@@ -19,14 +19,17 @@
         }
       ],
       "flash_sale": true,
-      "flash_sale_price": "30000.00",
+      "flash_sale_price": "38400",
       "new_arrival": false,
       "collection_name": "Jewellery",
       "collection_slug": "jewellery",
-      "on_sale": false,
+      "on_sale": true,
       "tags": [],
       "parent_collection_name": null,
-      "parent_collection_slug": null
+      "parent_collection_slug": null,
+      "collection_slugs": [
+        "flash-sale"
+      ]
     },
     {
       "id": "6",
@@ -56,15 +59,18 @@
           "stock": 10
         }
       ],
-      "flash_sale": false,
-      "flash_sale_price": null,
+      "flash_sale": true,
+      "flash_sale_price": "29600",
       "new_arrival": false,
       "collection_name": "Suits",
       "collection_slug": "suits",
-      "on_sale": false,
+      "on_sale": true,
       "tags": [],
       "parent_collection_name": null,
-      "parent_collection_slug": null
+      "parent_collection_slug": null,
+      "collection_slugs": [
+        "flash-sale"
+      ]
     },
     {
       "id": "10",
@@ -94,15 +100,18 @@
           "stock": 10
         }
       ],
-      "flash_sale": false,
-      "flash_sale_price": null,
+      "flash_sale": true,
+      "flash_sale_price": "24000",
       "new_arrival": false,
       "collection_name": "Suits",
       "collection_slug": "suits",
-      "on_sale": false,
+      "on_sale": true,
       "tags": [],
       "parent_collection_name": null,
-      "parent_collection_slug": null
+      "parent_collection_slug": null,
+      "collection_slugs": [
+        "flash-sale"
+      ]
     },
     {
       "id": "31",
@@ -951,15 +960,18 @@
           "stock": 0
         }
       ],
-      "flash_sale": false,
-      "flash_sale_price": null,
+      "flash_sale": true,
+      "flash_sale_price": "26666",
       "new_arrival": false,
       "collection_name": "Suits",
       "collection_slug": "suits",
-      "on_sale": false,
+      "on_sale": true,
       "tags": [],
       "parent_collection_name": null,
-      "parent_collection_slug": null
+      "parent_collection_slug": null,
+      "collection_slugs": [
+        "flash-sale"
+      ]
     },
     {
       "id": "101",
@@ -1002,15 +1014,18 @@
           "stock": 0
         }
       ],
-      "flash_sale": false,
-      "flash_sale_price": null,
+      "flash_sale": true,
+      "flash_sale_price": "26666",
       "new_arrival": false,
       "collection_name": "Suits",
       "collection_slug": "suits",
-      "on_sale": false,
+      "on_sale": true,
       "tags": [],
       "parent_collection_name": null,
-      "parent_collection_slug": null
+      "parent_collection_slug": null,
+      "collection_slugs": [
+        "flash-sale"
+      ]
     },
     {
       "id": "102",
@@ -1291,15 +1306,18 @@
           "stock": 10
         }
       ],
-      "flash_sale": false,
-      "flash_sale_price": null,
+      "flash_sale": true,
+      "flash_sale_price": "28800",
       "new_arrival": false,
       "collection_name": "Suits",
       "collection_slug": "suits",
-      "on_sale": false,
+      "on_sale": true,
       "tags": [],
       "parent_collection_name": null,
-      "parent_collection_slug": null
+      "parent_collection_slug": null,
+      "collection_slugs": [
+        "flash-sale"
+      ]
     },
     {
       "id": "26",
@@ -1926,15 +1944,18 @@
           "stock": 10
         }
       ],
-      "flash_sale": false,
-      "flash_sale_price": null,
+      "flash_sale": true,
+      "flash_sale_price": "22400",
       "new_arrival": false,
       "collection_name": "Suits",
       "collection_slug": "suits",
-      "on_sale": false,
+      "on_sale": true,
       "tags": [],
       "parent_collection_name": null,
-      "parent_collection_slug": null
+      "parent_collection_slug": null,
+      "collection_slugs": [
+        "flash-sale"
+      ]
     },
     {
       "id": "32",
@@ -2201,15 +2222,18 @@
           "stock": 10
         }
       ],
-      "flash_sale": false,
-      "flash_sale_price": null,
+      "flash_sale": true,
+      "flash_sale_price": "28000",
       "new_arrival": false,
       "collection_name": "Suits",
       "collection_slug": "suits",
-      "on_sale": false,
+      "on_sale": true,
       "tags": [],
       "parent_collection_name": null,
-      "parent_collection_slug": null
+      "parent_collection_slug": null,
+      "collection_slugs": [
+        "flash-sale"
+      ]
     },
     {
       "id": "103",
@@ -2239,15 +2263,18 @@
           "stock": 30
         }
       ],
-      "flash_sale": false,
-      "flash_sale_price": null,
+      "flash_sale": true,
+      "flash_sale_price": "9778",
       "new_arrival": false,
       "collection_name": "Suits",
       "collection_slug": "suits",
-      "on_sale": false,
+      "on_sale": true,
       "tags": [],
       "parent_collection_name": null,
-      "parent_collection_slug": null
+      "parent_collection_slug": null,
+      "collection_slugs": [
+        "flash-sale"
+      ]
     }
   ],
   "flash_sale_enabled": true
