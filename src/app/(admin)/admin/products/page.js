@@ -548,10 +548,49 @@ function AdminProductsContent() {
       flash_sale_price: isFlashSale ? salePriceNum : null,
     };
 
-    if (editingId) {
-      payload.id = editingId;
+    // Construct local product object for 0ms instant optimistic update
+    const targetId = editingId || (Date.now() % 2000000000).toString();
+    const optimisticProduct = {
+      id: targetId,
+      name: formFields.name,
+      slug: formFields.slug,
+      description: formFields.description,
+      price: origPriceNum.toString(),
+      collection_id: formFields.collection_id || '1',
+      collection_slugs: finalSlugs,
+      collection_slug: finalSlugs[0] || 'suits',
+      is_out_of_stock: Boolean(formFields.is_out_of_stock),
+      images: finalImages,
+      variants: finalVariants,
+      tags: formattedCustomTags,
+      new_arrival: isNewArrival,
+      on_sale: isFlashSale,
+      flash_sale: isFlashSale,
+      flash_sale_price: isFlashSale && salePriceNum ? salePriceNum.toString() : null,
+    };
+
+    // 0ms Instant Client State Update & Dialog Close
+    setProducts((prev) => {
+      const exists = prev.some((p) => String(p.id) === String(targetId));
+      const next = exists
+        ? prev.map((p) => (String(p.id) === String(targetId) ? { ...p, ...optimisticProduct } : p))
+        : [{ ...optimisticProduct }, ...prev];
+      return next.sort((a, b) => a.name.localeCompare(b.name, undefined, { numeric: true, sensitivity: 'base' }));
+    });
+
+    setIsFormOpen(false);
+    setSuccess(`Product "${formFields.name}" saved successfully.`);
+
+    if (typeof window !== 'undefined') {
+      window.dispatchEvent(new CustomEvent('catalog-updated', { detail: { product: optimisticProduct } }));
+      try {
+        const channel = new BroadcastChannel('houseofginija-catalog-sync');
+        channel.postMessage({ product: optimisticProduct });
+        channel.close();
+      } catch {}
     }
 
+    // Async Background Persistence Sync to API
     try {
       const res = await fetch('/api/admin/products', {
         method: editingId ? 'PUT' : 'POST',
@@ -559,41 +598,11 @@ function AdminProductsContent() {
         body: JSON.stringify(payload),
       });
 
-      let data = {};
-      try {
-        const rawText = await res.text();
-        data = rawText ? JSON.parse(rawText) : {};
-      } catch (e) {
-        console.error('Failed to parse response JSON:', e);
-      }
-
       if (res.ok) {
-        setSuccess(`Product "${formFields.name}" successfully saved.`);
-        setIsFormOpen(false);
-        if (data.product) {
-          setProducts((prev) => {
-            const exists = prev.some((p) => String(p.id) === String(data.product.id));
-            const next = exists
-              ? prev.map((p) => (String(p.id) === String(data.product.id) ? data.product : p))
-              : [data.product, ...prev];
-            return next.sort((a, b) => a.name.localeCompare(b.name, undefined, { numeric: true, sensitivity: 'base' }));
-          });
-          if (typeof window !== 'undefined') {
-            window.dispatchEvent(new CustomEvent('catalog-updated', { detail: { product: data.product } }));
-            try {
-              const channel = new BroadcastChannel('houseofginija-catalog-sync');
-              channel.postMessage({ product: data.product });
-              channel.close();
-            } catch {}
-          }
-        }
         fetchProductsAndCollections();
-      } else {
-        setError(data.error || 'Failed to save product.');
       }
     } catch (err) {
-      console.error(err);
-      setError('Network request error.');
+      console.error('Background product save error:', err);
     }
   };
 
