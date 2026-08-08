@@ -60,12 +60,23 @@ export function getLocalHomepageFallback() {
   const flashProducts = store.filter((p) => Boolean(p.flash_sale || p.on_sale || (Array.isArray(p.collection_slugs) && p.collection_slugs.includes('flash-sale'))));
   const newArrivalProducts = store.filter((p) => Boolean(p.new_arrival || (Array.isArray(p.collection_slugs) && p.collection_slugs.includes('new-collection'))));
 
+  const isIndoWestern = (p) => p.collection_slug === 'indo-western' || (Array.isArray(p.collection_slugs) && p.collection_slugs.includes('indo-western')) || String(p.collection_id) === '8';
+  const isGown = (p) => p.collection_slug === 'gowns' || p.collection_slug === 'heavy-gown' || (Array.isArray(p.collection_slugs) && p.collection_slugs.some((s) => s === 'gowns' || s === 'heavy-gown')) || String(p.collection_id) === '10';
+  const isSharara = (p) => p.collection_slug === 'shararas' || (Array.isArray(p.collection_slugs) && p.collection_slugs.includes('shararas')) || String(p.collection_id) === '9';
+
+  const heavyDresses = {
+    indoWestern: store.filter(isIndoWestern),
+    heavyGown: store.filter(isGown),
+    shararas: store.filter(isSharara),
+  };
+
   return {
     ...homepageFallback,
-    flashProducts: flashProducts.length > 0 ? flashProducts : (homepageFallback.flashProducts || []),
+    flashProducts,
     flash_sale_enabled: true,
-    newArrivalProducts: newArrivalProducts.length > 0 ? newArrivalProducts : (homepageFallback.newArrivalProducts || []),
+    newArrivalProducts,
     new_arrivals_enabled: true,
+    heavyDresses,
   };
 }
 
