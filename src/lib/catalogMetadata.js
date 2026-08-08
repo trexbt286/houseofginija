@@ -39,13 +39,23 @@ export function mapProductData(product, options = {}) {
     try { tags = JSON.parse(tags); } catch {}
   }
 
-  let collection_slugs = product.collection_slugs;
+  let collection_slugs = product.collection_slugs || product.collectionSlugs;
   if (typeof collection_slugs === 'string') {
     try { collection_slugs = JSON.parse(collection_slugs); } catch {}
   }
   
-  const isFlashSale = Boolean(product.flash_sale || product.on_sale || (Array.isArray(collection_slugs) && collection_slugs.includes('flash-sale')));
-  const isNewArrival = Boolean(product.new_arrival || (Array.isArray(collection_slugs) && collection_slugs.includes('new-collection')));
+  const isFlashSale = Boolean(
+    product.flash_sale ||
+    product.flashSale ||
+    product.on_sale ||
+    product.onSale ||
+    (Array.isArray(collection_slugs) && collection_slugs.includes('flash-sale'))
+  );
+  const isNewArrival = Boolean(
+    product.new_arrival ||
+    product.newArrival ||
+    (Array.isArray(collection_slugs) && collection_slugs.includes('new-collection'))
+  );
 
   if (!Array.isArray(collection_slugs)) {
     collection_slugs = [];
@@ -64,8 +74,9 @@ export function mapProductData(product, options = {}) {
   }
 
   const rawPrice = Number.parseFloat(product.price) || 0;
-  let flashSalePrice = product.flash_sale_price !== null && product.flash_sale_price !== undefined
-    ? Number.parseFloat(product.flash_sale_price)
+  const rawFlashPrice = product.flash_sale_price !== undefined ? product.flash_sale_price : product.flashSalePrice;
+  let flashSalePrice = rawFlashPrice !== null && rawFlashPrice !== undefined
+    ? Number.parseFloat(rawFlashPrice)
     : null;
   if (isFlashSale && (!flashSalePrice || Number.isNaN(flashSalePrice))) {
     flashSalePrice = Math.round(rawPrice * 0.8);

@@ -93,15 +93,22 @@ function parseProductPayload(body) {
     description: body.description || '',
     price: priceNum,
     collectionId,
+    collection_id: collectionId,
     collectionSlugs: [...new Set(collectionSlugs)],
+    collection_slugs: [...new Set(collectionSlugs)],
     isOutOfStock: Boolean(body.is_out_of_stock),
+    is_out_of_stock: Boolean(body.is_out_of_stock),
     images: body.images,
     variants: body.variants,
     tags: Array.isArray(body.tags) ? body.tags : [],
     flashSale,
+    flash_sale: flashSale,
     flashSalePrice,
+    flash_sale_price: flashSalePrice,
     newArrival,
+    new_arrival: newArrival,
     onSale: flashSale,
+    on_sale: flashSale,
   };
 }
 
