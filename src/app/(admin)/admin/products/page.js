@@ -33,6 +33,7 @@ function AdminProductsContent() {
     is_out_of_stock: false,
     on_sale: false,
     flash_sale_price: '',
+    flash_sale_percent: '20',
   });
 
   const [selectedTagIds, setSelectedTagIds] = useState([]);
@@ -126,8 +127,16 @@ function AdminProductsContent() {
   const handleTextChange = (e) => {
     const { name, value, type, checked } = e.target;
     
-    // Auto-generate slug from name if creating
-    if (name === 'name' && !editingId) {
+    if (name === 'price') {
+      const origPrice = parseFloat(value) || 0;
+      const pct = parseFloat(formFields.flash_sale_percent) || 20;
+      const computedPrice = origPrice > 0 ? Math.round(origPrice * (1 - pct / 100)) : '';
+      setFormFields((prev) => ({
+        ...prev,
+        price: value,
+        flash_sale_price: computedPrice ? computedPrice.toString() : prev.flash_sale_price,
+      }));
+    } else if (name === 'name' && !editingId) {
       const generatedSlug = value
         .toLowerCase()
         .replace(/[^a-z0-9]+/g, '-')
@@ -141,6 +150,46 @@ function AdminProductsContent() {
       setFormFields((prev) => ({
         ...prev,
         [name]: type === 'checkbox' ? checked : value,
+      }));
+    }
+  };
+
+  const handleDiscountPercentChange = (e) => {
+    const pctVal = e.target.value;
+    const origPrice = parseFloat(formFields.price) || 0;
+    const pctNum = parseFloat(pctVal);
+
+    if (!isNaN(pctNum) && pctNum > 0 && pctNum < 100 && origPrice > 0) {
+      const computedPrice = Math.round(origPrice * (1 - pctNum / 100));
+      setFormFields((prev) => ({
+        ...prev,
+        flash_sale_percent: pctVal,
+        flash_sale_price: computedPrice.toString(),
+      }));
+    } else {
+      setFormFields((prev) => ({
+        ...prev,
+        flash_sale_percent: pctVal,
+      }));
+    }
+  };
+
+  const handleDiscountPriceChange = (e) => {
+    const priceVal = e.target.value;
+    const origPrice = parseFloat(formFields.price) || 0;
+    const priceNum = parseFloat(priceVal);
+
+    if (!isNaN(priceNum) && priceNum > 0 && priceNum < origPrice && origPrice > 0) {
+      const computedPct = Math.round(((origPrice - priceNum) / origPrice) * 100);
+      setFormFields((prev) => ({
+        ...prev,
+        flash_sale_price: priceVal,
+        flash_sale_percent: computedPct > 0 ? computedPct.toString() : '',
+      }));
+    } else {
+      setFormFields((prev) => ({
+        ...prev,
+        flash_sale_price: priceVal,
       }));
     }
   };
@@ -340,6 +389,7 @@ function AdminProductsContent() {
       is_out_of_stock: false,
       on_sale: false,
       flash_sale_price: '',
+      flash_sale_percent: '20',
     });
     setSelectedCategorySlugs(['suits']);
     setCustomTags([]);
@@ -360,6 +410,9 @@ function AdminProductsContent() {
       is_out_of_stock: !!product.is_out_of_stock,
       on_sale: !!product.on_sale,
       flash_sale_price: product.flash_sale_price !== null && product.flash_sale_price !== undefined ? product.flash_sale_price.toString() : '',
+      flash_sale_percent: (product.price && product.flash_sale_price && parseFloat(product.price) > parseFloat(product.flash_sale_price))
+        ? Math.round(((parseFloat(product.price) - parseFloat(product.flash_sale_price)) / parseFloat(product.price)) * 100).toString()
+        : '20',
     });
     let initialSlugs = Array.isArray(product.collection_slugs) ? [...product.collection_slugs] : [];
     if (product.collection_slug && !initialSlugs.includes(product.collection_slug)) initialSlugs.push(product.collection_slug);
@@ -601,61 +654,92 @@ function AdminProductsContent() {
                     })}
                   </div>
 
-                  {/* FLASH SALE DISCOUNT PRICE INPUT (Appears when Flash Sale category is selected) */}
+                  {/* FLASH SALE DUAL AUTO-CALCULATING DISCOUNT INPUTS */}
                   {selectedCategorySlugs.includes('flash-sale') && (
                     <div style={{
                       marginTop: '0.8rem',
-                      padding: '1rem 1.2rem',
+                      padding: '1.2rem',
                       backgroundColor: '#FFF0F3',
-                      borderRadius: '8px',
+                      borderRadius: '10px',
                       border: '1.5px solid #D98E9B',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'space-between',
-                      flexWrap: 'wrap',
-                      gap: '1rem'
                     }}>
-                      <div>
-                        <label style={{ ...labelStyle, color: '#B65C73', marginBottom: '0.2rem' }}>
-                          ⚡ Flash Sale Discounted Price (₹)
+                      <div style={{ marginBottom: '0.8rem' }}>
+                        <label style={{ ...labelStyle, color: '#B65C73', marginBottom: '0.2rem', fontSize: '0.9rem' }}>
+                          ⚡ Flash Sale Discount Settings
                         </label>
                         <p style={{ fontSize: '0.75rem', color: 'rgba(0,0,0,0.55)', margin: 0 }}>
-                          Set the discounted sale price for this item during Flash Sale.
+                          Type into <strong>either option</strong> below — setting percentage or sale price automatically calculates the other!
                         </p>
                       </div>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                        <span style={{ fontWeight: '700', color: '#B65C73', fontSize: '1rem' }}>₹</span>
-                        <input
-                          type="number"
-                          name="flash_sale_price"
-                          value={formFields.flash_sale_price || ''}
-                          onChange={handleTextChange}
-                          placeholder={formFields.price ? Math.round(parseFloat(formFields.price) * 0.8).toString() : 'Discount price'}
-                          style={{
-                            width: '140px',
-                            padding: '0.55rem 0.8rem',
-                            borderRadius: '6px',
-                            border: '1.5px solid #D98E9B',
-                            fontSize: '0.9rem',
-                            fontWeight: '700',
-                            color: '#B65C73',
-                            outline: 'none',
-                            backgroundColor: '#FFFFFF'
-                          }}
-                        />
-                        {formFields.price && formFields.flash_sale_price && parseFloat(formFields.flash_sale_price) < parseFloat(formFields.price) && (
-                          <span style={{
-                            backgroundColor: '#B65C73',
-                            color: '#FFFFFF',
-                            padding: '0.3rem 0.6rem',
-                            borderRadius: '6px',
-                            fontSize: '0.75rem',
-                            fontWeight: '700'
-                          }}>
-                            -{Math.round(((parseFloat(formFields.price) - parseFloat(formFields.flash_sale_price)) / parseFloat(formFields.price)) * 100)}%
-                          </span>
-                        )}
+
+                      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', alignItems: 'center' }}>
+                        {/* OPTION 1: DISCOUNT PERCENTAGE */}
+                        <div style={{ backgroundColor: '#FFFFFF', padding: '0.8rem 1rem', borderRadius: '8px', border: '1px solid rgba(217, 142, 155, 0.4)' }}>
+                          <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: '700', color: '#B65C73', marginBottom: '0.4rem', textTransform: 'uppercase' }}>
+                            Option 1: Discount % Off
+                          </label>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+                            <input
+                              type="number"
+                              min="1"
+                              max="99"
+                              value={formFields.flash_sale_percent || ''}
+                              onChange={handleDiscountPercentChange}
+                              placeholder="20"
+                              style={{
+                                width: '100%',
+                                padding: '0.45rem 0.6rem',
+                                borderRadius: '6px',
+                                border: '1px solid #D98E9B',
+                                fontSize: '0.95rem',
+                                fontWeight: '700',
+                                color: '#B65C73',
+                                outline: 'none'
+                              }}
+                            />
+                            <span style={{ fontWeight: '700', color: '#B65C73', fontSize: '1.1rem' }}>%</span>
+                          </div>
+                        </div>
+
+                        {/* OPTION 2: DISCOUNT SALE PRICE */}
+                        <div style={{ backgroundColor: '#FFFFFF', padding: '0.8rem 1rem', borderRadius: '8px', border: '1px solid rgba(217, 142, 155, 0.4)' }}>
+                          <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: '700', color: '#B65C73', marginBottom: '0.4rem', textTransform: 'uppercase' }}>
+                            Option 2: Sale Price (₹)
+                          </label>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+                            <span style={{ fontWeight: '700', color: '#B65C73', fontSize: '1rem' }}>₹</span>
+                            <input
+                              type="number"
+                              name="flash_sale_price"
+                              value={formFields.flash_sale_price || ''}
+                              onChange={handleDiscountPriceChange}
+                              placeholder={formFields.price ? Math.round(parseFloat(formFields.price) * 0.8).toString() : '28000'}
+                              style={{
+                                width: '100%',
+                                padding: '0.45rem 0.6rem',
+                                borderRadius: '6px',
+                                border: '1px solid #D98E9B',
+                                fontSize: '0.95rem',
+                                fontWeight: '700',
+                                color: '#B65C73',
+                                outline: 'none'
+                              }}
+                            />
+                          </div>
+                        </div>
                       </div>
+
+                      {/* SUMMARY PREVIEW */}
+                      {formFields.price && formFields.flash_sale_price && (
+                        <div style={{ marginTop: '0.8rem', paddingTop: '0.6rem', borderTop: '1px dashed rgba(217, 142, 155, 0.4)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '0.8rem' }}>
+                          <span style={{ color: 'rgba(0,0,0,0.6)' }}>Original: <span style={{ textDecoration: 'line-through' }}>₹{parseFloat(formFields.price).toLocaleString('en-IN')}</span></span>
+                          <span style={{ fontWeight: '700', color: '#B65C73' }}>
+                            Final Sale Price: ₹{parseFloat(formFields.flash_sale_price).toLocaleString('en-IN')} ({
+                              formFields.flash_sale_percent || Math.round(((parseFloat(formFields.price) - parseFloat(formFields.flash_sale_price)) / parseFloat(formFields.price)) * 100)
+                            }% OFF)
+                          </span>
+                        </div>
+                      )}
                     </div>
                   )}
                 </div>
