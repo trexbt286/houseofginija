@@ -584,24 +584,11 @@ function CollectionsContent() {
   const shouldGroup = !searchQuery && (!selectedCollection || selectedCollection === 'jewellery');
 
   if (shouldGroup && products.length > 0) {
-    products.forEach(p => {
-      let groupName = 'Other';
-      const slug = p.slug.toLowerCase();
-      if (slug.includes('suit')) groupName = 'Suits';
-      else if (slug.includes('earring')) groupName = 'Earrings';
-      else if (slug.includes('ring')) groupName = 'Rings';
-      else if (slug.includes('necklace')) groupName = 'Necklaces';
-      else if (slug.includes('bracelet')) groupName = 'Bracelets';
-      else groupName = p.collection_name || 'Other';
-      
-      if (!groupedProducts[groupName]) groupedProducts[groupName] = [];
-      groupedProducts[groupName].push(p);
-    });
-
-    Object.keys(groupedProducts).forEach((key) => {
-      groupedProducts[key].sort((a, b) =>
-        compareCatalogProducts(a, b, selectedSort)
-      );
+    const sidebarCats = getSidebarCategories().filter(cat => cat.id !== 'all' && cat.id !== 'jewellery');
+    sidebarCats.forEach(cat => {
+      const matchedItems = products.filter(p => productMatchesCategory(p, cat.id));
+      matchedItems.sort((a, b) => compareCatalogProducts(a, b, selectedSort));
+      groupedProducts[cat.name] = matchedItems;
     });
   }
 
