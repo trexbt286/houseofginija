@@ -26,13 +26,19 @@ export default function AdminFlashSalePage() {
   // Disable background scrolling when modal is open
   useEffect(() => {
     if (isAddModalOpen && typeof document !== 'undefined') {
+      document.documentElement.style.overflow = 'hidden';
       document.body.style.overflow = 'hidden';
+      document.body.style.touchAction = 'none';
     } else if (typeof document !== 'undefined') {
-      document.body.style.overflow = 'unset';
+      document.documentElement.style.overflow = '';
+      document.body.style.overflow = '';
+      document.body.style.touchAction = '';
     }
     return () => {
       if (typeof document !== 'undefined') {
-        document.body.style.overflow = 'unset';
+        document.documentElement.style.overflow = '';
+        document.body.style.overflow = '';
+        document.body.style.touchAction = '';
       }
     };
   }, [isAddModalOpen]);

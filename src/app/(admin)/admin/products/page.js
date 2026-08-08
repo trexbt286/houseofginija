@@ -33,13 +33,19 @@ function AdminProductsContent() {
   // Disable background scrolling when modal is open
   useEffect(() => {
     if (isFormOpen && typeof document !== 'undefined') {
+      document.documentElement.style.overflow = 'hidden';
       document.body.style.overflow = 'hidden';
+      document.body.style.touchAction = 'none';
     } else if (typeof document !== 'undefined') {
-      document.body.style.overflow = 'unset';
+      document.documentElement.style.overflow = '';
+      document.body.style.overflow = '';
+      document.body.style.touchAction = '';
     }
     return () => {
       if (typeof document !== 'undefined') {
-        document.body.style.overflow = 'unset';
+        document.documentElement.style.overflow = '';
+        document.body.style.overflow = '';
+        document.body.style.touchAction = '';
       }
     };
   }, [isFormOpen]);
@@ -1348,6 +1354,7 @@ const formModalContainerStyle = {
   width: '100%',
   maxHeight: '88vh',
   overflowY: 'auto',
+  overscrollBehavior: 'contain',
   position: 'relative',
 };
 
