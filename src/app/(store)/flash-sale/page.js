@@ -7,11 +7,13 @@ import SkeletonCard from '@/components/SkeletonCard';
 import ProductImageGallery from '@/components/ProductImageGallery';
 import { AddToBagLabel, ProductFeatureStrip, ProductShareButton, ProductTagBadges } from '@/components/ProductQuickViewExtras';
 import { useStore } from '@/context/StoreContext';
+import { getLocalHomepageFallback } from '@/lib/localCatalogFallback';
 
 function FlashSaleContent() {
   const { cart, wishlist, toggleWishlist, addToCart, updateCartQuantity, user } = useStore();
-  const [products, setProducts] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const initialFlashItems = (getLocalHomepageFallback().flashProducts || []).filter((p) => Boolean(p.flash_sale || p.on_sale));
+  const [products, setProducts] = useState(initialFlashItems);
+  const [loading, setLoading] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedSort, setSelectedSort] = useState('name_asc');
   
