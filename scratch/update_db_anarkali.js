@@ -22,20 +22,11 @@ async function main() {
     console.log('Connected to CockroachDB!');
     const res = await client.query(`
       UPDATE products
-      SET flash_sale = false, flash_sale_price = NULL
-      WHERE id = $1 OR LOWER(name) LIKE '%anarkali%'
-      RETURNING id, name, flash_sale
+      SET flash_sale = true, flash_sale_price = 29600
+      WHERE id = $1 OR LOWER(name) = 'anarkali'
+      RETURNING id, name, flash_sale, flash_sale_price
     `, ['6']);
-    console.log('Successfully updated CockroachDB rows:', res.rows);
-
-    // Delete duplicate products if any exist in DB
-    const delRes = await client.query(`
-      DELETE FROM products
-      WHERE slug IN ('anarkali-flared-sharara', 'aqua-hand-draped-sharara', 'blush-pink-drape-2', 'bespoke-necklace-11')
-      RETURNING id, name, slug
-    `);
-    console.log('Deleted duplicate DB rows:', delRes.rows);
-
+    console.log('Successfully updated CockroachDB Anarkali flash sale:', res.rows);
     client.release();
   } catch (err) {
     console.error('CockroachDB update error:', err);

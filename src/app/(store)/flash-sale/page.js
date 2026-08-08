@@ -11,7 +11,8 @@ import { getLocalHomepageFallback } from '@/lib/localCatalogFallback';
 
 function FlashSaleContent() {
   const { cart, wishlist, toggleWishlist, addToCart, updateCartQuantity, user } = useStore();
-  const initialFlashItems = (getLocalHomepageFallback().flashProducts || []).filter((p) => Boolean(p.flash_sale || p.on_sale));
+  const isFlashProduct = (p) => Boolean(p.flash_sale || p.on_sale || (Array.isArray(p.collection_slugs) && p.collection_slugs.includes('flash-sale')));
+  const initialFlashItems = (getLocalHomepageFallback().flashProducts || []).filter(isFlashProduct);
   const [products, setProducts] = useState(initialFlashItems);
   const [loading, setLoading] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
@@ -29,7 +30,7 @@ function FlashSaleContent() {
       .then((res) => (res.ok ? res.json() : null))
       .then((data) => {
         const all = data?.products || [];
-        const flashOnly = all.filter((p) => Boolean(p.flash_sale || p.on_sale));
+        const flashOnly = all.filter(isFlashProduct);
         setProducts(flashOnly);
         setLoading(false);
       })

@@ -111,6 +111,48 @@
   ],
   "flashProducts": [
     {
+      "id": "6",
+      "name": "Anarkali",
+      "slug": "bespoke-suit-6",
+      "description": "A finely tailored bespoke suit, crafted from exceptional textiles with structured shoulders and a modern silhouette.",
+      "price": "37000",
+      "collection_id": "1",
+      "is_out_of_stock": false,
+      "images": [
+        "/local-products/002-bespoke-suit-6-1.jpg"
+      ],
+      "variants": [
+        {
+          "color": "Classic Black",
+          "size": "S",
+          "stock": 10
+        },
+        {
+          "color": "Classic Black",
+          "size": "M",
+          "stock": 10
+        },
+        {
+          "color": "Classic Black",
+          "size": "L",
+          "stock": 10
+        }
+      ],
+      "flash_sale": true,
+      "flash_sale_price": "29600",
+      "new_arrival": false,
+      "collection_name": "Suits",
+      "collection_slug": "suits",
+      "on_sale": true,
+      "tags": [],
+      "parent_collection_name": null,
+      "parent_collection_slug": null,
+      "collection_slugs": [
+        "flash-sale"
+      ],
+      "flash_sale_percent": "20"
+    },
+    {
       "id": "46",
       "name": "Bespoke Necklace 4",
       "slug": "bespoke-necklace-4",

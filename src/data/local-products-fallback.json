@@ -59,16 +59,19 @@
           "stock": 10
         }
       ],
-      "flash_sale": false,
-      "flash_sale_price": null,
+      "flash_sale": true,
+      "flash_sale_price": "29600",
       "new_arrival": false,
       "collection_name": "Suits",
       "collection_slug": "suits",
-      "on_sale": false,
+      "on_sale": true,
       "tags": [],
       "parent_collection_name": null,
       "parent_collection_slug": null,
-      "collection_slugs": []
+      "collection_slugs": [
+        "flash-sale"
+      ],
+      "flash_sale_percent": "20"
     },
     {
       "id": "10",
