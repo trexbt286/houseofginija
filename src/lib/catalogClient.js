@@ -2,44 +2,54 @@ export function productMatchesCategory(product, selectedCategory) {
   if (!selectedCategory) return true;
 
   const cat = selectedCategory.toLowerCase();
-  const slug = (product.slug || '').toLowerCase();
   const colSlug = (product.collection_slug || '').toLowerCase();
   const parentColSlug = (product.parent_collection_slug || '').toLowerCase();
   const colName = (product.collection_name || '').toLowerCase();
+  const colSlugs = Array.isArray(product.collection_slugs) ? product.collection_slugs.map((s) => String(s).toLowerCase()) : [];
+  const colId = String(product.collection_id || '');
+
+  if (cat === 'new-collection') {
+    return Boolean(product.new_arrival || colSlugs.includes('new-collection'));
+  }
+  if (cat === 'flash-sale') {
+    return Boolean(product.on_sale || product.flash_sale || colSlugs.includes('flash-sale'));
+  }
 
   if (cat === 'rings' || cat === 'ring') {
-    return (slug.includes('ring') && !slug.includes('earring')) || colSlug === 'rings';
+    return colSlug === 'rings' || colSlugs.includes('rings') || colId === '5';
   }
   if (cat === 'necklaces' || cat === 'necklace') {
-    return slug.includes('necklace') || colSlug === 'necklaces';
+    return colSlug === 'necklaces' || colSlugs.includes('necklaces') || colId === '2';
   }
   if (cat === 'bracelets' || cat === 'bracelet') {
-    return slug.includes('bracelet') || colSlug === 'bracelets';
+    return colSlug === 'bracelets' || colSlugs.includes('bracelets') || colId === '6';
   }
   if (cat === 'earrings' || cat === 'earring') {
-    return slug.includes('earring') || colSlug === 'earrings';
+    return colSlug === 'earrings' || colSlugs.includes('earrings') || colId === '4';
+  }
+  if (cat === 'suits' || cat === 'unstitched') {
+    return colSlug === 'suits' || colSlug === 'unstitched' || colSlugs.includes('suits') || colId === '1';
+  }
+  if (cat === 'indo-western') {
+    return colSlug === 'indo-western' || colSlugs.includes('indo-western') || colId === '8';
+  }
+  if (cat === 'gowns' || cat === 'heavy-gown') {
+    return colSlug === 'gowns' || colSlug === 'heavy-gown' || colSlugs.includes('gowns') || colSlugs.includes('heavy-gown') || colId === '10';
+  }
+  if (cat === 'shararas') {
+    return colSlug === 'shararas' || colSlugs.includes('shararas') || colId === '9';
+  }
+  if (cat === 'co-ords') {
+    return colSlug === 'co-ords' || colSlugs.includes('co-ords') || colId === '11';
   }
 
-  const categoryMatch =
+  return (
     colSlug === cat ||
     parentColSlug === cat ||
     colName === cat ||
-    (cat === 'gowns' && (colSlug === 'heavy-gown' || colSlug === 'gowns' || slug.includes('gown'))) ||
-    (cat === 'shararas' && (colSlug === 'shararas' || slug.includes('sharara'))) ||
-    (cat === 'indo-western' && (
-      colSlug === 'indo-western' ||
-      slug.includes('indo-western') ||
-      String(product.collection_id) === '8' ||
-      (Array.isArray(product.collection_slugs) && product.collection_slugs.includes('indo-western'))
-    ));
-
-  if (categoryMatch) return true;
-  if (cat === 'new-collection') return Boolean(product.new_arrival);
-  if (cat === 'flash-sale') {
-    return Boolean(product.on_sale || product.flash_sale);
-  }
-
-  return false;
+    colSlugs.includes(cat) ||
+    colId === cat
+  );
 }
 
 export function compareCatalogProducts(a, b, selectedSort = 'name_asc') {
