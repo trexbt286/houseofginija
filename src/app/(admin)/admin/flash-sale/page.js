@@ -13,37 +13,29 @@ export default function AdminFlashSalePage() {
   const [savingSettings, setSavingSettings] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
-  const [searchQuery, setSearchQuery] = useState('');
-  const [filterCategory, setFilterCategory] = useState('ALL');
 
-  // Local editing states per product ID
-  const [localEdits, setLocalEdits] = useState({});
+  // Add Product Modal states
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const [selectedProductId, setSelectedProductId] = useState('');
+  const [discountType, setDiscountType] = useState('PERCENTAGE'); // 'PERCENTAGE' | 'PRICE'
+  const [discountValue, setDiscountValue] = useState('20');
+  const [isAdding, setIsAdding] = useState(false);
+  const [addError, setAddError] = useState('');
+
+  // Edit / Save row state
+  const [savingId, setSavingId] = useState(null);
 
   const fetchData = async () => {
     setLoading(true);
     setError('');
     try {
-      // 1. Fetch products & collections
       const prodRes = await fetch('/api/admin/products');
-      if (!prodRes.ok) throw new Error('Failed to fetch catalog.');
-      const prodData = await prodRes.json();
-      setProducts(prodData.products || []);
-      setCollections(prodData.collections || []);
+      if (prodRes.ok) {
+        const prodData = await prodRes.json();
+        setProducts(prodData.products || []);
+        setCollections(prodData.collections || []);
+      }
 
-      // Initialize local edits
-      const edits = {};
-      (prodData.products || []).forEach(p => {
-        edits[p.id] = {
-          flash_sale: !!p.flash_sale,
-          flash_sale_price: p.flash_sale_price !== null ? p.flash_sale_price.toString() : '',
-          saving: false,
-          error: '',
-          success: ''
-        };
-      });
-      setLocalEdits(edits);
-
-      // 2. Fetch global settings
       const settingsRes = await fetch('/api/admin/settings');
       if (settingsRes.ok) {
         const settingsData = await settingsRes.json();
@@ -51,7 +43,7 @@ export default function AdminFlashSalePage() {
       }
     } catch (err) {
       console.error(err);
-      setError(err.message || 'Error fetching flash sale data.');
+      setError('Error loading catalog data.');
     } finally {
       setLoading(false);
     }
@@ -78,7 +70,7 @@ export default function AdminFlashSalePage() {
       });
       if (res.ok) {
         setFlashSaleEnabled(newValue);
-        setSuccess(`Flash sale section globally ${newValue ? 'ENABLED' : 'DISABLED'}.`);
+        setSuccess(`Flash Sale section is now ${newValue ? 'ENABLED' : 'DISABLED'} on the store.`);
       } else {
         const data = await res.json();
         setError(data.error || 'Failed to save global setting.');
@@ -91,100 +83,141 @@ export default function AdminFlashSalePage() {
     }
   };
 
-  const handleLocalChange = (productId, field, value) => {
-    setLocalEdits(prev => ({
-      ...prev,
-      [productId]: {
-        ...prev[productId],
-        [field]: value,
-        error: '', // clear error on edit
-        success: ''
-      }
-    }));
-  };
+  // Add Product to Flash Sale
+  const handleAddProductToFlashSale = async (e) => {
+    e.preventDefault();
+    setAddError('');
 
-  const handleSaveProduct = async (product) => {
-    const edit = localEdits[product.id];
-    if (!edit) return;
+    if (!selectedProductId) {
+      setAddError('Please select a product.');
+      return;
+    }
 
-    // Local validation before sending API call
-    const isFlashSale = edit.flash_sale;
-    let priceNum = null;
+    const product = products.find(p => p.id.toString() === selectedProductId.toString());
+    if (!product) {
+      setAddError('Selected product not found.');
+      return;
+    }
 
-    if (isFlashSale) {
-      if (edit.flash_sale_price === '') {
-        setLocalEdits(prev => ({
-          ...prev,
-          [product.id]: { ...prev[product.id], error: 'Flash sale price is required.' }
-        }));
+    const origPrice = parseFloat(product.price) || 0;
+    let computedPrice = 0;
+
+    if (discountType === 'PERCENTAGE') {
+      const pct = parseFloat(discountValue);
+      if (isNaN(pct) || pct <= 0 || pct >= 100) {
+        setAddError('Discount percentage must be between 1% and 99%.');
         return;
       }
-      priceNum = parseFloat(edit.flash_sale_price);
-      if (isNaN(priceNum) || priceNum <= 0) {
-        setLocalEdits(prev => ({
-          ...prev,
-          [product.id]: { ...prev[product.id], error: 'Flash sale price must be a valid positive number.' }
-        }));
-        return;
-      }
-      if (priceNum >= parseFloat(product.price)) {
-        setLocalEdits(prev => ({
-          ...prev,
-          [product.id]: { ...prev[product.id], error: 'Flash sale price must be less than original price.' }
-        }));
+      computedPrice = Math.round(origPrice * (1 - pct / 100));
+    } else {
+      computedPrice = parseFloat(discountValue);
+      if (isNaN(computedPrice) || computedPrice <= 0 || computedPrice >= origPrice) {
+        setAddError(`Flash sale price must be greater than ₹0 and less than ₹${origPrice}.`);
         return;
       }
     }
 
-    // Set saving state
-    setLocalEdits(prev => ({
-      ...prev,
-      [product.id]: { ...prev[product.id], saving: true, error: '', success: '' }
-    }));
-
+    setIsAdding(true);
     try {
       const res = await fetch('/api/admin/products', {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           ...product,
-          flash_sale: isFlashSale,
-          flash_sale_price: isFlashSale ? priceNum : null
+          flash_sale: true,
+          flash_sale_price: computedPrice
         })
       });
 
       const data = await res.json();
       if (res.ok) {
-        setLocalEdits(prev => ({
-          ...prev,
-          [product.id]: { 
-            ...prev[product.id], 
-            saving: false, 
-            success: 'Saved!' 
-          }
-        }));
-        // Update local products state
-        setProducts(prevProducts => 
-          prevProducts.map(p => p.id === product.id ? data.product : p)
-        );
+        setProducts(prev => prev.map(p => p.id === product.id ? data.product : p));
+        setSuccess(`"${product.name}" added to Flash Sale at ₹${computedPrice.toLocaleString('en-IN')}!`);
+        setIsAddModalOpen(false);
+        setSelectedProductId('');
+        setDiscountValue('20');
       } else {
-        setLocalEdits(prev => ({
-          ...prev,
-          [product.id]: { 
-            ...prev[product.id], 
-            saving: false, 
-            error: data.error || 'Failed to save product.' 
-          }
-        }));
+        setAddError(data.error || 'Failed to update product.');
       }
     } catch (err) {
       console.error(err);
-      setLocalEdits(prev => ({
-        ...prev,
-        [product.id]: { ...prev[product.id], saving: false, error: 'Network error.' }
-      }));
+      setAddError('Network request failed.');
+    } finally {
+      setIsAdding(false);
     }
   };
+
+  // Remove Product from Flash Sale
+  const handleRemoveFromFlashSale = async (product) => {
+    setSavingId(product.id);
+    setError('');
+    setSuccess('');
+    try {
+      const res = await fetch('/api/admin/products', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          ...product,
+          flash_sale: false,
+          flash_sale_price: null
+        })
+      });
+
+      const data = await res.json();
+      if (res.ok) {
+        setProducts(prev => prev.map(p => p.id === product.id ? data.product : p));
+        setSuccess(`"${product.name}" removed from Flash Sale.`);
+      } else {
+        setError(data.error || 'Failed to update product.');
+      }
+    } catch (err) {
+      console.error(err);
+      setError('Network request error.');
+    } finally {
+      setSavingId(null);
+    }
+  };
+
+  // Quick Update Sale Price for active item
+  const handleUpdatePrice = async (product, newPriceStr) => {
+    const newPrice = parseFloat(newPriceStr);
+    const origPrice = parseFloat(product.price) || 0;
+    if (isNaN(newPrice) || newPrice <= 0 || newPrice >= origPrice) {
+      setError(`Flash sale price must be greater than ₹0 and less than ₹${origPrice}.`);
+      return;
+    }
+
+    setSavingId(product.id);
+    setError('');
+    setSuccess('');
+    try {
+      const res = await fetch('/api/admin/products', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          ...product,
+          flash_sale: true,
+          flash_sale_price: newPrice
+        })
+      });
+
+      const data = await res.json();
+      if (res.ok) {
+        setProducts(prev => prev.map(p => p.id === product.id ? data.product : p));
+        setSuccess(`Updated Flash Sale price for "${product.name}" to ₹${newPrice.toLocaleString('en-IN')}.`);
+      } else {
+        setError(data.error || 'Failed to update price.');
+      }
+    } catch (err) {
+      console.error(err);
+      setError('Network request error.');
+    } finally {
+      setSavingId(null);
+    }
+  };
+
+  const activeFlashProducts = products.filter(p => !!p.flash_sale);
+  const eligibleProducts = products.filter(p => !p.flash_sale);
 
   const calculateDiscount = (original, discountVal) => {
     const orig = parseFloat(original);
@@ -219,7 +252,7 @@ export default function AdminFlashSalePage() {
           <div style={globalRowStyle}>
             <div>
               <h2 style={sectionTitleStyle}>Global Configuration</h2>
-              <p style={sectionSubStyle}>Enable or disable the flash sale section on the homepage.</p>
+              <p style={sectionSubStyle}>Enable or disable the Flash Sale section on the storefront.</p>
             </div>
             <div>
               <button 
@@ -237,158 +270,237 @@ export default function AdminFlashSalePage() {
           </div>
         </section>
 
-        {/* Products list panel */}
+        {/* ACTIVE FLASH SALE PRODUCTS SECTION */}
         <section style={sectionCardStyle}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem', marginBottom: '1.5rem' }}>
             <div>
-              <h2 style={sectionTitleStyle}>Manage Flash Sale Products</h2>
-              <p style={{ ...sectionSubStyle, marginBottom: 0 }}>Assign products to the flash sale and set their discounted prices.</p>
+              <h2 style={sectionTitleStyle}>Active Flash Sale Items ({activeFlashProducts.length})</h2>
+              <p style={{ ...sectionSubStyle, marginBottom: 0 }}>Products currently featured in the flash sale section.</p>
             </div>
             
-            <div style={{ display: 'flex', gap: '0.8rem', alignItems: 'center', flexWrap: 'wrap' }}>
-              <input
-                type="text"
-                placeholder="Search products..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                style={{
-                  padding: '0.55rem 1rem',
-                  borderRadius: '20px',
-                  border: '1px solid rgba(139, 119, 137, 0.25)',
-                  fontSize: '0.8rem',
-                  outline: 'none',
-                  minWidth: '200px'
-                }}
-              />
-              <select
-                value={filterCategory}
-                onChange={(e) => setFilterCategory(e.target.value)}
-                style={{
-                  padding: '0.55rem 1rem',
-                  borderRadius: '20px',
-                  border: '1px solid rgba(139, 119, 137, 0.25)',
-                  fontSize: '0.8rem',
-                  backgroundColor: '#FFFFFF',
-                  outline: 'none',
-                  cursor: 'pointer'
-                }}
-              >
-                <option value="ALL">All Categories</option>
-                <option value="FLASH_ONLY">Flash Sale Active Only</option>
-                {collections.map(c => (
-                  <option key={c.id} value={c.slug || c.name}>{c.name}</option>
-                ))}
-              </select>
-            </div>
+            <button
+              onClick={() => {
+                setIsAddModalOpen(true);
+                setAddError('');
+                if (eligibleProducts.length > 0) {
+                  setSelectedProductId(eligibleProducts[0].id);
+                }
+              }}
+              style={{
+                ...actionBtnStyle,
+                backgroundColor: '#D98E9B',
+                color: '#FFFFFF',
+                boxShadow: '0 4px 12px rgba(217, 142, 155, 0.3)'
+              }}
+            >
+              + ADD PRODUCT TO FLASH SALE
+            </button>
           </div>
 
-          {loading ? (
-            <div style={loadingStyle}>Accessing catalog...</div>
+          {activeFlashProducts.length === 0 ? (
+            <div style={{ textAlign: 'center', padding: '3rem 1rem', color: 'rgba(0, 0, 0, 0.45)', backgroundColor: '#FAF5F6', borderRadius: '12px', border: '1px dashed rgba(139, 119, 137, 0.2)' }}>
+              <p style={{ fontSize: '1rem', fontWeight: '600', marginBottom: '0.5rem', color: '#000' }}>No active flash sale products.</p>
+              <p style={{ fontSize: '0.85rem', marginBottom: '1.2rem' }}>Click "+ ADD PRODUCT TO FLASH SALE" to select and discount products.</p>
+              <button
+                onClick={() => {
+                  setIsAddModalOpen(true);
+                  if (eligibleProducts.length > 0) setSelectedProductId(eligibleProducts[0].id);
+                }}
+                style={{ ...actionBtnStyle, backgroundColor: '#D98E9B', color: '#FFF' }}
+              >
+                + Add First Product
+              </button>
+            </div>
           ) : (
-            <div style={tableWrapperStyle}>
-              <table style={tableStyle}>
-                <thead>
-                  <tr>
-                    <th style={thStyle}>Product</th>
-                    <th style={thStyle} className="hide-on-mobile">Category</th>
-                    <th style={thStyle} className="hide-on-mobile">Original Price</th>
-                    <th style={thStyle} className="hide-on-mobile">Flash Sale Active</th>
-                    <th style={thStyle}>Flash Sale Price (₹)</th>
-                    <th style={thStyle} className="hide-on-mobile">Calculated Discount</th>
-                    <th style={{ ...thStyle, textAlign: 'center' }}>Action</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {products.filter(product => {
-                    const edit = localEdits[product.id] || {};
-                    const matchesSearch = !searchQuery || product.name.toLowerCase().includes(searchQuery.toLowerCase());
-                    let matchesCat = true;
-                    if (filterCategory === 'FLASH_ONLY') {
-                      matchesCat = !!edit.flash_sale;
-                    } else if (filterCategory !== 'ALL') {
-                      matchesCat = (product.collection_slug === filterCategory || product.collection_name === filterCategory);
-                    }
-                    return matchesSearch && matchesCat;
-                  }).map(product => {
-                    const edit = localEdits[product.id] || {
-                      flash_sale: false,
-                      flash_sale_price: '',
-                      saving: false,
-                      error: '',
-                      success: ''
-                    };
-                    const discountBadge = edit.flash_sale && edit.flash_sale_price
-                      ? calculateDiscount(product.price, edit.flash_sale_price)
-                      : null;
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))', gap: '1.2rem' }}>
+              {activeFlashProducts.map(product => {
+                const origPrice = parseFloat(product.price) || 0;
+                const flashPrice = parseFloat(product.flash_sale_price) || Math.round(origPrice * 0.8);
+                const discountText = calculateDiscount(origPrice, flashPrice);
 
-                    return (
-                      <tr key={product.id} style={trStyle}>
-                        <td style={tdStyle}>
-                          <div style={productInfoStyle}>
-                            <img 
-                              src={product.images?.[0] || '/icon.png'} 
-                              alt={product.name} 
-                              style={productImgStyle} 
-                              loading="lazy"
-                            />
-                            <span style={productNameStyle}>{product.name}</span>
-                          </div>
-                        </td>
-                        <td style={tdStyle} className="hide-on-mobile">{product.collection_name || 'Unassigned'}</td>
-                        <td style={{ ...tdStyle, fontWeight: '600' }} className="hide-on-mobile">₹{parseFloat(product.price).toLocaleString('en-IN')}</td>
-                        <td style={tdStyle} className="hide-on-mobile">
-                          <input 
-                            type="checkbox"
-                            checked={edit.flash_sale}
-                            onChange={(e) => handleLocalChange(product.id, 'flash_sale', e.target.checked)}
-                            style={checkboxStyle}
-                          />
-                        </td>
-                        <td style={tdStyle}>
-                          <input 
-                            type="number"
-                            placeholder="Discount price"
-                            value={edit.flash_sale_price}
-                            onChange={(e) => handleLocalChange(product.id, 'flash_sale_price', e.target.value)}
-                            disabled={!edit.flash_sale}
-                            style={{
-                              ...priceInputStyle,
-                              borderColor: edit.error ? '#FF0000' : 'rgba(139, 119, 137, 0.2)'
-                            }}
-                          />
-                        </td>
-                        <td style={tdStyle} className="hide-on-mobile">
-                          {discountBadge ? (
-                            <span style={badgeStyle}>{discountBadge}</span>
-                          ) : (
-                            <span style={{ color: 'rgba(0, 0, 0, 0.3)', fontSize: '0.8rem' }}>—</span>
+                return (
+                  <div key={product.id} style={productCardStyle}>
+                    <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
+                      <img 
+                        src={product.images?.[0] || '/icon.png'} 
+                        alt={product.name} 
+                        style={{ width: '64px', height: '80px', objectFit: 'cover', borderRadius: '8px', border: '1px solid rgba(0,0,0,0.06)' }} 
+                      />
+                      <div style={{ flex: 1, minWidth: 0 }}>
+                        <h4 style={{ fontSize: '0.95rem', fontWeight: '600', color: '#000', marginBottom: '0.2rem', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                          {product.name}
+                        </h4>
+                        <p style={{ fontSize: '0.75rem', color: 'rgba(0,0,0,0.5)', marginBottom: '0.4rem' }}>
+                          {product.collection_name || 'Collection Item'}
+                        </p>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
+                          <span style={{ fontSize: '0.8rem', color: 'rgba(0,0,0,0.4)', textDecoration: 'line-through' }}>
+                            ₹{origPrice.toLocaleString('en-IN')}
+                          </span>
+                          <span style={{ fontSize: '1rem', fontWeight: '700', color: '#B65C73' }}>
+                            ₹{flashPrice.toLocaleString('en-IN')}
+                          </span>
+                          {discountText && (
+                            <span style={badgeStyle}>{discountText}</span>
                           )}
-                        </td>
-                        <td style={{ ...tdStyle, textAlign: 'center' }}>
-                          <button
-                            onClick={() => handleSaveProduct(product)}
-                            disabled={edit.saving}
-                            style={saveBtnStyle}
-                          >
-                            {edit.saving ? 'Saving...' : 'Save'}
-                          </button>
-                          {edit.error && <div style={rowErrorStyle}>{edit.error}</div>}
-                          {edit.success && <div style={rowSuccessStyle}>{edit.success}</div>}
-                        </td>
-                      </tr>
-                    );
-                  })}
-                </tbody>
-              </table>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div style={{ display: 'flex', gap: '0.5rem', marginTop: '1rem', paddingTop: '0.8rem', borderTop: '1px solid rgba(139, 119, 137, 0.1)' }}>
+                      <button
+                        onClick={() => {
+                          const newPrice = prompt(`Enter new Flash Sale Price (₹) for "${product.name}" (Original: ₹${origPrice}):`, flashPrice);
+                          if (newPrice !== null && newPrice !== '') {
+                            handleUpdatePrice(product, newPrice);
+                          }
+                        }}
+                        disabled={savingId === product.id}
+                        style={smallBtnOutlineStyle}
+                      >
+                        {savingId === product.id ? 'Saving...' : 'Edit Price'}
+                      </button>
+                      <button
+                        onClick={() => handleRemoveFromFlashSale(product)}
+                        disabled={savingId === product.id}
+                        style={smallBtnDangerStyle}
+                      >
+                        {savingId === product.id ? 'Removing...' : 'Remove'}
+                      </button>
+                    </div>
+                  </div>
+                );
+              })}
             </div>
           )}
         </section>
+
+        {/* MODAL: ADD PRODUCT TO FLASH SALE */}
+        {isAddModalOpen && (
+          <div style={modalOverlayStyle} onClick={() => setIsAddModalOpen(false)}>
+            <div style={modalContentStyle} onClick={(e) => e.stopPropagation()}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
+                <h3 style={{ fontFamily: 'var(--font-serif)', fontSize: '1.4rem', fontWeight: '600', color: '#000' }}>
+                  Add Product to Flash Sale
+                </h3>
+                <button 
+                  onClick={() => setIsAddModalOpen(false)}
+                  style={{ background: 'none', border: 'none', fontSize: '1.5rem', cursor: 'pointer', color: 'rgba(0,0,0,0.5)' }}
+                >
+                  ✕
+                </button>
+              </div>
+
+              {addError && <div style={{ ...errorBannerStyle, marginBottom: '1rem' }}>{addError}</div>}
+
+              <form onSubmit={handleAddProductToFlashSale}>
+                <div style={{ marginBottom: '1.2rem' }}>
+                  <label style={labelStyle}>Select Product</label>
+                  <select
+                    value={selectedProductId}
+                    onChange={(e) => setSelectedProductId(e.target.value)}
+                    style={inputSelectStyle}
+                    required
+                  >
+                    {eligibleProducts.length === 0 ? (
+                      <option value="">All catalog products are already on flash sale!</option>
+                    ) : (
+                      eligibleProducts.map(p => (
+                        <option key={p.id} value={p.id}>
+                          {p.name} — ₹{parseFloat(p.price).toLocaleString('en-IN')}
+                        </option>
+                      ))
+                    )}
+                  </select>
+                </div>
+
+                <div style={{ marginBottom: '1.2rem' }}>
+                  <label style={labelStyle}>Set Discount Method</label>
+                  <div style={{ display: 'flex', gap: '0.8rem', marginBottom: '0.8rem' }}>
+                    <button
+                      type="button"
+                      onClick={() => setDiscountType('PERCENTAGE')}
+                      style={{
+                        ...toggleBtnStyle,
+                        backgroundColor: discountType === 'PERCENTAGE' ? '#D98E9B' : '#F5E6E9',
+                        color: discountType === 'PERCENTAGE' ? '#FFFFFF' : '#000000'
+                      }}
+                    >
+                      Discount % Off
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setDiscountType('PRICE')}
+                      style={{
+                        ...toggleBtnStyle,
+                        backgroundColor: discountType === 'PRICE' ? '#D98E9B' : '#F5E6E9',
+                        color: discountType === 'PRICE' ? '#FFFFFF' : '#000000'
+                      }}
+                    >
+                      Exact Sale Price (₹)
+                    </button>
+                  </div>
+
+                  {discountType === 'PERCENTAGE' ? (
+                    <div>
+                      <input
+                        type="number"
+                        placeholder="e.g. 20"
+                        min="1"
+                        max="99"
+                        value={discountValue}
+                        onChange={(e) => setDiscountValue(e.target.value)}
+                        style={inputSelectStyle}
+                        required
+                      />
+                      {selectedProductId && (
+                        <p style={{ fontSize: '0.75rem', color: 'rgba(0,0,0,0.5)', marginTop: '0.4rem' }}>
+                          Calculated Sale Price: <strong style={{ color: '#B65C73' }}>₹{
+                            Math.round((parseFloat(products.find(p => p.id.toString() === selectedProductId.toString())?.price || 0)) * (1 - (parseFloat(discountValue) || 0) / 100)).toLocaleString('en-IN')
+                          }</strong>
+                        </p>
+                      )}
+                    </div>
+                  ) : (
+                    <div>
+                      <input
+                        type="number"
+                        placeholder="e.g. 25000"
+                        value={discountValue}
+                        onChange={(e) => setDiscountValue(e.target.value)}
+                        style={inputSelectStyle}
+                        required
+                      />
+                    </div>
+                  )}
+                </div>
+
+                <div style={{ display: 'flex', gap: '0.8rem', justifyContent: 'flex-end', marginTop: '2rem' }}>
+                  <button
+                    type="button"
+                    onClick={() => setIsAddModalOpen(false)}
+                    style={smallBtnOutlineStyle}
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="submit"
+                    disabled={isAdding || eligibleProducts.length === 0}
+                    style={{ ...actionBtnStyle, backgroundColor: '#D98E9B', color: '#FFF' }}
+                  >
+                    {isAdding ? 'Adding...' : 'Add to Flash Sale'}
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        )}
       </main>
     </div>
   );
 }
 
-// Styles consistent with coupons page theme
+// Styling Constants
 const layoutStyle = {
   display: 'flex',
   minHeight: '100vh',
@@ -497,110 +609,95 @@ const successBannerStyle = {
   fontWeight: '600',
 };
 
-const loadingStyle = {
-  textAlign: 'center',
-  padding: '3rem',
-  color: 'rgba(0, 0, 0, 0.5)',
-  fontSize: '0.9rem',
-};
-
-const tableWrapperStyle = {
-  overflowX: 'auto',
-};
-
-const tableStyle = {
-  width: '100%',
-  borderCollapse: 'collapse',
-};
-
-const thStyle = {
-  textAlign: 'left',
-  padding: '1rem 0.75rem',
-  borderBottom: '2px solid rgba(139, 119, 137, 0.1)',
-  fontSize: '0.75rem',
-  textTransform: 'uppercase',
-  letterSpacing: '0.06em',
-  color: 'rgba(0, 0, 0, 0.5)',
-  fontWeight: '700',
-};
-
-const trStyle = {
-  borderBottom: '1px solid rgba(139, 119, 137, 0.05)',
-  transition: 'background-color 0.2s ease',
-};
-
-const tdStyle = {
-  padding: '1rem 0.75rem',
-  fontSize: '0.85rem',
-  color: '#000000',
-  verticalAlign: 'middle',
-};
-
-const productInfoStyle = {
+const productCardStyle = {
+  backgroundColor: '#FFF7F8',
+  borderRadius: '12px',
+  padding: '1rem',
+  border: '1px solid #F4E1E5',
   display: 'flex',
-  alignItems: 'center',
-  gap: '1rem',
-};
-
-const productImgStyle = {
-  width: '40px',
-  height: '40px',
-  borderRadius: '6px',
-  objectFit: 'cover',
-  backgroundColor: '#F6DDE2',
-};
-
-const productNameStyle = {
-  fontWeight: '600',
-};
-
-const checkboxStyle = {
-  width: '18px',
-  height: '18px',
-  cursor: 'pointer',
-  accentColor: '#B65C73',
-};
-
-const priceInputStyle = {
-  width: '120px',
-  padding: '0.4rem 0.6rem',
-  borderRadius: '6px',
-  border: '1px solid',
-  outline: 'none',
-  fontSize: '0.85rem',
+  flexDirection: 'column',
+  justify: 'space-between',
 };
 
 const badgeStyle = {
-  backgroundColor: '#F6DDE2',
+  backgroundColor: '#FDF2F4',
   color: '#B65C73',
   padding: '0.2rem 0.5rem',
-  borderRadius: '4px',
+  borderRadius: '6px',
   fontSize: '0.75rem',
   fontWeight: '700',
+  border: '1px solid rgba(182, 92, 115, 0.2)',
 };
 
-const saveBtnStyle = {
-  backgroundColor: '#C16C7D',
-  color: '#FFFFFF',
-  border: 'none',
-  padding: '0.4rem 1rem',
+const smallBtnOutlineStyle = {
+  flex: 1,
+  padding: '0.45rem 0.8rem',
   borderRadius: '20px',
-  fontSize: '0.78rem',
+  border: '1px solid rgba(139, 119, 137, 0.3)',
+  backgroundColor: '#FFFFFF',
+  color: '#000000',
+  fontSize: '0.75rem',
+  fontWeight: '600',
+  cursor: 'pointer',
+};
+
+const smallBtnDangerStyle = {
+  flex: 1,
+  padding: '0.45rem 0.8rem',
+  borderRadius: '20px',
+  border: '1px solid #F8B4B4',
+  backgroundColor: '#FDF2F2',
+  color: '#C81E1E',
+  fontSize: '0.75rem',
+  fontWeight: '600',
+  cursor: 'pointer',
+};
+
+const modalOverlayStyle = {
+  position: 'fixed',
+  inset: 0,
+  backgroundColor: 'rgba(0, 0, 0, 0.4)',
+  display: 'flex',
+  justifyContent: 'center',
+  alignItems: 'center',
+  zIndex: 999,
+  padding: '1rem',
+};
+
+const modalContentStyle = {
+  backgroundColor: '#FFFFFF',
+  borderRadius: '16px',
+  padding: '2rem',
+  width: '100%',
+  maxWidth: '480px',
+  boxShadow: '0 10px 40px rgba(0, 0, 0, 0.15)',
+};
+
+const labelStyle = {
+  display: 'block',
+  fontSize: '0.85rem',
+  fontWeight: '600',
+  color: '#000000',
+  marginBottom: '0.5rem',
+};
+
+const inputSelectStyle = {
+  width: '100%',
+  padding: '0.75rem 1rem',
+  borderRadius: '8px',
+  border: '1px solid rgba(139, 119, 137, 0.25)',
+  fontSize: '0.85rem',
+  outline: 'none',
+  backgroundColor: '#FFFFFF',
+};
+
+const toggleBtnStyle = {
+  flex: 1,
+  padding: '0.5rem 0.8rem',
+  borderRadius: '20px',
+  border: 'none',
+  fontSize: '0.8rem',
   fontWeight: '600',
   cursor: 'pointer',
   transition: 'all 0.2s ease',
-};
-
-const rowErrorStyle = {
-  color: '#FF0000',
-  fontSize: '0.7rem',
-  marginTop: '0.3rem',
-  fontWeight: '600',
-};
-
-const rowSuccessStyle = {
-  color: '#22C55E',
-  fontSize: '0.7rem',
-  marginTop: '0.3rem',
-  fontWeight: '600',
 };
