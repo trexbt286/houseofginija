@@ -69,7 +69,7 @@ function AdminProductsContent() {
   const [variants, setVariants] = useState([]);
 
   const ADMIN_CATEGORY_OPTIONS = [
-    { id: 'new-collection', name: 'New Collection' },
+    { id: 'new-collection', name: 'Fresh Collection' },
     { id: 'flash-sale', name: 'Flash Sale' },
     { id: 'suits', name: 'Unstitched Suits' },
     { id: 'indo-western', name: 'Indo-Western' },
@@ -1091,7 +1091,7 @@ function AdminProductsContent() {
                     }}
                   >
                     <option value="">All Categories ({products.length})</option>
-                    <option value="new-collection">New Collection</option>
+                    <option value="new-collection">Fresh Collection</option>
                     <option value="indo-western">Indo-Western</option>
                     <option value="shararas">Drape Sarees</option>
                     <option value="gowns">Heavy Gowns</option>

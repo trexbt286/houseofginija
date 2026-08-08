@@ -79,7 +79,7 @@ export default function AdminNewArrivalsPage() {
       });
       if (res.ok) {
         setNewArrivalsEnabled(newValue);
-        setSuccess(`New arrivals section globally ${newValue ? 'ENABLED' : 'DISABLED'}.`);
+        setSuccess(`Fresh Collection section globally ${newValue ? 'ENABLED' : 'DISABLED'}.`);
       } else {
         const data = await res.json();
         setError(data.error || 'Failed to save global setting.');
@@ -167,8 +167,8 @@ export default function AdminNewArrivalsPage() {
         {/* Header bar */}
         <header style={headerBarStyle}>
           <div>
-            <h1 style={pageTitleStyle}>New Arrivals Manager</h1>
-            <p style={pageSubStyle}>Tag and manage new collection highlights</p>
+            <h1 style={pageTitleStyle}>Fresh Collection Manager</h1>
+            <p style={pageSubStyle}>Tag and manage fresh collection highlights</p>
           </div>
           <button onClick={logout} style={logoutBtnStyle}>
             Sign Out
@@ -184,7 +184,7 @@ export default function AdminNewArrivalsPage() {
           <div style={globalRowStyle}>
             <div>
               <h2 style={sectionTitleStyle}>Global Configuration</h2>
-              <p style={sectionSubStyle}>Enable or disable the new arrivals section on the homepage.</p>
+              <p style={sectionSubStyle}>Enable or disable the fresh collection section on the homepage.</p>
             </div>
             <div>
               <button 
@@ -196,7 +196,7 @@ export default function AdminNewArrivalsPage() {
                   color: '#FFFFFF'
                 }}
               >
-                {savingSettings ? 'Saving...' : (newArrivalsEnabled ? 'DISABLE NEW ARRIVALS' : 'ENABLE NEW ARRIVALS')}
+                {savingSettings ? 'Saving...' : (newArrivalsEnabled ? 'DISABLE FRESH COLLECTION' : 'ENABLE FRESH COLLECTION')}
               </button>
             </div>
           </div>
@@ -204,8 +204,8 @@ export default function AdminNewArrivalsPage() {
 
         {/* Products list panel */}
         <section style={sectionCardStyle}>
-          <h2 style={sectionTitleStyle}>Manage New Arrivals</h2>
-          <p style={sectionSubStyle}>Select which products are tagged as &quot;New Arrivals&quot; on the homepage.</p>
+          <h2 style={sectionTitleStyle}>Manage Fresh Collection</h2>
+          <p style={sectionSubStyle}>Select which products are tagged under &quot;Fresh Collection&quot; on the homepage.</p>
 
           {loading ? (
             <div style={loadingStyle}>Accessing catalog...</div>

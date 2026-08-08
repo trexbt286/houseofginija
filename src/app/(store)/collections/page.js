@@ -751,7 +751,7 @@ function CollectionsContent() {
 
   const getSidebarCategories = () => {
     return [
-      { id: 'new-collection', name: 'New Collection', targetId: 'new-collection' },
+      { id: 'new-collection', name: 'Fresh Collection', targetId: 'new-collection' },
       { id: 'flash-sale', name: 'Flash Sale', targetId: 'flash-sale' },
       { id: 'suits', name: 'Unstitched Suits', targetId: 'suits' },
       { id: 'indo-western', name: 'Indo-Western', targetId: 'indo-western' },

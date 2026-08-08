@@ -54,7 +54,7 @@ export default function AdminSidebar({ active }) {
           href="/admin/new-arrivals" 
           style={active === "new-arrivals" ? activeNavLinkStyle : navLinkStyle}
         >
-          New Arrivals
+          Fresh Collection
         </Link>
         <Link 
           href="/admin/orders" 

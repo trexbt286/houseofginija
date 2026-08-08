@@ -196,14 +196,14 @@ export default function Header() {
                   onMouseLeave={() => setDropdownOpen(false)}
                 >
                   <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.25rem 1.8rem' }}>
-                    {/* New Collection */}
+                    {/* Fresh Collection */}
                     <div>
                       <Link 
                         href="/collections?collection=new-collection" 
                         style={{ fontSize: '0.8rem', fontWeight: '700', color: '#000000', textTransform: 'uppercase', letterSpacing: '0.08em', textDecoration: 'none' }}
                         onClick={() => { setDropdownOpen(false); setMenuOpen(false); }}
                       >
-                        New Collection
+                        Fresh Collection
                       </Link>
                     </div>
 
@@ -397,7 +397,7 @@ export default function Header() {
               )}
             </Link>
 
-            {/* 2. NEW COLLECTION */}
+            {/* 2. FRESH COLLECTION */}
             <Link 
               href="/collections?collection=new-collection" 
               className="mobile-nav-item-row"
@@ -407,7 +407,7 @@ export default function Header() {
                 <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#D98E9B" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
                   <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
                 </svg>
-                <span className="mobile-nav-item-title">NEW COLLECTION</span>
+                <span className="mobile-nav-item-title">FRESH COLLECTION</span>
               </div>
               <div className="mobile-nav-item-chevron">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
