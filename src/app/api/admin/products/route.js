@@ -192,7 +192,7 @@ export async function POST(request) {
 
   if (shouldUseLocalCatalogFallbackFirst()) {
     const store = getStoreProducts();
-    const newId = Date.now();
+    const newId = Math.floor(Date.now() % 2000000000);
     const newProduct = mapProductData({
       id: newId,
       ...product,
@@ -252,7 +252,7 @@ export async function POST(request) {
     if (client) await client.query('ROLLBACK').catch(() => {});
     console.error('Admin POST product error:', error);
     const store = getStoreProducts();
-    const newId = Date.now();
+    const newId = Math.floor(Date.now() % 2000000000);
     const newProduct = mapProductData({
       id: newId,
       ...product,
@@ -280,16 +280,19 @@ export async function PUT(request) {
 
   const product = parseProductPayload(body);
 
-  if (shouldUseLocalCatalogFallbackFirst()) {
+  const isValidDbId = !isNaN(Number(body.id)) && Number(body.id) > 0 && Number(body.id) <= 2147483647;
+
+  if (shouldUseLocalCatalogFallbackFirst() || !isValidDbId) {
+    const existing = getStore().find((p) => String(p.id) === String(body.id) || p.slug === body.slug);
     const updatedProduct = mapProductData({
-      ...(getStore().find((p) => String(p.id) === String(body.id) || p.slug === body.slug) || {}),
+      ...(existing || {}),
       ...product,
       id: body.id,
-      collection_id: product.collectionId || 1,
+      collection_id: product.collectionId || (existing && existing.collection_id) || 1,
       collection_slugs: product.collectionSlugs,
-      collection_slug: product.collectionSlugs[0] || 'suits',
+      collection_slug: product.collectionSlugs[0] || (existing && existing.collection_slug) || 'suits',
       tags: normalizeLocalProductTags(body),
-    });
+    }, { isAdmin: true });
     upsertProduct(updatedProduct);
     return NextResponse.json({ success: true, product: updatedProduct });
   }
