@@ -496,12 +496,14 @@ function AdminProductsContent() {
     if (product.new_arrival && !initialSlugs.includes('new-collection')) initialSlugs.push('new-collection');
     if ((product.on_sale || product.flash_sale) && !initialSlugs.includes('flash-sale')) initialSlugs.push('flash-sale');
 
-    setSelectedCategorySlugs([...new Set(initialSlugs)]);
+    setSelectedCategorySlugs([...new Set(initialSlugs.length > 0 ? initialSlugs : ['suits'])]);
     const existingCustomTags = (product.tags || []).map((t) => (typeof t === 'string' ? t : t?.name || ''));
     setCustomTags([...new Set(existingCustomTags.filter(Boolean))]);
     setSelectedTagIds((product.tags || []).map((tag) => Number(tag?.id)).filter(Boolean));
-    setImages(product.images || []);
-    setVariants(product.variants || []);
+    const prodImages = Array.isArray(product.images) && product.images.length > 0 ? product.images : [product.image_url || '/icon.png'];
+    const prodVariants = Array.isArray(product.variants) && product.variants.length > 0 ? product.variants : [{ size: 'One Size', stock: 10 }];
+    setImages(prodImages);
+    setVariants(prodVariants);
     setIsFormOpen(true);
   };
 
@@ -510,20 +512,9 @@ function AdminProductsContent() {
     setError('');
     setSuccess('');
 
-    if (selectedCategorySlugs.length === 0) {
-      setError('Please select at least one category for the product.');
-      return;
-    }
-
-    if (images.length === 0) {
-      setError('Please upload at least one image.');
-      return;
-    }
-
-    if (variants.length === 0) {
-      setError('Please define at least one sizing variant with stock.');
-      return;
-    }
+    const finalCategories = selectedCategorySlugs.length > 0 ? selectedCategorySlugs : ['suits'];
+    const finalImages = images.length > 0 ? images : ['/icon.png'];
+    const finalVariants = variants.length > 0 ? variants : [{ size: 'One Size', stock: 10 }];
 
     const formattedCustomTags = customTags.map((name) => ({
       id: name.toLowerCase().replace(/[^a-z0-9]+/g, '-'),
@@ -531,9 +522,9 @@ function AdminProductsContent() {
       slug: name.toLowerCase().trim().replace(/[^a-z0-9]+/g, '-'),
     }));
 
-    const isFlashSale = selectedCategorySlugs.includes('flash-sale') || Boolean(formFields.on_sale);
-    const isNewArrival = selectedCategorySlugs.includes('new-collection');
-    let finalSlugs = [...new Set(selectedCategorySlugs)];
+    const isFlashSale = finalCategories.includes('flash-sale') || Boolean(formFields.on_sale);
+    const isNewArrival = finalCategories.includes('new-collection');
+    let finalSlugs = [...new Set(finalCategories)];
     if (isNewArrival && !finalSlugs.includes('new-collection')) finalSlugs.push('new-collection');
     if (isFlashSale) {
       finalSlugs = ['flash-sale', ...finalSlugs.filter((s) => s !== 'flash-sale')];
@@ -545,8 +536,8 @@ function AdminProductsContent() {
     const payload = {
       ...formFields,
       collection_slugs: finalSlugs,
-      images,
-      variants,
+      images: finalImages,
+      variants: finalVariants,
       tag_ids: selectedTagIds,
       tags: formattedCustomTags,
       new_arrival: isNewArrival,
@@ -666,13 +657,15 @@ function AdminProductsContent() {
           >
             <section style={formModalContainerStyle}>
               <div style={formHeaderRowStyle}>
-              <h2 style={formTitleStyle}>
-                {editingId ? `Edit: ${formFields.name}` : 'Create New Creation'}
-              </h2>
-              <button onClick={() => setIsFormOpen(false)} style={closeFormBtnStyle}>
-                ✕ Close Form
-              </button>
-            </div>
+                <h2 style={formTitleStyle}>
+                  {editingId ? `Edit: ${formFields.name}` : 'Create New Creation'}
+                </h2>
+                <button onClick={() => setIsFormOpen(false)} style={closeFormBtnStyle}>
+                  ✕ Close Form
+                </button>
+              </div>
+              
+              {error && <div style={errorBannerStyle}>{error}</div>}
             
             <form onSubmit={handleFormSubmit} style={formStyle}>
               {/* Row 1: Name & Slug */}
