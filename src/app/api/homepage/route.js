@@ -133,21 +133,32 @@ export async function GET() {
     const fallbackHeavyDresses = getLocalHomepageFallback().heavyDresses || {};
     const getCategoryProducts = (slugs, fallbackItems = []) => {
       const acceptedSlugs = Array.isArray(slugs) ? slugs : [slugs];
-      const matched = heavyDressProducts
-        .filter((product) => acceptedSlugs.includes(product.collection_slug))
-        .slice(0, 4);
-      if (matched.length >= 4) return matched;
+      const matched = heavyDressProducts.filter((product) =>
+        acceptedSlugs.includes(product.collection_slug) ||
+        (Array.isArray(product.collection_slugs) && product.collection_slugs.some((s) => acceptedSlugs.includes(s))) ||
+        (acceptedSlugs.includes('indo-western') && String(product.collection_id) === '8')
+      );
 
-      const existingSlugs = new Set(matched.map((product) => product.slug));
-      const filled = [...matched];
-      for (const fallbackProduct of fallbackItems) {
-        if (filled.length >= 4) break;
-        if (!existingSlugs.has(fallbackProduct.slug)) {
-          filled.push(fallbackProduct);
-          existingSlugs.add(fallbackProduct.slug);
+      const storeItems = getStore().filter((product) =>
+        acceptedSlugs.includes(product.collection_slug) ||
+        (Array.isArray(product.collection_slugs) && product.collection_slugs.some((s) => acceptedSlugs.includes(s))) ||
+        (acceptedSlugs.includes('indo-western') && String(product.collection_id) === '8')
+      );
+
+      const fallbackFiltered = fallbackItems.filter((product) =>
+        acceptedSlugs.includes(product.collection_slug) ||
+        (Array.isArray(product.collection_slugs) && product.collection_slugs.some((s) => acceptedSlugs.includes(s))) ||
+        (acceptedSlugs.includes('indo-western') && String(product.collection_id) === '8')
+      );
+
+      const uniqueMap = new Map();
+      [...matched, ...storeItems, ...fallbackFiltered].forEach((p) => {
+        if (!uniqueMap.has(p.id || p.slug)) {
+          uniqueMap.set(p.id || p.slug, p);
         }
-      }
-      return filled;
+      });
+
+      return Array.from(uniqueMap.values());
     };
 
     const heavyDresses = {
