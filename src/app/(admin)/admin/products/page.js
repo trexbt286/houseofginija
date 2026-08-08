@@ -91,7 +91,7 @@ function AdminProductsContent() {
 
   const fetchProductsAndCollections = async () => {
     try {
-      const res = await fetch('/api/admin/products');
+      const res = await fetch('/api/admin/products', { cache: 'no-store', headers: { 'Cache-Control': 'no-cache' } });
       if (res.ok) {
         const data = await res.json();
         if (data.products && Array.isArray(data.products) && data.products.length > 0) {
@@ -117,27 +117,42 @@ function AdminProductsContent() {
   useEffect(() => {
     fetchProductsAndCollections();
 
-    const handleCatalogUpdate = (e) => {
+    const handleProductUpdate = (updatedProduct) => {
+      if (!updatedProduct) return;
+      setProducts((prev) => {
+        const exists = prev.some((p) => String(p.id) === String(updatedProduct.id));
+        const next = exists
+          ? prev.map((p) => (String(p.id) === String(updatedProduct.id) ? updatedProduct : p))
+          : [updatedProduct, ...prev];
+        return next.sort((a, b) => a.name.localeCompare(b.name, undefined, { numeric: true, sensitivity: 'base' }));
+      });
+    };
+
+    const handleCustomEvent = (e) => {
       if (e.detail && e.detail.product) {
-        const updated = e.detail.product;
-        setProducts((prev) => {
-          const exists = prev.some((p) => String(p.id) === String(updated.id));
-          const next = exists
-            ? prev.map((p) => (String(p.id) === String(updated.id) ? updated : p))
-            : [updated, ...prev];
-          return next.sort((a, b) => a.name.localeCompare(b.name, undefined, { numeric: true, sensitivity: 'base' }));
-        });
+        handleProductUpdate(e.detail.product);
       } else {
         fetchProductsAndCollections();
       }
     };
 
+    let channel;
     if (typeof window !== 'undefined') {
-      window.addEventListener('catalog-updated', handleCatalogUpdate);
+      window.addEventListener('catalog-updated', handleCustomEvent);
+      try {
+        channel = new BroadcastChannel('houseofginija-catalog-sync');
+        channel.onmessage = (event) => {
+          if (event.data && event.data.product) {
+            handleProductUpdate(event.data.product);
+          }
+        };
+      } catch {}
     }
+
     return () => {
       if (typeof window !== 'undefined') {
-        window.removeEventListener('catalog-updated', handleCatalogUpdate);
+        window.removeEventListener('catalog-updated', handleCustomEvent);
+        if (channel) channel.close();
       }
     };
   }, []);
@@ -532,6 +547,11 @@ function AdminProductsContent() {
           });
           if (typeof window !== 'undefined') {
             window.dispatchEvent(new CustomEvent('catalog-updated', { detail: { product: data.product } }));
+            try {
+              const channel = new BroadcastChannel('houseofginija-catalog-sync');
+              channel.postMessage({ product: data.product });
+              channel.close();
+            } catch {}
           }
         }
         fetchProductsAndCollections();

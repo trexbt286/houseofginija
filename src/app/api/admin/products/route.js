@@ -23,6 +23,7 @@ import {
 } from '@/lib/globalProductStore';
 
 export const dynamic = 'force-dynamic';
+export const revalidate = 0;
 
 function getStoreProducts() {
   return getStore();
