@@ -22,12 +22,12 @@ function FlashSaleContent() {
   const [activeProductColor, setActiveProductColor] = useState('');
   const [activeProductQty, setActiveProductQty] = useState(1);
 
-  useEffect(() => {
-    fetch('/api/products')
+  const loadFlashProducts = () => {
+    fetch('/api/products?collection=flash-sale', { cache: 'no-store', headers: { 'Cache-Control': 'no-cache' } })
       .then((res) => (res.ok ? res.json() : null))
       .then((data) => {
         const all = data?.products || [];
-        const flashOnly = all.filter((p) => Boolean(p.flash_sale));
+        const flashOnly = all.filter((p) => Boolean(p.flash_sale || p.on_sale));
         setProducts(flashOnly);
         setLoading(false);
       })
@@ -35,6 +35,24 @@ function FlashSaleContent() {
         console.error('Fetch flash sale products error:', err);
         setLoading(false);
       });
+  };
+
+  useEffect(() => {
+    loadFlashProducts();
+
+    let channel;
+    if (typeof window !== 'undefined') {
+      try {
+        channel = new BroadcastChannel('houseofginija-catalog-sync');
+        channel.onmessage = () => {
+          loadFlashProducts();
+        };
+      } catch {}
+    }
+
+    return () => {
+      if (channel) channel.close();
+    };
   }, []);
 
   const handleProductClick = (e, product) => {

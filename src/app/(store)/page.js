@@ -129,7 +129,7 @@ export default function Home() {
     // Fetch unified homepage data
     const fetchHomepageData = async () => {
       try {
-        const res = await fetch('/api/homepage');
+        const res = await fetch('/api/homepage', { cache: 'no-store', headers: { 'Cache-Control': 'no-cache' } });
         if (res.ok) {
           const data = await res.json();
           setFlashProducts(data.flashProducts || []);
@@ -147,6 +147,20 @@ export default function Home() {
     };
 
     fetchHomepageData();
+
+    let channel;
+    if (typeof window !== 'undefined') {
+      try {
+        channel = new BroadcastChannel('houseofginija-catalog-sync');
+        channel.onmessage = () => {
+          fetchHomepageData();
+        };
+      } catch {}
+    }
+
+    return () => {
+      if (channel) channel.close();
+    };
   }, []);
 
   // Handle window resizing for sibling switcher translateX calculations
