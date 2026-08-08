@@ -181,12 +181,34 @@ export function AdminProductMetadataFields({
 }
 
 export function AdminProductMetadataBadges({ product }) {
+  if (!product) return null;
+
   const tags = Array.isArray(product.tags) ? product.tags : [];
-  if (!product.on_sale && tags.length === 0) return null;
+  const slugs = Array.isArray(product.collection_slugs) ? product.collection_slugs : [];
+
+  const isFlashSale = Boolean(
+    product.flash_sale ||
+    product.flashSale ||
+    product.on_sale ||
+    product.onSale ||
+    slugs.includes('flash-sale')
+  );
+
+  const origPrice = parseFloat(product.price) || 0;
+  const flashPrice = parseFloat(product.flash_sale_price || product.flashSalePrice) || 0;
+  const discountPct = (origPrice > 0 && flashPrice > 0 && flashPrice < origPrice)
+    ? Math.round(((origPrice - flashPrice) / origPrice) * 100)
+    : null;
+
+  if (!isFlashSale && tags.length === 0) return null;
 
   return (
     <div style={metadataRowStyle}>
-      {product.on_sale && <span style={onSaleBadgeStyle}>On Sale</span>}
+      {isFlashSale && (
+        <span style={flashSaleBadgeStyle}>
+          ⚡ FLASH SALE {discountPct ? `(-${discountPct}%)` : (flashPrice ? `(₹${flashPrice.toLocaleString('en-IN')})` : '')}
+        </span>
+      )}
       {tags.map((tag) => (
         <span key={tag.id || tag.slug} style={tagBadgeStyle}>
           {tag.name}
@@ -277,4 +299,15 @@ const onSaleBadgeStyle = {
   ...tagBadgeStyle,
   backgroundColor: '#D98E9B',
   color: '#FFFFFF',
+};
+
+const flashSaleBadgeStyle = {
+  ...tagBadgeStyle,
+  backgroundColor: '#B65C73',
+  color: '#FFFFFF',
+  border: 'none',
+  padding: '0.18rem 0.55rem',
+  fontSize: '0.65rem',
+  letterSpacing: '0.04em',
+  boxShadow: '0 2px 6px rgba(182, 92, 115, 0.25)',
 };
