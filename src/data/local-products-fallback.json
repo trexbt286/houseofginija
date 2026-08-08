@@ -2220,18 +2220,16 @@
           "stock": 10
         }
       ],
-      "flash_sale": true,
-      "flash_sale_price": "28000",
+      "flash_sale": false,
+      "flash_sale_price": null,
       "new_arrival": false,
       "collection_name": "Suits",
       "collection_slug": "suits",
-      "on_sale": true,
+      "on_sale": false,
       "tags": [],
       "parent_collection_name": null,
       "parent_collection_slug": null,
-      "collection_slugs": [
-        "flash-sale"
-      ]
+      "collection_slugs": []
     },
     {
       "id": "103",
