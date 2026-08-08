@@ -442,19 +442,27 @@ function AdminProductsContent() {
   };
 
   function openEditForm(product) {
+    if (!product) return;
     setEditingId(product.id);
+    const priceVal = product.price !== null && product.price !== undefined ? product.price.toString() : '';
+    const flashVal = product.flash_sale_price !== null && product.flash_sale_price !== undefined ? product.flash_sale_price.toString() : '';
+
+    const origPrice = parseFloat(priceVal) || 0;
+    const salePrice = parseFloat(flashVal) || 0;
+    const computedPct = (origPrice > 0 && salePrice > 0 && origPrice > salePrice)
+      ? Math.round(((origPrice - salePrice) / origPrice) * 100).toString()
+      : '';
+
     setFormFields({
-      name: product.name,
-      slug: product.slug,
+      name: product.name || '',
+      slug: product.slug || '',
       description: product.description || '',
-      price: product.price.toString(),
+      price: priceVal,
       collection_id: product.collection_id ? product.collection_id.toString() : '',
       is_out_of_stock: !!product.is_out_of_stock,
-      on_sale: !!product.on_sale,
-      flash_sale_price: product.flash_sale_price !== null && product.flash_sale_price !== undefined ? product.flash_sale_price.toString() : '',
-      flash_sale_percent: (product.price && product.flash_sale_price && parseFloat(product.price) > parseFloat(product.flash_sale_price))
-        ? Math.round(((parseFloat(product.price) - parseFloat(product.flash_sale_price)) / parseFloat(product.price)) * 100).toString()
-        : '',
+      on_sale: !!(product.on_sale || product.flash_sale),
+      flash_sale_price: flashVal,
+      flash_sale_percent: computedPct,
     });
     let initialSlugs = Array.isArray(product.collection_slugs) ? [...product.collection_slugs] : [];
     if (product.collection_slug && !initialSlugs.includes(product.collection_slug)) initialSlugs.push(product.collection_slug);
@@ -463,9 +471,9 @@ function AdminProductsContent() {
     if ((product.on_sale || product.flash_sale) && !initialSlugs.includes('flash-sale')) initialSlugs.push('flash-sale');
 
     setSelectedCategorySlugs([...new Set(initialSlugs)]);
-    const existingCustomTags = (product.tags || []).map((t) => (typeof t === 'string' ? t : t.name));
-    setCustomTags([...new Set(existingCustomTags)]);
-    setSelectedTagIds((product.tags || []).map((tag) => Number(tag.id)));
+    const existingCustomTags = (product.tags || []).map((t) => (typeof t === 'string' ? t : t?.name || ''));
+    setCustomTags([...new Set(existingCustomTags.filter(Boolean))]);
+    setSelectedTagIds((product.tags || []).map((tag) => Number(tag?.id)).filter(Boolean));
     setImages(product.images || []);
     setVariants(product.variants || []);
     setIsFormOpen(true);
@@ -1299,14 +1307,14 @@ const formOverlayBackdropStyle = {
   left: 0,
   right: 0,
   bottom: 0,
-  backgroundColor: 'rgba(0, 0, 0, 0.65)',
-  backdropFilter: 'blur(6px)',
-  WebkitBackdropFilter: 'blur(6px)',
-  zIndex: 9999,
+  backgroundColor: 'rgba(0, 0, 0, 0.75)',
+  backdropFilter: 'blur(8px)',
+  WebkitBackdropFilter: 'blur(8px)',
+  zIndex: 999999,
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
-  padding: '1.5rem',
+  padding: '1rem',
 };
 
 const formModalContainerStyle = {
