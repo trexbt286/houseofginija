@@ -163,19 +163,6 @@ export function AdminProductMetadataFields({
           )}
         </div>
       </div>
-
-      <div style={checkboxGroupStyle}>
-        <input
-          type="checkbox"
-          id="on_sale"
-          checked={onSale}
-          onChange={(event) => onSaleChange(event.target.checked)}
-          style={checkboxStyle}
-        />
-        <label htmlFor="on_sale" style={checkboxLabelStyle}>
-          On Sale (prioritize this product in category listings)
-        </label>
-      </div>
     </div>
   );
 }

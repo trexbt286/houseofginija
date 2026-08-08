@@ -769,8 +769,6 @@ function AdminProductsContent() {
                 onSelectedTagIdsChange={setSelectedTagIds}
                 customTags={customTags}
                 onCustomTagsChange={setCustomTags}
-                onSale={formFields.on_sale}
-                onSaleChange={(onSale) => setFormFields((current) => ({ ...current, on_sale: onSale }))}
               />
 
               {/* Row 4: Toggles */}

@@ -38,10 +38,7 @@ export function productMatchesCategory(product, selectedCategory) {
 }
 
 export function compareCatalogProducts(a, b, selectedSort = 'name_asc') {
-  const saleDelta = Number(Boolean(b.on_sale)) - Number(Boolean(a.on_sale));
-  if (saleDelta) return saleDelta;
-
-  const flashDelta = Number(Boolean(b.flash_sale)) - Number(Boolean(a.flash_sale));
+  const flashDelta = Number(Boolean(b.flash_sale || b.on_sale)) - Number(Boolean(a.flash_sale || a.on_sale));
   if (flashDelta) return flashDelta;
 
   if (selectedSort === 'price_asc') {
