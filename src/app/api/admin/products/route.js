@@ -70,16 +70,14 @@ function parseProductPayload(body) {
     ? Number.parseInt(body.collection_id, 10)
     : null;
 
-  const collectionSlugs = Array.isArray(body.collection_slugs) ? [...body.collection_slugs] : [];
-
-  const flashSale = collectionSlugs.includes('flash-sale') || Boolean(body.flash_sale) || Boolean(body.on_sale);
-  if (flashSale && !collectionSlugs.includes('flash-sale')) {
-    collectionSlugs.push('flash-sale');
-  }
+  const flashSale = body.flash_sale === false ? false : (collectionSlugs.includes('flash-sale') || Boolean(body.flash_sale));
+  const finalCollectionSlugs = flashSale
+    ? [...new Set(['flash-sale', ...collectionSlugs])]
+    : collectionSlugs.filter((s) => s !== 'flash-sale');
 
   const newArrival = collectionSlugs.includes('new-collection') || Boolean(body.new_arrival);
-  if (newArrival && !collectionSlugs.includes('new-collection')) {
-    collectionSlugs.push('new-collection');
+  if (newArrival && !finalCollectionSlugs.includes('new-collection')) {
+    finalCollectionSlugs.push('new-collection');
   }
 
   let flashSalePrice = null;
@@ -95,8 +93,8 @@ function parseProductPayload(body) {
     price: priceNum,
     collectionId,
     collection_id: collectionId,
-    collectionSlugs: [...new Set(collectionSlugs)],
-    collection_slugs: [...new Set(collectionSlugs)],
+    collectionSlugs: [...new Set(finalCollectionSlugs)],
+    collection_slugs: [...new Set(finalCollectionSlugs)],
     isOutOfStock: Boolean(body.is_out_of_stock),
     is_out_of_stock: Boolean(body.is_out_of_stock),
     images: body.images,

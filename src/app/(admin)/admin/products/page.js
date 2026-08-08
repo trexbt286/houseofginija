@@ -522,12 +522,12 @@ function AdminProductsContent() {
       slug: name.toLowerCase().trim().replace(/[^a-z0-9]+/g, '-'),
     }));
 
-    const isFlashSale = finalCategories.includes('flash-sale') || Boolean(formFields.on_sale);
+    const isFlashSale = finalCategories.includes('flash-sale');
     const isNewArrival = finalCategories.includes('new-collection');
-    let finalSlugs = [...new Set(finalCategories)];
+    let finalSlugs = finalCategories.filter((s) => s !== 'flash-sale');
     if (isNewArrival && !finalSlugs.includes('new-collection')) finalSlugs.push('new-collection');
     if (isFlashSale) {
-      finalSlugs = ['flash-sale', ...finalSlugs.filter((s) => s !== 'flash-sale')];
+      finalSlugs = ['flash-sale', ...finalSlugs];
     }
 
     const origPriceNum = parseFloat(formFields.price) || 0;
