@@ -32,6 +32,7 @@ function AdminProductsContent() {
     collection_id: '',
     is_out_of_stock: false,
     on_sale: false,
+    flash_sale_price: '',
   });
 
   const [selectedTagIds, setSelectedTagIds] = useState([]);
@@ -338,6 +339,7 @@ function AdminProductsContent() {
       collection_id: '',
       is_out_of_stock: false,
       on_sale: false,
+      flash_sale_price: '',
     });
     setSelectedCategorySlugs(['suits']);
     setCustomTags([]);
@@ -357,6 +359,7 @@ function AdminProductsContent() {
       collection_id: product.collection_id ? product.collection_id.toString() : '',
       is_out_of_stock: !!product.is_out_of_stock,
       on_sale: !!product.on_sale,
+      flash_sale_price: product.flash_sale_price !== null && product.flash_sale_price !== undefined ? product.flash_sale_price.toString() : '',
     });
     let initialSlugs = Array.isArray(product.collection_slugs) ? [...product.collection_slugs] : [];
     if (product.collection_slug && !initialSlugs.includes(product.collection_slug)) initialSlugs.push(product.collection_slug);
@@ -405,6 +408,9 @@ function AdminProductsContent() {
     if (isFlashSale && !finalSlugs.includes('flash-sale')) finalSlugs.push('flash-sale');
     if (isNewArrival && !finalSlugs.includes('new-collection')) finalSlugs.push('new-collection');
 
+    const origPriceNum = parseFloat(formFields.price) || 0;
+    const salePriceNum = formFields.flash_sale_price ? parseFloat(formFields.flash_sale_price) : (origPriceNum > 0 ? Math.round(origPriceNum * 0.8) : null);
+
     const payload = {
       ...formFields,
       collection_slugs: finalSlugs,
@@ -415,6 +421,7 @@ function AdminProductsContent() {
       new_arrival: isNewArrival,
       on_sale: isFlashSale,
       flash_sale: isFlashSale,
+      flash_sale_price: isFlashSale ? salePriceNum : null,
     };
 
     if (editingId) {
@@ -593,6 +600,64 @@ function AdminProductsContent() {
                       );
                     })}
                   </div>
+
+                  {/* FLASH SALE DISCOUNT PRICE INPUT (Appears when Flash Sale category is selected) */}
+                  {selectedCategorySlugs.includes('flash-sale') && (
+                    <div style={{
+                      marginTop: '0.8rem',
+                      padding: '1rem 1.2rem',
+                      backgroundColor: '#FFF0F3',
+                      borderRadius: '8px',
+                      border: '1.5px solid #D98E9B',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'space-between',
+                      flexWrap: 'wrap',
+                      gap: '1rem'
+                    }}>
+                      <div>
+                        <label style={{ ...labelStyle, color: '#B65C73', marginBottom: '0.2rem' }}>
+                          ⚡ Flash Sale Discounted Price (₹)
+                        </label>
+                        <p style={{ fontSize: '0.75rem', color: 'rgba(0,0,0,0.55)', margin: 0 }}>
+                          Set the discounted sale price for this item during Flash Sale.
+                        </p>
+                      </div>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                        <span style={{ fontWeight: '700', color: '#B65C73', fontSize: '1rem' }}>₹</span>
+                        <input
+                          type="number"
+                          name="flash_sale_price"
+                          value={formFields.flash_sale_price || ''}
+                          onChange={handleTextChange}
+                          placeholder={formFields.price ? Math.round(parseFloat(formFields.price) * 0.8).toString() : 'Discount price'}
+                          style={{
+                            width: '140px',
+                            padding: '0.55rem 0.8rem',
+                            borderRadius: '6px',
+                            border: '1.5px solid #D98E9B',
+                            fontSize: '0.9rem',
+                            fontWeight: '700',
+                            color: '#B65C73',
+                            outline: 'none',
+                            backgroundColor: '#FFFFFF'
+                          }}
+                        />
+                        {formFields.price && formFields.flash_sale_price && parseFloat(formFields.flash_sale_price) < parseFloat(formFields.price) && (
+                          <span style={{
+                            backgroundColor: '#B65C73',
+                            color: '#FFFFFF',
+                            padding: '0.3rem 0.6rem',
+                            borderRadius: '6px',
+                            fontSize: '0.75rem',
+                            fontWeight: '700'
+                          }}>
+                            -{Math.round(((parseFloat(formFields.price) - parseFloat(formFields.flash_sale_price)) / parseFloat(formFields.price)) * 100)}%
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                  )}
                 </div>
               </div>
 
