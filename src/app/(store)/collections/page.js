@@ -9,7 +9,7 @@ import ImageWithSkeleton from '@/components/ImageWithSkeleton';
 import SkeletonCard from '@/components/SkeletonCard';
 import ProductImageGallery from '@/components/ProductImageGallery';
 import { AddToBagLabel, ProductFeatureStrip, ProductShareButton, ProductTagBadges } from '@/components/ProductQuickViewExtras';
-import { compareCatalogProducts, getCategoryTitle, productMatchesCategory } from '@/lib/catalogClient';
+import { compareCatalogProducts, getCategoryTitle, productMatchesCategory, mergeCatalogWithLocalOverrides } from '@/lib/catalogClient';
 
 function MobileSearchBar({ allProducts, initialQuery, onSearch, handleProductClick }) {
   const [localQuery, setLocalQuery] = useState(initialQuery || '');
@@ -504,7 +504,7 @@ function CollectionsContent() {
         const res = await fetch('/api/products');
         if (res.ok) {
           const data = await res.json();
-          const list = data.products || [];
+          const list = mergeCatalogWithLocalOverrides(data.products || []);
           setAllProducts(list);
           setProducts(list);
         }
