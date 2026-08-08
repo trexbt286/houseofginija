@@ -70,8 +70,8 @@ export function mapProductData(product, options = {}) {
   if (isNewArrival && !collection_slugs.includes('new-collection')) {
     collection_slugs.push('new-collection');
   }
-  if (isFlashSale && !collection_slugs.includes('flash-sale')) {
-    collection_slugs.push('flash-sale');
+  if (isFlashSale) {
+    collection_slugs = ['flash-sale', ...collection_slugs.filter((s) => s !== 'flash-sale')];
   }
 
   const rawPrice = Number.parseFloat(product.price) || 0;

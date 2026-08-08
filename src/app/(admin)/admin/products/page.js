@@ -460,9 +460,11 @@ function AdminProductsContent() {
 
     const isFlashSale = selectedCategorySlugs.includes('flash-sale') || Boolean(formFields.on_sale);
     const isNewArrival = selectedCategorySlugs.includes('new-collection');
-    const finalSlugs = [...new Set(selectedCategorySlugs)];
-    if (isFlashSale && !finalSlugs.includes('flash-sale')) finalSlugs.push('flash-sale');
+    let finalSlugs = [...new Set(selectedCategorySlugs)];
     if (isNewArrival && !finalSlugs.includes('new-collection')) finalSlugs.push('new-collection');
+    if (isFlashSale) {
+      finalSlugs = ['flash-sale', ...finalSlugs.filter((s) => s !== 'flash-sale')];
+    }
 
     const origPriceNum = parseFloat(formFields.price) || 0;
     const salePriceNum = formFields.flash_sale_price ? parseFloat(formFields.flash_sale_price) : (origPriceNum > 0 ? Math.round(origPriceNum * 0.8) : null);
@@ -1061,25 +1063,33 @@ function AdminProductsContent() {
                       </td>
                       <td style={tdStyle} className="hide-on-mobile">
                         <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.25rem', maxWidth: '220px' }}>
-                          {(p.collection_slugs && p.collection_slugs.length > 0 ? p.collection_slugs : [p.collection_slug || 'suits']).map((slug) => {
-                            const catObj = ADMIN_CATEGORY_OPTIONS.find((c) => c.id === slug);
-                            return (
-                              <span
-                                key={slug}
-                                style={{
-                                  fontSize: '0.7rem',
-                                  fontWeight: '600',
-                                  backgroundColor: '#F6DDE2',
-                                  color: '#7D4352',
-                                  padding: '0.15rem 0.45rem',
-                                  borderRadius: '4px',
-                                  textTransform: 'capitalize',
-                                }}
-                              >
-                                {catObj ? catObj.name : slug}
-                              </span>
-                            );
-                          })}
+                          {(() => {
+                            let rawSlugs = p.collection_slugs && p.collection_slugs.length > 0 ? [...p.collection_slugs] : [p.collection_slug || 'suits'];
+                            if (p.flash_sale || p.on_sale) {
+                              rawSlugs = ['flash-sale', ...rawSlugs.filter((s) => s !== 'flash-sale')];
+                            }
+                            return rawSlugs.map((slug) => {
+                              const isFlashTag = slug === 'flash-sale';
+                              const catObj = ADMIN_CATEGORY_OPTIONS.find((c) => c.id === slug);
+                              return (
+                                <span
+                                  key={slug}
+                                  style={{
+                                    fontSize: '0.7rem',
+                                    fontWeight: '700',
+                                    backgroundColor: isFlashTag ? '#B65C73' : '#F6DDE2',
+                                    color: isFlashTag ? '#FFFFFF' : '#7D4352',
+                                    padding: '0.15rem 0.5rem',
+                                    borderRadius: '4px',
+                                    textTransform: 'capitalize',
+                                    boxShadow: isFlashTag ? '0 2px 5px rgba(182, 92, 115, 0.3)' : 'none',
+                                  }}
+                                >
+                                  {isFlashTag ? '⚡ Flash Sale' : (catObj ? catObj.name : slug)}
+                                </span>
+                              );
+                            });
+                          })()}
                         </div>
                       </td>
                       <td style={tdStyle}>₹{parseFloat(p.price).toLocaleString('en-IN')}</td>
