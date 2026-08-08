@@ -212,9 +212,9 @@ export async function POST(request) {
       `
         INSERT INTO products (
           name, slug, description, price, collection_id, is_out_of_stock,
-          images, variants, flash_sale, flash_sale_price, new_arrival, on_sale
+          images, variants, flash_sale, flash_sale_price, new_arrival
         )
-        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)
+        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)
         RETURNING id
       `,
       [
@@ -229,7 +229,6 @@ export async function POST(request) {
         product.flashSale,
         product.flashSalePrice,
         product.newArrival,
-        product.onSale,
       ]
     );
 
@@ -310,9 +309,8 @@ export async function PUT(request) {
           variants = $8,
           flash_sale = $9,
           flash_sale_price = $10,
-          new_arrival = $11,
-          on_sale = $12
-        WHERE id = $13
+          new_arrival = $11
+        WHERE id = $12
         RETURNING id
       `,
       [
@@ -327,7 +325,6 @@ export async function PUT(request) {
         product.flashSale,
         product.flashSalePrice,
         product.newArrival,
-        product.onSale,
         body.id,
       ]
     );

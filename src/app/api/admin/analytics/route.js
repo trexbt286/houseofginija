@@ -18,9 +18,15 @@ export async function GET() {
   }
 
   try {
-    // 1. Fetch site visits trend (grouped daily)
-    try {
-      const visitsResult = await pool.query(`
+    const [
+      visitsRes,
+      revenueRes,
+      ordersRes,
+      productsRes,
+      customersRes,
+      subscribersRes,
+    ] = await Promise.allSettled([
+      pool.query(`
         SELECT 
           TO_CHAR(timestamp, 'YYYY-MM-DD') as date, 
           COUNT(id)::int as visits 
@@ -28,40 +34,46 @@ export async function GET() {
         WHERE timestamp > NOW() - INTERVAL '30 days'
         GROUP BY date 
         ORDER BY date ASC
-      `);
-      resultData.visitsTrend = visitsResult.rows || [];
-    } catch (e) {
-      console.warn('Analytics visits query skipped:', e.message);
-    }
-
-    // 2. Fetch revenue metrics (paid orders)
-    try {
-      const revenueResult = await pool.query(`
+      `),
+      pool.query(`
         SELECT 
           COUNT(id)::int as order_count, 
           COALESCE(SUM(total), 0)::float as revenue 
         FROM orders 
         WHERE payment_status = 'Paid'
-      `);
-      if (revenueResult.rows.length > 0) {
-        const metrics = revenueResult.rows[0];
-        resultData.metrics = {
-          totalOrders: metrics.order_count || 0,
-          totalRevenue: metrics.revenue || 0,
-        };
-      }
-    } catch (e) {
-      console.warn('Analytics revenue query skipped:', e.message);
-    }
-
-    // 3. Fetch orders to calculate best-selling items
-    try {
-      const ordersResult = await pool.query(`
+      `),
+      pool.query(`
         SELECT items FROM orders WHERE payment_status = 'Paid'
-      `);
-      
+      `),
+      pool.query(`
+        SELECT id, name, variants, is_out_of_stock FROM products
+      `),
+      pool.query(`
+        SELECT id, name, email, created_at 
+        FROM users 
+        WHERE role = 'customer' 
+        ORDER BY id DESC
+      `),
+      pool.query(`
+        SELECT email, subscribed_at 
+        FROM newsletter_subscribers 
+        ORDER BY subscribed_at DESC
+      `),
+    ]);
+
+    if (visitsRes.status === 'fulfilled' && visitsRes.value.rows) {
+      resultData.visitsTrend = visitsRes.value.rows;
+    }
+    if (revenueRes.status === 'fulfilled' && revenueRes.value.rows.length > 0) {
+      const metrics = revenueRes.value.rows[0];
+      resultData.metrics = {
+        totalOrders: metrics.order_count || 0,
+        totalRevenue: metrics.revenue || 0,
+      };
+    }
+    if (ordersRes.status === 'fulfilled' && ordersRes.value.rows) {
       const productSales = {};
-      ordersResult.rows.forEach(order => {
+      ordersRes.value.rows.forEach(order => {
         const items = order.items || [];
         items.forEach(item => {
           if (!productSales[item.id]) {
@@ -76,22 +88,13 @@ export async function GET() {
           productSales[item.id].revenue += item.price * item.quantity;
         });
       });
-
       resultData.bestSellers = Object.values(productSales)
         .sort((a, b) => b.sales_count - a.sales_count)
         .slice(0, 5);
-    } catch (e) {
-      console.warn('Analytics best sellers query skipped:', e.message);
     }
-
-    // 4. Fetch all products to compile low stock alerts
-    try {
-      const productsResult = await pool.query(`
-        SELECT id, name, variants, is_out_of_stock FROM products
-      `);
-
+    if (productsRes.status === 'fulfilled' && productsRes.value.rows) {
       const lowStockAlerts = [];
-      productsResult.rows.forEach(product => {
+      productsRes.value.rows.forEach(product => {
         const variants = product.variants || [];
         variants.forEach(v => {
           if (v.stock <= 3 && !product.is_out_of_stock) {
@@ -106,33 +109,12 @@ export async function GET() {
         });
       });
       resultData.lowStockAlerts = lowStockAlerts;
-    } catch (e) {
-      console.warn('Analytics low stock query skipped:', e.message);
     }
-
-    // 5. Fetch registered customers list
-    try {
-      const customersResult = await pool.query(`
-        SELECT id, name, email, created_at 
-        FROM users 
-        WHERE role = 'customer' 
-        ORDER BY id DESC
-      `);
-      resultData.customers = customersResult.rows || [];
-    } catch (e) {
-      console.warn('Analytics customers query skipped:', e.message);
+    if (customersRes.status === 'fulfilled' && customersRes.value.rows) {
+      resultData.customers = customersRes.value.rows;
     }
-
-    // 6. Fetch newsletter subscribers list
-    try {
-      const subscribersResult = await pool.query(`
-        SELECT email, subscribed_at 
-        FROM newsletter_subscribers 
-        ORDER BY subscribed_at DESC
-      `);
-      resultData.subscribers = subscribersResult.rows || [];
-    } catch (e) {
-      console.warn('Analytics subscribers query skipped:', e.message);
+    if (subscribersRes.status === 'fulfilled' && subscribersRes.value.rows) {
+      resultData.subscribers = subscribersRes.value.rows;
     }
 
     return NextResponse.json(resultData);

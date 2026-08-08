@@ -14,9 +14,6 @@ function AdminProductsContent() {
   const [collections, setCollections] = useState([]);
   const [tags, setTags] = useState([]);
   const [filterCategory, setFilterCategory] = useState('');
-  const [searchQuery, setSearchQuery] = useState('');
-  const [currentPage, setCurrentPage] = useState(1);
-  const PRODUCTS_PER_PAGE = 15;
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
@@ -802,51 +799,21 @@ function AdminProductsContent() {
           <div>Catalog retrieving...</div>
         ) : (() => {
           const filteredProducts = products.filter((p) => {
-            if (filterCategory && !productMatchesCategory(p, filterCategory)) return false;
-            if (searchQuery.trim()) {
-              const q = searchQuery.toLowerCase();
-              const matchName = p.name && p.name.toLowerCase().includes(q);
-              const matchSlug = p.slug && p.slug.toLowerCase().includes(q);
-              if (!matchName && !matchSlug) return false;
-            }
-            return true;
+            if (!filterCategory) return true;
+            return productMatchesCategory(p, filterCategory);
           });
-
-          const totalPages = Math.ceil(filteredProducts.length / PRODUCTS_PER_PAGE) || 1;
-          const startIdx = (currentPage - 1) * PRODUCTS_PER_PAGE;
-          const paginatedProducts = filteredProducts.slice(startIdx, startIdx + PRODUCTS_PER_PAGE);
 
           return (
             <div>
-              {/* Category Filter & Search Bar */}
+              {/* Category Filter Bar */}
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.2rem', gap: '1rem', flexWrap: 'wrap', backgroundColor: '#FFF7F8', padding: '0.9rem 1.2rem', borderRadius: '8px', border: '1px solid #F4E1E5' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '0.8rem', flexWrap: 'wrap' }}>
-                  {/* Text Search */}
-                  <input
-                    type="text"
-                    placeholder="Search product by name..."
-                    value={searchQuery}
-                    onChange={(e) => {
-                      setSearchQuery(e.target.value);
-                      setCurrentPage(1);
-                    }}
-                    style={{
-                      padding: '0.5rem 0.9rem',
-                      borderRadius: '6px',
-                      border: '1px solid #D98E9B',
-                      backgroundColor: '#FFFFFF',
-                      fontSize: '0.85rem',
-                      outline: 'none',
-                      width: '220px',
-                    }}
-                  />
-                  {/* Category Filter */}
+                  <label style={{ fontSize: '0.85rem', fontWeight: '700', color: '#3C303A' }}>
+                    Filter by Category:
+                  </label>
                   <select
                     value={filterCategory}
-                    onChange={(e) => {
-                      setFilterCategory(e.target.value);
-                      setCurrentPage(1);
-                    }}
+                    onChange={(e) => setFilterCategory(e.target.value)}
                     style={{
                       padding: '0.5rem 1rem',
                       borderRadius: '6px',
@@ -875,13 +842,9 @@ function AdminProductsContent() {
                     <option value="flash-sale">Flash Sale</option>
                   </select>
 
-                  {(filterCategory || searchQuery) && (
+                  {filterCategory && (
                     <button
-                      onClick={() => {
-                        setFilterCategory('');
-                        setSearchQuery('');
-                        setCurrentPage(1);
-                      }}
+                      onClick={() => setFilterCategory('')}
                       style={{
                         padding: '0.45rem 0.9rem',
                         fontSize: '0.78rem',
@@ -893,13 +856,13 @@ function AdminProductsContent() {
                         fontWeight: '700',
                       }}
                     >
-                      Clear Filters
+                      Clear Filter (Show All)
                     </button>
                   )}
                 </div>
 
                 <div style={{ fontSize: '0.85rem', color: '#8B7789', fontWeight: '700' }}>
-                  Showing <span style={{ color: '#D98E9B' }}>{paginatedProducts.length}</span> of {filteredProducts.length} Products
+                  Showing <span style={{ color: '#D98E9B' }}>{filteredProducts.length}</span> of {products.length} Products
                 </div>
               </div>
 
@@ -917,14 +880,14 @@ function AdminProductsContent() {
                     </tr>
                   </thead>
                   <tbody>
-                    {paginatedProducts.length === 0 ? (
+                    {filteredProducts.length === 0 ? (
                       <tr>
                         <td colSpan="7" style={{ padding: '2rem', textAlign: 'center', color: '#8B7789', fontWeight: '600' }}>
-                          No products found matching the search/filter criteria.
+                          No products found matching the selected category filter.
                         </td>
                       </tr>
                     ) : (
-                      paginatedProducts.map((p) => {
+                      filteredProducts.map((p) => {
                   const totalStock = (p.variants || []).reduce((sum, v) => sum + v.stock, 0);
                   const isForcedOut = p.is_out_of_stock;
                   return (
@@ -997,49 +960,6 @@ function AdminProductsContent() {
               )}
                   </tbody>
                 </table>
-              </div>
-
-              {/* Table Pagination Bar */}
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: '1.2rem', padding: '0.8rem 1rem', backgroundColor: '#FFF7F8', borderRadius: '8px', border: '1px solid #F4E1E5' }}>
-                <div style={{ fontSize: '0.85rem', color: '#8B7789', fontWeight: '600' }}>
-                  Page {currentPage} of {totalPages} ({filteredProducts.length} total creations)
-                </div>
-                <div style={{ display: 'flex', gap: '0.5rem' }}>
-                  <button
-                    onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
-                    disabled={currentPage === 1}
-                    style={{
-                      padding: '0.4rem 0.9rem',
-                      borderRadius: '6px',
-                      border: '1px solid #D98E9B',
-                      backgroundColor: '#FFFFFF',
-                      fontSize: '0.8rem',
-                      fontWeight: '700',
-                      color: '#B65C73',
-                      cursor: currentPage === 1 ? 'not-allowed' : 'pointer',
-                      opacity: currentPage === 1 ? 0.4 : 1,
-                    }}
-                  >
-                    ‹ Previous
-                  </button>
-                  <button
-                    onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
-                    disabled={currentPage >= totalPages}
-                    style={{
-                      padding: '0.4rem 0.9rem',
-                      borderRadius: '6px',
-                      border: '1px solid #D98E9B',
-                      backgroundColor: '#FFFFFF',
-                      fontSize: '0.8rem',
-                      fontWeight: '700',
-                      color: '#B65C73',
-                      cursor: currentPage >= totalPages ? 'not-allowed' : 'pointer',
-                      opacity: currentPage >= totalPages ? 0.4 : 1,
-                    }}
-                  >
-                    Next ›
-                  </button>
-                </div>
               </div>
             </div>
           );
