@@ -130,7 +130,7 @@ export default function AdminFlashSalePage() {
 
       const data = await res.json();
       if (res.ok) {
-        setProducts(prev => prev.map(p => p.id === product.id ? data.product : p));
+        setProducts(prev => prev.map(p => String(p.id) === String(product.id) ? data.product : p));
         if (enableSale) {
           setSuccess(`"${product.name}" is now ON FLASH SALE for ₹${salePriceNum.toLocaleString('en-IN')}!`);
         } else {
@@ -191,7 +191,7 @@ export default function AdminFlashSalePage() {
 
       const data = await res.json();
       if (res.ok) {
-        setProducts(prev => prev.map(p => p.id === product.id ? data.product : p));
+        setProducts(prev => prev.map(p => String(p.id) === String(product.id) ? data.product : p));
         setSuccess(`"${product.name}" added to Flash Sale at ₹${computedPrice.toLocaleString('en-IN')} (-${pct}%)!`);
         setIsAddModalOpen(false);
       } else {
@@ -205,8 +205,9 @@ export default function AdminFlashSalePage() {
     }
   };
 
-  const activeFlashProducts = products.filter(p => !!p.flash_sale);
-  const nonFlashProducts = products.filter(p => !p.flash_sale);
+  const sortedProducts = [...products].sort((a, b) => a.name.localeCompare(b.name, undefined, { numeric: true, sensitivity: 'base' }));
+  const activeFlashProducts = sortedProducts.filter(p => !!p.flash_sale);
+  const nonFlashProducts = sortedProducts.filter(p => !p.flash_sale);
 
   const calculateDiscountPct = (original, saleVal) => {
     const orig = parseFloat(original);

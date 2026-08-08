@@ -141,9 +141,15 @@ function validateRequiredProductFields(body, update = false) {
 }
 
 export async function GET() {
+  const sortAlphabetically = (list) =>
+    [...list].sort((a, b) =>
+      a.name.localeCompare(b.name, undefined, { numeric: true, sensitivity: 'base' })
+    );
+
   if (shouldUseLocalCatalogFallbackFirst()) {
+    const rawList = getStoreProducts().map((p) => mapProductData(p, { isAdmin: true })).filter(Boolean);
     return NextResponse.json({
-      products: getStoreProducts().map((p) => mapProductData(p, { isAdmin: true })).filter(Boolean),
+      products: sortAlphabetically(rawList),
       collections: getLocalCollectionsFallback(),
       categoryTree: getLocalCategoryTreeFallback(),
       tags: getLocalTagsFallback(),
@@ -156,22 +162,27 @@ export async function GET() {
         SELECT ${PRODUCT_SELECT_FIELDS}
         FROM products p
         ${PRODUCT_COLLECTION_JOINS}
-        ORDER BY p.id DESC
+        ORDER BY
+          SUBSTRING(p.name FROM '^[^0-9]+') ASC,
+          COALESCE(NULLIF(SUBSTRING(p.name FROM '[0-9]+'), ''), '0')::integer ASC,
+          p.name ASC
       `),
       pool.query(CATEGORY_QUERY),
       pool.query('SELECT id, name, slug FROM tags ORDER BY name ASC'),
     ]);
 
+    const rawList = productsResult.rows.map((row) => mapProductData(row, { isAdmin: true })).filter(Boolean);
     return NextResponse.json({
-      products: productsResult.rows.map((row) => mapProductData(row, { isAdmin: true })).filter(Boolean),
+      products: sortAlphabetically(rawList),
       collections: collectionsResult.rows,
       categoryTree: buildCategoryTree(collectionsResult.rows),
       tags: tagsResult.rows,
     });
   } catch (error) {
     console.error('Admin GET products error:', error);
+    const rawList = getStoreProducts().map((p) => mapProductData(p, { isAdmin: true })).filter(Boolean);
     return NextResponse.json({
-      products: getStoreProducts().map((p) => mapProductData(p, { isAdmin: true })).filter(Boolean),
+      products: sortAlphabetically(rawList),
       collections: getLocalCollectionsFallback(),
       categoryTree: getLocalCategoryTreeFallback(),
       tags: getLocalTagsFallback(),

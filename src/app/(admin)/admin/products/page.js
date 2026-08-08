@@ -954,7 +954,7 @@ function AdminProductsContent() {
           const filteredProducts = products.filter((p) => {
             if (!filterCategory) return true;
             return productMatchesCategory(p, filterCategory);
-          });
+          }).sort((a, b) => a.name.localeCompare(b.name, undefined, { numeric: true, sensitivity: 'base' }));
 
           return (
             <div>
