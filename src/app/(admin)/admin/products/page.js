@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, Suspense } from 'react';
+import { createPortal } from 'react-dom';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import { useStore } from '@/context/StoreContext';
@@ -20,6 +21,11 @@ function AdminProductsContent() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
+
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   // Form states
   const [isFormOpen, setIsFormOpen] = useState(false);
@@ -629,8 +635,8 @@ function AdminProductsContent() {
         {success && <div style={successBannerStyle}>{success}</div>}
         {error && <div style={errorBannerStyle}>{error}</div>}
 
-        {/* CRUD FORM MODAL DIALOG */}
-        {isFormOpen && (
+        {/* CRUD FORM MODAL DIALOG (REACT PORTAL) */}
+        {isFormOpen && mounted && createPortal(
           <div
             style={formOverlayBackdropStyle}
             className="animate-fade-in"
@@ -1018,7 +1024,8 @@ function AdminProductsContent() {
               </button>
             </form>
           </section>
-        </div>
+        </div>,
+        document.body
         )}
 
         {/* PRODUCTS LIST TABLE */}
