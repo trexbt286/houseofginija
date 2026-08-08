@@ -15,12 +15,22 @@ const STORE_KEY = '__houseOfGinijaProductStore';
 function buildInitialStore() {
   const catalogProducts = productsFallback.products || [];
   const homepageCategoryProducts = Object.values(homepageFallback.heavyDresses || {}).flat();
-  const knownSlugs = new Set(catalogProducts.map((p) => p.slug));
 
-  return [
-    ...catalogProducts,
-    ...homepageCategoryProducts.filter((p) => !knownSlugs.has(p.slug)),
-  ];
+  const knownSlugs = new Set(catalogProducts.map((p) => p.slug));
+  const knownImages = new Set(
+    catalogProducts
+      .map((p) => (Array.isArray(p.images) && p.images[0]) || p.image_url)
+      .filter(Boolean)
+  );
+
+  const uniqueAdditions = homepageCategoryProducts.filter((p) => {
+    const img = (Array.isArray(p.images) && p.images[0]) || p.image_url;
+    if (knownSlugs.has(p.slug)) return false;
+    if (img && knownImages.has(img)) return false;
+    return true;
+  });
+
+  return [...catalogProducts, ...uniqueAdditions];
 }
 
 /**

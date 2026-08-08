@@ -655,34 +655,6 @@
       "parent_collection_slug": null
     },
     {
-      "id": "53",
-      "name": "Bespoke Necklace 11",
-      "slug": "bespoke-necklace-11",
-      "description": "Hand-crafted necklace from the exclusive House of Ginija collections.",
-      "price": "48000.00",
-      "collection_id": "2",
-      "is_out_of_stock": false,
-      "images": [
-        "/local-products/023-bespoke-necklace-10-1.jpg"
-      ],
-      "variants": [
-        {
-          "color": "Gold",
-          "size": "One Size",
-          "stock": 10
-        }
-      ],
-      "flash_sale": false,
-      "flash_sale_price": null,
-      "new_arrival": false,
-      "collection_name": "Jewellery",
-      "collection_slug": "jewellery",
-      "on_sale": false,
-      "tags": [],
-      "parent_collection_name": null,
-      "parent_collection_slug": null
-    },
-    {
       "id": "54",
       "name": "Bespoke Ring 1",
       "slug": "bespoke-rings-1",
@@ -921,60 +893,6 @@
       "id": "100",
       "name": "Blush Pink Drape",
       "slug": "blush-pink-drape",
-      "description": "A graceful blush pink drape set featuring a heavily hand-embellished blouse with intricate sequins, beads, and zari work, paired with a fluid draped skirt and an elegant long shrug. Perfect for cocktail parties, engagement ceremonies, wedding festivities, and contemporary festive celebrations.",
-      "price": "33333",
-      "collection_id": "1",
-      "is_out_of_stock": false,
-      "images": [
-        "/local-products/033-blush-pink-drape-1.jpg",
-        "/local-products/034-blush-pink-drape-2.jpg",
-        "/local-products/035-blush-pink-drape-3.jpg",
-        "/local-products/036-blush-pink-drape-4.jpg"
-      ],
-      "variants": [
-        {
-          "color": "Default",
-          "size": "S",
-          "stock": 0
-        },
-        {
-          "color": "Default",
-          "size": "M",
-          "stock": 0
-        },
-        {
-          "color": "Default",
-          "size": "L",
-          "stock": 0
-        },
-        {
-          "color": "Default",
-          "size": "XL",
-          "stock": 0
-        },
-        {
-          "color": "Default",
-          "size": "XXL",
-          "stock": 0
-        }
-      ],
-      "flash_sale": true,
-      "flash_sale_price": "26666",
-      "new_arrival": false,
-      "collection_name": "Suits",
-      "collection_slug": "suits",
-      "on_sale": true,
-      "tags": [],
-      "parent_collection_name": null,
-      "parent_collection_slug": null,
-      "collection_slugs": [
-        "flash-sale"
-      ]
-    },
-    {
-      "id": "101",
-      "name": "Blush Pink Drape",
-      "slug": "blush-pink-drape-2",
       "description": "A graceful blush pink drape set featuring a heavily hand-embellished blouse with intricate sequins, beads, and zari work, paired with a fluid draped skirt and an elegant long shrug. Perfect for cocktail parties, engagement ceremonies, wedding festivities, and contemporary festive celebrations.",
       "price": "33333",
       "collection_id": "1",
