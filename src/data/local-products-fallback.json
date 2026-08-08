@@ -10,12 +10,23 @@
       "is_out_of_stock": false,
       "images": [
         "/local-products/033-blush-pink-drape-1.jpg",
-        "/local-products/034-blush-pink-drape-2.jpg"
+        "/local-products/034-blush-pink-drape-2.jpg",
+        "/local-products/035-blush-pink-drape-3.jpg"
       ],
       "variants": [
         {
           "color": "Default",
           "size": "S",
+          "stock": 10
+        },
+        {
+          "color": "Default",
+          "size": "M",
+          "stock": 10
+        },
+        {
+          "color": "Default",
+          "size": "L",
           "stock": 10
         }
       ],
@@ -25,9 +36,6 @@
       "collection_name": "Indo-Western",
       "collection_slug": "indo-western",
       "on_sale": true,
-      "tags": [],
-      "parent_collection_name": null,
-      "parent_collection_slug": null,
       "collection_slugs": [
         "indo-western",
         "flash-sale"
@@ -926,60 +934,6 @@
       "parent_collection_slug": null
     },
     {
-      "id": "100",
-      "name": "Blush Pink Drape",
-      "slug": "blush-pink-drape",
-      "description": "A graceful blush pink drape set featuring a heavily hand-embellished blouse with intricate sequins, beads, and zari work, paired with a fluid draped skirt and an elegant long shrug. Perfect for cocktail parties, engagement ceremonies, wedding festivities, and contemporary festive celebrations.",
-      "price": "33333",
-      "collection_id": "1",
-      "is_out_of_stock": false,
-      "images": [
-        "/local-products/033-blush-pink-drape-1.jpg",
-        "/local-products/034-blush-pink-drape-2.jpg",
-        "/local-products/035-blush-pink-drape-3.jpg",
-        "/local-products/036-blush-pink-drape-4.jpg"
-      ],
-      "variants": [
-        {
-          "color": "Default",
-          "size": "S",
-          "stock": 0
-        },
-        {
-          "color": "Default",
-          "size": "M",
-          "stock": 0
-        },
-        {
-          "color": "Default",
-          "size": "L",
-          "stock": 0
-        },
-        {
-          "color": "Default",
-          "size": "XL",
-          "stock": 0
-        },
-        {
-          "color": "Default",
-          "size": "XXL",
-          "stock": 0
-        }
-      ],
-      "flash_sale": true,
-      "flash_sale_price": "26666",
-      "new_arrival": false,
-      "collection_name": "Suits",
-      "collection_slug": "suits",
-      "on_sale": true,
-      "tags": [],
-      "parent_collection_name": null,
-      "parent_collection_slug": null,
-      "collection_slugs": [
-        "flash-sale"
-      ]
-    },
-    {
       "id": "102",
       "name": "Champagne Drape Saree",
       "slug": "champagne-drape-saree-1",
@@ -989,12 +943,23 @@
       "is_out_of_stock": false,
       "images": [
         "/local-products/037-champagne-drape-saree-1.jpg",
-        "/local-products/038-champagne-drape-saree-2.jpg"
+        "/local-products/038-champagne-drape-saree-2.jpg",
+        "/local-products/039-champagne-drape-saree-3.jpg"
       ],
       "variants": [
         {
           "color": "Default",
+          "size": "S",
+          "stock": 10
+        },
+        {
+          "color": "Default",
           "size": "M",
+          "stock": 10
+        },
+        {
+          "color": "Default",
+          "size": "L",
           "stock": 10
         }
       ],
@@ -1004,9 +969,6 @@
       "collection_name": "Indo-Western",
       "collection_slug": "indo-western",
       "on_sale": false,
-      "tags": [],
-      "parent_collection_name": null,
-      "parent_collection_slug": null,
       "collection_slugs": [
         "indo-western"
       ]
@@ -1346,7 +1308,17 @@
       "variants": [
         {
           "color": "Default",
+          "size": "S",
+          "stock": 10
+        },
+        {
+          "color": "Default",
           "size": "M",
+          "stock": 10
+        },
+        {
+          "color": "Default",
+          "size": "L",
           "stock": 10
         }
       ],
@@ -1356,9 +1328,6 @@
       "collection_name": "Indo-Western",
       "collection_slug": "indo-western",
       "on_sale": false,
-      "tags": [],
-      "parent_collection_name": null,
-      "parent_collection_slug": null,
       "collection_slugs": [
         "indo-western"
       ]
@@ -1455,7 +1424,17 @@
       "variants": [
         {
           "color": "Default",
+          "size": "S",
+          "stock": 10
+        },
+        {
+          "color": "Default",
           "size": "M",
+          "stock": 10
+        },
+        {
+          "color": "Default",
+          "size": "L",
           "stock": 10
         }
       ],
@@ -1465,9 +1444,6 @@
       "collection_name": "Indo-Western",
       "collection_slug": "indo-western",
       "on_sale": false,
-      "tags": [],
-      "parent_collection_name": null,
-      "parent_collection_slug": null,
       "collection_slugs": [
         "indo-western"
       ]
@@ -1526,7 +1502,17 @@
       "variants": [
         {
           "color": "Default",
+          "size": "S",
+          "stock": 10
+        },
+        {
+          "color": "Default",
           "size": "M",
+          "stock": 10
+        },
+        {
+          "color": "Default",
+          "size": "L",
           "stock": 10
         }
       ],
@@ -1536,9 +1522,6 @@
       "collection_name": "Indo-Western",
       "collection_slug": "indo-western",
       "on_sale": false,
-      "tags": [],
-      "parent_collection_name": null,
-      "parent_collection_slug": null,
       "collection_slugs": [
         "indo-western"
       ]
@@ -2158,7 +2141,17 @@
       "variants": [
         {
           "color": "Default",
+          "size": "S",
+          "stock": 10
+        },
+        {
+          "color": "Default",
           "size": "M",
+          "stock": 10
+        },
+        {
+          "color": "Default",
+          "size": "L",
           "stock": 10
         }
       ],
@@ -2168,9 +2161,6 @@
       "collection_name": "Indo-Western",
       "collection_slug": "indo-western",
       "on_sale": false,
-      "tags": [],
-      "parent_collection_name": null,
-      "parent_collection_slug": null,
       "collection_slugs": [
         "indo-western"
       ]
