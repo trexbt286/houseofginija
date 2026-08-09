@@ -26,6 +26,8 @@ function AdminProductsContent() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
+  const [dbError, setDbError] = useState(null);
+  const [retrying, setRetrying] = useState(false);
 
   const [mounted, setMounted] = useState(false);
   useEffect(() => {
@@ -120,7 +122,7 @@ function AdminProductsContent() {
     'Dusty Mauve',
   ];
 
-  const fetchProductsAndCollections = async () => {
+  const fetchProductsAndCollections = async (attempt = 1) => {
     try {
       const res = await fetch('/api/admin/products', { cache: 'no-store', headers: { 'Cache-Control': 'no-cache' } });
       if (res.ok) {
@@ -137,13 +139,30 @@ function AdminProductsContent() {
         if (data.tags && Array.isArray(data.tags)) {
           setTags(data.tags);
         }
+        setDbError(null);
+      } else {
+        const errData = await res.json().catch(() => ({}));
+        const errMsg = errData.error || `Server error (${res.status})`;
+        if (attempt < 4) {
+          console.warn(`Admin products API attempt ${attempt} failed: ${errMsg}. Retrying in 2s...`);
+          setTimeout(() => fetchProductsAndCollections(attempt + 1), 2000);
+          return;
+        }
+        setDbError(errMsg);
       }
     } catch (err) {
+      if (attempt < 4) {
+        console.warn(`Admin products fetch attempt ${attempt} threw: ${err.message}. Retrying in 2s...`);
+        setTimeout(() => fetchProductsAndCollections(attempt + 1), 2000);
+        return;
+      }
+      setDbError(err.message || 'Network error');
       console.error('Failed to fetch catalog details:', err);
     } finally {
       setLoading(false);
     }
   };
+
 
   const searchParams = useSearchParams();
   const editIdParam = searchParams.get('edit');
@@ -1078,8 +1097,26 @@ function AdminProductsContent() {
         document.body
         )}
 
+        {/* DB ERROR BANNER */}
+        {dbError && (
+          <div style={{ background: '#FFF0F0', border: '1px solid #E57373', borderRadius: '8px', padding: '1rem 1.5rem', marginBottom: '1rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '0.75rem' }}>
+            <div>
+              <strong style={{ color: '#C62828', fontSize: '0.95rem' }}>⚠️ Database connection failed</strong>
+              <div style={{ color: '#B71C1C', fontSize: '0.82rem', marginTop: '0.25rem' }}>{dbError}</div>
+              <div style={{ color: '#888', fontSize: '0.78rem', marginTop: '0.25rem' }}>Showing cached/offline data. Click Retry to reload from database.</div>
+            </div>
+            <button
+              onClick={() => { setDbError(null); setLoading(true); fetchProductsAndCollections(1); }}
+              style={{ background: '#C62828', color: '#fff', border: 'none', borderRadius: '6px', padding: '0.5rem 1.2rem', fontWeight: '700', cursor: 'pointer', fontSize: '0.85rem' }}
+            >
+              🔄 Retry
+            </button>
+          </div>
+        )}
+
         {/* PRODUCTS LIST TABLE */}
         {(() => {
+
           const filteredProducts = products.filter((p) => {
             if (!filterCategory) return true;
             return productMatchesCategory(p, filterCategory);
