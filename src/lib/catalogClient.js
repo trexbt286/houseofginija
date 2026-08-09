@@ -142,16 +142,8 @@ export function mergeCatalogWithLocalOverrides(fetchedList = []) {
   const overrides = getStoredLocalCatalogOverrides();
   if (!Array.isArray(overrides) || overrides.length === 0) return fetchedList;
 
-  const cleanOverrides = overrides.filter((p) => {
-    if (p.name === 'Champagne Drape Saree' && String(p.price) === '15001') return false;
-    if (p.name === 'Blush Pink Drape' && String(p.price) === '8500') return false;
-    if (p.slug === 'champagne-drape-saree') return false;
-    if (p.slug === 'blush-pink-drape') return false;
-    return true;
-  });
-
   let merged = [...fetchedList];
-  cleanOverrides.forEach((override) => {
+  overrides.forEach((override) => {
     const idx = merged.findIndex((p) => String(p.id) === String(override.id) || p.slug === override.slug);
     if (idx !== -1) {
       merged[idx] = { ...merged[idx], ...override };

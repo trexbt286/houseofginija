@@ -4,6 +4,7 @@ import { use, useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useStore } from '@/context/StoreContext';
 import Link from 'next/link';
+import { getStoredLocalCatalogOverrides } from '@/lib/catalogClient';
 
 export default function ProductPage({ params }) {
   const { slug } = use(params);
@@ -25,13 +26,25 @@ export default function ProductPage({ params }) {
     const fetchProductDetails = async () => {
       try {
         const res = await fetch(`/api/products/${slug}`);
-        if (!res.ok) {
+        let targetProd = null;
+        if (res.ok) {
+          const data = await res.json();
+          targetProd = data.product;
+        }
+
+        const overrides = getStoredLocalCatalogOverrides();
+        const localMatch = overrides.find((p) => p.slug === slug || String(p.id) === String(targetProd?.id));
+        if (localMatch) {
+          targetProd = { ...targetProd, ...localMatch };
+        }
+
+        if (!targetProd) {
           throw new Error('Product not found in our vaults.');
         }
-        const data = await res.json();
-        setProduct(data.product);
-        if (data.product.images && data.product.images.length > 0) {
-          setActiveImage(data.product.images[0]);
+
+        setProduct(targetProd);
+        if (targetProd.images && targetProd.images.length > 0) {
+          setActiveImage(targetProd.images[0]);
         }
         
         // Auto select first available size/color combinations if they have stock
