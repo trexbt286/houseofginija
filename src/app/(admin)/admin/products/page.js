@@ -19,11 +19,11 @@ import homepageFallback from '@/data/local-homepage-fallback.json';
 
 function AdminProductsContent() {
   const { logout } = useStore();
-  const [products, setProducts] = useState(productsFallback.products || []);
+  const [products, setProducts] = useState([]);
   const [collections, setCollections] = useState(homepageFallback.collections || []);
   const [tags, setTags] = useState([]);
   const [filterCategory, setFilterCategory] = useState('');
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
   const [dbError, setDbError] = useState(null);
@@ -1126,7 +1126,13 @@ function AdminProductsContent() {
         )}
 
         {/* PRODUCTS LIST TABLE */}
-        {(() => {
+        {loading ? (
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '4rem 2rem', gap: '1rem' }}>
+            <div style={{ width: '48px', height: '48px', border: '4px solid #F4E1E5', borderTop: '4px solid #D98E9B', borderRadius: '50%', animation: 'spin 0.8s linear infinite' }} />
+            <p style={{ color: '#8B7789', fontWeight: '600', fontSize: '0.95rem', margin: 0 }}>Loading your catalog from database…</p>
+            <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
+          </div>
+        ) : (() => {
 
           const filteredProducts = products.filter((p) => {
             if (!filterCategory) return true;
