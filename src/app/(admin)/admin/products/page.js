@@ -177,7 +177,12 @@ function AdminProductsContent() {
         const next = exists
           ? prev.map((p) => (String(p.id) === String(updatedProduct.id) ? updatedProduct : p))
           : [updatedProduct, ...prev];
-        return next.sort((a, b) => a.name.localeCompare(b.name, undefined, { numeric: true, sensitivity: 'base' }));
+        const sortByNewest = (a, b) => {
+          const idA = String(a.id || ''); const idB = String(b.id || '');
+          if (idA.length !== idB.length) return idB.length - idA.length;
+          return idB.localeCompare(idA);
+        };
+        return next.sort(sortByNewest);
       });
     };
 
@@ -601,7 +606,13 @@ function AdminProductsContent() {
       const next = exists
         ? prev.map((p) => (String(p.id) === String(targetId) ? { ...p, ...optimisticProduct } : p))
         : [{ ...optimisticProduct }, ...prev];
-      return next.sort((a, b) => a.name.localeCompare(b.name, undefined, { numeric: true, sensitivity: 'base' }));
+      // Always put the newest (largest ID) first
+      const sortByNewest = (a, b) => {
+        const idA = String(a.id || ''); const idB = String(b.id || '');
+        if (idA.length !== idB.length) return idB.length - idA.length;
+        return idB.localeCompare(idA);
+      };
+      return next.sort(sortByNewest);
     });
 
     setIsFormOpen(false);
