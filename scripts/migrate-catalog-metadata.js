@@ -22,9 +22,14 @@ async function main() {
     '20260802_catalog_categories_and_tags.sql'
   );
   const sql = fs.readFileSync(sqlPath, 'utf8');
+  const useSsl = process.env.DATABASE_URL && 
+    !process.env.DATABASE_URL.includes('localhost') && 
+    !process.env.DATABASE_URL.includes('127.0.0.1');
+
   const pool = new Pool({
     connectionString: process.env.DATABASE_URL,
-    connectionTimeoutMillis: 3000
+    connectionTimeoutMillis: 3000,
+    ssl: useSsl ? { rejectUnauthorized: false } : undefined
   });
 
   let timerId;
