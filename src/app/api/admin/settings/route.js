@@ -18,7 +18,11 @@ export async function GET() {
     // Database connection optional in fallback mode
   }
 
-  return NextResponse.json({ settings: mergedSettings });
+  return NextResponse.json({ settings: mergedSettings }, {
+    headers: {
+      'Cache-Control': 'no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0',
+    }
+  });
 }
 
 // POST update settings

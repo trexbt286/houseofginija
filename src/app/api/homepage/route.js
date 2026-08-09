@@ -24,6 +24,10 @@ export async function GET() {
     return NextResponse.json({
       ...getLocalHomepageFallback(),
       db_connected: false,
+    }, {
+      headers: {
+        'Cache-Control': 'no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0',
+      }
     });
   }
 
@@ -196,6 +200,10 @@ export async function GET() {
       founderReels: founderReelsResult.rows || [],
       heavyDresses,
       db_connected: true,
+    }, {
+      headers: {
+        'Cache-Control': 'no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0',
+      }
     });
   } catch (error) {
     console.error('Fetch homepage data error:', error);
@@ -203,6 +211,10 @@ export async function GET() {
       return NextResponse.json({
         ...getLocalHomepageFallback(),
         db_connected: false,
+      }, {
+        headers: {
+          'Cache-Control': 'no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0',
+        }
       });
     }
     return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
