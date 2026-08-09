@@ -15,7 +15,7 @@ function optimizeCloudinaryUrl(url) {
   return `${prefix}f_auto,q_auto/${suffix}`;
 }
 
-const DEFAULT_FALLBACK_IMAGE = '/local-products/002-bespoke-suit-6-1.jpg';
+const DEFAULT_FALLBACK_IMAGE = '/local-products/045-bespoke-suit-13-1.jpg';
 
 export default function ImageWithSkeleton({ src, alt, style = {}, className = '', eager = false, fallbackSrc = DEFAULT_FALLBACK_IMAGE, ...props }) {
   const [loaded, setLoaded] = useState(false);

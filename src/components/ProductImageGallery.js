@@ -137,7 +137,8 @@ const imageStyle = {
   width: '100%',
   height: '100%',
   maxHeight: '430px',
-  objectFit: 'contain',
+  objectFit: 'cover',
+  objectPosition: 'center top',
   display: 'block',
 };
 
