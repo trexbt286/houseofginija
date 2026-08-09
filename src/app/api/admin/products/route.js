@@ -59,6 +59,15 @@ async function fetchProductById(client, productId) {
 }
 
 function parseProductPayload(body) {
+  if (Array.isArray(body.images)) {
+    const hasBase64 = body.images.some(img => img && img.startsWith('data:'));
+    if (hasBase64) {
+      const error = new Error('Raw base64 images cannot be saved directly to the database. Please upload them using Cloudinary first.');
+      error.status = 400;
+      throw error;
+    }
+  }
+
   const priceNum = Number.parseFloat(body.price);
   if (!Number.isFinite(priceNum) || priceNum <= 0) {
     const error = new Error('Product price must be a valid positive number.');
