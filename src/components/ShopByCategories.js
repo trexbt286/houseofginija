@@ -4,6 +4,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useRef, useState, useEffect } from 'react';
 import { productMatchesCategory } from '@/lib/catalogClient';
+import { useStore } from '@/context/StoreContext';
 
 const ALL_CATEGORY_ITEMS = [
   { 
@@ -53,6 +54,7 @@ const ALL_CATEGORY_ITEMS = [
 ];
 
 export default function ShopByCategories({ initialCategoryCounts }) {
+  const { jewelleryEnabled } = useStore();
   const trackRef = useRef(null);
   const [categoryImages, setCategoryImages] = useState({});
   const [counts, setCounts] = useState(initialCategoryCounts || null);
@@ -91,8 +93,9 @@ export default function ShopByCategories({ initialCategoryCounts }) {
       .catch((err) => console.error('ShopByCategories fetch homepage data error:', err));
   }, []);
 
-  // Filter categories based on zero product counts for discounted items
+  // Filter categories based on zero product counts for discounted items and jewelleryEnabled setting
   const activeCategories = ALL_CATEGORY_ITEMS.filter((item) => {
+    if (jewelleryEnabled === false && (item.id === 'jewellery' || item.slug === 'jewellery' || item.slug === 'rings' || item.slug === 'necklaces' || item.slug === 'bracelets' || item.slug === 'earrings')) return false;
     if (!counts) return true; // Show by default until counts load
     if (item.id === 'discounted_suits' && counts.discounted_suits === 0) return false;
     if (item.id === 'discounted_heavy' && counts.discounted_heavy === 0) return false;

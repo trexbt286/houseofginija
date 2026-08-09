@@ -737,7 +737,7 @@ function CollectionsContent() {
   };
 
   const getSidebarCategories = () => {
-    return [
+    const list = [
       { id: 'new-collection', name: 'Fresh Collection', targetId: 'new-collection' },
       { id: 'flash-sale', name: 'Flash Sale', targetId: 'flash-sale' },
       { id: 'suits', name: 'Unstitched Suits', targetId: 'suits' },
@@ -745,11 +745,16 @@ function CollectionsContent() {
       { id: 'shararas', name: 'Drape Sarees', targetId: 'shararas' },
       { id: 'gowns', name: 'Heavy Gowns', targetId: 'gowns' },
       { id: 'co-ords', name: 'Co-ords', targetId: 'co-ords' },
-      { id: 'earrings', name: 'Earrings', targetId: 'earrings' },
-      { id: 'rings', name: 'Rings', targetId: 'rings' },
-      { id: 'necklaces', name: 'Necklace', targetId: 'necklaces' },
-      { id: 'bracelets', name: 'Bracelet', targetId: 'bracelets' },
     ];
+    if (jewelleryEnabled !== false) {
+      list.push(
+        { id: 'earrings', name: 'Earrings', targetId: 'earrings' },
+        { id: 'rings', name: 'Rings', targetId: 'rings' },
+        { id: 'necklaces', name: 'Necklace', targetId: 'necklaces' },
+        { id: 'bracelets', name: 'Bracelet', targetId: 'bracelets' }
+      );
+    }
+    return list;
   };
 
   const renderProductCard = (p, index = 0) => {

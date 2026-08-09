@@ -70,12 +70,29 @@ export function getLocalHomepageFallback() {
     shararas: store.filter(isSharara),
   };
 
+  let jewelleryEnabled = true;
+  try {
+    if (typeof window === 'undefined') {
+      const req = eval('require');
+      const fs = req('fs');
+      const path = req('path');
+      const settingsPath = path.join(process.cwd(), 'src/data/local-settings.json');
+      if (fs.existsSync(settingsPath)) {
+        const settingsData = JSON.parse(fs.readFileSync(settingsPath, 'utf8'));
+        if (settingsData.jewellery_enabled === 'false') {
+          jewelleryEnabled = false;
+        }
+      }
+    }
+  } catch {}
+
   return {
     ...homepageFallback,
     flashProducts,
     flash_sale_enabled: true,
     newArrivalProducts,
     new_arrivals_enabled: true,
+    jewellery_enabled: jewelleryEnabled,
     heavyDresses,
   };
 }

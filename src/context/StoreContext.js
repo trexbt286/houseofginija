@@ -11,8 +11,22 @@ export function StoreProvider({ children }) {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [isLoginOpen, setIsLoginOpen] = useState(false);
-  const [jewelleryEnabled, setJewelleryEnabled] = useState(true);
+  const [jewelleryEnabled, setJewelleryEnabledState] = useState(() => {
+    if (typeof window !== 'undefined') {
+      const stored = localStorage.getItem('houseofginija_jewellery_enabled');
+      if (stored === 'false') return false;
+      if (stored === 'true') return true;
+    }
+    return true;
+  });
   const router = useRouter();
+
+  const setJewelleryEnabled = (val) => {
+    setJewelleryEnabledState(val);
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('houseofginija_jewellery_enabled', val ? 'true' : 'false');
+    }
+  };
 
   // Load initial settings (jewellery_enabled) once on mount
   useEffect(() => {
