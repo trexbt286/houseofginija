@@ -198,6 +198,7 @@ export async function GET() {
       return NextResponse.json({
         ...getLocalHomepageFallback(),
         db_connected: false,
+        db_error: error.message,
       });
     }
     return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
