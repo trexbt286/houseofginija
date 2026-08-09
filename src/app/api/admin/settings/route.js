@@ -1,44 +1,12 @@
 import { NextResponse } from 'next/server';
 import pool from '@/lib/db';
-import fs from 'fs';
-import path from 'path';
+import { getRuntimeSettings, updateRuntimeSettings } from '@/lib/settingsStore';
 
 export const dynamic = 'force-dynamic';
 
-const SETTINGS_FILE_PATH = path.join(process.cwd(), 'src', 'data', 'local-settings.json');
-
-// In-memory fallback store for settings when DB or disk is being accessed
-const inMemorySettings = {};
-
-function readLocalSettings() {
-  try {
-    if (fs.existsSync(SETTINGS_FILE_PATH)) {
-      const data = fs.readFileSync(SETTINGS_FILE_PATH, 'utf8');
-      return JSON.parse(data || '{}');
-    }
-  } catch (err) {
-    console.error('Error reading local-settings.json:', err);
-  }
-  return {};
-}
-
-function writeLocalSettings(newSettings) {
-  try {
-    const existing = readLocalSettings();
-    const updated = { ...existing, ...newSettings };
-    const dir = path.dirname(SETTINGS_FILE_PATH);
-    if (!fs.existsSync(dir)) {
-      fs.mkdirSync(dir, { recursive: true });
-    }
-    fs.writeFileSync(SETTINGS_FILE_PATH, JSON.stringify(updated, null, 2), 'utf8');
-  } catch (err) {
-    console.error('Error writing local-settings.json:', err);
-  }
-}
-
 // GET settings
 export async function GET() {
-  const mergedSettings = { ...readLocalSettings() };
+  const mergedSettings = { ...getRuntimeSettings() };
 
   try {
     const result = await pool.query('SELECT key, value FROM settings');
@@ -48,9 +16,6 @@ export async function GET() {
   } catch (error) {
     // Database connection optional in fallback mode
   }
-
-  // Merge in-memory overrides on top
-  Object.assign(mergedSettings, inMemorySettings);
 
   return NextResponse.json({ settings: mergedSettings });
 }
@@ -63,13 +28,10 @@ export async function POST(request) {
       return NextResponse.json({ error: 'Invalid settings payload' }, { status: 400 });
     }
 
-    // 1. Update in-memory store
-    Object.assign(inMemorySettings, settings);
+    // Update runtime singleton store & disk
+    const updated = updateRuntimeSettings(settings);
 
-    // 2. Persist to disk JSON file
-    writeLocalSettings(settings);
-
-    // 3. Attempt DB persistence for settings table and collections.image_url
+    // Attempt DB persistence for settings table and collections.image_url
     try {
       for (const [key, value] of Object.entries(settings)) {
         // Upsert into settings table

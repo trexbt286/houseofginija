@@ -28,16 +28,44 @@ export function StoreProvider({ children }) {
     }
   };
 
-  // Load initial settings (jewellery_enabled) once on mount
-  useEffect(() => {
+  const syncSettings = () => {
     fetch('/api/homepage')
       .then((res) => (res.ok ? res.json() : null))
       .then((data) => {
         if (data && typeof data.jewellery_enabled === 'boolean') {
-          setJewelleryEnabled(data.jewellery_enabled);
+          setJewelleryEnabledState(data.jewellery_enabled);
+          if (typeof window !== 'undefined') {
+            localStorage.setItem('houseofginija_jewellery_enabled', data.jewellery_enabled ? 'true' : 'false');
+          }
         }
       })
       .catch(() => {});
+  };
+
+  // Load initial settings and set up real-time sync listeners
+  useEffect(() => {
+    syncSettings();
+
+    if (typeof window !== 'undefined') {
+      const handleStorage = (e) => {
+        if (e.key === 'houseofginija_jewellery_enabled' || !e.key) {
+          const val = localStorage.getItem('houseofginija_jewellery_enabled');
+          if (val === 'false') setJewelleryEnabledState(false);
+          if (val === 'true') setJewelleryEnabledState(true);
+        }
+      };
+
+      window.addEventListener('storage', handleStorage);
+      window.addEventListener('houseofginija_settings_updated', syncSettings);
+
+      const interval = setInterval(syncSettings, 3000);
+
+      return () => {
+        window.removeEventListener('storage', handleStorage);
+        window.removeEventListener('houseofginija_settings_updated', syncSettings);
+        clearInterval(interval);
+      };
+    }
   }, []);
 
   // Load cart, wishlist and session on mount

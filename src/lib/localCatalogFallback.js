@@ -2,6 +2,7 @@ import homepageFallback from '@/data/local-homepage-fallback.json';
 import productsFallback from '@/data/local-products-fallback.json';
 import localSettings from '@/data/local-settings.json';
 import { getStore, findBySlug } from '@/lib/globalProductStore';
+import { getSetting } from '@/lib/settingsStore';
 
 const isProduction = process.env.NODE_ENV === 'production';
 const hasDatabaseUrl = Boolean(process.env.DATABASE_URL);
@@ -71,7 +72,7 @@ export function getLocalHomepageFallback() {
     shararas: store.filter(isSharara),
   };
 
-  const jewelleryEnabled = localSettings.jewellery_enabled !== 'false';
+  const jewelleryEnabled = getSetting('jewellery_enabled', true);
 
   return {
     ...homepageFallback,
