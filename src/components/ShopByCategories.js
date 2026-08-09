@@ -60,7 +60,7 @@ export default function ShopByCategories({ initialCategoryCounts }) {
   const [counts, setCounts] = useState(initialCategoryCounts || null);
 
   useEffect(() => {
-    fetch('/api/homepage')
+    fetch('/api/homepage?t=' + Date.now(), { cache: 'no-store', headers: { 'Cache-Control': 'no-cache' } })
       .then((res) => (res.ok ? res.json() : null))
       .then((data) => {
         if (data) {

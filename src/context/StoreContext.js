@@ -29,7 +29,7 @@ export function StoreProvider({ children }) {
   };
 
   const syncSettings = () => {
-    fetch('/api/homepage')
+    fetch('/api/homepage?t=' + Date.now(), { cache: 'no-store', headers: { 'Cache-Control': 'no-cache' } })
       .then((res) => (res.ok ? res.json() : null))
       .then((data) => {
         if (data && typeof data.jewellery_enabled === 'boolean') {

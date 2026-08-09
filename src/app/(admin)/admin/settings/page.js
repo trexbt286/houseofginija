@@ -12,7 +12,7 @@ export default function AdminSettingsPage() {
   const [message, setMessage] = useState('');
 
   useEffect(() => {
-    fetch('/api/admin/settings')
+    fetch('/api/admin/settings?t=' + Date.now(), { cache: 'no-store', headers: { 'Cache-Control': 'no-cache' } })
       .then((res) => (res.ok ? res.json() : null))
       .then((data) => {
         if (data?.settings) {
