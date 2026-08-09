@@ -195,25 +195,16 @@ export async function GET() {
   }
 
   try {
-    const withTimeout = (promise, ms = 1500) =>
-      Promise.race([
-        promise,
-        new Promise((_, reject) => setTimeout(() => reject(new Error('DB Timeout')), ms)),
-      ]);
-
-    const [productsResult, collectionsResult, tagsResult] = await withTimeout(
-      Promise.all([
-        pool.query(`
-          SELECT ${PRODUCT_SELECT_FIELDS}
-          FROM products p
-          ${PRODUCT_COLLECTION_JOINS}
-          ORDER BY p.id DESC
-        `),
-        pool.query(CATEGORY_QUERY),
-        pool.query('SELECT id, name, slug FROM tags ORDER BY name ASC'),
-      ]),
-      1500
-    );
+    const [productsResult, collectionsResult, tagsResult] = await Promise.all([
+      pool.query(`
+        SELECT ${PRODUCT_SELECT_FIELDS}
+        FROM products p
+        ${PRODUCT_COLLECTION_JOINS}
+        ORDER BY p.id DESC
+      `),
+      pool.query(CATEGORY_QUERY),
+      pool.query('SELECT id, name, slug FROM tags ORDER BY name ASC'),
+    ]);
 
     const rawList = productsResult.rows.map((row) => mapProductData(row, { isAdmin: true })).filter(Boolean);
     return NextResponse.json({
