@@ -215,13 +215,7 @@ export async function GET() {
     });
   } catch (error) {
     console.error('Admin GET products error:', error);
-    const rawList = getStoreProducts().map((p) => mapProductData(p, { isAdmin: true })).filter(Boolean);
-    return NextResponse.json({
-      products: sortByNewest(rawList),
-      collections: getLocalCollectionsFallback(),
-      categoryTree: getLocalCategoryTreeFallback(),
-      tags: getLocalTagsFallback(),
-    });
+    return NextResponse.json({ error: error.message || String(error) }, { status: 500 });
   }
 }
 
