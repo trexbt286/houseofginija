@@ -501,7 +501,7 @@ function CollectionsContent() {
     const fetchAllProducts = async () => {
       setLoading(true);
       try {
-        const res = await fetch('/api/products');
+        const res = await fetch('/api/products', { cache: 'no-store', headers: { 'Cache-Control': 'no-cache' } });
         if (res.ok) {
           const data = await res.json();
           let list = mergeCatalogWithLocalOverrides(data.products || []);
@@ -526,7 +526,7 @@ function CollectionsContent() {
       if (searchQuery.trim().length > 0) {
         setLoading(true);
         try {
-          const res = await fetch(`/api/products?search=${encodeURIComponent(searchQuery.trim())}`);
+          const res = await fetch(`/api/products?search=${encodeURIComponent(searchQuery.trim())}`, { cache: 'no-store', headers: { 'Cache-Control': 'no-cache' } });
           if (res.ok) {
             const data = await res.json();
             let list = mergeCatalogWithLocalOverrides(data.products || []);

@@ -15,6 +15,7 @@ import { isJewelleryProduct, productMatchesCategory } from '@/lib/catalogClient'
 import { fetchCloudSettingsHttps, getSetting } from '@/lib/settingsStore';
 
 export const dynamic = 'force-dynamic';
+export const revalidate = 0;
 
 export async function GET(request) {
   await fetchCloudSettingsHttps();
