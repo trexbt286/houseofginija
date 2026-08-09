@@ -16,7 +16,10 @@ export const revalidate = 0;
 
 export async function GET() {
   if (shouldUseLocalCatalogFallbackFirst()) {
-    return NextResponse.json(getLocalHomepageFallback());
+    return NextResponse.json({
+      ...getLocalHomepageFallback(),
+      db_connected: false,
+    });
   }
 
   try {
@@ -187,11 +190,15 @@ export async function GET() {
       heroReels: heroReelsResult.rows || [],
       founderReels: founderReelsResult.rows || [],
       heavyDresses,
+      db_connected: true,
     });
   } catch (error) {
     console.error('Fetch homepage data error:', error);
     if (canUseLocalCatalogFallback()) {
-      return NextResponse.json(getLocalHomepageFallback());
+      return NextResponse.json({
+        ...getLocalHomepageFallback(),
+        db_connected: false,
+      });
     }
     return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
   }
