@@ -10,6 +10,7 @@ import {
   canUseLocalCatalogFallback,
   getLocalHomepageFallback,
 } from '@/lib/localCatalogFallback';
+import { getStore } from '@/lib/globalProductStore';
 
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
