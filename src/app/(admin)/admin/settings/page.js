@@ -46,6 +46,10 @@ export default function AdminSettingsPage() {
       if (res.ok) {
         setJewelleryActive(newValue);
         setJewelleryEnabled(newValue);
+        if (typeof window !== 'undefined') {
+          localStorage.setItem('houseofginija_jewellery_enabled', newValue ? 'true' : 'false');
+          window.dispatchEvent(new Event('storage'));
+        }
         setMessage(`Jewellery Section successfully ${newValue ? 'ENABLED' : 'DISABLED'}`);
       } else {
         setMessage('Failed to update setting. Please try again.');
