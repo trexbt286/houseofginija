@@ -15,8 +15,18 @@ function optimizeCloudinaryUrl(url) {
   return `${prefix}f_auto,q_auto/${suffix}`;
 }
 
-export default function ImageWithSkeleton({ src, alt, style = {}, className = '', eager = false, ...props }) {
+const DEFAULT_FALLBACK_IMAGE = '/local-products/002-bespoke-suit-6-1.jpg';
+
+export default function ImageWithSkeleton({ src, alt, style = {}, className = '', eager = false, fallbackSrc = DEFAULT_FALLBACK_IMAGE, ...props }) {
   const [loaded, setLoaded] = useState(false);
+  const [imgSrc, setImgSrc] = useState(() => optimizeCloudinaryUrl(src) || fallbackSrc);
+
+  const handleError = () => {
+    if (imgSrc !== fallbackSrc) {
+      setImgSrc(fallbackSrc);
+    }
+    setLoaded(true);
+  };
 
   const finalStyle = {
     backgroundColor: loaded ? '#FBF0EC' : '#F6DDE2',
@@ -25,14 +35,13 @@ export default function ImageWithSkeleton({ src, alt, style = {}, className = ''
     ...style,
   };
 
-  const optimizedSrc = optimizeCloudinaryUrl(src);
-
   return (
     <img
-      src={optimizedSrc || '/icon.png'}
+      src={imgSrc}
       alt={alt || ''}
       loading={eager ? "eager" : "lazy"}
       onLoad={() => setLoaded(true)}
+      onError={handleError}
       style={finalStyle}
       className={`${!loaded ? 'skeleton-shimmer' : ''} ${className}`}
       {...props}

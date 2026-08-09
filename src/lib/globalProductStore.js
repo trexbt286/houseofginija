@@ -13,9 +13,9 @@ import homepageFallback from '@/data/local-homepage-fallback.json';
 function persistStoreToDisk(store) {
   try {
     if (typeof window !== 'undefined') return;
-    const req = typeof __webpack_require__ === 'function' ? null : require;
-    const fs = req ? req('fs') : null;
-    const path = req ? req('path') : null;
+    const req = eval('require');
+    const fs = req('fs');
+    const path = req('path');
     if (!fs || !path) return;
 
     const prodsFilePath = path.join(process.cwd(), 'src/data/local-products-fallback.json');
