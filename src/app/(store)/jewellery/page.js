@@ -179,6 +179,7 @@ function MobileSearchBar({ allProducts, initialQuery, onSearch, handleProductCli
 }
 
 function CollectionsContent() {
+  const router = useRouter();
   const searchParams = useSearchParams();
   const { user, cart, addToCart, updateCartQuantity, wishlist, toggleWishlist, jewelleryEnabled } = useStore();
 

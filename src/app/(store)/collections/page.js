@@ -538,6 +538,20 @@ function CollectionsContent() {
       } else {
         let filtered = [...allProducts];
 
+        if (jewelleryEnabled === false) {
+          const isJewelleryProduct = (product) => {
+            const cid = String(product.collection_id || '');
+            if (['2', '4', '5', '6'].includes(cid)) return true;
+            const slug = (product.collection_slug || '').toLowerCase();
+            if (['jewellery', 'rings', 'necklaces', 'bracelets', 'earrings'].includes(slug)) return true;
+            if (Array.isArray(product.collection_slugs) && product.collection_slugs.some(s => ['jewellery', 'rings', 'necklaces', 'bracelets', 'earrings'].includes(s.toLowerCase()))) return true;
+            const nameLower = (product.name || '').toLowerCase();
+            if (nameLower.includes('ring') || nameLower.includes('necklace') || nameLower.includes('bracelet') || nameLower.includes('earring')) return true;
+            return false;
+          };
+          filtered = filtered.filter((p) => !isJewelleryProduct(p));
+        }
+
         // Filter mode: apply collection, size, and color filters
         if (selectedCollection) {
           filtered = filtered.filter((product) =>
