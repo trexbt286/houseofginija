@@ -69,24 +69,11 @@ export function productMatchesCategory(product, selectedCategory) {
   if (cat === 'suits' || cat === 'unstitched' || cat === 'unstitched-suits') {
     if (isJewelleryProduct(product)) return false;
 
-    const hasSuitTag = Array.isArray(product.tags) && product.tags.some((t) => {
-      const tagSlug = (typeof t === 'string' ? t : t?.slug || t?.name || '').toLowerCase();
-      return tagSlug === 'suits' || tagSlug === 'unstitched' || tagSlug === 'unstitched-suits';
-    });
-
-    const nameLower = (product.name || '').toLowerCase();
-    const descLower = (product.description || '').toLowerCase();
-    const isSuitByName = nameLower.includes('kurta') || nameLower.includes('dupatta') || nameLower.includes('muslin') || nameLower.includes('santoon') || nameLower.includes('salwar') || nameLower.includes('kameez') || nameLower.includes('suit') || nameLower.includes('unstitched') || descLower.includes('unstitched');
-
     return (
       colSlug === 'suits' ||
       colSlug === 'unstitched' ||
       colSlugs.includes('suits') ||
       colSlugs.includes('unstitched') ||
-      colName.includes('suit') ||
-      colName.includes('unstitched') ||
-      hasSuitTag ||
-      isSuitByName ||
       colId === '1'
     );
   }

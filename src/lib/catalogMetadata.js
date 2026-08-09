@@ -58,20 +58,31 @@ export function mapProductData(product, options = {}) {
     (Array.isArray(collection_slugs) && collection_slugs.includes('new-collection'))
   );
 
+  const hasExplicitSlugs = Array.isArray(collection_slugs) && collection_slugs.length > 0;
   if (!Array.isArray(collection_slugs)) {
     collection_slugs = [];
   }
-  if (product.collection_slug && !collection_slugs.includes(product.collection_slug)) {
-    collection_slugs.push(product.collection_slug);
-  }
-  if (product.parent_collection_slug && !collection_slugs.includes(product.parent_collection_slug)) {
-    collection_slugs.push(product.parent_collection_slug);
-  }
-  if (isNewArrival && !collection_slugs.includes('new-collection')) {
-    collection_slugs.push('new-collection');
-  }
-  if (isFlashSale) {
-    collection_slugs = ['flash-sale', ...collection_slugs.filter((s) => s !== 'flash-sale')];
+  
+  if (!hasExplicitSlugs) {
+    if (product.collection_slug && !collection_slugs.includes(product.collection_slug)) {
+      collection_slugs.push(product.collection_slug);
+    }
+    if (product.parent_collection_slug && !collection_slugs.includes(product.parent_collection_slug)) {
+      collection_slugs.push(product.parent_collection_slug);
+    }
+    if (isNewArrival && !collection_slugs.includes('new-collection')) {
+      collection_slugs.push('new-collection');
+    }
+    if (isFlashSale) {
+      collection_slugs = ['flash-sale', ...collection_slugs.filter((s) => s !== 'flash-sale')];
+    }
+  } else {
+    if (isNewArrival && !collection_slugs.includes('new-collection')) {
+      collection_slugs.push('new-collection');
+    }
+    if (isFlashSale && !collection_slugs.includes('flash-sale')) {
+      collection_slugs = ['flash-sale', ...collection_slugs.filter((s) => s !== 'flash-sale')];
+    }
   }
 
   const rawPrice = Number.parseFloat(product.price) || 0;

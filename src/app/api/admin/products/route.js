@@ -66,9 +66,9 @@ function parseProductPayload(body) {
     throw error;
   }
 
-  const collectionId = body.collection_id
-    ? Number.parseInt(body.collection_id, 10)
-    : null;
+  const collectionSlugs = Array.isArray(body.collection_slugs)
+    ? body.collection_slugs
+    : (Array.isArray(body.collectionSlugs) ? body.collectionSlugs : []);
 
   const flashSale = body.flash_sale === false ? false : (collectionSlugs.includes('flash-sale') || Boolean(body.flash_sale));
   const finalCollectionSlugs = flashSale
@@ -78,6 +78,38 @@ function parseProductPayload(body) {
   const newArrival = collectionSlugs.includes('new-collection') || Boolean(body.new_arrival);
   if (newArrival && !finalCollectionSlugs.includes('new-collection')) {
     finalCollectionSlugs.push('new-collection');
+  }
+
+  const SLUG_TO_COLLECTION_ID = {
+    'suits': 1,
+    'unstitched': 1,
+    'jewellery': 2,
+    'rings': 2,
+    'necklaces': 2,
+    'necklace': 2,
+    'bracelets': 2,
+    'earrings': 2,
+    'indo-western': 1197838482593087489,
+    'gowns': 1197838482697388033,
+    'heavy-gown': 1197838482697388033,
+    'shararas': 1197838482794545153,
+    'co-ords': 1198002016480985089,
+  };
+
+  let collectionId = null;
+  for (const slug of finalCollectionSlugs) {
+    if (SLUG_TO_COLLECTION_ID[slug]) {
+      collectionId = SLUG_TO_COLLECTION_ID[slug];
+      break;
+    }
+  }
+
+  if (!collectionId && body.collection_id) {
+    collectionId = Number.parseInt(body.collection_id, 10);
+  }
+
+  if (!collectionId) {
+    collectionId = 1;
   }
 
   let flashSalePrice = null;
@@ -238,9 +270,10 @@ export async function POST(request) {
       `
         INSERT INTO products (
           name, slug, description, price, collection_id, is_out_of_stock,
-          images, variants, flash_sale, flash_sale_price, new_arrival
+          images, variants, flash_sale, flash_sale_price, new_arrival,
+          collection_slugs
         )
-        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)
+        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)
         RETURNING id
       `,
       [
@@ -255,6 +288,7 @@ export async function POST(request) {
         product.flashSale,
         product.flashSalePrice,
         product.newArrival,
+        JSON.stringify(product.collection_slugs),
       ]
     );
 
@@ -341,8 +375,9 @@ export async function PUT(request) {
           variants = $8,
           flash_sale = $9,
           flash_sale_price = $10,
-          new_arrival = $11
-        WHERE id = $12
+          new_arrival = $11,
+          collection_slugs = $12
+        WHERE id = $13
         RETURNING id
       `,
       [
@@ -357,6 +392,7 @@ export async function PUT(request) {
         product.flashSale,
         product.flashSalePrice,
         product.newArrival,
+        JSON.stringify(product.collection_slugs),
         body.id,
       ]
     );
