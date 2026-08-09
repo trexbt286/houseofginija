@@ -608,10 +608,19 @@ function AdminProductsContent() {
       });
 
       if (res.ok) {
+        setSuccess(`Product "${formFields.name}" saved successfully to catalog.`);
+        fetchProductsAndCollections();
+      } else {
+        const rawText = await res.text();
+        const data = rawText ? JSON.parse(rawText) : {};
+        setError(data.error || 'Failed to save product to database.');
+        // Revert optimistic update by pulling the correct state from the database
         fetchProductsAndCollections();
       }
     } catch (err) {
       console.error('Background product save error:', err);
+      setError('Network request error saving product.');
+      fetchProductsAndCollections();
     }
   };
 

@@ -81,19 +81,19 @@ function parseProductPayload(body) {
   }
 
   const SLUG_TO_COLLECTION_ID = {
-    'suits': 1,
-    'unstitched': 1,
-    'jewellery': 2,
-    'rings': 2,
-    'necklaces': 2,
-    'necklace': 2,
-    'bracelets': 2,
-    'earrings': 2,
-    'indo-western': 1197838482593087489,
-    'gowns': 1197838482697388033,
-    'heavy-gown': 1197838482697388033,
-    'shararas': 1197838482794545153,
-    'co-ords': 1198002016480985089,
+    'suits': '1',
+    'unstitched': '1',
+    'jewellery': '2',
+    'rings': '2',
+    'necklaces': '2',
+    'necklace': '2',
+    'bracelets': '2',
+    'earrings': '2',
+    'indo-western': '1197838482593087489',
+    'gowns': '1197838482697388033',
+    'heavy-gown': '1197838482697388033',
+    'shararas': '1197838482794545153',
+    'co-ords': '1198002016480985089',
   };
 
   let collectionId = null;
@@ -105,7 +105,11 @@ function parseProductPayload(body) {
   }
 
   if (!collectionId && body.collection_id) {
-    collectionId = Number.parseInt(body.collection_id, 10);
+    collectionId = String(body.collection_id);
+  }
+
+  if (!collectionId) {
+    collectionId = '1';
   }
 
   if (!collectionId) {
@@ -304,19 +308,7 @@ export async function POST(request) {
   } catch (error) {
     if (client) await client.query('ROLLBACK').catch(() => {});
     console.error('Admin POST product error:', error);
-    const store = getStoreProducts();
-    const newId = Math.floor(Date.now() % 2000000000);
-    const newProduct = mapProductData({
-      id: newId,
-      ...product,
-      collection_id: product.collectionId || 1,
-      collection_slugs: product.collectionSlugs,
-      collection_slug: product.collectionSlugs[0] || 'suits',
-      collection_name: product.collectionSlugs[0] || 'Unstitched Suits',
-      tags: Array.isArray(product.tags) ? product.tags : [],
-    });
-    upsertProduct(newProduct);
-    return NextResponse.json({ success: true, product: newProduct });
+    return NextResponse.json({ error: error.message || 'Database write error.' }, { status: 500 });
   } finally {
     if (client) client.release();
   }
@@ -416,18 +408,7 @@ export async function PUT(request) {
   } catch (error) {
     if (client) await client.query('ROLLBACK').catch(() => {});
     console.error('Admin PUT product error:', error);
-    const existing = getStore().find((p) => String(p.id) === String(body.id) || p.slug === body.slug);
-    const updatedProduct = mapProductData({
-      ...(existing || {}),
-      ...product,
-      id: body.id,
-      collection_id: product.collectionId || (existing && existing.collection_id) || 1,
-      collection_slugs: product.collectionSlugs,
-      collection_slug: product.collectionSlugs[0] || (existing && existing.collection_slug) || 'suits',
-      tags: Array.isArray(product.tags) ? product.tags : [],
-    });
-    upsertProduct(updatedProduct);
-    return NextResponse.json({ success: true, product: updatedProduct });
+    return NextResponse.json({ error: error.message || 'Database write error.' }, { status: 500 });
   } finally {
     if (client) client.release();
   }
