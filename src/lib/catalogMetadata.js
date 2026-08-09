@@ -58,7 +58,8 @@ export function mapProductData(product, options = {}) {
     (Array.isArray(collection_slugs) && collection_slugs.includes('new-collection'))
   );
 
-  const hasExplicitSlugs = Array.isArray(collection_slugs) && collection_slugs.length > 0;
+  const rawSlugs = product.collection_slugs !== undefined ? product.collection_slugs : product.collectionSlugs;
+  const hasExplicitSlugs = rawSlugs !== null && rawSlugs !== undefined;
   if (!Array.isArray(collection_slugs)) {
     collection_slugs = [];
   }
