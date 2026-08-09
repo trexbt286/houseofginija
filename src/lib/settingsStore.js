@@ -9,53 +9,55 @@
  * if the main database is disabled or unreachable, allowing cross-browser synchronization.
  */
 
+import https from 'https';
 import initialSettings from '@/data/local-settings.json';
 
 const STORE_KEY = '__houseOfGinijaRuntimeSettings';
-const LAST_FETCH_KEY = '__houseOfGinijaLastFetchTime';
-const CACHE_TTL_MS = 5000; // 5 seconds cache TTL
 
 if (!globalThis[STORE_KEY]) {
   globalThis[STORE_KEY] = { ...initialSettings };
 }
 
-// Background revalidation function to fetch latest settings from cloud KV
-async function fetchCloudSettings() {
-  const now = Date.now();
-  if (globalThis[LAST_FETCH_KEY] && (now - globalThis[LAST_FETCH_KEY] < CACHE_TTL_MS)) {
-    return; // Use cache
-  }
-  globalThis[LAST_FETCH_KEY] = now;
-
-  try {
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 2000); // 2s timeout
-
-    const res = await fetch('https://api.restful-api.dev/objects/ff8081819f7e10ae019fe4dfde521444', {
-      signal: controller.signal,
-      cache: 'no-store',
-    });
-    clearTimeout(timeoutId);
-
-    if (res.ok) {
-      const json = await res.json();
-      if (json && json.data) {
-        globalThis[STORE_KEY] = {
-          ...globalThis[STORE_KEY],
-          ...json.data,
-        };
-      }
+// Function to fetch latest settings from cloud KV using native HTTPS module (prevents Next.js caching)
+export function fetchCloudSettingsHttps() {
+  return new Promise((resolve) => {
+    if (typeof window !== 'undefined') {
+      resolve(false);
+      return;
     }
-  } catch (err) {
-    // Silent fail in background
-  }
+
+    const req = https.get('https://api.restful-api.dev/objects/ff8081819f7e10ae019fe4dfde521444', (res) => {
+      let data = '';
+      res.on('data', chunk => data += chunk);
+      res.on('end', () => {
+        try {
+          if (res.statusCode === 200) {
+            const json = JSON.parse(data);
+            if (json && json.data) {
+              globalThis[STORE_KEY] = {
+                ...globalThis[STORE_KEY],
+                ...json.data,
+              };
+              resolve(true);
+              return;
+            }
+          }
+        } catch (e) {}
+        resolve(false);
+      });
+    });
+
+    req.on('error', () => resolve(false));
+    req.setTimeout(2000, () => {
+      req.destroy();
+      resolve(false);
+    });
+    req.end();
+  });
 }
 
 export function getRuntimeSettings() {
   if (typeof window === 'undefined') {
-    // Trigger background revalidation (stale-while-revalidate)
-    fetchCloudSettings().catch(() => {});
-
     try {
       const req = eval('require');
       const fs = req('fs');
@@ -120,11 +122,20 @@ export function updateRuntimeSettings(newSettings) {
         name: 'houseofginija_settings',
         data: globalThis[STORE_KEY],
       };
-      fetch('https://api.restful-api.dev/objects/ff8081819f7e10ae019fe4dfde521444', {
+      const req = https.request({
+        hostname: 'api.restful-api.dev',
+        path: '/objects/ff8081819f7e10ae019fe4dfde521444',
         method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload),
-      }).catch(() => {});
+        headers: {
+          'Content-Type': 'application/json',
+          'Content-Length': Buffer.byteLength(JSON.stringify(payload))
+        }
+      }, (res) => {
+        res.on('data', () => {});
+      });
+      req.on('error', () => {});
+      req.write(JSON.stringify(payload));
+      req.end();
     }
   } catch (err) {
     // Catch for environments without network fetch access

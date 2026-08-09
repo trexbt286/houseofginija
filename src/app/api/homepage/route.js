@@ -12,10 +12,14 @@ import {
 } from '@/lib/localCatalogFallback';
 import { getStore } from '@/lib/globalProductStore';
 
+import { fetchCloudSettingsHttps } from '@/lib/settingsStore';
+
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
 
 export async function GET() {
+  await fetchCloudSettingsHttps();
+
   if (shouldUseLocalCatalogFallbackFirst()) {
     return NextResponse.json({
       ...getLocalHomepageFallback(),

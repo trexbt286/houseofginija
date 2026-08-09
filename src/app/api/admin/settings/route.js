@@ -1,11 +1,12 @@
 import { NextResponse } from 'next/server';
 import pool from '@/lib/db';
-import { getRuntimeSettings, updateRuntimeSettings } from '@/lib/settingsStore';
+import { getRuntimeSettings, updateRuntimeSettings, fetchCloudSettingsHttps } from '@/lib/settingsStore';
 
 export const dynamic = 'force-dynamic';
 
 // GET settings
 export async function GET() {
+  await fetchCloudSettingsHttps();
   const mergedSettings = { ...getRuntimeSettings() };
 
   try {
