@@ -108,7 +108,17 @@ export function getStoredLocalCatalogOverrides() {
   if (typeof window === 'undefined') return [];
   try {
     const raw = localStorage.getItem('houseofginija_custom_products');
-    return raw ? JSON.parse(raw) : [];
+    if (!raw) return [];
+    const list = JSON.parse(raw);
+    const cleaned = list.filter((p) => {
+      if (p.id === '201' || p.slug === 'muslin-kurta-and-dupatta-bottom-santoon') return false;
+      if ((p.name || '').toLowerCase().includes('muslin kurta and dupatta bottom')) return false;
+      return true;
+    });
+    if (cleaned.length !== list.length) {
+      localStorage.setItem('houseofginija_custom_products', JSON.stringify(cleaned));
+    }
+    return cleaned;
   } catch {
     return [];
   }
@@ -139,10 +149,15 @@ export function removeStoredLocalCatalogOverride(id) {
 }
 
 export function mergeCatalogWithLocalOverrides(fetchedList = []) {
-  const overrides = getStoredLocalCatalogOverrides();
-  if (!Array.isArray(overrides) || overrides.length === 0) return fetchedList;
+  let merged = fetchedList.filter((p) => {
+    if (p.id === '201' || p.slug === 'muslin-kurta-and-dupatta-bottom-santoon') return false;
+    if ((p.name || '').toLowerCase().includes('muslin kurta and dupatta bottom')) return false;
+    return true;
+  });
 
-  let merged = [...fetchedList];
+  const overrides = getStoredLocalCatalogOverrides();
+  if (!Array.isArray(overrides) || overrides.length === 0) return merged;
+
   overrides.forEach((override) => {
     const idx = merged.findIndex((p) => String(p.id) === String(override.id) || p.slug === override.slug);
     if (idx !== -1) {
