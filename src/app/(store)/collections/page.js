@@ -581,7 +581,7 @@ function CollectionsContent() {
 
     // URL sync has been removed to prevent Next.js App Router Suspense bugs 
     // where modifying history manually causes a remount on the next state change (like closing a bottom sheet).
-  }, [selectedCollection, searchQuery, selectedSize, selectedColor, selectedSort, allProducts]);
+  }, [selectedCollection, searchQuery, selectedSize, selectedColor, selectedSort, allProducts, jewelleryEnabled]);
 
   const handleClearFilters = () => {
     setSelectedCollection('');
