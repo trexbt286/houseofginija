@@ -111,7 +111,7 @@ export default function Header() {
         <div style={brandLogoWrapperStyle}>
           <a href="/" style={{ display: 'flex', alignItems: 'center', gap: '0.8rem', textDecoration: 'none', cursor: 'pointer' }}>
             <img 
-              src="/brand_symbol_logo.png" 
+              src="https://res.cloudinary.com/cyygtyfb/image/upload/v1786258952/houseofginija/brand_symbol_logo.png" 
               alt="House of Ginija Symbol" 
               style={{ height: '34px', width: 'auto', objectFit: 'contain', display: 'block' }} 
               loading="lazy"

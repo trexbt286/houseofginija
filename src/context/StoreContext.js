@@ -28,6 +28,18 @@ export function StoreProvider({ children }) {
     }
   };
 
+  const applySettings = (settings) => {
+    if (!settings || settings.jewellery_enabled === undefined || settings.jewellery_enabled === null) {
+      return;
+    }
+
+    const enabled = settings.jewellery_enabled === true || settings.jewellery_enabled === 'true';
+    setJewelleryEnabledState(enabled);
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('houseofginija_jewellery_enabled', enabled ? 'true' : 'false');
+    }
+  };
+
   const syncSettings = () => {
     fetch('/api/homepage?t=' + Date.now(), { cache: 'no-store', headers: { 'Cache-Control': 'no-cache' } })
       .then((res) => (res.ok ? res.json() : null))
@@ -60,11 +72,23 @@ export function StoreProvider({ children }) {
       window.addEventListener('storage', handleStorage);
       window.addEventListener('houseofginija_settings_updated', syncSettings);
 
+      let channel;
+      try {
+        channel = new BroadcastChannel('houseofginija-catalog-sync');
+        channel.onmessage = (event) => {
+          if (event.data?.type === 'settings-updated') {
+            applySettings(event.data.settings);
+            syncSettings();
+          }
+        };
+      } catch {}
+
       const interval = setInterval(syncSettings, 3000);
 
       return () => {
         window.removeEventListener('storage', handleStorage);
         window.removeEventListener('houseofginija_settings_updated', syncSettings);
+        if (channel) channel.close();
         clearInterval(interval);
       };
     }

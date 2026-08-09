@@ -3,6 +3,7 @@ import productsFallback from '@/data/local-products-fallback.json';
 import localSettings from '@/data/local-settings.json';
 import { getStore, findBySlug } from '@/lib/globalProductStore';
 import { getSetting } from '@/lib/settingsStore';
+import { isJewelleryProduct } from '@/lib/catalogClient';
 
 const isProduction = process.env.NODE_ENV === 'production';
 const hasDatabaseUrl = Boolean(process.env.DATABASE_URL);
@@ -59,20 +60,22 @@ export function getLocalTagsFallback() {
 
 export function getLocalHomepageFallback() {
   const store = getStore();
-  const flashProducts = store.filter((p) => Boolean(p.flash_sale || p.on_sale || (Array.isArray(p.collection_slugs) && p.collection_slugs.includes('flash-sale'))));
-  const newArrivalProducts = store.filter((p) => Boolean(p.new_arrival || (Array.isArray(p.collection_slugs) && p.collection_slugs.includes('new-collection'))));
+  const jewelleryEnabled = getSetting('jewellery_enabled', true);
+  const visibleStore = jewelleryEnabled === false
+    ? store.filter((product) => !isJewelleryProduct(product))
+    : store;
+  const flashProducts = visibleStore.filter((p) => Boolean(p.flash_sale || p.on_sale || (Array.isArray(p.collection_slugs) && p.collection_slugs.includes('flash-sale'))));
+  const newArrivalProducts = visibleStore.filter((p) => Boolean(p.new_arrival || (Array.isArray(p.collection_slugs) && p.collection_slugs.includes('new-collection'))));
 
   const isIndoWestern = (p) => p.collection_slug === 'indo-western' || (Array.isArray(p.collection_slugs) && p.collection_slugs.includes('indo-western')) || String(p.collection_id) === '8';
   const isGown = (p) => p.collection_slug === 'gowns' || p.collection_slug === 'heavy-gown' || (Array.isArray(p.collection_slugs) && p.collection_slugs.some((s) => s === 'gowns' || s === 'heavy-gown')) || String(p.collection_id) === '10';
   const isSharara = (p) => p.collection_slug === 'shararas' || (Array.isArray(p.collection_slugs) && p.collection_slugs.includes('shararas')) || String(p.collection_id) === '9';
 
   const heavyDresses = {
-    indoWestern: store.filter(isIndoWestern),
-    heavyGown: store.filter(isGown),
-    shararas: store.filter(isSharara),
+    indoWestern: visibleStore.filter(isIndoWestern),
+    heavyGown: visibleStore.filter(isGown),
+    shararas: visibleStore.filter(isSharara),
   };
-
-  const jewelleryEnabled = getSetting('jewellery_enabled', true);
 
   return {
     ...homepageFallback,
@@ -90,9 +93,15 @@ export function getLocalProductsFallback() {
 }
 
 export function getLocalProductsResponseFallback() {
+  const jewelleryEnabled = getSetting('jewellery_enabled', true);
+  const products = jewelleryEnabled === false
+    ? getStore().filter((product) => !isJewelleryProduct(product))
+    : getStore();
+
   return {
-    products: getStore(),
+    products,
     flash_sale_enabled: productsFallback.flash_sale_enabled ?? true,
+    jewellery_enabled: jewelleryEnabled,
   };
 }
 

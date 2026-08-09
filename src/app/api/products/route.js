@@ -11,11 +11,15 @@ import {
   getLocalProductsFallback,
   getLocalProductsResponseFallback,
 } from '@/lib/localCatalogFallback';
-import { productMatchesCategory } from '@/lib/catalogClient';
+import { isJewelleryProduct, productMatchesCategory } from '@/lib/catalogClient';
+import { fetchCloudSettingsHttps, getSetting } from '@/lib/settingsStore';
 
 export const dynamic = 'force-dynamic';
 
 export async function GET(request) {
+  await fetchCloudSettingsHttps();
+  let jewelleryEnabled = getSetting('jewellery_enabled', true);
+
   if (shouldUseLocalCatalogFallbackFirst()) {
     const response = getLocalProductsResponseFallback();
     const { searchParams } = new URL(request.url);
@@ -26,6 +30,10 @@ export async function GET(request) {
     const sort = searchParams.get('sort');
 
     let products = [...response.products];
+
+    if (jewelleryEnabled === false) {
+      products = products.filter((product) => !isJewelleryProduct(product));
+    }
 
     if (ids) {
       const selectedIds = new Set(ids.split(',').map(String));
@@ -54,7 +62,7 @@ export async function GET(request) {
       return a.name.localeCompare(b.name, undefined, { numeric: true, sensitivity: 'base' });
     });
 
-    return NextResponse.json({ ...response, products });
+    return NextResponse.json({ ...response, products, jewellery_enabled: jewelleryEnabled });
   }
 
   try {
@@ -148,10 +156,14 @@ export async function GET(request) {
 
     const result = await pool.query(queryText, queryParams);
     const settingsResult = await pool.query(
-      "SELECT value FROM settings WHERE key = 'flash_sale_enabled'"
+      "SELECT key, value FROM settings WHERE key IN ('flash_sale_enabled', 'jewellery_enabled')"
     );
     const flash_sale_enabled =
-      settingsResult.rows.length > 0 && settingsResult.rows[0].value === 'true';
+      settingsResult.rows.find((row) => row.key === 'flash_sale_enabled')?.value === 'true';
+    const jewelleryRow = settingsResult.rows.find((row) => row.key === 'jewellery_enabled');
+    if (jewelleryRow) {
+      jewelleryEnabled = jewelleryRow.value !== 'false';
+    }
 
     const dbProducts = result.rows.map(mapProductData);
     const fallbackProducts = getLocalProductsFallback();
@@ -181,16 +193,24 @@ export async function GET(request) {
       matchingFallback = matchingFallback.filter((p) => p.name.toLowerCase().includes(term));
     }
 
-    const finalProducts = [...dbProducts, ...matchingFallback];
+    let finalProducts = [...dbProducts, ...matchingFallback];
+    if (jewelleryEnabled === false) {
+      finalProducts = finalProducts.filter((product) => !isJewelleryProduct(product));
+    }
 
     return NextResponse.json({
       products: finalProducts,
       flash_sale_enabled,
+      jewellery_enabled: jewelleryEnabled,
     });
   } catch (error) {
     console.error('Fetch products error:', error);
     if (canUseLocalCatalogFallback()) {
-      return NextResponse.json(getLocalProductsResponseFallback());
+      const response = getLocalProductsResponseFallback();
+      const products = jewelleryEnabled === false
+        ? response.products.filter((product) => !isJewelleryProduct(product))
+        : response.products;
+      return NextResponse.json({ ...response, products, jewellery_enabled: jewelleryEnabled });
     }
     return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
   }

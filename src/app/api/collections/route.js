@@ -5,17 +5,26 @@ import {
   shouldUseLocalCatalogFallbackFirst,
   canUseLocalCatalogFallback,
   getLocalCollectionsFallback,
-  getLocalCategoryTreeFallback,
 } from '@/lib/localCatalogFallback';
+import { isJewelleryCollection } from '@/lib/catalogClient';
+import { fetchCloudSettingsHttps, getSetting } from '@/lib/settingsStore';
 
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
 
 export async function GET() {
+  await fetchCloudSettingsHttps();
+  let jewelleryEnabled = getSetting('jewellery_enabled', true);
+  const hideDisabledCollections = (collections) =>
+    jewelleryEnabled === false
+      ? collections.filter((collection) => !isJewelleryCollection(collection))
+      : collections;
+
   if (shouldUseLocalCatalogFallbackFirst()) {
+    const collections = hideDisabledCollections(getLocalCollectionsFallback());
     return NextResponse.json({
-      collections: getLocalCollectionsFallback(),
-      categoryTree: getLocalCategoryTreeFallback(),
+      collections,
+      categoryTree: buildCategoryTree(collections),
     });
   }
 
@@ -37,6 +46,13 @@ export async function GET() {
     `);
 
     const dbCollections = result.rows;
+    const settingsResult = await pool.query(
+      "SELECT value FROM settings WHERE key = 'jewellery_enabled'"
+    );
+    if (settingsResult.rows.length > 0) {
+      jewelleryEnabled = settingsResult.rows[0].value !== 'false';
+    }
+
     const fallbackCollections = getLocalCollectionsFallback();
     const existingSlugs = new Set(dbCollections.map((c) => c.slug));
 
@@ -45,16 +61,19 @@ export async function GET() {
       ...fallbackCollections.filter((c) => !existingSlugs.has(c.slug)),
     ];
 
+    const visibleCollections = hideDisabledCollections(mergedCollections);
+
     return NextResponse.json({
-      collections: mergedCollections,
-      categoryTree: buildCategoryTree(mergedCollections),
+      collections: visibleCollections,
+      categoryTree: buildCategoryTree(visibleCollections),
     });
   } catch (error) {
     console.error('Fetch collections error:', error);
     if (canUseLocalCatalogFallback()) {
+      const collections = hideDisabledCollections(getLocalCollectionsFallback());
       return NextResponse.json({
-        collections: getLocalCollectionsFallback(),
-        categoryTree: getLocalCategoryTreeFallback(),
+        collections,
+        categoryTree: buildCategoryTree(collections),
       });
     }
     return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });

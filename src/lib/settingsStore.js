@@ -13,9 +13,27 @@ import https from 'https';
 import initialSettings from '@/data/local-settings.json';
 
 const STORE_KEY = '__houseOfGinijaRuntimeSettings';
+const STORE_HYDRATED_KEY = '__houseOfGinijaRuntimeSettingsHydrated';
+
+function readDiskSettings() {
+  if (typeof window !== 'undefined') return {};
+
+  try {
+    const req = eval('require');
+    const fs = req('fs');
+    const path = req('path');
+    const settingsFilePath = path.join(process.cwd(), 'src', 'data', 'local-settings.json');
+    if (fs.existsSync(settingsFilePath)) {
+      return JSON.parse(fs.readFileSync(settingsFilePath, 'utf8') || '{}');
+    }
+  } catch {}
+
+  return {};
+}
 
 if (!globalThis[STORE_KEY]) {
-  globalThis[STORE_KEY] = { ...initialSettings };
+  globalThis[STORE_KEY] = { ...initialSettings, ...readDiskSettings() };
+  globalThis[STORE_HYDRATED_KEY] = true;
 }
 
 // Function to fetch latest settings from cloud KV using native HTTPS module (prevents Next.js caching)
@@ -38,6 +56,7 @@ export function fetchCloudSettingsHttps() {
                 ...globalThis[STORE_KEY],
                 ...json.data,
               };
+              globalThis[STORE_HYDRATED_KEY] = true;
               resolve(true);
               return;
             }
@@ -56,22 +75,54 @@ export function fetchCloudSettingsHttps() {
   });
 }
 
+export function persistCloudSettingsHttps(settings) {
+  return new Promise((resolve) => {
+    if (typeof window !== 'undefined') {
+      resolve(false);
+      return;
+    }
+
+    const payload = JSON.stringify({
+      name: 'houseofginija_settings',
+      data: settings,
+    });
+
+    const req = https.request({
+      hostname: 'api.restful-api.dev',
+      path: '/objects/ff8081819f7e10ae019fe4dfde521444',
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        'Content-Length': Buffer.byteLength(payload),
+      },
+    }, (res) => {
+      res.on('data', () => {});
+      res.on('end', () => {
+        resolve(res.statusCode >= 200 && res.statusCode < 300);
+      });
+    });
+
+    req.on('error', () => resolve(false));
+    req.setTimeout(4000, () => {
+      req.destroy();
+      resolve(false);
+    });
+    req.write(payload);
+    req.end();
+  });
+}
+
 export function getRuntimeSettings() {
   if (typeof window === 'undefined') {
     try {
-      const req = eval('require');
-      const fs = req('fs');
-      const path = req('path');
-      if (fs && path) {
-        const settingsFilePath = path.join(process.cwd(), 'src', 'data', 'local-settings.json');
-        if (fs.existsSync(settingsFilePath)) {
-          const diskData = JSON.parse(fs.readFileSync(settingsFilePath, 'utf8') || '{}');
-          globalThis[STORE_KEY] = {
-            ...initialSettings,
-            ...diskData,
-            ...globalThis[STORE_KEY],
-          };
-        }
+      if (!globalThis[STORE_HYDRATED_KEY]) {
+        const diskData = readDiskSettings();
+        globalThis[STORE_KEY] = {
+          ...initialSettings,
+          ...globalThis[STORE_KEY],
+          ...diskData,
+        };
+        globalThis[STORE_HYDRATED_KEY] = true;
       }
     } catch {}
   }
@@ -99,6 +150,7 @@ export function updateRuntimeSettings(newSettings) {
     ...current,
     ...newSettings,
   };
+  globalThis[STORE_HYDRATED_KEY] = true;
 
   // 1. Attempt disk persistence when running in Node.js server context
   try {
@@ -113,32 +165,6 @@ export function updateRuntimeSettings(newSettings) {
     }
   } catch (err) {
     // Catch for environments without filesystem access
-  }
-
-  // 2. Attempt cloud KV persistence when running in server context
-  try {
-    if (typeof window === 'undefined') {
-      const payload = {
-        name: 'houseofginija_settings',
-        data: globalThis[STORE_KEY],
-      };
-      const req = https.request({
-        hostname: 'api.restful-api.dev',
-        path: '/objects/ff8081819f7e10ae019fe4dfde521444',
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-          'Content-Length': Buffer.byteLength(JSON.stringify(payload))
-        }
-      }, (res) => {
-        res.on('data', () => {});
-      });
-      req.on('error', () => {});
-      req.write(JSON.stringify(payload));
-      req.end();
-    }
-  } catch (err) {
-    // Catch for environments without network fetch access
   }
 
   return globalThis[STORE_KEY];

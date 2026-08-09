@@ -12,9 +12,20 @@ import { AddToBagLabel, ProductFeatureStrip, ProductShareButton, ProductTagBadge
 import FounderReelsRow from '@/components/FounderReelsRow';
 import ShopByCategories from '@/components/ShopByCategories';
 
+const CLOUDINARY_REEL_URLS = [
+  'https://res.cloudinary.com/cyygtyfb/video/upload/v1786258826/houseofginija/videos/hero_reels/reel_1.mp4',
+  'https://res.cloudinary.com/cyygtyfb/video/upload/v1786258829/houseofginija/videos/hero_reels/reel_2.mp4',
+  'https://res.cloudinary.com/cyygtyfb/video/upload/v1786258831/houseofginija/videos/hero_reels/reel_3.mp4',
+  'https://res.cloudinary.com/cyygtyfb/video/upload/v1786258833/houseofginija/videos/hero_reels/reel_4.mp4',
+  'https://res.cloudinary.com/cyygtyfb/video/upload/v1786258836/houseofginija/videos/hero_reels/reel_5.mp4',
+  'https://res.cloudinary.com/cyygtyfb/video/upload/v1786258838/houseofginija/videos/hero_reels/reel_6.mp4',
+  'https://res.cloudinary.com/cyygtyfb/video/upload/v1786258841/houseofginija/videos/hero_reels/reel_7.mp4',
+  'https://res.cloudinary.com/cyygtyfb/video/upload/v1786258843/houseofginija/videos/hero_reels/reel_8.mp4',
+];
+
 const LOCAL_HERO_REELS = Array.from({ length: 8 }, (_, index) => ({
   id: `local-hero-reel-${index + 1}`,
-  video_url: `/videos/hero_reels/reel_${index + 1}.mp4`,
+  video_url: CLOUDINARY_REEL_URLS[index],
   title: `Hero Reel ${index + 1}`,
 }));
 
@@ -52,56 +63,56 @@ export default function Home() {
 
   const reviewImages = [
     {
-      img: '/reviews/review_1.jpg',
+      img: 'https://res.cloudinary.com/cyygtyfb/image/upload/v1786258948/houseofginija/reviews/review_1.jpg',
       name: 'Saurabh Singh',
       location: 'Lucknow',
       initial: 'S',
       text: 'I have been visiting the House of Ginija since last two years and all the ladies in my family absolutely adore the collection of the studio. The professional yet personal touch provided by Nikita to all the handcrafted pieces is what makes it one of the leading brand of chique fashion in the city.',
     },
     {
-      img: '/reviews/review_2.jpg',
+      img: 'https://res.cloudinary.com/cyygtyfb/image/upload/v1786258949/houseofginija/reviews/review_2.jpg',
       name: 'Chaitra Reddy',
       location: 'United States',
       initial: 'C',
       text: 'The store was recommended to me by a friend, absolutely lovely collection. Recently I placed an order ( which I am going to ship to the United States later ) and I want to appreciate all the patience and responsiveness even with the time difference. Amazing collection and service.',
     },
     {
-      img: '/reviews/review_3.jpg',
+      img: 'https://res.cloudinary.com/cyygtyfb/image/upload/v1786258950/houseofginija/reviews/review_3.jpg',
       name: 'Riya Sen',
       location: 'Delhi',
       initial: 'R',
       text: 'Heyy! I loved your lehanga so much ... it was too good 😊 I was looking so pretty in the lehanga ... looking to buy more dresses from you ... Will share the pics soon !!! ❤️',
     },
     {
-      img: '/reviews/review_4.jpg',
+      img: 'https://res.cloudinary.com/cyygtyfb/image/upload/v1786258950/houseofginija/reviews/review_4.jpg',
       name: 'Krati Parmar',
       location: 'Lucknow',
       initial: 'K',
       text: "I have been visiting House of Ginija since their launch in Lucknow and I just can't stop coming back. Nikita, the owner is super hospitable and the staff provides the best support and service. Their every season collection is to die for😍 Best brand label in Lucknow!! Highly recommended",
     },
     {
-      img: '/reviews/review_5.jpg',
+      img: 'https://res.cloudinary.com/cyygtyfb/image/upload/v1786258951/houseofginija/reviews/review_5.jpg',
       name: 'Priya Sharma',
       location: 'Mumbai',
       initial: 'P',
       text: 'Hey thanks for the beautiful suit ❤️ it\'s really very gorgeous. My husband too loved it 🥰🥰 Looking forward to purchase many more outfits from your collection in coming festive season. Simply superb & classy 😍 Thank you once again!',
     },
     {
-      img: '/reviews/review_1.jpg',
+      img: 'https://res.cloudinary.com/cyygtyfb/image/upload/v1786258948/houseofginija/reviews/review_1.jpg',
       name: 'Anjali Verma',
       location: 'Lucknow',
       initial: 'A',
       text: 'Superb quality and absolute master craftsmanship! The suit fits like a dream and the fabric is incredibly premium. Nikita was very responsive and guided me on sizing options. Definitely buying more soon.',
     },
     {
-      img: '/reviews/review_2.jpg',
+      img: 'https://res.cloudinary.com/cyygtyfb/image/upload/v1786258949/houseofginija/reviews/review_2.jpg',
       name: 'Divya Nair',
       location: 'Bangalore',
       initial: 'D',
       text: 'Outstanding experience shopping here. The designs are exclusive and unique, and the fit is absolute perfection. Highly recommend their bespoke tailoring service for special occasions.',
     },
     {
-      img: '/reviews/review_4.jpg',
+      img: 'https://res.cloudinary.com/cyygtyfb/image/upload/v1786258950/houseofginija/reviews/review_4.jpg',
       name: 'Meenakshi Iyer',
       location: 'Chennai',
       initial: 'M',

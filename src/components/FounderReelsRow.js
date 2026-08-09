@@ -104,9 +104,9 @@ export default function FounderReelsRow({ founderReels = [], loading = false }) 
     });
   }, [isSectionVisible, selectedReel, shouldLoadVideos]);
   const fallbackReels = [
-    { id: 'f6', video_url: '/videos/hero_reels/reel_6.mp4', title: 'Hero Reel 6' },
-    { id: 'f7', video_url: '/videos/hero_reels/reel_7.mp4', title: 'Hero Reel 7' },
-    { id: 'f8', video_url: '/videos/hero_reels/reel_8.mp4', title: 'Hero Reel 8' },
+    { id: 'f6', video_url: 'https://res.cloudinary.com/cyygtyfb/video/upload/v1786258838/houseofginija/videos/hero_reels/reel_6.mp4', title: 'Hero Reel 6' },
+    { id: 'f7', video_url: 'https://res.cloudinary.com/cyygtyfb/video/upload/v1786258841/houseofginija/videos/hero_reels/reel_7.mp4', title: 'Hero Reel 7' },
+    { id: 'f8', video_url: 'https://res.cloudinary.com/cyygtyfb/video/upload/v1786258843/houseofginija/videos/hero_reels/reel_8.mp4', title: 'Hero Reel 8' },
   ];
 
   const reelsToDisplay = (founderReels && founderReels.length > 0)

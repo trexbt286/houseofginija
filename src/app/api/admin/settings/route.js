@@ -1,6 +1,11 @@
 import { NextResponse } from 'next/server';
 import pool from '@/lib/db';
-import { getRuntimeSettings, updateRuntimeSettings, fetchCloudSettingsHttps } from '@/lib/settingsStore';
+import {
+  fetchCloudSettingsHttps,
+  getRuntimeSettings,
+  persistCloudSettingsHttps,
+  updateRuntimeSettings,
+} from '@/lib/settingsStore';
 
 export const dynamic = 'force-dynamic';
 
@@ -34,7 +39,9 @@ export async function POST(request) {
     }
 
     // Update runtime singleton store & disk
-    const updated = updateRuntimeSettings(settings);
+    let updated = updateRuntimeSettings(settings);
+    let dbSynced = false;
+    let cloudSynced = false;
 
     // Attempt DB persistence for settings table and collections.image_url
     try {
@@ -56,11 +63,37 @@ export async function POST(request) {
           );
         }
       }
+      dbSynced = true;
     } catch (dbError) {
       console.warn('DB settings write failed, using disk JSON and in-memory store:', dbError.message);
     }
 
-    return NextResponse.json({ success: true });
+    updated = { ...getRuntimeSettings(), ...settings };
+    cloudSynced = await persistCloudSettingsHttps(updated);
+
+    if (!dbSynced && !cloudSynced) {
+      return NextResponse.json({
+        error: 'Settings were not saved to a persistent store. Please try again.',
+        settings: updated,
+        sync: {
+          db: dbSynced,
+          cloud: cloudSynced,
+        },
+      }, { status: 503 });
+    }
+
+    return NextResponse.json({
+      success: true,
+      settings: updated,
+      sync: {
+        db: dbSynced,
+        cloud: cloudSynced,
+      },
+    }, {
+      headers: {
+        'Cache-Control': 'no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0',
+      },
+    });
   } catch (error) {
     console.error('Admin POST settings error:', error);
     return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });

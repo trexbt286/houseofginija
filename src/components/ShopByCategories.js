@@ -11,7 +11,7 @@ const ALL_CATEGORY_ITEMS = [
     id: 'discounted_suits',
     name: 'Discounted Unstitched Suits', 
     slug: 'discounted-suits', 
-    defaultImage: '/images/categories/unstitched.png', 
+    defaultImage: 'https://res.cloudinary.com/cyygtyfb/image/upload/v1786258820/houseofginija/images/categories/unstitched.png', 
     href: '/collections?collection=suits&flash_sale=true',
     isDiscounted: true,
   },
@@ -19,7 +19,7 @@ const ALL_CATEGORY_ITEMS = [
     id: 'discounted_heavy',
     name: 'Discounted Heavy Dresses', 
     slug: 'discounted-heavy', 
-    defaultImage: '/images/categories/heavy-dresses.png', 
+    defaultImage: 'https://res.cloudinary.com/cyygtyfb/image/upload/v1786258814/houseofginija/images/categories/heavy-dresses.png', 
     href: '/collections?collection=gowns&flash_sale=true',
     isDiscounted: true,
   },
@@ -27,28 +27,28 @@ const ALL_CATEGORY_ITEMS = [
     id: 'suits',
     name: 'Unstitched Suits', 
     slug: 'suits', 
-    defaultImage: '/images/categories/unstitched.png', 
+    defaultImage: 'https://res.cloudinary.com/cyygtyfb/image/upload/v1786258820/houseofginija/images/categories/unstitched.png', 
     href: '/collections?collection=suits' 
   },
   { 
     id: 'indo-western',
     name: 'Indo Western', 
     slug: 'indo-western', 
-    defaultImage: '/images/categories/indo-western.png', 
+    defaultImage: 'https://res.cloudinary.com/cyygtyfb/image/upload/v1786258816/houseofginija/images/categories/indo-western.png', 
     href: '/collections?collection=indo-western' 
   },
   { 
     id: 'gowns',
     name: 'Heavy Gowns', 
     slug: 'gowns', 
-    defaultImage: '/local-products/037-champagne-drape-saree-1.jpg', 
+    defaultImage: 'https://res.cloudinary.com/cyygtyfb/image/upload/v1786258877/houseofginija/local-products/037-champagne-drape-saree-1.jpg', 
     href: '/collections?collection=gowns' 
   },
   { 
     id: 'shararas',
     name: 'Drape Sarees', 
     slug: 'shararas', 
-    defaultImage: '/images/categories/heavy-dresses.png', 
+    defaultImage: 'https://res.cloudinary.com/cyygtyfb/image/upload/v1786258814/houseofginija/images/categories/heavy-dresses.png', 
     href: '/collections?collection=shararas' 
   },
 ];

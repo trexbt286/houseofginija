@@ -38,9 +38,36 @@ function persistStoreToDisk(store) {
 
 const STORE_KEY = '__houseOfGinijaProductStore';
 
+const CLOUDINARY_BASE = 'https://res.cloudinary.com/cyygtyfb/image/upload/f_auto,q_auto/houseofginija';
+
+/**
+ * Rewrite a local /local-products/xxx.jpg path to a Cloudinary URL.
+ * Already-absolute URLs (http/https) are returned unchanged.
+ */
+function toCloudinaryUrl(path) {
+  if (!path) return path;
+  if (path.startsWith('http')) return path;
+  // Strip leading slash and extension
+  const withoutLeadingSlash = path.replace(/^\//, '');
+  const withoutExt = withoutLeadingSlash.replace(/\.[^/.]+$/, '');
+  return `${CLOUDINARY_BASE}/${withoutExt}`;
+}
+
+function rewriteProductImages(product) {
+  if (!product) return product;
+  const images = Array.isArray(product.images)
+    ? product.images.map(toCloudinaryUrl)
+    : product.images;
+  return {
+    ...product,
+    images,
+    image_url: toCloudinaryUrl(product.image_url),
+  };
+}
+
 function buildInitialStore() {
-  const catalogProducts = productsFallback.products || [];
-  const homepageCategoryProducts = Object.values(homepageFallback.heavyDresses || {}).flat();
+  const catalogProducts = (productsFallback.products || []).map(rewriteProductImages);
+  const homepageCategoryProducts = Object.values(homepageFallback.heavyDresses || {}).flat().map(rewriteProductImages);
 
   const knownSlugs = new Set(catalogProducts.map((p) => p.slug));
   const knownImages = new Set(

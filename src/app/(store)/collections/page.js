@@ -9,7 +9,7 @@ import ImageWithSkeleton from '@/components/ImageWithSkeleton';
 import SkeletonCard from '@/components/SkeletonCard';
 import ProductImageGallery from '@/components/ProductImageGallery';
 import { AddToBagLabel, ProductFeatureStrip, ProductShareButton, ProductTagBadges } from '@/components/ProductQuickViewExtras';
-import { compareCatalogProducts, getCategoryTitle, productMatchesCategory, mergeCatalogWithLocalOverrides } from '@/lib/catalogClient';
+import { compareCatalogProducts, getCategoryTitle, isJewelleryProduct, productMatchesCategory, mergeCatalogWithLocalOverrides } from '@/lib/catalogClient';
 
 function MobileSearchBar({ allProducts, initialQuery, onSearch, handleProductClick }) {
   const [localQuery, setLocalQuery] = useState(initialQuery || '');
@@ -504,7 +504,10 @@ function CollectionsContent() {
         const res = await fetch('/api/products');
         if (res.ok) {
           const data = await res.json();
-          const list = mergeCatalogWithLocalOverrides(data.products || []);
+          let list = mergeCatalogWithLocalOverrides(data.products || []);
+          if (jewelleryEnabled === false) {
+            list = list.filter((product) => !isJewelleryProduct(product));
+          }
           setAllProducts(list);
           setProducts(list);
         }
@@ -515,7 +518,7 @@ function CollectionsContent() {
       }
     };
     fetchAllProducts();
-  }, []);
+  }, [jewelleryEnabled]);
 
   // Filter in memory or fetch from API when selections change
   useEffect(() => {
@@ -526,7 +529,10 @@ function CollectionsContent() {
           const res = await fetch(`/api/products?search=${encodeURIComponent(searchQuery.trim())}`);
           if (res.ok) {
             const data = await res.json();
-            const list = data.products || [];
+            let list = mergeCatalogWithLocalOverrides(data.products || []);
+            if (jewelleryEnabled === false) {
+              list = list.filter((product) => !isJewelleryProduct(product));
+            }
             list.sort((a, b) => compareCatalogProducts(a, b, 'name_asc'));
             setProducts(list);
           }
@@ -539,17 +545,7 @@ function CollectionsContent() {
         let filtered = [...allProducts];
 
         if (jewelleryEnabled === false) {
-          const isJewelleryProduct = (product) => {
-            const cid = String(product.collection_id || '');
-            if (['2', '4', '5', '6'].includes(cid)) return true;
-            const slug = (product.collection_slug || '').toLowerCase();
-            if (['jewellery', 'rings', 'necklaces', 'bracelets', 'earrings'].includes(slug)) return true;
-            if (Array.isArray(product.collection_slugs) && product.collection_slugs.some(s => ['jewellery', 'rings', 'necklaces', 'bracelets', 'earrings'].includes(s.toLowerCase()))) return true;
-            const nameLower = (product.name || '').toLowerCase();
-            if (nameLower.includes('ring') || nameLower.includes('necklace') || nameLower.includes('bracelet') || nameLower.includes('earring')) return true;
-            return false;
-          };
-          filtered = filtered.filter((p) => !isJewelleryProduct(p));
+          filtered = filtered.filter((product) => !isJewelleryProduct(product));
         }
 
         // Filter mode: apply collection, size, and color filters

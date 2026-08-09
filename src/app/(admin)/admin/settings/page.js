@@ -44,13 +44,27 @@ export default function AdminSettingsPage() {
       });
 
       if (res.ok) {
-        setJewelleryActive(newValue);
-        setJewelleryEnabled(newValue);
+        const data = await res.json();
+        const savedValue = data?.settings?.jewellery_enabled;
+        const isEnabled = savedValue === true || savedValue === 'true';
+
+        setJewelleryActive(isEnabled);
+        setJewelleryEnabled(isEnabled);
         if (typeof window !== 'undefined') {
-          localStorage.setItem('houseofginija_jewellery_enabled', newValue ? 'true' : 'false');
+          localStorage.setItem('houseofginija_jewellery_enabled', isEnabled ? 'true' : 'false');
           window.dispatchEvent(new Event('storage'));
+          window.dispatchEvent(new Event('houseofginija_settings_updated'));
+
+          try {
+            const channel = new BroadcastChannel('houseofginija-catalog-sync');
+            channel.postMessage({
+              type: 'settings-updated',
+              settings: data?.settings || { jewellery_enabled: isEnabled ? 'true' : 'false' },
+            });
+            channel.close();
+          } catch {}
         }
-        setMessage(`Jewellery Section successfully ${newValue ? 'ENABLED' : 'DISABLED'}`);
+        setMessage(`Jewellery Section successfully ${isEnabled ? 'ENABLED' : 'DISABLED'}`);
       } else {
         setMessage('Failed to update setting. Please try again.');
       }

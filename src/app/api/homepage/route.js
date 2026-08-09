@@ -11,6 +11,7 @@ import {
   getLocalHomepageFallback,
 } from '@/lib/localCatalogFallback';
 import { getStore } from '@/lib/globalProductStore';
+import { isJewelleryProduct } from '@/lib/catalogClient';
 
 import { fetchCloudSettingsHttps } from '@/lib/settingsStore';
 
@@ -121,14 +122,21 @@ export async function GET() {
     const dbFlashProducts = flashProductsResult.rows.map((row) => mapProductData(row, { isAdmin: false }));
     const localFlashProducts = getLocalHomepageFallback().flashProducts || [];
     const dbFlashSlugs = new Set(dbFlashProducts.map((p) => p.slug));
-    const flashProducts = [
+    let flashProducts = [
       ...dbFlashProducts,
       ...localFlashProducts.filter((p) => !dbFlashSlugs.has(p.slug) && (p.flash_sale || p.on_sale))
     ];
 
-    const newArrivalProducts = newArrivalsResult.rows.map((row) => mapProductData(row, { isAdmin: false }));
-    const heavyDressProducts = heavyDressesResult.rows.map((row) => mapProductData(row, { isAdmin: false }));
-    const allProductsMapped = allProductsResult.rows.map((row) => mapProductData(row, { isAdmin: false }));
+    let newArrivalProducts = newArrivalsResult.rows.map((row) => mapProductData(row, { isAdmin: false }));
+    let heavyDressProducts = heavyDressesResult.rows.map((row) => mapProductData(row, { isAdmin: false }));
+    let allProductsMapped = allProductsResult.rows.map((row) => mapProductData(row, { isAdmin: false }));
+
+    if (jewellery_enabled === false) {
+      flashProducts = flashProducts.filter((product) => !isJewelleryProduct(product));
+      newArrivalProducts = newArrivalProducts.filter((product) => !isJewelleryProduct(product));
+      heavyDressProducts = heavyDressProducts.filter((product) => !isJewelleryProduct(product));
+      allProductsMapped = allProductsMapped.filter((product) => !isJewelleryProduct(product));
+    }
 
     const isSuitsCategory = (slug) => slug === 'suits' || slug === 'unstitched';
     const isHeavyCategory = (slug) => ['indo-western', 'gowns', 'heavy-gown', 'shararas'].includes(slug);
@@ -151,11 +159,14 @@ export async function GET() {
         (acceptedSlugs.includes('indo-western') && String(product.collection_id) === '8')
       );
 
-      const storeItems = getStore().filter((product) =>
-        acceptedSlugs.includes(product.collection_slug) ||
-        (Array.isArray(product.collection_slugs) && product.collection_slugs.some((s) => acceptedSlugs.includes(s))) ||
-        (acceptedSlugs.includes('indo-western') && String(product.collection_id) === '8')
-      );
+      const storeItems = getStore().filter((product) => {
+        if (jewellery_enabled === false && isJewelleryProduct(product)) return false;
+        return (
+          acceptedSlugs.includes(product.collection_slug) ||
+          (Array.isArray(product.collection_slugs) && product.collection_slugs.some((s) => acceptedSlugs.includes(s))) ||
+          (acceptedSlugs.includes('indo-western') && String(product.collection_id) === '8')
+        );
+      });
 
       const fallbackFiltered = fallbackItems.filter((product) =>
         acceptedSlugs.includes(product.collection_slug) ||

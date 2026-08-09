@@ -1,3 +1,42 @@
+export const JEWELLERY_CATEGORY_SLUGS = ['jewellery', 'rings', 'necklaces', 'bracelets', 'earrings'];
+export const JEWELLERY_COLLECTION_IDS = ['2', '4', '5', '6'];
+
+export function isJewelleryProduct(product = {}) {
+  const collectionId = String(product.collection_id || '');
+  if (JEWELLERY_COLLECTION_IDS.includes(collectionId)) return true;
+
+  const collectionSlug = (product.collection_slug || '').toLowerCase();
+  const parentCollectionSlug = (product.parent_collection_slug || '').toLowerCase();
+  if (JEWELLERY_CATEGORY_SLUGS.includes(collectionSlug) || JEWELLERY_CATEGORY_SLUGS.includes(parentCollectionSlug)) {
+    return true;
+  }
+
+  const collectionSlugs = Array.isArray(product.collection_slugs)
+    ? product.collection_slugs.map((slug) => String(slug).toLowerCase())
+    : [];
+  if (collectionSlugs.some((slug) => JEWELLERY_CATEGORY_SLUGS.includes(slug))) return true;
+
+  const collectionName = (product.collection_name || '').toLowerCase();
+  if (collectionName.includes('jewellery') || collectionName.includes('jewelry')) return true;
+
+  const name = (product.name || '').toLowerCase();
+  return /\b(rings?|necklaces?|bracelets?|earrings?)\b/.test(name);
+}
+
+export function isJewelleryCollection(collection = {}) {
+  const slug = (collection.slug || '').toLowerCase();
+  const parentSlug = (collection.parent_slug || '').toLowerCase();
+  const id = String(collection.id || '');
+  const parentId = String(collection.parent_id || '');
+
+  return (
+    JEWELLERY_CATEGORY_SLUGS.includes(slug) ||
+    JEWELLERY_CATEGORY_SLUGS.includes(parentSlug) ||
+    JEWELLERY_COLLECTION_IDS.includes(id) ||
+    JEWELLERY_COLLECTION_IDS.includes(parentId)
+  );
+}
+
 export function productMatchesCategory(product, selectedCategory) {
   if (!selectedCategory) return true;
 
@@ -28,8 +67,7 @@ export function productMatchesCategory(product, selectedCategory) {
     return colSlug === 'earrings' || colSlugs.includes('earrings') || colId === '4';
   }
   if (cat === 'suits' || cat === 'unstitched' || cat === 'unstitched-suits') {
-    const isJewellery = colSlug === 'rings' || colSlug === 'necklaces' || colSlug === 'bracelets' || colSlug === 'earrings' || colSlug === 'jewellery' || ['2', '4', '5', '6'].includes(colId) || colSlugs.some((s) => ['rings', 'necklaces', 'bracelets', 'earrings', 'jewellery'].includes(s));
-    if (isJewellery) return false;
+    if (isJewelleryProduct(product)) return false;
 
     const hasSuitTag = Array.isArray(product.tags) && product.tags.some((t) => {
       const tagSlug = (typeof t === 'string' ? t : t?.slug || t?.name || '').toLowerCase();

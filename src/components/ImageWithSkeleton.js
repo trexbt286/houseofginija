@@ -15,7 +15,7 @@ function optimizeCloudinaryUrl(url) {
   return `${prefix}f_auto,q_auto/${suffix}`;
 }
 
-const DEFAULT_FALLBACK_IMAGE = '/local-products/002-bespoke-suit-6-1.jpg';
+const DEFAULT_FALLBACK_IMAGE = 'https://res.cloudinary.com/cyygtyfb/image/upload/v1786258845/houseofginija/local-products/002-bespoke-suit-6-1.jpg';
 
 export default function ImageWithSkeleton({ src, alt, style = {}, className = '', eager = false, fallbackSrc = DEFAULT_FALLBACK_IMAGE, ...props }) {
   const [loaded, setLoaded] = useState(false);

@@ -207,7 +207,7 @@ export default function Footer() {
           {/* Centered Gold HG Monogram + Tagline */}
           <div style={monogramContainerStyle} className="footer-monogram-section">
             <img 
-              src="/brand_symbol_logo.png" 
+              src="https://res.cloudinary.com/cyygtyfb/image/upload/v1786258952/houseofginija/brand_symbol_logo.png" 
               alt="House of Ginija Logo" 
               style={{ height: '65px', width: 'auto', objectFit: 'contain', margin: '0 auto 0.8rem auto', display: 'block' }} 
               className="footer-brand-logo"
@@ -463,7 +463,7 @@ const visitUsCardStyle = {
   margin: '0 auto',
   borderRadius: '20px',
   overflow: 'hidden',
-  backgroundImage: 'url(/images/store_photo.png)',
+  backgroundImage: 'url(https://res.cloudinary.com/cyygtyfb/image/upload/v1786258822/houseofginija/images/store_photo.png)',
   backgroundSize: 'cover',
   backgroundPosition: 'center',
   minHeight: '220px',
