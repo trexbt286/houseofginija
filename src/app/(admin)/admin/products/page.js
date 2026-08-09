@@ -1083,7 +1083,12 @@ function AdminProductsContent() {
           const filteredProducts = products.filter((p) => {
             if (!filterCategory) return true;
             return productMatchesCategory(p, filterCategory);
-          }).sort((a, b) => a.name.localeCompare(b.name, undefined, { numeric: true, sensitivity: 'base' }));
+          }).sort((a, b) => {
+            const idA = String(a.id || '');
+            const idB = String(b.id || '');
+            if (idA.length !== idB.length) return idB.length - idA.length;
+            return idB.localeCompare(idA);
+          });
 
           return (
             <div>
