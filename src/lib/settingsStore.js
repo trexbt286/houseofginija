@@ -68,8 +68,8 @@ export function getRuntimeSettings() {
           const diskData = JSON.parse(fs.readFileSync(settingsFilePath, 'utf8') || '{}');
           globalThis[STORE_KEY] = {
             ...initialSettings,
-            ...globalThis[STORE_KEY],
             ...diskData,
+            ...globalThis[STORE_KEY],
           };
         }
       }
