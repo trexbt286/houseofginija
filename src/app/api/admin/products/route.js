@@ -217,7 +217,7 @@ export async function GET() {
 
     const rawList = productsResult.rows.map((row) => mapProductData(row, { isAdmin: true })).filter(Boolean);
     return NextResponse.json({
-      products: sortAlphabetically(rawList),
+      products: sortByNewest(rawList),
       collections: collectionsResult.rows,
       categoryTree: buildCategoryTree(collectionsResult.rows),
       tags: tagsResult.rows,
