@@ -140,28 +140,30 @@ function AdminProductsContent() {
           setTags(data.tags);
         }
         setDbError(null);
+        setLoading(false);
       } else {
         const errData = await res.json().catch(() => ({}));
         const errMsg = errData.error || `Server error (${res.status})`;
         if (attempt < 4) {
           console.warn(`Admin products API attempt ${attempt} failed: ${errMsg}. Retrying in 2s...`);
           setTimeout(() => fetchProductsAndCollections(attempt + 1), 2000);
-          return;
+          return; // keep loading=true while retrying
         }
         setDbError(errMsg);
+        setLoading(false);
       }
     } catch (err) {
       if (attempt < 4) {
         console.warn(`Admin products fetch attempt ${attempt} threw: ${err.message}. Retrying in 2s...`);
         setTimeout(() => fetchProductsAndCollections(attempt + 1), 2000);
-        return;
+        return; // keep loading=true while retrying
       }
       setDbError(err.message || 'Network error');
-      console.error('Failed to fetch catalog details:', err);
-    } finally {
       setLoading(false);
+      console.error('Failed to fetch catalog details:', err);
     }
   };
+
 
 
   const searchParams = useSearchParams();
