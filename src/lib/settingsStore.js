@@ -15,6 +15,24 @@ if (!globalThis[STORE_KEY]) {
 }
 
 export function getRuntimeSettings() {
+  if (typeof window === 'undefined') {
+    try {
+      const req = eval('require');
+      const fs = req('fs');
+      const path = req('path');
+      if (fs && path) {
+        const settingsFilePath = path.join(process.cwd(), 'src', 'data', 'local-settings.json');
+        if (fs.existsSync(settingsFilePath)) {
+          const diskData = JSON.parse(fs.readFileSync(settingsFilePath, 'utf8') || '{}');
+          globalThis[STORE_KEY] = {
+            ...initialSettings,
+            ...globalThis[STORE_KEY],
+            ...diskData,
+          };
+        }
+      }
+    } catch {}
+  }
   if (!globalThis[STORE_KEY]) {
     globalThis[STORE_KEY] = { ...initialSettings };
   }
