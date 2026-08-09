@@ -32,10 +32,12 @@ export function StoreProvider({ children }) {
     fetch('/api/homepage?t=' + Date.now(), { cache: 'no-store', headers: { 'Cache-Control': 'no-cache' } })
       .then((res) => (res.ok ? res.json() : null))
       .then((data) => {
-        if (data && typeof data.jewellery_enabled === 'boolean') {
-          setJewelleryEnabledState(data.jewellery_enabled);
+        if (data && data.jewellery_enabled !== undefined && data.jewellery_enabled !== null) {
+          // DB returns string "true"/"false", API may return boolean true/false — handle both
+          const enabled = data.jewellery_enabled === true || data.jewellery_enabled === 'true';
+          setJewelleryEnabledState(enabled);
           if (typeof window !== 'undefined') {
-            localStorage.setItem('houseofginija_jewellery_enabled', data.jewellery_enabled ? 'true' : 'false');
+            localStorage.setItem('houseofginija_jewellery_enabled', enabled ? 'true' : 'false');
           }
         }
       })
