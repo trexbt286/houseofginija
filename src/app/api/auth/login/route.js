@@ -4,40 +4,6 @@ import pool from '@/lib/db';
 import { signJWT } from '@/lib/auth';
 import { cookies } from 'next/headers';
 
-// Recognized admin identifiers (emails and usernames)
-const DEFAULT_ADMIN_EMAILS = [
-  'admin@houseofginija.com',
-  'admin@ginija.com',
-  'admin@houseofginija.in',
-  'houseofginija@gmail.com',
-  'admin',
-  'ginija',
-  'administrator',
-];
-
-// Recognized admin passwords for fallback / direct access
-const DEFAULT_ADMIN_PASSWORDS = [
-  'admin123',
-  'admin',
-  'admin@123',
-  'Admin@123',
-  'Admin123',
-  'admin1234',
-  'admin#123',
-  'HouseOfGinija',
-  'HouseOfGinija@123',
-  'houseofginija',
-  'houseofginija123',
-  'ginija',
-  'ginija123',
-  'ginija@123',
-  'Ginija@123',
-  'Ginija123',
-  'password',
-  '123456',
-  '12345678',
-];
-
 export async function POST(request) {
   try {
     const { email, password } = await request.json();
@@ -46,28 +12,7 @@ export async function POST(request) {
       return NextResponse.json({ error: 'Missing email or password' }, { status: 400 });
     }
 
-    const emailRaw = String(email).trim();
-    const emailLower = emailRaw.toLowerCase();
-    const pwd = String(password).trim();
-    const rawPwd = String(password);
-
-    // Build list of valid admin emails
-    const envAdminEmail = (process.env.ADMIN_EMAIL || '').toLowerCase().trim();
-    const validAdminEmails = new Set(DEFAULT_ADMIN_EMAILS);
-    if (envAdminEmail) {
-      validAdminEmails.add(envAdminEmail);
-    }
-
-    // Build list of valid admin passwords
-    const envAdminPassword = process.env.ADMIN_PASSWORD;
-    const validAdminPasswords = new Set(DEFAULT_ADMIN_PASSWORDS);
-    if (envAdminPassword) {
-      validAdminPasswords.add(envAdminPassword);
-      validAdminPasswords.add(envAdminPassword.trim());
-    }
-
-    const isAdminIdentifier = validAdminEmails.has(emailLower) || emailLower.startsWith('admin@');
-    const isAdminPassword = validAdminPasswords.has(pwd) || validAdminPasswords.has(rawPwd);
+    const emailLower = email.toLowerCase().trim();
 
     let user = null;
     let passwordMatch = false;
@@ -75,49 +20,13 @@ export async function POST(request) {
     // 1. Try PostgreSQL database lookup if configured
     if (process.env.DATABASE_URL) {
       try {
-        const queryEmails = [emailLower];
-        if (isAdminIdentifier && emailLower !== 'admin@houseofginija.com') {
-          queryEmails.push('admin@houseofginija.com');
-        }
-        if (envAdminEmail && !queryEmails.includes(envAdminEmail)) {
-          queryEmails.push(envAdminEmail);
-        }
-
-        const result = await pool.query(
-          'SELECT * FROM users WHERE LOWER(email) = ANY($1::text[])',
-          [queryEmails]
-        );
-
+        const result = await pool.query('SELECT * FROM users WHERE email = $1', [emailLower]);
         if (result.rows.length > 0) {
-          for (const dbUser of result.rows) {
-            let match = false;
-            // Check bcrypt hash with raw and trimmed password
-            try {
-              if (dbUser.password_hash) {
-                match = (await bcrypt.compare(rawPwd, dbUser.password_hash)) ||
-                        (await bcrypt.compare(pwd, dbUser.password_hash));
-              }
-            } catch (e) {}
-
-            // Check plaintext password in DB
-            if (!match && (dbUser.password_hash === rawPwd || dbUser.password_hash === pwd)) {
-              match = true;
-            }
-
-            // Check admin fallback passwords if this is an admin account
-            if (!match && (dbUser.role === 'admin' || isAdminIdentifier) && isAdminPassword) {
-              match = true;
-            }
-
-            if (match) {
-              user = { ...dbUser };
-              // Ensure admin role for recognized admin logins
-              if (isAdminIdentifier || isAdminPassword || dbUser.role === 'admin') {
-                user.role = 'admin';
-              }
-              passwordMatch = true;
-              break;
-            }
+          const dbUser = result.rows[0];
+          const isMatch = await bcrypt.compare(password, dbUser.password_hash);
+          if (isMatch) {
+            user = dbUser;
+            passwordMatch = true;
           }
         }
       } catch (dbErr) {
@@ -126,14 +35,15 @@ export async function POST(request) {
     }
 
     // 2. Admin fallback credentials if DB lookup didn't match or DB is unconfigured/offline
-    const primaryAdminEmail = envAdminEmail || 'admin@houseofginija.com';
+    const adminEmail = (process.env.ADMIN_EMAIL || 'admin@houseofginija.com').toLowerCase().trim();
+    const adminPassword = process.env.ADMIN_PASSWORD || 'admin123';
 
-    if (!user && (isAdminIdentifier || isAdminPassword)) {
-      if (isAdminPassword || pwd === envAdminPassword || pwd === 'admin123' || rawPwd === 'admin123') {
+    if (!user && emailLower === adminEmail) {
+      if (password === adminPassword || password === 'admin123') {
         user = {
           id: 1,
           name: 'House Of Ginija Admin',
-          email: validAdminEmails.has(emailLower) && emailLower.includes('@') ? emailLower : primaryAdminEmail,
+          email: adminEmail,
           role: 'admin',
         };
         passwordMatch = true;
@@ -141,8 +51,8 @@ export async function POST(request) {
     }
 
     // 3. Fallback for demo customer credentials if DB is unconfigured/offline
-    if (!user && (emailLower === 'customer@houseofginija.com' || emailLower === 'customer')) {
-      if (pwd === 'customer123' || rawPwd === 'customer123' || pwd === 'customer') {
+    if (!user && emailLower === 'customer@houseofginija.com') {
+      if (password === 'customer123') {
         user = {
           id: 2,
           name: 'Aria Sharma',
