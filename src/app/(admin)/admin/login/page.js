@@ -16,12 +16,8 @@ export default function AdminLoginPage() {
 
   // If already logged in as admin, redirect to dashboard
   useEffect(() => {
-    if (!loading && user) {
-      if (user.role === 'admin') {
-        router.push('/admin/dashboard');
-      } else {
-        setFormError('Access Denied: Admin credentials required.');
-      }
+    if (!loading && user && user.role === 'admin') {
+      window.location.href = '/admin/dashboard';
     }
   }, [user, loading]);
 
@@ -34,15 +30,15 @@ export default function AdminLoginPage() {
       const res = await fetch('/api/auth/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password }),
+        body: JSON.stringify({ email: email.trim(), password }),
       });
 
       const data = await res.json();
 
       if (res.ok && data.user) {
         if (data.user.role === 'admin') {
-          login(data.user);
-          router.push('/admin/dashboard');
+          await login(data.user);
+          window.location.href = '/admin/dashboard';
         } else {
           setFormError('Access Denied: This account is not registered as an administrator.');
         }
@@ -66,15 +62,16 @@ export default function AdminLoginPage() {
 
         <form onSubmit={handleSubmit} style={formStyle}>
           <div style={formGroupStyle}>
-            <label style={labelStyle}>Administrator Email</label>
+            <label style={labelStyle}>Administrator Email or Username</label>
             <input
-              type="email"
+              type="text"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               style={inputStyle}
               required
-              placeholder="admin@houseofginija.com"
+              placeholder="admin@houseofginija.com or admin"
               disabled={formLoading}
+              autoComplete="username"
             />
           </div>
 
