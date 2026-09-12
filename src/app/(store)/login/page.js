@@ -59,13 +59,13 @@ function LoginContent() {
       if (res.ok && data.user) {
         if (loginType === 'admin') {
           if (data.user.role === 'admin') {
-            login(data.user);
-            router.push('/admin/dashboard');
+            await login(data.user);
+            window.location.href = '/admin/dashboard';
           } else {
             setFormError('Access Denied: Admin credentials required.');
           }
         } else {
-          login(data.user);
+          await login(data.user);
           router.push(redirectUrl);
         }
       } else {
@@ -154,7 +154,7 @@ function LoginContent() {
         <form onSubmit={handleSubmit} style={formStyle}>
           <div style={formGroupStyle}>
             <label style={labelStyle}>
-              {loginType === 'admin' ? 'Administrator Email' : 'Email Address'}
+              {loginType === 'admin' ? 'Administrator Email or Username' : 'Email Address'}
             </label>
             <div style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="rgba(0, 0, 0, 0.4)" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" style={{ position: 'absolute', left: '1rem' }}>
@@ -162,13 +162,14 @@ function LoginContent() {
                 <polyline points="22,6 12,13 2,6"></polyline>
               </svg>
               <input
-                type="email"
+                type={loginType === 'admin' ? 'text' : 'email'}
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 style={{ ...inputStyle, width: '100%', paddingLeft: '2.8rem', boxSizing: 'border-box' }}
                 required
-                placeholder="Enter email address"
+                placeholder={loginType === 'admin' ? "admin@houseofginija.com or admin" : "Enter email address"}
                 disabled={formLoading}
+                autoComplete={loginType === 'admin' ? 'username' : 'email'}
               />
             </div>
           </div>
