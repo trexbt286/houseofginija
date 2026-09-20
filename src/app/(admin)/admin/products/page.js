@@ -23,8 +23,6 @@ function AdminProductsContent() {
   const [collections, setCollections] = useState(homepageFallback.collections || []);
   const [tags, setTags] = useState([]);
   const [filterCategory, setFilterCategory] = useState('');
-  const [searchQuery, setSearchQuery] = useState('');
-  const [searchAllCategories, setSearchAllCategories] = useState(true);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
@@ -1156,45 +1154,7 @@ function AdminProductsContent() {
           </div>
         ) : (() => {
 
-          const cleanSearch = searchQuery.trim().toLowerCase();
-          const searchTokens = cleanSearch ? cleanSearch.split(/\s+/).filter(Boolean) : [];
-
           const filteredProducts = products.filter((p) => {
-            // 1. Search Query check (name, slug, id, category, tags, fabric, material, color, description, price)
-            if (cleanSearch) {
-              const pName = (p.name || '').toLowerCase();
-              const pSlug = (p.slug || '').toLowerCase();
-              const pId = String(p.id || '').toLowerCase();
-              const pColName = (p.collection_name || '').toLowerCase();
-              const pColSlug = (p.collection_slug || '').toLowerCase();
-              const pParentColSlug = (p.parent_collection_slug || '').toLowerCase();
-              const pColSlugs = Array.isArray(p.collection_slugs)
-                ? p.collection_slugs.map((s) => String(s).toLowerCase()).join(' ')
-                : '';
-              const pTags = Array.isArray(p.tags)
-                ? p.tags.map((t) => (typeof t === 'string' ? t : t?.name || t?.id || '')).join(' ').toLowerCase()
-                : '';
-              const pDesc = (p.description || '').toLowerCase();
-              const pPrice = String(p.price || '');
-              const pSalePrice = String(p.flash_sale_price || '');
-              const pFabric = String(p.fabric || '').toLowerCase();
-              const pMaterial = String(p.material || '').toLowerCase();
-              const pColor = String(p.color || '').toLowerCase();
-              const pWork = String(p.work || '').toLowerCase();
-
-              const fullHaystack = `${pName} ${pSlug} ${pId} ${pColName} ${pColSlug} ${pParentColSlug} ${pColSlugs} ${pTags} ${pDesc} ${pPrice} ${pSalePrice} ${pFabric} ${pMaterial} ${pColor} ${pWork}`;
-
-              const matchesSearch = searchTokens.every((token) => fullHaystack.includes(token));
-              if (!matchesSearch) return false;
-            }
-
-            // 2. Category Filter logic
-            // If user has a search query and 'searchAllCategories' is enabled, search across ALL categories
-            if (cleanSearch && searchAllCategories) {
-              return true;
-            }
-
-            // Otherwise filter by selected category
             if (!filterCategory) return true;
             return productMatchesCategory(p, filterCategory);
           }).sort((a, b) => {
@@ -1206,281 +1166,64 @@ function AdminProductsContent() {
 
           return (
             <div>
-              {/* Search & Category Filter Toolbar */}
-              <div
-                style={{
-                  backgroundColor: '#FFF7F8',
-                  padding: '1rem 1.2rem',
-                  borderRadius: '8px',
-                  border: '1px solid #F4E1E5',
-                  marginBottom: '1.2rem',
-                  display: 'flex',
-                  flexDirection: 'column',
-                  gap: '0.8rem',
-                }}
-              >
-                {/* Search input + Category selector row */}
-                <div
-                  style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '1rem',
-                    flexWrap: 'wrap',
-                    justifyContent: 'space-between',
-                  }}
-                >
-                  {/* Search Input Box */}
-                  <div
+              {/* Category Filter Bar */}
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.2rem', gap: '1rem', flexWrap: 'wrap', backgroundColor: '#FFF7F8', padding: '0.9rem 1.2rem', borderRadius: '8px', border: '1px solid #F4E1E5' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.8rem', flexWrap: 'wrap' }}>
+                  <label style={{ fontSize: '0.85rem', fontWeight: '700', color: '#3C303A' }}>
+                    Filter by Category:
+                  </label>
+                  <select
+                    value={filterCategory}
+                    onChange={(e) => setFilterCategory(e.target.value)}
                     style={{
-                      position: 'relative',
-                      flex: '1 1 340px',
-                      display: 'flex',
-                      alignItems: 'center',
+                      padding: '0.5rem 1rem',
+                      borderRadius: '6px',
+                      border: '1px solid #D98E9B',
+                      backgroundColor: '#FFFFFF',
+                      fontSize: '0.85rem',
+                      color: '#3C303A',
+                      fontWeight: '600',
+                      cursor: 'pointer',
+                      outline: 'none',
+                      boxShadow: '0 2px 6px rgba(217, 142, 155, 0.12)',
                     }}
                   >
-                    <span
-                      style={{
-                        position: 'absolute',
-                        left: '0.85rem',
-                        fontSize: '0.95rem',
-                        color: '#8B7789',
-                        pointerEvents: 'none',
-                        lineHeight: 1,
-                      }}
-                    >
-                      🔍
-                    </span>
-                    <input
-                      type="text"
-                      placeholder="Search products by name, slug, tag, ID, fabric, price..."
-                      value={searchQuery}
-                      onChange={(e) => setSearchQuery(e.target.value)}
-                      onKeyDown={(e) => {
-                        if (e.key === 'Escape') setSearchQuery('');
-                      }}
-                      style={{
-                        width: '100%',
-                        padding: '0.65rem 2.4rem 0.65rem 2.4rem',
-                        borderRadius: '6px',
-                        border: '1px solid #D98E9B',
-                        backgroundColor: '#FFFFFF',
-                        fontSize: '0.88rem',
-                        color: '#3C303A',
-                        outline: 'none',
-                        boxShadow: '0 2px 6px rgba(217, 142, 155, 0.12)',
-                        transition: 'border-color 0.2s ease, box-shadow 0.2s ease',
-                      }}
-                      aria-label="Search all products"
-                    />
-                    {searchQuery && (
-                      <button
-                        type="button"
-                        onClick={() => setSearchQuery('')}
-                        style={{
-                          position: 'absolute',
-                          right: '0.65rem',
-                          background: 'transparent',
-                          border: 'none',
-                          color: '#8B7789',
-                          cursor: 'pointer',
-                          fontSize: '0.9rem',
-                          padding: '0.2rem 0.4rem',
-                          borderRadius: '50%',
-                          fontWeight: '700',
-                          lineHeight: 1,
-                        }}
-                        title="Clear search"
-                        aria-label="Clear search"
-                      >
-                        ✕
-                      </button>
-                    )}
-                  </div>
+                    <option value="">All Categories ({products.length})</option>
+                    <option value="new-collection">Fresh Collection</option>
+                    <option value="indo-western">Indo-Western</option>
+                    <option value="shararas">Drape Sarees</option>
+                    <option value="gowns">Heavy Gowns</option>
+                    <option value="co-ords">Co-ords</option>
+                    <option value="suits">Unstitched Suits</option>
+                    <option value="jewellery">Jewellery</option>
+                    <option value="earrings">Earrings</option>
+                    <option value="necklaces">Necklace</option>
+                    <option value="rings">Rings</option>
+                    <option value="bracelets">Bracelet</option>
+                    <option value="flash-sale">Flash Sale</option>
+                  </select>
 
-                  {/* Category Dropdown */}
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', flexWrap: 'wrap' }}>
-                    <label style={{ fontSize: '0.85rem', fontWeight: '700', color: '#3C303A', whiteSpace: 'nowrap' }}>
-                      Category:
-                    </label>
-                    <select
-                      value={filterCategory}
-                      onChange={(e) => setFilterCategory(e.target.value)}
+                  {filterCategory && (
+                    <button
+                      onClick={() => setFilterCategory('')}
                       style={{
-                        padding: '0.6rem 1rem',
+                        padding: '0.45rem 0.9rem',
+                        fontSize: '0.78rem',
+                        color: '#FFFFFF',
+                        backgroundColor: '#D98E9B',
+                        border: 'none',
                         borderRadius: '6px',
-                        border: '1px solid #D98E9B',
-                        backgroundColor: '#FFFFFF',
-                        fontSize: '0.85rem',
-                        color: '#3C303A',
-                        fontWeight: '600',
                         cursor: 'pointer',
-                        outline: 'none',
-                        boxShadow: '0 2px 6px rgba(217, 142, 155, 0.12)',
+                        fontWeight: '700',
                       }}
                     >
-                      <option value="">All Categories ({products.length})</option>
-                      <option value="new-collection">Fresh Collection</option>
-                      <option value="indo-western">Indo-Western</option>
-                      <option value="shararas">Drape Sarees</option>
-                      <option value="gowns">Heavy Gowns</option>
-                      <option value="co-ords">Co-ords</option>
-                      <option value="suits">Unstitched Suits</option>
-                      <option value="jewellery">Jewellery</option>
-                      <option value="earrings">Earrings</option>
-                      <option value="necklaces">Necklace</option>
-                      <option value="rings">Rings</option>
-                      <option value="bracelets">Bracelet</option>
-                      <option value="flash-sale">Flash Sale</option>
-                    </select>
-                  </div>
+                      Clear Filter (Show All)
+                    </button>
+                  )}
                 </div>
 
-                {/* Sub-bar with Scope, Active Badges, and Stats */}
-                <div
-                  style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'space-between',
-                    gap: '0.8rem',
-                    flexWrap: 'wrap',
-                    paddingTop: '0.2rem',
-                    borderTop: '1px solid rgba(217, 142, 155, 0.2)',
-                  }}
-                >
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', flexWrap: 'wrap' }}>
-                    {/* Search All Categories Checkbox */}
-                    {cleanSearch && (
-                      <label
-                        style={{
-                          display: 'inline-flex',
-                          alignItems: 'center',
-                          gap: '0.45rem',
-                          fontSize: '0.8rem',
-                          fontWeight: '700',
-                          color: '#3C303A',
-                          cursor: 'pointer',
-                          backgroundColor: searchAllCategories ? '#FDF0F3' : '#FFFFFF',
-                          padding: '0.35rem 0.75rem',
-                          borderRadius: '6px',
-                          border: `1px solid ${searchAllCategories ? '#D98E9B' : '#E0D2D7'}`,
-                          userSelect: 'none',
-                        }}
-                      >
-                        <input
-                          type="checkbox"
-                          checked={searchAllCategories}
-                          onChange={(e) => setSearchAllCategories(e.target.checked)}
-                          style={{ accentColor: '#D98E9B', cursor: 'pointer', width: '15px', height: '15px' }}
-                        />
-                        <span>Search across ALL categories</span>
-                        {filterCategory && searchAllCategories && (
-                          <span style={{ fontSize: '0.74rem', color: '#B65C73', fontWeight: '500' }}>
-                            (all categories included)
-                          </span>
-                        )}
-                      </label>
-                    )}
-
-                    {/* Active category pill */}
-                    {filterCategory && (
-                      <span
-                        style={{
-                          display: 'inline-flex',
-                          alignItems: 'center',
-                          gap: '0.4rem',
-                          padding: '0.3rem 0.7rem',
-                          fontSize: '0.78rem',
-                          fontWeight: '600',
-                          backgroundColor: '#FFFFFF',
-                          color: '#3C303A',
-                          borderRadius: '6px',
-                          border: '1px solid #D98E9B',
-                        }}
-                      >
-                        Category: <strong style={{ color: '#D98E9B' }}>{filterCategory}</strong>
-                        <button
-                          type="button"
-                          onClick={() => setFilterCategory('')}
-                          style={{
-                            background: 'transparent',
-                            border: 'none',
-                            color: '#8B7789',
-                            cursor: 'pointer',
-                            padding: '0 0.2rem',
-                            fontWeight: '700',
-                            fontSize: '0.8rem',
-                          }}
-                          title="Remove category filter"
-                        >
-                          ✕
-                        </button>
-                      </span>
-                    )}
-
-                    {/* Active search pill */}
-                    {cleanSearch && (
-                      <span
-                        style={{
-                          display: 'inline-flex',
-                          alignItems: 'center',
-                          gap: '0.4rem',
-                          padding: '0.3rem 0.7rem',
-                          fontSize: '0.78rem',
-                          fontWeight: '600',
-                          backgroundColor: '#FFFFFF',
-                          color: '#3C303A',
-                          borderRadius: '6px',
-                          border: '1px solid #D98E9B',
-                        }}
-                      >
-                        Search: <strong style={{ color: '#D98E9B' }}>&ldquo;{cleanSearch}&rdquo;</strong>
-                        <button
-                          type="button"
-                          onClick={() => setSearchQuery('')}
-                          style={{
-                            background: 'transparent',
-                            border: 'none',
-                            color: '#8B7789',
-                            cursor: 'pointer',
-                            padding: '0 0.2rem',
-                            fontWeight: '700',
-                            fontSize: '0.8rem',
-                          }}
-                          title="Clear search query"
-                        >
-                          ✕
-                        </button>
-                      </span>
-                    )}
-
-                    {/* Reset all button */}
-                    {(cleanSearch || filterCategory) && (
-                      <button
-                        type="button"
-                        onClick={() => {
-                          setSearchQuery('');
-                          setFilterCategory('');
-                          setSearchAllCategories(true);
-                        }}
-                        style={{
-                          padding: '0.35rem 0.8rem',
-                          fontSize: '0.76rem',
-                          color: '#FFFFFF',
-                          backgroundColor: '#8B7789',
-                          border: 'none',
-                          borderRadius: '6px',
-                          cursor: 'pointer',
-                          fontWeight: '700',
-                        }}
-                      >
-                        Reset Filters
-                      </button>
-                    )}
-                  </div>
-
-                  <div style={{ fontSize: '0.85rem', color: '#8B7789', fontWeight: '700' }}>
-                    Showing <span style={{ color: '#D98E9B' }}>{filteredProducts.length}</span> of {products.length} Products
-                  </div>
+                <div style={{ fontSize: '0.85rem', color: '#8B7789', fontWeight: '700' }}>
+                  Showing <span style={{ color: '#D98E9B' }}>{filteredProducts.length}</span> of {products.length} Products
                 </div>
               </div>
 
@@ -1500,57 +1243,8 @@ function AdminProductsContent() {
                   <tbody>
                     {filteredProducts.length === 0 ? (
                       <tr>
-                        <td colSpan="7" style={{ padding: '3.5rem 2rem', textAlign: 'center', color: '#8B7789' }}>
-                          <div style={{ fontSize: '2.2rem', marginBottom: '0.6rem' }}>🔍</div>
-                          <div style={{ fontSize: '1.1rem', color: '#3C303A', fontWeight: '700', marginBottom: '0.4rem' }}>
-                            No products found
-                          </div>
-                          <p style={{ margin: '0 0 1.2rem 0', fontSize: '0.88rem', color: '#8B7789' }}>
-                            {cleanSearch
-                              ? `No products match "${cleanSearch}"${filterCategory && !searchAllCategories ? ` in category "${filterCategory}"` : ' across any category'}.`
-                              : 'No products found matching the selected category filter.'}
-                          </p>
-                          <div style={{ display: 'flex', gap: '0.6rem', justifyContent: 'center' }}>
-                            {cleanSearch && (
-                              <button
-                                type="button"
-                                onClick={() => setSearchQuery('')}
-                                style={{
-                                  padding: '0.5rem 1.2rem',
-                                  fontSize: '0.82rem',
-                                  color: '#FFFFFF',
-                                  backgroundColor: '#D98E9B',
-                                  border: 'none',
-                                  borderRadius: '6px',
-                                  cursor: 'pointer',
-                                  fontWeight: '700',
-                                }}
-                              >
-                                Clear Search
-                              </button>
-                            )}
-                            {filterCategory && (
-                              <button
-                                type="button"
-                                onClick={() => {
-                                  setFilterCategory('');
-                                  setSearchAllCategories(true);
-                                }}
-                                style={{
-                                  padding: '0.5rem 1.2rem',
-                                  fontSize: '0.82rem',
-                                  color: '#3C303A',
-                                  backgroundColor: '#FFFFFF',
-                                  border: '1px solid #D98E9B',
-                                  borderRadius: '6px',
-                                  cursor: 'pointer',
-                                  fontWeight: '700',
-                                }}
-                              >
-                                View All Categories
-                              </button>
-                            )}
-                          </div>
+                        <td colSpan="7" style={{ padding: '2rem', textAlign: 'center', color: '#8B7789', fontWeight: '600' }}>
+                          No products found matching the selected category filter.
                         </td>
                       </tr>
                     ) : (
@@ -1561,20 +1255,9 @@ function AdminProductsContent() {
                     <tr key={p.id} style={trStyle}>
                       <td style={tdStyle}>
                         <div style={productInfoCellStyle}>
-                          <img
-                            src={(p.images && p.images[0]) || '/placeholder.jpg'}
-                            alt={p.name}
-                            style={{ ...tableProdImgStyle, cursor: 'pointer' }}
-                            loading="lazy"
-                            onClick={() => openEditForm(p)}
-                            title="Click to edit product"
-                          />
+                          <img src={(p.images && p.images[0]) || '/placeholder.jpg'} alt={p.name} style={tableProdImgStyle} loading="lazy" />
                           <div>
-                            <strong
-                              style={{ ...tableProdNameStyle, cursor: 'pointer' }}
-                              onClick={() => openEditForm(p)}
-                              title="Click to edit product"
-                            >
+                            <strong style={tableProdNameStyle}>
                               {p.name}
                             </strong>
                             <AdminProductMetadataBadges product={p} />
