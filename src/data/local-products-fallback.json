@@ -1401,8 +1401,8 @@
       "id": "1",
       "name": "Ice Blue Cape",
       "slug": "bespoke-suit-1",
-      "description": "A finely tailored bespoke suit, crafted from exceptional textiles with structured shoulders and a modern silhouette.",
-      "price": "27000",
+      "description": "Exquisite draped skirt & cape top with organza cape and chinon skirt, detailed with all-over hand embroidery.",
+      "price": "19000",
       "collection_id": "8",
       "is_out_of_stock": false,
       "images": [
@@ -1411,68 +1411,160 @@
       ],
       "variants": [
         {
-          "color": "Default",
+          "color": "Ice Blue",
+          "size": "XS",
+          "stock": 10
+        },
+        {
+          "color": "Ice Blue",
           "size": "S",
           "stock": 10
         },
         {
-          "color": "Default",
+          "color": "Ice Blue",
           "size": "M",
           "stock": 10
         },
         {
-          "color": "Default",
+          "color": "Ice Blue",
           "size": "L",
+          "stock": 10
+        },
+        {
+          "color": "Ice Blue",
+          "size": "XL",
+          "stock": 10
+        },
+        {
+          "color": "Ice Blue",
+          "size": "XXL",
           "stock": 10
         }
       ],
       "flash_sale": false,
       "flash_sale_price": null,
-      "new_arrival": false,
+      "new_arrival": true,
       "collection_name": "Indo-Western",
       "collection_slug": "indo-western",
       "on_sale": false,
       "collection_slugs": [
-        "indo-western"
+        "indo-western",
+        "new-collection",
+        "heavy-dresses"
+      ],
+      "original_price": "19000",
+      "discount_percent": 0,
+      "sale_price": "19000",
+      "parent_collection_name": "Heavy Dresses",
+      "parent_collection_slug": "heavy-dresses",
+      "tags": [
+        {
+          "id": "tag-1",
+          "name": "Cape: Organza",
+          "slug": "cape-organza"
+        },
+        {
+          "id": "tag-2",
+          "name": "Skirt: Chinon",
+          "slug": "skirt-chinon"
+        },
+        {
+          "id": "tag-3",
+          "name": "Work: All-Over Hand Embroidery",
+          "slug": "work-all-over-hand-embroidery"
+        },
+        {
+          "id": "tag-4",
+          "name": "Style: Draped Skirt & Cape Top",
+          "slug": "style-draped-skirt-cape-top"
+        }
+      ],
+      "sizes": [
+        "XS",
+        "S",
+        "M",
+        "L",
+        "XL",
+        "XXL"
       ]
     },
     {
       "id": "4",
       "name": "Ivory Layered Gown",
       "slug": "bespoke-suit-4",
-      "description": "A finely tailored bespoke suit, crafted from exceptional textiles with structured shoulders and a modern silhouette.",
-      "price": "33000",
-      "collection_id": "1",
+      "description": "Graceful georgette layered gown featuring top heavy hand embroidery, high neckline, and embellished cap sleeves.",
+      "price": "8000",
+      "collection_id": "10",
       "is_out_of_stock": false,
       "images": [
         "/local-products/065-bespoke-suit-4-1.jpg"
       ],
       "variants": [
         {
-          "color": "Classic Black",
+          "color": "Ivory",
           "size": "S",
           "stock": 10
         },
         {
-          "color": "Classic Black",
+          "color": "Ivory",
           "size": "M",
           "stock": 10
         },
         {
-          "color": "Classic Black",
+          "color": "Ivory",
           "size": "L",
+          "stock": 10
+        },
+        {
+          "color": "Ivory",
+          "size": "XL",
           "stock": 10
         }
       ],
-      "flash_sale": false,
-      "flash_sale_price": null,
+      "flash_sale": true,
+      "flash_sale_price": "4000",
       "new_arrival": false,
-      "collection_name": "Suits",
-      "collection_slug": "suits",
-      "on_sale": false,
-      "tags": [],
-      "parent_collection_name": null,
-      "parent_collection_slug": null
+      "collection_name": "Heavy Gowns",
+      "collection_slug": "gowns",
+      "on_sale": true,
+      "tags": [
+        {
+          "id": "tag-13",
+          "name": "Fabric: Georgette Gown",
+          "slug": "fabric-georgette-gown"
+        },
+        {
+          "id": "tag-14",
+          "name": "Top Work: Heavy Hand Embroidery",
+          "slug": "top-work-heavy-hand-embroidery"
+        },
+        {
+          "id": "tag-15",
+          "name": "Neckline: High Neck",
+          "slug": "neckline-high-neck"
+        },
+        {
+          "id": "tag-16",
+          "name": "Sleeves: Embellished Cap Sleeves",
+          "slug": "sleeves-embellished-cap-sleeves"
+        }
+      ],
+      "parent_collection_name": "Heavy Dresses",
+      "parent_collection_slug": "heavy-dresses",
+      "original_price": "8000",
+      "discount_percent": 50,
+      "sale_price": "4000",
+      "collection_slugs": [
+        "flash-sale",
+        "gowns",
+        "heavy-dresses"
+      ],
+      "sizes": [
+        "S",
+        "M",
+        "L",
+        "XL"
+      ]
     },
     {
       "id": "22",
@@ -1596,8 +1688,8 @@
       "id": "2",
       "name": "Monochrome Drape",
       "slug": "bespoke-suit-2",
-      "description": "A striking monochrome drape outfit with a structured jacket overlay.",
-      "price": "29000",
+      "description": "A striking cross drape gown crafted in chinon, featuring neckline floral embroidery and hand embroidery cape.",
+      "price": "7500",
       "collection_id": "8",
       "is_out_of_stock": false,
       "images": [
@@ -1605,29 +1697,69 @@
       ],
       "variants": [
         {
-          "color": "Default",
+          "color": "Monochrome",
           "size": "S",
           "stock": 10
         },
         {
-          "color": "Default",
+          "color": "Monochrome",
           "size": "M",
           "stock": 10
         },
         {
-          "color": "Default",
+          "color": "Monochrome",
           "size": "L",
+          "stock": 10
+        },
+        {
+          "color": "Monochrome",
+          "size": "XL",
           "stock": 10
         }
       ],
-      "flash_sale": false,
-      "flash_sale_price": null,
+      "flash_sale": true,
+      "flash_sale_price": "3750",
       "new_arrival": false,
       "collection_name": "Indo-Western",
       "collection_slug": "indo-western",
-      "on_sale": false,
+      "on_sale": true,
       "collection_slugs": [
-        "indo-western"
+        "flash-sale",
+        "indo-western",
+        "heavy-dresses"
+      ],
+      "original_price": "7500",
+      "discount_percent": 50,
+      "sale_price": "3750",
+      "parent_collection_name": "Heavy Dresses",
+      "parent_collection_slug": "heavy-dresses",
+      "tags": [
+        {
+          "id": "tag-5",
+          "name": "Fabric: Chinon",
+          "slug": "fabric-chinon"
+        },
+        {
+          "id": "tag-6",
+          "name": "Style: Cross Drape Gown",
+          "slug": "style-cross-drape-gown"
+        },
+        {
+          "id": "tag-7",
+          "name": "Work: Neckline Floral Embroidery",
+          "slug": "work-neckline-floral-embroidery"
+        },
+        {
+          "id": "tag-8",
+          "name": "Hand Embroidery Cape",
+          "slug": "hand-embroidery-cape"
+        }
+      ],
+      "sizes": [
+        "S",
+        "M",
+        "L",
+        "XL"
       ]
     },
     {
@@ -2116,39 +2248,79 @@
       "id": "3",
       "name": "Sunshine Gown",
       "slug": "bespoke-suit-3",
-      "description": "A finely tailored bespoke suit, crafted from exceptional textiles with structured shoulders and a modern silhouette.",
-      "price": "31000",
-      "collection_id": "1",
+      "description": "Opulent heavy gown featuring crop top & flared skirt with short jacket in chinon, adorned with multi-color embroidery and fringe detail.",
+      "price": "9000",
+      "collection_id": "10",
       "is_out_of_stock": false,
       "images": [
         "/local-products/109-bespoke-suit-3-1.jpg"
       ],
       "variants": [
         {
-          "color": "Classic Black",
+          "color": "Yellow",
           "size": "S",
           "stock": 10
         },
         {
-          "color": "Classic Black",
+          "color": "Yellow",
           "size": "M",
           "stock": 10
         },
         {
-          "color": "Classic Black",
+          "color": "Yellow",
           "size": "L",
+          "stock": 10
+        },
+        {
+          "color": "Yellow",
+          "size": "XL",
           "stock": 10
         }
       ],
-      "flash_sale": false,
-      "flash_sale_price": null,
+      "flash_sale": true,
+      "flash_sale_price": "4500",
       "new_arrival": false,
-      "collection_name": "Suits",
-      "collection_slug": "suits",
-      "on_sale": false,
-      "tags": [],
-      "parent_collection_name": null,
-      "parent_collection_slug": null
+      "collection_name": "Heavy Gowns",
+      "collection_slug": "gowns",
+      "on_sale": true,
+      "tags": [
+        {
+          "id": "tag-9",
+          "name": "Fabric: Chinon",
+          "slug": "fabric-chinon"
+        },
+        {
+          "id": "tag-10",
+          "name": "Style: Crop Top & Flared Skirt with Short Jacket",
+          "slug": "style-crop-top-flared-skirt-short-jacket"
+        },
+        {
+          "id": "tag-11",
+          "name": "Work: Multi-Color Embroidery & Fringe Detail",
+          "slug": "work-multi-color-embroidery-fringe-detail"
+        },
+        {
+          "id": "tag-12",
+          "name": "Color: Yellow",
+          "slug": "color-yellow"
+        }
+      ],
+      "parent_collection_name": "Heavy Dresses",
+      "parent_collection_slug": "heavy-dresses",
+      "original_price": "9000",
+      "discount_percent": 50,
+      "sale_price": "4500",
+      "collection_slugs": [
+        "flash-sale",
+        "gowns",
+        "heavy-dresses"
+      ],
+      "sizes": [
+        "S",
+        "M",
+        "L",
+        "XL"
+      ]
     },
     {
       "id": "24",

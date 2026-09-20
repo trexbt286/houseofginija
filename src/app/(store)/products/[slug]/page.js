@@ -84,11 +84,12 @@ export default function ProductPage({ params }) {
   }
 
   // Get available sizes & colors
-  const hasClothingSizes = product.variants && product.variants.some(v => ['S', 'M', 'L', 'XL', 'XXL'].includes(v.size?.toUpperCase()));
+  const allClothingOrder = ['XS', 'S', 'M', 'L', 'XL', 'XXL'];
+  const hasClothingSizes = product.variants && product.variants.some(v => allClothingOrder.includes(v.size?.toUpperCase()));
   const sizes = hasClothingSizes 
-    ? ['S', 'M', 'L', 'XL', 'XXL'] 
-    : [...new Set(product.variants.map(v => v.size))].filter(Boolean);
-  const colors = [...new Set(product.variants.map(v => v.color))].filter(Boolean);
+    ? allClothingOrder.filter(s => product.variants.some(v => v.size?.toUpperCase() === s))
+    : [...new Set((product.variants || []).map(v => v.size))].filter(Boolean);
+  const colors = [...new Set((product.variants || []).map(v => v.color))].filter(Boolean);
 
   // Find stock of selected size/color combination
   const getSelectedVariant = () => {
@@ -207,7 +208,21 @@ export default function ProductPage({ params }) {
         <div style={detailsColumnStyle}>
           <span style={collectionNameStyle}>{product.collection_name}</span>
           <h1 style={productNameStyle}>{product.name}</h1>
-          <p style={priceStyle}>₹{parseFloat(product.price).toLocaleString('en-IN')}</p>
+          {((product.flash_sale || product.on_sale) && product.flash_sale_price && parseFloat(product.flash_sale_price) < parseFloat(product.price)) ? (
+            <div style={{ display: 'flex', alignItems: 'baseline', gap: '0.75rem', marginBottom: '1.2rem', flexWrap: 'wrap' }}>
+              <span style={{ fontSize: '1.8rem', fontWeight: '700', color: '#B97285' }}>
+                ₹{parseFloat(product.flash_sale_price).toLocaleString('en-IN')}
+              </span>
+              <span style={{ fontSize: '1.2rem', color: '#888', textDecoration: 'line-through', fontWeight: '400' }}>
+                ₹{parseFloat(product.price).toLocaleString('en-IN')}
+              </span>
+              <span style={{ fontSize: '0.85rem', fontWeight: '600', color: '#B97285', backgroundColor: '#FFF0F3', padding: '3px 8px', borderRadius: '4px', border: '1px solid rgba(185,114,133,0.3)' }}>
+                {Math.round(((parseFloat(product.price) - parseFloat(product.flash_sale_price)) / parseFloat(product.price)) * 100)}% OFF
+              </span>
+            </div>
+          ) : (
+            <p style={priceStyle}>₹{parseFloat(product.price).toLocaleString('en-IN')}</p>
+          )}
 
           {/* Custom Tag Badges below Price and above Description */}
           {(() => {
